@@ -368,6 +368,10 @@ class OutgoingMail(Document):
 			del message["X-Priority"]
 			message["X-Priority"] = str(0 if self.is_newsletter else 1)
 
+			if self.is_newsletter:
+				del message["X-Newsletter"]
+				message["X-Newsletter"] = "1"
+
 		def _add_attachments(message: MIMEMultipart | Message) -> None:
 			"""Adds the attachments to the message."""
 
