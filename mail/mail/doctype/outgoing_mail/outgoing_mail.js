@@ -31,7 +31,7 @@ frappe.ui.form.on("Outgoing Mail", {
                     frm.trigger("transfer_to_mail_server");
                 }, __("Actions"));
             }
-            else if (frm.doc.status === "Failed") {
+            else if (frm.doc.status === "Failed" && frm.doc.failed_count < 3) {
                 frm.add_custom_button(__("Retry"), () => {
                     frm.trigger("retry_failed");
                 }, __("Actions"));

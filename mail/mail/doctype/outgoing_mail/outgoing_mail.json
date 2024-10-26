@@ -45,6 +45,7 @@
   "submitted_after",
   "transfer_started_after",
   "transfer_completed_after",
+  "failed_count",
   "section_break_aafd",
   "tracking_id",
   "first_opened_at",
@@ -444,12 +445,23 @@
    "label": "Error Log",
    "no_copy": 1,
    "read_only": 1
+  },
+  {
+   "default": "0",
+   "depends_on": "eval: doc.failed_count",
+   "fieldname": "failed_count",
+   "fieldtype": "Int",
+   "label": "Failed Count",
+   "no_copy": 1,
+   "non_negative": 1,
+   "read_only": 1,
+   "search_index": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-10-24 12:45:57.215002",
+ "modified": "2024-10-26 11:49:31.788673",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Outgoing Mail",

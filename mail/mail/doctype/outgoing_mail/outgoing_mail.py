@@ -669,19 +669,19 @@ class OutgoingMail(Document):
 	def retry_failed(self) -> None:
 		"""Retries the failed mail."""
 
-		if self.docstatus == 1 and self.status == "Failed":
+		if self.docstatus == 1 and self.status == "Failed" and self.failed_count < 3:
 			self._db_set(status="Pending", error_log=None, error_message=None, commit=True)
 			self.transfer_to_mail_server()
 
 	@frappe.whitelist()
 	def transfer_to_mail_server(self) -> None:
-		"""Transfers the mail now."""
+		"""Transfers the email to the Mail Server."""
 
 		if not frappe.flags.force_transfer:
 			self.load_from_db()
 
 			# Ensure the document is submitted and in "Pending" status
-			if not (self.docstatus == 1 and self.status == "Pending"):
+			if not (self.docstatus == 1 and self.status == "Pending" and self.failed_count < 3):
 				return
 
 		from email import message_from_string
@@ -707,8 +707,6 @@ class OutgoingMail(Document):
 			self._db_set(
 				token=token,
 				status="Queued",
-				error_log=None,
-				error_message=None,
 				transfer_started_at=transfer_started_at,
 				transfer_started_after=transfer_started_after,
 				transfer_completed_at=transfer_completed_at,
@@ -721,7 +719,7 @@ class OutgoingMail(Document):
 			self._db_set(
 				status="Failed",
 				error_log=error_log,
-				error_message=None,
+				failed_count=self.failed_count + 1,
 				commit=True,
 				notify_update=True,
 			)
@@ -936,7 +934,7 @@ def get_permission_query_condition(user: str | None = None) -> str:
 
 
 def transfer_emails_to_mail_server() -> None:
-	"""Transfers the mails to Mail Server."""
+	"""Transfers the emails to the Mail Server."""
 
 	from frappe.query_builder.functions import GroupConcat
 
@@ -958,7 +956,11 @@ def transfer_emails_to_mail_server() -> None:
 				OM.submitted_at,
 				GroupConcat(MR.email).as_("recipients"),
 			)
-			.where((OM.docstatus == 1) & (OM.status == "Pending"))
+			.where(
+				(OM.docstatus == 1)
+				& (OM.failed_count < 3)
+				& (OM.status.isin(["Pending", "Failed"]))
+			)
 			.groupby(OM.name)
 			.orderby(OM.submitted_at)
 			.limit(batch_size)
@@ -1003,11 +1005,14 @@ def transfer_emails_to_mail_server() -> None:
 				except Exception:
 					batch_failures += 1
 					error_log = frappe.get_traceback(with_context=False)
-					frappe.db.set_value(
-						"Outgoing Mail",
-						mail["name"],
-						{"status": "Failed", "error_log": error_log, "error_message": None},
-					)
+					(
+						frappe.qb.update(OM)
+						.set(OM.status, "Failed")
+						.set(OM.error_log, error_log)
+						.set(OM.error_message, None)
+						.set(OM.failed_count, OM.failed_count + 1)
+						.where(OM.name == mail["name"])
+					).run()
 
 					if batch_failures >= batch_failure_threshold:
 						return

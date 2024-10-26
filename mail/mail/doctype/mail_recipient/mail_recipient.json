@@ -62,6 +62,7 @@
    "fieldtype": "Float",
    "label": "Action After (Seconds)",
    "no_copy": 1,
+   "precision": "2",
    "read_only": 1
   },
   {
@@ -94,7 +95,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-10-22 15:39:06.255331",
+ "modified": "2024-10-26 11:14:20.285232",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Recipient",
