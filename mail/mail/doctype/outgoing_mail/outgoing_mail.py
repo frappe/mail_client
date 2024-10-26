@@ -362,9 +362,6 @@ class OutgoingMail(Document):
 				for header in self.custom_headers:
 					message.add_header(header.key, header.value)
 
-			del message["X-FM-OM"]
-			message["X-FM-OM"] = self.name
-
 			del message["X-Priority"]
 			message["X-Priority"] = str(0 if self.is_newsletter else 1)
 
