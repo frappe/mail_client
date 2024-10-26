@@ -89,12 +89,6 @@ def get_columns() -> list[dict]:
 			"width": 120,
 		},
 		{
-			"label": _("Agent"),
-			"fieldname": "agent",
-			"fieldtype": "Data",
-			"width": 150,
-		},
-		{
 			"label": _("Domain Name"),
 			"fieldname": "domain_name",
 			"fieldtype": "Link",
@@ -156,7 +150,6 @@ def get_data(filters: dict | None = None) -> list[list]:
 				+ OM.transfer_completed_after
 				+ MR.action_after
 			).as_("total_delay"),
-			OM.agent,
 			OM.domain_name,
 			OM.ip_address,
 			OM.sender,
@@ -179,7 +172,6 @@ def get_data(filters: dict | None = None) -> list[list]:
 
 	for field in [
 		"name",
-		"agent",
 		"domain_name",
 		"ip_address",
 		"sender",

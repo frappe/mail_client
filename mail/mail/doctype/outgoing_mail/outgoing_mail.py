@@ -625,11 +625,13 @@ class OutgoingMail(Document):
 
 		from frappe.utils import get_datetime, convert_utc_to_system_timezone
 
-		if data["recipients"]:
+		if recipients_map := {rcpt["email"]: rcpt for rcpt in data["recipients"]}:
 			for rcpt in self.recipients:
-				if _rcpt := data["recipients"].get(rcpt.email):
+				if _rcpt := recipients_map.get(rcpt.email):
 					rcpt.status = _rcpt["status"]
-					rcpt.action_at = convert_utc_to_system_timezone(get_datetime(_rcpt["action_at"]))
+					rcpt.action_at = convert_utc_to_system_timezone(
+						get_datetime(_rcpt["action_at"])
+					).replace(tzinfo=None)
 					rcpt.action_after = time_diff_in_seconds(
 						rcpt.action_at, self.transfer_completed_at
 					)

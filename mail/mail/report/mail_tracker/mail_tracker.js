@@ -35,11 +35,6 @@ frappe.query_reports["Mail Tracker"] = {
 			options: ["", "Pending", "Failed", "Queued", "Blocked", "Deferred", "Bounced", "Partially Sent", "Sent"],
 		},
 		{
-			fieldname: "agent",
-			label: __("Agent"),
-			fieldtype: "Data",
-		},
-		{
 			fieldname: "domain_name",
 			label: __("Domain Name"),
 			fieldtype: "Link",

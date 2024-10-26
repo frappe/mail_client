@@ -35,11 +35,6 @@ frappe.query_reports["Outbound Delay"] = {
 			options: ["", "Deferred", "Bounced", "Sent"],
 		},
 		{
-			fieldname: "agent",
-			label: __("Agent"),
-			fieldtype: "Data",
-		},
-		{
 			fieldname: "domain_name",
 			label: __("Domain Name"),
 			fieldtype: "Link",

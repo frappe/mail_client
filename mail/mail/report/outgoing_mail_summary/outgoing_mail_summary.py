@@ -72,12 +72,6 @@ def get_columns() -> list[dict]:
 			"width": 500,
 		},
 		{
-			"label": _("Agent"),
-			"fieldname": "agent",
-			"fieldtype": "Data",
-			"width": 150,
-		},
-		{
 			"label": _("Domain Name"),
 			"fieldname": "domain_name",
 			"fieldtype": "Link",
@@ -137,7 +131,6 @@ def get_data(filters: dict | None = None) -> list[list]:
 			OM.via_api,
 			OM.is_newsletter,
 			MR.response,
-			OM.agent,
 			OM.domain_name,
 			OM.ip_address,
 			OM.sender,
@@ -161,7 +154,6 @@ def get_data(filters: dict | None = None) -> list[list]:
 
 	for field in [
 		"name",
-		"agent",
 		"domain_name",
 		"ip_address",
 		"sender",

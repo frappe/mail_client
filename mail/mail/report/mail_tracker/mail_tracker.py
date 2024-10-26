@@ -44,12 +44,6 @@ def get_columns() -> list[dict]:
 			"width": 130,
 		},
 		{
-			"label": _("Agent"),
-			"fieldname": "agent",
-			"fieldtype": "Data",
-			"width": 150,
-		},
-		{
 			"label": _("Domain Name"),
 			"fieldname": "domain_name",
 			"fieldtype": "Link",
@@ -113,7 +107,6 @@ def get_data(filters: dict | None = None) -> list[list]:
 			OM.creation,
 			OM.status,
 			OM.open_count,
-			OM.agent,
 			OM.domain_name,
 			OM.sender,
 			OM.message_id,
@@ -140,7 +133,6 @@ def get_data(filters: dict | None = None) -> list[list]:
 	for field in [
 		"name",
 		"status",
-		"agent",
 		"domain_name",
 		"sender",
 		"message_id",
