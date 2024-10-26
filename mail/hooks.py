@@ -208,11 +208,11 @@ scheduler_events = {
 	# ],
 	"cron": {
 		"* * * * *": [
-			"mail.mail.doctype.outgoing_mail.outgoing_mail.enqueue_transfer_mails",
+			"mail.tasks.enqueue_transfer_emails_to_mail_server",
 			"mail.mail.doctype.incoming_mail.incoming_mail.enqueue_get_incoming_mails",
 		],
 		"*/10 * * * *": [
-			"mail.mail.doctype.outgoing_mail.outgoing_mail.enqueue_fetch_and_update_delivery_statuses",
+			"mail.tasks.enqueue_fetch_and_update_delivery_statuses",
 		],
 	},
 }

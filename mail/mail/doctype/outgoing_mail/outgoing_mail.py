@@ -11,10 +11,10 @@ from uuid_utils import uuid7
 from email.message import Message
 from email.mime.text import MIMEText
 from frappe.model.document import Document
+from mail.utils import convert_html_to_text
 from email.utils import formataddr, parseaddr
 from email.mime.multipart import MIMEMultipart
 from frappe.utils import flt, now, time_diff_in_seconds
-from mail.utils import convert_html_to_text, enqueue_job
 from mail.mail_server import get_mail_server_outbound_api
 from mail.utils.validation import validate_mailbox_for_outgoing
 from mail.utils.user import get_user_mailboxes, is_mailbox_owner, is_system_manager
@@ -53,7 +53,7 @@ class OutgoingMail(Document):
 
 		if self.via_api and not self.is_newsletter and self.submitted_after <= 5:
 			frappe.enqueue_doc(
-				"Outgoing Mail", self.name, "transfer_now", enqueue_after_commit=True
+				"Outgoing Mail", self.name, "transfer_to_mail_server", enqueue_after_commit=True
 			)
 
 	def on_update_after_submit(self) -> None:
@@ -674,10 +674,10 @@ class OutgoingMail(Document):
 
 		if self.docstatus == 1 and self.status == "Failed":
 			self._db_set(status="Pending", error_log=None, error_message=None, commit=True)
-			self.transfer_now()
+			self.transfer_to_mail_server()
 
 	@frappe.whitelist()
-	def transfer_now(self) -> None:
+	def transfer_to_mail_server(self) -> None:
 		"""Transfers the mail now."""
 
 		if not frappe.flags.force_transfer:
@@ -938,7 +938,7 @@ def get_permission_query_condition(user: str | None = None) -> str:
 		return "1=0"
 
 
-def transfer_mails() -> None:
+def transfer_emails_to_mail_server() -> None:
 	"""Transfers the mails to Mail Server."""
 
 	from frappe.query_builder.functions import GroupConcat
@@ -1078,18 +1078,3 @@ def fetch_and_update_delivery_statuses() -> None:
 
 			if total_failures < max_failures:
 				time.sleep(2**total_failures)
-
-
-def enqueue_transfer_mails() -> None:
-	"Called by the scheduler to enqueue the `transfer_mails` job."
-
-	frappe.session.user = "Administrator"
-	enqueue_job(transfer_mails, queue="long")
-
-
-@frappe.whitelist()
-def enqueue_fetch_and_update_delivery_statuses() -> None:
-	"Called by the scheduler to enqueue the `fetch_and_update_delivery_statuses` job."
-
-	frappe.session.user = "Administrator"
-	enqueue_job(fetch_and_update_delivery_statuses, queue="long")

@@ -28,7 +28,7 @@ frappe.ui.form.on("Outgoing Mail", {
         if (frm.doc.docstatus === 1) {
             if (frm.doc.status === "Pending") {
                 frm.add_custom_button(__("Transfer Now"), () => {
-                    frm.trigger("transfer_now");
+                    frm.trigger("transfer_to_mail_server");
                 }, __("Actions"));
             }
             else if (frm.doc.status === "Failed") {
@@ -65,10 +65,10 @@ frappe.ui.form.on("Outgoing Mail", {
         }
     },
 
-    transfer_now(frm) {
+    transfer_to_mail_server(frm) {
         frappe.call({
             doc: frm.doc,
-            method: "transfer_now",
+            method: "transfer_to_mail_server",
             freeze: true,
             freeze_message: __("Transferring..."),
             callback: (r) => {
@@ -95,7 +95,7 @@ frappe.ui.form.on("Outgoing Mail", {
 
     fetch_and_update_delivery_statuses(frm) {
 		frappe.call({
-			method: "mail.mail.doctype.outgoing_mail.outgoing_mail.enqueue_fetch_and_update_delivery_statuses",
+			method: "mail.tasks.enqueue_fetch_and_update_delivery_statuses",
 			freeze: true,
 			freeze_message: __("Creating Job..."),
 			callback: () => {
