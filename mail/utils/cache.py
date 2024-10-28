@@ -41,15 +41,6 @@ def delete_cache(name: str, key: str | None = None) -> None:
 		frappe.cache.hdel(name, key)
 
 
-def get_root_domain_name() -> str | None:
-	"""Returns the root domain name."""
-
-	def getter() -> str | None:
-		return frappe.db.get_single_value("Mail Settings", "root_domain_name")
-
-	return _get_or_set("root_domain_name", getter, expires_in_sec=None)
-
-
 def get_postmaster_for_domain(domain_name: str) -> str:
 	"""Returns the postmaster for the domain."""
 
@@ -72,33 +63,6 @@ def get_postmaster_for_domain(domain_name: str) -> str:
 		return postmaster
 
 	return _get_or_set(f"postmaster|{domain_name}", getter)
-
-
-def get_user_domains(user: str) -> list:
-	"""Returns the domains of the user."""
-
-	def getter() -> list:
-		MAILBOX = frappe.qb.DocType("Mailbox")
-		return (
-			frappe.qb.from_(MAILBOX)
-			.select("domain_name")
-			.where((MAILBOX.user == user) & (MAILBOX.enabled == 1))
-			.distinct()
-		).run(pluck="domain_name")
-
-	return _hget_or_hset(f"user|{user}", "domains", getter)
-
-
-def get_user_owned_domains(user: str) -> list:
-	"""Returns the domains owned by the user."""
-
-	def getter() -> list:
-		MAIL_DOMAIN = frappe.qb.DocType("Mail Domain")
-		return (
-			frappe.qb.from_(MAIL_DOMAIN).select("name").where((MAIL_DOMAIN.enabled == 1))
-		).run(pluck="name")
-
-	return _hget_or_hset(f"user|{user}", "owned_domains", getter)
 
 
 def get_user_incoming_mailboxes(user: str) -> list:
@@ -136,23 +100,3 @@ def get_user_default_mailbox(user: str) -> str | None:
 		return frappe.db.get_value("Mailbox", {"user": user, "is_default": 1}, "name")
 
 	return _hget_or_hset(f"user|{user}", "default_mailbox", getter)
-
-
-def get_blacklist_for_ip_group(ip_group: str) -> list:
-	"""Returns the blacklist for the IP group."""
-
-	def getter() -> list:
-		IP_BLACKLIST = frappe.qb.DocType("IP Blacklist")
-		return (
-			frappe.qb.from_(IP_BLACKLIST)
-			.select(
-				IP_BLACKLIST.name,
-				IP_BLACKLIST.is_blacklisted,
-				IP_BLACKLIST.ip_address,
-				IP_BLACKLIST.ip_address_expanded,
-				IP_BLACKLIST.blacklist_reason,
-			)
-			.where(IP_BLACKLIST.ip_group == ip_group)
-		).run(as_dict=True)
-
-	return _get_or_set(f"blacklist|{ip_group}", getter, expires_in_sec=24 * 60 * 60)

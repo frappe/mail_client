@@ -6,8 +6,9 @@ from frappe.translate import get_all_translations
 
 
 @frappe.whitelist(allow_guest=True)
-def get_branding():
-	"""Get branding details."""
+def get_branding() -> dict:
+	"""Returns branding information."""
+
 	return {
 		"brand_name": frappe.db.get_single_value("Website Settings", "app_name"),
 		"brand_html": frappe.db.get_single_value("Website Settings", "brand_html"),
@@ -16,7 +17,9 @@ def get_branding():
 
 
 @frappe.whitelist(allow_guest=True)
-def get_user_info():
+def get_user_info() -> dict:
+	"""Returns user information."""
+
 	if frappe.session.user == "Guest":
 		return None
 
@@ -28,20 +31,26 @@ def get_user_info():
 	)
 	user["roles"] = frappe.get_roles(user.name)
 	user.mail_user = "Mailbox User" in user.roles
+
 	return user
 
 
 @frappe.whitelist(allow_guest=True)
-def get_translations():
+def get_translations() -> dict:
+	"""Returns translations for the current user's language."""
+
 	if frappe.session.user != "Guest":
 		language = frappe.db.get_value("User", frappe.session.user, "language")
 	else:
 		language = frappe.db.get_single_value("System Settings", "language")
+
 	return get_all_translations(language)
 
 
 @frappe.whitelist()
 def get_incoming_mails(start: int = 0) -> list:
+	"""Returns incoming mails for the current user."""
+
 	mails = frappe.get_all(
 		"Incoming Mail",
 		{"receiver": frappe.session.user, "docstatus": 1},
@@ -67,6 +76,8 @@ def get_incoming_mails(start: int = 0) -> list:
 
 @frappe.whitelist()
 def get_outgoing_mails(start: int = 0) -> list:
+	"""Returns outgoing mails for the current user."""
+
 	mails = frappe.get_all(
 		"Outgoing Mail",
 		{
@@ -93,7 +104,9 @@ def get_outgoing_mails(start: int = 0) -> list:
 	return get_mail_list(mails, "Outgoing Mail")
 
 
-def get_mail_list(mails, mail_type):
+def get_mail_list(mails, mail_type) -> list:
+	"""Returns a list of mails with additional details."""
+
 	for mail in mails[:]:
 		mail.mail_type = mail_type
 		thread = get_list_thread(mail)
@@ -113,7 +126,9 @@ def get_mail_list(mails, mail_type):
 	return mails
 
 
-def get_list_thread(mail):
+def get_list_thread(mail) -> list:
+	"""Returns a list of mails in the thread."""
+
 	thread = []
 	processed = set()
 
@@ -137,7 +152,9 @@ def get_list_thread(mail):
 	return thread
 
 
-def get_latest_content(html, plain):
+def get_latest_content(html, plain) -> str:
+	"""Returns the latest content from the mail."""
+
 	content = html if html else plain
 	if content is None:
 		return ""
@@ -152,7 +169,9 @@ def get_latest_content(html, plain):
 	return content
 
 
-def get_snippet(content):
+def get_snippet(content) -> str:
+	"""Returns a snippet of the content."""
+
 	content = re.sub(
 		r"(?<=[.,])(?=[^\s])", r" ", content
 	)  # add space after . and , if not followed by a space
@@ -160,7 +179,9 @@ def get_snippet(content):
 
 
 @frappe.whitelist()
-def get_mail_thread(name, mail_type):
+def get_mail_thread(name, mail_type) -> list:
+	"""Returns the mail thread for the given mail."""
+
 	mail = get_mail_details(name, mail_type, True)
 	mail.mail_type = mail_type
 
@@ -201,18 +222,24 @@ def get_mail_thread(name, mail_type):
 	return thread
 
 
-def reverse_type(mail_type):
+def reverse_type(mail_type) -> str:
+	"""Returns the reverse mail type."""
+
 	return "Incoming Mail" if mail_type == "Outgoing Mail" else "Outgoing Mail"
 
 
-def gather_thread_replies(mail_name):
+def gather_thread_replies(mail_name) -> list:
+	"""Gathers all replies in the thread."""
+
 	thread = []
 	thread += get_thread_from_replies("Outgoing Mail", mail_name)
 	thread += get_thread_from_replies("Incoming Mail", mail_name)
 	return thread
 
 
-def get_thread_from_replies(mail_type, mail_name):
+def get_thread_from_replies(mail_type, mail_name) -> list:
+	"""Returns the thread from the replies."""
+
 	replies = []
 	emails = frappe.get_all(mail_type, {"in_reply_to_mail_name": mail_name}, pluck="name")
 	for email in emails:
@@ -223,12 +250,16 @@ def get_thread_from_replies(mail_type, mail_name):
 	return replies
 
 
-def find_replica(mail, mail_type):
+def find_replica(mail, mail_type) -> str:
+	"""Returns the replica of the mail."""
+
 	replica_type = reverse_type(mail_type)
 	return frappe.db.exists(replica_type, {"message_id": mail.message_id})
 
 
-def remove_duplicates_and_sort(thread):
+def remove_duplicates_and_sort(thread) -> list:
+	"""Removes duplicates and sorts the thread."""
+
 	seen = set()
 	thread = [x for x in thread if x["name"] not in seen and not seen.add(x["name"])]
 	thread = [
@@ -238,7 +269,9 @@ def remove_duplicates_and_sort(thread):
 	return thread
 
 
-def get_mail_details(name: str, type: str, include_all_details: bool = False):
+def get_mail_details(name: str, type: str, include_all_details: bool = False) -> dict:
+	"""Returns the mail details."""
+
 	fields = [
 		"name",
 		"subject",
@@ -271,7 +304,9 @@ def get_mail_details(name: str, type: str, include_all_details: bool = False):
 	return mail
 
 
-def extract_email_body(html):
+def extract_email_body(html) -> str | None:
+	"""Extracts the email body from the html content."""
+
 	if not html:
 		return
 	soup = BeautifulSoup(html, "html.parser")
@@ -281,7 +316,9 @@ def extract_email_body(html):
 	return html
 
 
-def get_recipients(name, type, recipient_type):
+def get_recipients(name, type, recipient_type) -> list:
+	"""Returns the recipients of the mail."""
+
 	recipients = frappe.get_all(
 		"Mail Recipient",
 		{"parent": name, "parenttype": type, "type": recipient_type},
@@ -296,7 +333,9 @@ def get_recipients(name, type, recipient_type):
 
 
 @frappe.whitelist()
-def get_mail_contacts(txt=None):
+def get_mail_contacts(txt=None) -> list:
+	"""Returns the mail contacts for the current user."""
+
 	filters = {"user": frappe.session.user}
 	if txt:
 		filters["email"] = ["like", f"%{txt}%"]

@@ -19,7 +19,7 @@ frappe.ui.form.on("Mailbox", {
         }));
 
 		frm.set_query("user", () => ({
-            query: "mail.mail.doctype.mailbox.mailbox.get_users_with_mailbox_user_role",
+            query: "mail.utils.query.get_users_with_mailbox_user_role",
             filters: {
 				enabled: 1,
 				role: "Mailbox User",

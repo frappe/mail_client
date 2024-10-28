@@ -4,7 +4,6 @@
 import json
 import frappe
 from frappe import _
-from frappe.utils import flt
 from datetime import datetime
 from frappe.query_builder import Order, Criterion
 from frappe.query_builder.functions import Date, IfNull
@@ -30,8 +29,8 @@ def get_columns() -> list[dict]:
 			"width": 100,
 		},
 		{
-			"label": _("Creation"),
-			"fieldname": "creation",
+			"label": _("Submitted At"),
+			"fieldname": "submitted_at",
 			"fieldtype": "Datetime",
 			"width": 180,
 		},
@@ -124,7 +123,7 @@ def get_data(filters: dict | None = None) -> list[list]:
 		.on(OM.name == MR.parent)
 		.select(
 			OM.name,
-			OM.creation,
+			OM.submitted_at,
 			MR.status,
 			MR.retries,
 			OM.message_size,
@@ -139,14 +138,14 @@ def get_data(filters: dict | None = None) -> list[list]:
 			OM.message_id,
 		)
 		.where((OM.docstatus == 1) & (IfNull(MR.status, "") != ""))
-		.orderby(OM.creation, OM.created_at, order=Order.desc)
+		.orderby(OM.submitted_at, order=Order.desc)
 		.orderby(MR.idx, order=Order.asc)
 	)
 
 	if not filters.get("name") and not filters.get("message_id"):
 		query = query.where(
-			(Date(OM.created_at) >= Date(filters.get("from_date")))
-			& (Date(OM.created_at) <= Date(filters.get("to_date")))
+			(Date(OM.submitted_at) >= Date(filters.get("from_date")))
+			& (Date(OM.submitted_at) <= Date(filters.get("to_date")))
 		)
 
 	if not filters.get("include_newsletter"):
@@ -197,10 +196,10 @@ def get_chart(data: list) -> list[dict]:
 	labels, sent, deffered, bounced = [], [], [], []
 
 	for row in reversed(data):
-		if not isinstance(row["creation"], datetime):
+		if not isinstance(row["submitted_at"], datetime):
 			frappe.throw(_("Invalid date format"))
 
-		date = row["creation"].date().strftime("%d-%m-%Y")
+		date = row["submitted_at"].date().strftime("%d-%m-%Y")
 
 		if date not in labels:
 			labels.append(date)

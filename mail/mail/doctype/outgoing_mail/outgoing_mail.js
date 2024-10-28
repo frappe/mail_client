@@ -14,7 +14,7 @@ frappe.ui.form.on("Outgoing Mail", {
 
     set_queries(frm) {
         frm.set_query("sender", () => ({
-            query: "mail.mail.doctype.outgoing_mail.outgoing_mail.get_sender",
+            query: "mail.utils.query.get_sender",
         }));
     },
 

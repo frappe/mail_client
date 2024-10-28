@@ -1,9 +1,6 @@
 import frappe
 from frappe import _
 from frappe.utils import flt, cint
-from frappe.model.document import Document
-from mail.utils.cache import get_user_owned_domains
-from mail.utils.user import has_role, is_system_manager
 
 
 def validate_file(doc, method):

@@ -211,7 +211,7 @@ scheduler_events = {
 			"mail.tasks.enqueue_fetch_emails_from_mail_server",
 			"mail.tasks.enqueue_transfer_emails_to_mail_server",
 		],
-		"*/10 * * * *": [
+		"*/30 * * * *": [
 			"mail.tasks.enqueue_fetch_and_update_delivery_statuses",
 		],
 	},

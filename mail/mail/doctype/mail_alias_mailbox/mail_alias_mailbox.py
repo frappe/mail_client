@@ -9,7 +9,7 @@ class MailAliasMailbox(Document):
 	pass
 
 
-def on_doctype_update():
+def on_doctype_update() -> None:
 	frappe.db.add_unique(
 		"Mail Alias Mailbox", ["parent", "mailbox"], constraint_name="unique_parent_mailbox"
 	)

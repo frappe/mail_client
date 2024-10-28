@@ -1,6 +1,7 @@
 import frappe
 from typing import Literal
 from frappe.utils.caching import request_cache
+from mail.utils.cache import get_user_incoming_mailboxes, get_user_outgoing_mailboxes
 
 
 @request_cache
@@ -14,8 +15,6 @@ def get_user_mailboxes(
 	user: str, type: Literal["Incoming", "Outgoing"] | None = None
 ) -> list:
 	"""Returns the list of mailboxes associated with the user."""
-
-	from mail.utils.cache import get_user_incoming_mailboxes, get_user_outgoing_mailboxes
 
 	if type and type in ["Incoming", "Outgoing"]:
 		if type == "Incoming":

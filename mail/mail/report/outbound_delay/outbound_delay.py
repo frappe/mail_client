@@ -6,7 +6,6 @@ from frappe import _
 from typing import Tuple
 from frappe.utils import flt
 from frappe.query_builder import Order, Criterion
-from mail.utils.cache import get_user_owned_domains
 from frappe.query_builder.functions import Date, IfNull
 from mail.utils.user import has_role, is_system_manager, get_user_mailboxes
 
@@ -29,8 +28,8 @@ def get_columns() -> list[dict]:
 			"width": 100,
 		},
 		{
-			"label": _("Creation"),
-			"fieldname": "creation",
+			"label": _("Submitted At"),
+			"fieldname": "submitted_at",
 			"fieldtype": "Datetime",
 			"width": 180,
 		},
@@ -135,7 +134,7 @@ def get_data(filters: dict | None = None) -> list[list]:
 		.on(OM.name == MR.parent)
 		.select(
 			OM.name,
-			OM.creation,
+			OM.submitted_at,
 			MR.status,
 			MR.retries,
 			OM.message_size,
@@ -157,14 +156,14 @@ def get_data(filters: dict | None = None) -> list[list]:
 			OM.message_id,
 		)
 		.where((OM.docstatus == 1) & (IfNull(MR.status, "") != ""))
-		.orderby(OM.creation, OM.created_at, order=Order.desc)
+		.orderby(OM.submitted_at, order=Order.desc)
 		.orderby(MR.idx, order=Order.asc)
 	)
 
 	if not filters.get("name") and not filters.get("message_id"):
 		query = query.where(
-			(Date(OM.created_at) >= Date(filters.get("from_date")))
-			& (Date(OM.created_at) <= Date(filters.get("to_date")))
+			(Date(OM.submitted_at) >= Date(filters.get("from_date")))
+			& (Date(OM.submitted_at) <= Date(filters.get("to_date")))
 		)
 
 	if not filters.get("include_newsletter"):

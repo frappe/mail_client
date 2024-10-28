@@ -1,19 +1,23 @@
 # Copyright (c) 2024, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
+import time
 import frappe
 from frappe import _
 from uuid_utils import uuid7
 from typing import TYPE_CHECKING
 from email.utils import parseaddr
+from frappe.query_builder import Interval
 from frappe.model.document import Document
+from frappe.query_builder.functions import Now
 from frappe.utils import now, time_diff_in_seconds
 from mail.utils.cache import get_postmaster_for_domain
-from mail.utils import parse_iso_datetime, get_in_reply_to_mail
+from mail.mail_server import get_mail_server_inbound_api
 from mail.utils.email_parser import EmailParser, extract_ip_and_host
 from mail.mail.doctype.mail_contact.mail_contact import create_mail_contact
 from mail.mail.doctype.outgoing_mail.outgoing_mail import create_outgoing_mail
 from mail.utils.user import is_mailbox_owner, is_system_manager, get_user_mailboxes
+from mail.utils import parse_iso_datetime, get_in_reply_to_mail, add_or_update_tzinfo
 
 if TYPE_CHECKING:
 	from mail.mail.doctype.outgoing_mail.outgoing_mail import OutgoingMail
@@ -21,6 +25,7 @@ if TYPE_CHECKING:
 
 class IncomingMail(Document):
 	def autoname(self) -> None:
+
 		self.name = str(uuid7())
 
 	def validate(self) -> None:
@@ -105,6 +110,7 @@ class IncomingMail(Document):
 		"""Creates the mail contact."""
 
 		if frappe.get_cached_value("Mailbox", self.receiver, "create_mail_contact"):
+
 			user = frappe.get_cached_value("Mailbox", self.receiver, "user")
 			create_mail_contact(user, self.sender, self.display_name)
 
@@ -187,9 +193,6 @@ def reply_to_mail(source_name, target_doc=None) -> "OutgoingMail":
 
 def delete_rejected_mails() -> None:
 	"""Called by the scheduler to delete the rejected mails based on the retention."""
-
-	from frappe.query_builder import Interval
-	from frappe.query_builder.functions import Now
 
 	retention_days = frappe.db.get_single_value(
 		"Mail Settings", "rejected_mail_retention", cache=True
@@ -325,10 +328,6 @@ def fetch_emails_from_mail_server(domain_name: str) -> None:
 			is_rejected=1,
 			rejection_message="550 5.4.1 Recipient address rejected: Access denied.",
 		)
-
-	import time
-	from mail.utils import add_or_update_tzinfo
-	from mail.mail_server import get_mail_server_inbound_api
 
 	max_failures = 3
 	total_failures = 0

@@ -1,5 +1,12 @@
+import re
+from email import policy
 from typing import TYPE_CHECKING
 from email.utils import parseaddr
+from email import message_from_string
+from mail.utils import parsedate_to_datetime
+from frappe.utils import cint, get_datetime_str
+from frappe.utils.file_manager import save_file
+from email.header import decode_header, make_header
 
 if TYPE_CHECKING:
 	from email.message import Message
@@ -13,8 +20,6 @@ class EmailParser:
 	@staticmethod
 	def get_parsed_message(message: str) -> "Message":
 		"""Returns parsed email message object from string."""
-
-		from email import message_from_string
 
 		return message_from_string(message)
 
@@ -32,8 +37,6 @@ class EmailParser:
 
 	def get_subject(self) -> str | None:
 		"""Returns the decoded subject of the email."""
-
-		from email.header import decode_header, make_header
 
 		if subject := self.message["Subject"]:
 			decoded_subject = str(make_header(decode_header(subject)))
@@ -68,15 +71,11 @@ class EmailParser:
 	def get_date(self) -> str | None:
 		"""Returns the date of the email."""
 
-		from frappe.utils import get_datetime_str
-		from mail.utils import parsedate_to_datetime
-
 		if date_header := self.message.get("Date"):
 			return get_datetime_str(parsedate_to_datetime(date_header))
 
 	def get_size(self) -> int:
 		"""Returns the size of the email."""
-		from email import policy
 
 		return len(self.message.as_string(policy=policy.default).encode("utf-8"))
 
@@ -102,10 +101,6 @@ class EmailParser:
 		self, doctype: str, docname: str, is_private: bool = True
 	) -> None:
 		"""Saves the attachments of the email."""
-
-		import re
-		from frappe.utils import cint
-		from frappe.utils.file_manager import save_file
 
 		def save_attachment(
 			filename: str, content: bytes, doctype: str, docname: str, is_private: bool
@@ -209,8 +204,6 @@ def extract_ip_and_host(header: str | None = None) -> tuple[str | None, str | No
 	if not header:
 		return None, None
 
-	import re
-
 	ip_pattern = re.compile(r"\[(?P<ip>[\d\.]+|[a-fA-F0-9:]+)")
 	host_pattern = re.compile(r"from\s+(?P<host>[^\s]+)")
 
@@ -228,8 +221,6 @@ def extract_spam_score(header: str | None = None) -> float:
 
 	if not header:
 		return 0.0
-
-	import re
 
 	spam_score_pattern = re.compile(r"score=(-?\d+\.?\d*)")
 	if match := spam_score_pattern.search(header):

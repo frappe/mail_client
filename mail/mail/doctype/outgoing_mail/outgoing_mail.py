@@ -6,18 +6,44 @@ import time
 import frappe
 from frappe import _
 from re import finditer
-from email import policy
 from uuid_utils import uuid7
 from email.message import Message
+from mimetypes import guess_type
+from dkim import sign as dkim_sign
+from email.mime.base import MIMEBase
 from email.mime.text import MIMEText
+from email.mime.audio import MIMEAudio
+from email.mime.image import MIMEImage
+from email.encoders import encode_base64
+from frappe.query_builder import Interval
 from frappe.model.document import Document
-from mail.utils import convert_html_to_text
-from email.utils import formataddr, parseaddr
+from urllib.parse import parse_qs, urlparse
+from email import policy, message_from_string
 from email.mime.multipart import MIMEMultipart
-from frappe.utils import flt, now, time_diff_in_seconds
+from mail.utils.email_parser import EmailParser
+from frappe.utils.file_manager import save_file
+from mail.utils.cache import get_user_default_mailbox
 from mail.mail_server import get_mail_server_outbound_api
 from mail.utils.validation import validate_mailbox_for_outgoing
+from frappe.query_builder.functions import Now, IfNull, GroupConcat
+from email.utils import parseaddr, formataddr, formatdate, make_msgid
+from mail.mail.doctype.mail_contact.mail_contact import create_mail_contact
 from mail.utils.user import get_user_mailboxes, is_mailbox_owner, is_system_manager
+from mail.utils import (
+	get_in_reply_to,
+	convert_html_to_text,
+	get_in_reply_to_mail,
+	parsedate_to_datetime,
+)
+from frappe.utils import (
+	flt,
+	now,
+	get_datetime,
+	get_datetime_str,
+	time_diff_in_seconds,
+	validate_email_address,
+	convert_utc_to_system_timezone,
+)
 
 
 class OutgoingMail(Document):
@@ -129,8 +155,6 @@ class OutgoingMail(Document):
 				)
 			)
 
-		from mail.utils import get_in_reply_to
-
 		self.in_reply_to = get_in_reply_to(
 			self.in_reply_to_mail_type, self.in_reply_to_mail_name
 		)
@@ -151,8 +175,6 @@ class OutgoingMail(Document):
 					frappe.bold(len(self.recipients)), frappe.bold(max_recipients)
 				)
 			)
-
-		from frappe.utils import validate_email_address
 
 		recipients = []
 		for recipient in self.recipients:
@@ -268,8 +290,6 @@ class OutgoingMail(Document):
 	def set_message_id(self) -> None:
 		"""Sets the Message ID."""
 
-		from email.utils import make_msgid
-
 		self.message_id = make_msgid(domain=self.domain_name)
 
 	def set_body_html(self) -> None:
@@ -292,9 +312,6 @@ class OutgoingMail(Document):
 			"""Returns the MIME message."""
 
 			if self.raw_message:
-				from mail.utils.email_parser import EmailParser
-				from mail.utils import get_in_reply_to_mail
-
 				parser = EmailParser(self.raw_message)
 
 				if parser.get_date() > now():
@@ -322,8 +339,6 @@ class OutgoingMail(Document):
 				self.body_html, self.body_plain = parser.get_body()
 
 				return parser.message
-
-			from email.utils import formatdate
 
 			message = MIMEMultipart("alternative", policy=policy.SMTP)
 
@@ -372,12 +387,6 @@ class OutgoingMail(Document):
 		def _add_attachments(message: MIMEMultipart | Message) -> None:
 			"""Adds the attachments to the message."""
 
-			from mimetypes import guess_type
-			from email.mime.base import MIMEBase
-			from email.mime.audio import MIMEAudio
-			from email.mime.image import MIMEImage
-			from email.encoders import encode_base64
-
 			for attachment in self.attachments:
 				file = frappe.get_doc("File", attachment.get("name"))
 				content_type = guess_type(file.file_name)[0]
@@ -414,8 +423,6 @@ class OutgoingMail(Document):
 		def _add_dkim_signature(message: MIMEMultipart | Message) -> None:
 			"""Adds the DKIM signature to the message."""
 
-			from dkim import sign as dkim_sign
-
 			include_headers = [
 				b"To",
 				b"Cc",
@@ -440,9 +447,6 @@ class OutgoingMail(Document):
 			)
 			dkim_header = dkim_signature.decode().replace("\n", "").replace("\r", "")
 			message["DKIM-Signature"] = dkim_header[len("DKIM-Signature: ") :]
-
-		from frappe.utils import get_datetime_str
-		from mail.utils import parsedate_to_datetime
 
 		message = _get_message()
 		_add_headers(message)
@@ -472,8 +476,6 @@ class OutgoingMail(Document):
 		"""Creates the mail contacts."""
 
 		if self.runtime.mailbox.create_mail_contact:
-			from mail.mail.doctype.mail_contact.mail_contact import create_mail_contact
-
 			for recipient in self.recipients:
 				create_mail_contact(
 					self.runtime.mailbox.user, recipient.email, recipient.display_name
@@ -520,8 +522,6 @@ class OutgoingMail(Document):
 		"""Adds the attachments."""
 
 		if attachment:
-			from frappe.utils.file_manager import save_file
-
 			attachments = [attachment] if isinstance(attachment, dict) else attachment
 			for a in attachments:
 				filename = a.get("filename")
@@ -568,8 +568,6 @@ class OutgoingMail(Document):
 		self, file_url: str, set_as_inline: bool = False
 	) -> str | None:
 		"""Returns the attachment content ID."""
-
-		from urllib.parse import parse_qs, urlparse
 
 		if file_url:
 			field = "file_url"
@@ -622,8 +620,6 @@ class OutgoingMail(Document):
 		elif self.status == data["status"] and self.status != "Deferred":
 			self.add_comment("Comment", _("Status unchanged"))
 			return
-
-		from frappe.utils import get_datetime, convert_utc_to_system_timezone
 
 		if recipients_map := {rcpt["email"]: rcpt for rcpt in data["recipients"]}:
 			for rcpt in self.recipients:
@@ -686,8 +682,6 @@ class OutgoingMail(Document):
 			if not (self.docstatus == 1 and self.status == "Pending" and self.failed_count < 3):
 				return
 
-		from email import message_from_string
-
 		try:
 			transfer_started_at = now()
 			transfer_started_after = time_diff_in_seconds(transfer_started_at, self.submitted_at)
@@ -725,43 +719,6 @@ class OutgoingMail(Document):
 				commit=True,
 				notify_update=True,
 			)
-
-
-@frappe.whitelist()
-@frappe.validate_and_sanitize_search_inputs
-def get_sender(
-	doctype: str | None = None,
-	txt: str | None = None,
-	searchfield: str | None = None,
-	start: int = 0,
-	page_len: int = 20,
-	filters: dict | None = None,
-) -> list:
-	"""Returns the sender."""
-
-	MAILBOX = frappe.qb.DocType("Mailbox")
-	DOMAIN = frappe.qb.DocType("Mail Domain")
-	query = (
-		frappe.qb.from_(DOMAIN)
-		.left_join(MAILBOX)
-		.on(DOMAIN.name == MAILBOX.domain_name)
-		.select(MAILBOX.name)
-		.where(
-			(DOMAIN.enabled == 1)
-			& (DOMAIN.is_verified == 1)
-			& (MAILBOX.enabled == 1)
-			& (MAILBOX.outgoing == 1)
-			& (MAILBOX[searchfield].like(f"%{txt}%"))
-		)
-		.offset(start)
-		.limit(page_len)
-	)
-
-	user = frappe.session.user
-	if not is_system_manager(user):
-		query = query.where(MAILBOX.user == user)
-
-	return query.run(as_dict=False)
 
 
 @frappe.whitelist()
@@ -863,8 +820,6 @@ def create_outgoing_mail(
 	if via_api and not is_newsletter:
 		user = frappe.session.user
 		if sender not in get_user_mailboxes(user, "Outgoing"):
-			from mail.utils.cache import get_user_default_mailbox
-
 			doc.sender = get_user_default_mailbox(user)
 
 	if not do_not_save:
@@ -878,9 +833,6 @@ def create_outgoing_mail(
 
 def delete_newsletters() -> None:
 	"""Called by the scheduler to delete the newsletters based on the retention."""
-
-	from frappe.query_builder import Interval
-	from frappe.query_builder.functions import Now
 
 	newsletter_retention_and_mail_domains_map = {}
 	for mail_domain in frappe.db.get_list(
@@ -937,8 +889,6 @@ def get_permission_query_condition(user: str | None = None) -> str:
 
 def transfer_emails_to_mail_server() -> None:
 	"""Transfers the emails to the Mail Server."""
-
-	from frappe.query_builder.functions import GroupConcat
 
 	batch_size = 500
 	max_failures = 3
@@ -1030,8 +980,6 @@ def transfer_emails_to_mail_server() -> None:
 
 def fetch_and_update_delivery_statuses() -> None:
 	"""Fetches and updates the delivery statuses of the mails."""
-
-	from frappe.query_builder.functions import IfNull
 
 	batch_size = 250
 	max_failures = 3

@@ -26,8 +26,8 @@ def get_columns() -> list[dict]:
 			"width": 100,
 		},
 		{
-			"label": _("Creation"),
-			"fieldname": "creation",
+			"label": _("Submitted At"),
+			"fieldname": "submitted_at",
 			"fieldtype": "Datetime",
 			"width": 180,
 		},
@@ -70,12 +70,6 @@ def get_columns() -> list[dict]:
 			"width": 200,
 		},
 		{
-			"label": _("Created At"),
-			"fieldname": "created_at",
-			"fieldtype": "Datetime",
-			"width": 180,
-		},
-		{
 			"label": _("First Opened At"),
 			"fieldname": "first_opened_at",
 			"fieldtype": "Datetime",
@@ -104,20 +98,19 @@ def get_data(filters: dict | None = None) -> list[list]:
 		frappe.qb.from_(OM)
 		.select(
 			OM.name,
-			OM.creation,
+			OM.submitted_at,
 			OM.status,
 			OM.open_count,
 			OM.domain_name,
 			OM.sender,
 			OM.message_id,
 			OM.tracking_id,
-			OM.created_at,
 			OM.first_opened_at,
 			OM.last_opened_at,
 			OM.last_opened_from_ip,
 		)
 		.where((OM.docstatus == 1) & (OM.tracking_id.isnotnull()))
-		.orderby(OM.creation, OM.created_at, order=Order.desc)
+		.orderby(OM.submitted_at, order=Order.desc)
 	)
 
 	if (
@@ -126,8 +119,8 @@ def get_data(filters: dict | None = None) -> list[list]:
 		and not filters.get("tracking_id")
 	):
 		query = query.where(
-			(Date(OM.created_at) >= Date(filters.get("from_date")))
-			& (Date(OM.created_at) <= Date(filters.get("to_date")))
+			(Date(OM.submitted_at) >= Date(filters.get("from_date")))
+			& (Date(OM.submitted_at) <= Date(filters.get("to_date")))
 		)
 
 	for field in [

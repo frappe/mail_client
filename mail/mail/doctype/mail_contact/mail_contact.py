@@ -18,8 +18,8 @@ class MailContact(Document):
 	def set_user(self) -> None:
 		"""Set user as current user if not set."""
 
-		user = frappe.session.user
-		if not self.user or not is_system_manager(user):
+		if not self.user:
+			user = frappe.session.user
 			self.user = user
 
 	def validate_duplicate_contact(self) -> None:
@@ -65,7 +65,7 @@ def get_permission_query_condition(user: str | None = None) -> str:
 	return f"(`tabMail Contact`.`user` = {frappe.db.escape(user)})"
 
 
-def on_doctype_update():
+def on_doctype_update() -> None:
 	frappe.db.add_unique(
 		"Mail Contact", ["user", "email"], constraint_name="unique_user_email"
 	)

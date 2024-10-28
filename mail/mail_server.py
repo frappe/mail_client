@@ -2,6 +2,7 @@ import frappe
 from typing import Any
 from urllib.parse import urljoin
 from frappe.frappeclient import FrappeClient, FrappeOAuth2Client
+from frappe.utils import get_datetime, convert_utc_to_system_timezone
 
 
 class MailServerAPI:
@@ -145,8 +146,6 @@ class MailServerInboundAPI(MailServerAPI):
 		self, domain_name: str, limit: int = 100, last_synced_at: str | None = None
 	) -> dict[str, list[dict] | str]:
 		"""Fetches inbound emails for a domain from the Frappe Mail Server."""
-
-		from frappe.utils import convert_utc_to_system_timezone, get_datetime
 
 		endpoint = "/api/method/mail_server.api.inbound.fetch"
 		data = {"domain_name": domain_name, "limit": limit, "last_synced_at": last_synced_at}

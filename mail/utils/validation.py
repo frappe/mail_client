@@ -10,37 +10,6 @@ def is_valid_host(host: str) -> bool:
 	return bool(re.compile(r"^[a-zA-Z0-9_-]+$").match(host))
 
 
-def is_valid_ip(ip: str, category: str | None = None) -> bool:
-	"""Returns True if the IP is valid else False."""
-
-	import ipaddress
-
-	try:
-		ip_obj = ipaddress.ip_address(ip)
-
-		if category:
-			if category == "private":
-				return ip_obj.is_private
-			elif category == "public":
-				return not ip_obj.is_private
-
-		return True
-	except ValueError:
-		return False
-
-
-def is_port_open(fqdn: str, port: int) -> bool:
-	"""Returns True if the port is open else False."""
-
-	import socket
-
-	try:
-		with socket.create_connection((fqdn, port), timeout=10):
-			return True
-	except (socket.timeout, socket.error):
-		return False
-
-
 def is_valid_email_for_domain(
 	email: str, domain_name: str, raise_exception: bool = False
 ) -> bool:
