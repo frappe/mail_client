@@ -3,8 +3,8 @@
 
 frappe.listview_settings["Incoming Mail"] = {
 	refresh: (listview) => {
-		listview.page.add_inner_button("Refresh", () => {
-			get_incoming_mails(listview);
+		listview.page.add_inner_button("Fetch Emails", () => {
+			fetch_emails_from_mail_server(listview);
 		});;
 	},
 
@@ -19,14 +19,14 @@ frappe.listview_settings["Incoming Mail"] = {
 	},
 };
 
-function get_incoming_mails(listview) {
+function fetch_emails_from_mail_server(listview) {
 	frappe.call({
-		method: "mail.mail.doctype.incoming_mail.incoming_mail.enqueue_get_incoming_mails",
+		method: "mail.tasks.enqueue_fetch_emails_from_mail_server",
 		freeze: true,
 		freeze_message: __("Creating Job..."),
 		callback: () => {
 			frappe.show_alert({
-				message: __("{0} job has been created.", [__("Get Mails").bold()]),
+				message: __("{0} job has been created.", [__("Fetch Emails").bold()]),
 				indicator: "green",
 			});
 		}

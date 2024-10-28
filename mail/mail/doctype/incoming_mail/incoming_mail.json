@@ -22,11 +22,9 @@
   "status",
   "from_ip",
   "from_host",
-  "spam_score",
-  "is_spam",
   "column_break_pxhn",
   "domain_name",
-  "agent",
+  "oml",
   "section_break_lpj2",
   "is_rejected",
   "column_break_uulh",
@@ -39,9 +37,11 @@
   "section_break_z08o",
   "created_at",
   "received_at",
+  "fetched_at",
   "processed_at",
   "column_break_x0zs",
   "received_after",
+  "fetched_after",
   "processed_after",
   "section_break_5me5",
   "spf_pass",
@@ -67,16 +67,6 @@
    "options": "Draft\nRejected\nAccepted",
    "read_only": 1,
    "search_index": 1
-  },
-  {
-   "fieldname": "agent",
-   "fieldtype": "Data",
-   "label": "Agent",
-   "no_copy": 1,
-   "permlevel": 1,
-   "read_only": 1,
-   "search_index": 1,
-   "set_only_once": 1
   },
   {
    "fieldname": "amended_from",
@@ -238,6 +228,7 @@
    "fieldtype": "Float",
    "label": "Received After (Seconds)",
    "no_copy": 1,
+   "precision": "2",
    "read_only": 1
   },
   {
@@ -296,11 +287,12 @@
    "read_only": 1
   },
   {
-   "description": "Processed At - Received At",
+   "description": "Processed At - Fetched At",
    "fieldname": "processed_after",
    "fieldtype": "Float",
    "label": "Processed After (Seconds)",
    "no_copy": 1,
+   "precision": "2",
    "read_only": 1
   },
   {
@@ -308,7 +300,6 @@
    "depends_on": "eval: doc.is_rejected",
    "fieldname": "is_rejected",
    "fieldtype": "Check",
-   "hidden": 1,
    "label": "is Rejected",
    "no_copy": 1,
    "read_only": 1,
@@ -360,15 +351,6 @@
    "search_index": 1
   },
   {
-   "default": "0",
-   "fieldname": "spam_score",
-   "fieldtype": "Float",
-   "label": "Spam Score",
-   "no_copy": 1,
-   "precision": "1",
-   "read_only": 1
-  },
-  {
    "fieldname": "from_ip",
    "fieldtype": "Data",
    "label": "From IP",
@@ -411,16 +393,6 @@
    "read_only": 1
   },
   {
-   "default": "0",
-   "depends_on": "eval: doc.is_spam",
-   "fieldname": "is_spam",
-   "fieldtype": "Check",
-   "hidden": 1,
-   "label": "Is Spam",
-   "no_copy": 1,
-   "read_only": 1
-  },
-  {
    "fieldname": "column_break_pxhn",
    "fieldtype": "Column Break"
   },
@@ -431,13 +403,36 @@
   {
    "fieldname": "column_break_uulh",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "oml",
+   "fieldtype": "Data",
+   "label": "Outgoing Mail Log",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "fetched_at",
+   "fieldtype": "Datetime",
+   "label": "Fetched At",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "description": "Fetched At - Received At",
+   "fieldname": "fetched_after",
+   "fieldtype": "Float",
+   "label": "Fetched After (Seconds)",
+   "no_copy": 1,
+   "precision": "2",
+   "read_only": 1
   }
  ],
  "in_create": 1,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-10-27 12:23:21.280650",
+ "modified": "2024-10-28 17:13:28.325743",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Incoming Mail",

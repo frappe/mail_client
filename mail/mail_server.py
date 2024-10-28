@@ -138,8 +138,29 @@ class MailServerOutboundAPI(MailServerAPI):
 		return self.request("GET", endpoint=endpoint, json={"data": data})
 
 
+class MailServerInboundAPI(MailServerAPI):
+	"""Class to receive inbound emails from the Frappe Mail Server."""
+
+	def fetch(
+		self, domain_name: str, limit: int = 100, last_synced_at: str | None = None
+	) -> dict[str, list[dict] | str]:
+		"""Fetches inbound emails for a domain from the Frappe Mail Server."""
+
+		from frappe.utils import convert_utc_to_system_timezone, get_datetime
+
+		endpoint = "/api/method/mail_server.api.inbound.fetch"
+		data = {"domain_name": domain_name, "limit": limit, "last_synced_at": last_synced_at}
+		headers = {"X-Frappe-Mail-Site": frappe.utils.get_url()}
+		result = self.request("GET", endpoint=endpoint, data=data, headers=headers)
+		result["last_synced_at"] = convert_utc_to_system_timezone(
+			get_datetime(result["last_synced_at"])
+		)
+
+		return result
+
+
 def get_mail_server_api() -> "MailServerAPI":
-	"""Returns a MailServer instance."""
+	"""Returns a MailServerAPI instance."""
 
 	mail_settings = frappe.get_cached_doc("Mail Settings")
 	return MailServerAPI(
@@ -150,7 +171,7 @@ def get_mail_server_api() -> "MailServerAPI":
 
 
 def get_mail_server_auth_api() -> "MailServerAuthAPI":
-	"""Returns a MailServerAuth instance."""
+	"""Returns a MailServerAuthAPI instance."""
 
 	mail_settings = frappe.get_cached_doc("Mail Settings")
 	return MailServerAuthAPI(
@@ -161,7 +182,7 @@ def get_mail_server_auth_api() -> "MailServerAuthAPI":
 
 
 def get_mail_server_domain_api() -> "MailServerDomainAPI":
-	"""Returns a MailServerDomain instance."""
+	"""Returns a MailServerDomainAPI instance."""
 
 	mail_settings = frappe.get_cached_doc("Mail Settings")
 	return MailServerDomainAPI(
@@ -172,10 +193,21 @@ def get_mail_server_domain_api() -> "MailServerDomainAPI":
 
 
 def get_mail_server_outbound_api() -> "MailServerOutboundAPI":
-	"""Returns a MailServerOutbound instance."""
+	"""Returns a MailServerOutboundAPI instance."""
 
 	mail_settings = frappe.get_cached_doc("Mail Settings")
 	return MailServerOutboundAPI(
+		mail_settings.mail_server_host,
+		mail_settings.mail_server_api_key,
+		mail_settings.get_password("mail_server_api_secret"),
+	)
+
+
+def get_mail_server_inbound_api() -> "MailServerInboundAPI":
+	"""Returns a MailServerInboundAPI instance."""
+
+	mail_settings = frappe.get_cached_doc("Mail Settings")
+	return MailServerInboundAPI(
 		mail_settings.mail_server_host,
 		mail_settings.mail_server_api_key,
 		mail_settings.get_password("mail_server_api_secret"),

@@ -5,8 +5,8 @@ import dns.resolver
 from frappe import _
 from typing import Callable
 from datetime import datetime
-from frappe.utils import get_system_timezone
 from frappe.utils.caching import request_cache
+from frappe.utils import get_datetime, get_system_timezone
 
 
 def get_dns_record(
@@ -90,8 +90,6 @@ def convert_to_utc(
 ) -> "datetime":
 	"""Converts the given datetime to UTC timezone."""
 
-	from frappe.utils import get_datetime
-
 	dt = get_datetime(date_time)
 	if dt.tzinfo is None:
 		tz = pytz.timezone(from_timezone or get_system_timezone())
@@ -171,3 +169,17 @@ def parse_iso_datetime(
 	)
 
 	return get_datetime_str(dt) if as_str else dt
+
+
+def add_or_update_tzinfo(date_time: datetime | str, timezone: str | None = None) -> str:
+	"""Adds or updates timezone to the datetime."""
+
+	date_time = get_datetime(date_time)
+	target_tz = pytz.timezone(timezone or get_system_timezone())
+
+	if date_time.tzinfo is None:
+		date_time = target_tz.localize(date_time)
+	else:
+		date_time = date_time.astimezone(target_tz)
+
+	return str(date_time)
