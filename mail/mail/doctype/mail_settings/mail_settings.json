@@ -156,7 +156,7 @@
    "fieldtype": "Section Break"
   },
   {
-   "default": "https://frappemail.com/",
+   "default": "https://server.frappemail.com/",
    "fieldname": "mail_server_host",
    "fieldtype": "Data",
    "label": "Mail Server",
@@ -186,7 +186,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-10-22 17:37:30.496963",
+ "modified": "2024-10-30 17:26:00.355671",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Settings",

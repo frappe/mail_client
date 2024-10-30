@@ -5,7 +5,7 @@ import frappe
 from frappe import _
 from frappe.utils import cint
 from frappe.model.document import Document
-from mail.mail_server import get_mail_server_auth_api
+from mail.mail_server import MailServerAuthAPI
 from frappe.core.api.file import get_max_file_size
 
 
@@ -18,7 +18,11 @@ class MailSettings(Document):
 	def validate_mail_server(self) -> None:
 		"""Validates the Mail Server."""
 
-		auth_api = get_mail_server_auth_api()
+		auth_api = MailServerAuthAPI(
+			self.mail_server_host,
+			self.mail_server_api_key,
+			self.get_password("mail_server_api_secret"),
+		)
 		auth_api.validate()
 
 	def validate_outgoing_max_attachment_size(self) -> None:
