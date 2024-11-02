@@ -48,21 +48,6 @@ website_redirects = [
 		"target": "/api/method/mail.api.inbound.pull_raw",
 		"redirect_http_status": 307,
 	},
-	{
-		"source": "/spamd/scan",
-		"target": "/api/method/mail.api.spamd.scan",
-		"redirect_http_status": 307,
-	},
-	{
-		"source": "/spamd/is-spam",
-		"target": "/api/method/mail.api.spamd.is_spam",
-		"redirect_http_status": 307,
-	},
-	{
-		"source": "/spamd/score",
-		"target": "/api/method/mail.api.spamd.get_spam_score",
-		"redirect_http_status": 307,
-	},
 ]
 
 
@@ -164,20 +149,14 @@ website_redirects = [
 # Permissions evaluated in scripted ways
 
 permission_query_conditions = {
-	"User": "mail.overrides.get_user_permission_query_condition",
 	"Mailbox": "mail.mail.doctype.mailbox.mailbox.get_permission_query_condition",
-	"Mail Alias": "mail.mail.doctype.mail_alias.mail_alias.get_permission_query_condition",
-	"Mail Domain": "mail.mail.doctype.mail_domain.mail_domain.get_permission_query_condition",
 	"Mail Contact": "mail.mail.doctype.mail_contact.mail_contact.get_permission_query_condition",
 	"Outgoing Mail": "mail.mail.doctype.outgoing_mail.outgoing_mail.get_permission_query_condition",
 	"Incoming Mail": "mail.mail.doctype.incoming_mail.incoming_mail.get_permission_query_condition",
 }
 
 has_permission = {
-	"User": "mail.overrides.user_has_permission",
 	"Mailbox": "mail.mail.doctype.mailbox.mailbox.has_permission",
-	"Mail Alias": "mail.mail.doctype.mail_alias.mail_alias.has_permission",
-	"Mail Domain": "mail.mail.doctype.mail_domain.mail_domain.has_permission",
 	"Mail Contact": "mail.mail.doctype.mail_contact.mail_contact.has_permission",
 	"Outgoing Mail": "mail.mail.doctype.outgoing_mail.outgoing_mail.has_permission",
 	"Incoming Mail": "mail.mail.doctype.incoming_mail.incoming_mail.has_permission",
@@ -229,12 +208,11 @@ scheduler_events = {
 	# ],
 	"cron": {
 		"* * * * *": [
-			"mail.mail.doctype.outgoing_mail.outgoing_mail.enqueue_transfer_mails",
-			"mail.mail.doctype.incoming_mail.incoming_mail.enqueue_get_incoming_mails",
+			"mail.tasks.enqueue_fetch_emails_from_mail_server",
+			"mail.tasks.enqueue_transfer_emails_to_mail_server",
 		],
-		"*/2 * * * *": [
-			"mail.mail.doctype.outgoing_mail.outgoing_mail.enqueue_get_outgoing_mails_status",
-			"mail.mail.doctype.outgoing_mail.outgoing_mail.enqueue_process_newsletter_queue",
+		"*/30 * * * *": [
+			"mail.tasks.enqueue_fetch_and_update_delivery_statuses",
 		],
 	},
 }
@@ -311,17 +289,13 @@ ignore_links_on_delete = ["Mail Domain", "Incoming Mail", "Outgoing Mail"]
 # Automatically update python controller files with type annotations for this app.
 # export_python_type_annotations = True
 
-default_log_clearing_doctypes = {"Spam Check Log": 14}
+# default_log_clearing_doctypes = {
+# 	"Logging DocType Name": 30  # days to retain logs
+# }
 
 fixtures = [
 	{
 		"dt": "Role",
-		"filters": [["role_name", "in", ["Postmaster", "Mailbox User", "Domain Owner"]]],
-	},
-	{
-		"dt": "Custom DocPerm",
-		"filters": {
-			"parent": "User",
-		},
+		"filters": [["role_name", "in", ["Mailbox User"]]],
 	},
 ]

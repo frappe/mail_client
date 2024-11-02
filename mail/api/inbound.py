@@ -7,7 +7,7 @@ from email.utils import formataddr
 from mail.utils import convert_to_utc
 from mail.api.auth import validate_user, validate_mailbox
 from mail.utils.validation import validate_mailbox_for_incoming
-from frappe.utils import now, cint, get_datetime, convert_utc_to_system_timezone
+from frappe.utils import now, cint, convert_utc_to_system_timezone
 from mail.mail.doctype.mail_sync_history.mail_sync_history import get_mail_sync_history
 
 if TYPE_CHECKING:

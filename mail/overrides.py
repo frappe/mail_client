@@ -1,9 +1,6 @@
 import frappe
 from frappe import _
 from frappe.utils import flt, cint
-from frappe.model.document import Document
-from mail.utils.cache import get_user_owned_domains
-from mail.utils.user import has_role, is_system_manager
 
 
 def validate_file(doc, method):
@@ -57,33 +54,3 @@ def validate_file(doc, method):
 						doc.attached_to_doctype, frappe.bold(doc.attached_to_name)
 					)
 				)
-
-
-def user_has_permission(doc: Document, ptype: str, user: str) -> bool:
-	if doc.doctype != "User":
-		return False
-
-	return (
-		(user == doc.name)
-		or is_system_manager(user)
-		or (
-			has_role(user, "Domain Owner")
-			and (doc.email.split("@")[1] in get_user_owned_domains(user))
-		)
-	)
-
-
-def get_user_permission_query_condition(user: str | None = None) -> str:
-	conditions = []
-
-	if not user:
-		user = frappe.session.user
-
-	if not is_system_manager(user):
-		conditions.append(f"(`tabUser`.`name` = {frappe.db.escape(user)})")
-
-		if has_role(user, "Domain Owner"):
-			for domain in get_user_owned_domains(user):
-				conditions.append(f"(`tabUser`.`email` LIKE '%@{domain}')")
-
-	return " OR ".join(conditions)

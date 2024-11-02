@@ -7,7 +7,7 @@ frappe.query_reports["Outbound Delay"] = {
 			fieldname: "from_date",
 			label: __("From Date"),
 			fieldtype: "Date",
-			default: frappe.datetime.add_months(frappe.datetime.get_today(), -1),
+			default: frappe.datetime.add_days(frappe.datetime.get_today(), -7),
 			reqd: 1,
 		},
 		{
@@ -33,11 +33,6 @@ frappe.query_reports["Outbound Delay"] = {
 			label: __("Status"),
 			fieldtype: "Select",
 			options: ["", "Deferred", "Bounced", "Sent"],
-		},
-		{
-			fieldname: "agent",
-			label: __("Agent"),
-			fieldtype: "Data",
 		},
 		{
 			fieldname: "domain_name",

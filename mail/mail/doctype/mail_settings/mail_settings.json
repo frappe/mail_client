@@ -5,48 +5,15 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "root_domain_name",
-  "column_break_3hud",
-  "dns_provider",
-  "dns_provider_token",
-  "section_break_71vy",
-  "postmaster",
-  "column_break_rm1i",
-  "spf_host",
-  "defaults_section",
-  "default_dkim_key_size",
-  "default_ttl",
-  "column_break_xlun",
-  "default_newsletter_retention",
-  "rabbitmq_amqp_tab",
-  "rmq_host",
-  "rmq_port",
-  "rmq_virtual_host",
-  "test_rabbitmq_connection",
-  "column_break_yebz",
-  "rmq_username",
-  "rmq_password",
-  "spamassassin_tab",
-  "enable_spam_detection",
-  "column_break_7l7w",
-  "spamd_host",
-  "spamd_port",
-  "scanning_mode",
-  "hybrid_scanning_threshold",
-  "section_break_f89w",
-  "scan_outgoing_mail",
-  "column_break_rdyc",
-  "max_spam_score_for_outbound",
-  "block_spam_outgoing_mail",
-  "section_break_viyu",
-  "scan_incoming_mail",
-  "column_break_1gdq",
-  "max_spam_score_for_inbound",
+  "section_break_1kdf",
+  "mail_server_host",
+  "column_break_awdi",
+  "mail_server_api_key",
+  "mail_server_api_secret",
   "outgoing_tab",
   "max_recipients",
   "max_headers",
   "column_break_sf4n",
-  "max_batch_size",
   "max_message_size",
   "section_break_xudp",
   "outgoing_max_attachments",
@@ -54,6 +21,8 @@
   "outgoing_max_attachment_size",
   "outgoing_total_attachments_size",
   "newsletter_section",
+  "default_newsletter_retention",
+  "column_break_pcku",
   "max_newsletter_retention",
   "incoming_tab",
   "send_notification_on_reject",
@@ -62,41 +31,6 @@
   "rejected_mail_retention"
  ],
  "fields": [
-  {
-   "default": "_spf",
-   "fieldname": "spf_host",
-   "fieldtype": "Data",
-   "label": "SPF Host",
-   "reqd": 1
-  },
-  {
-   "fieldname": "column_break_3hud",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "column_break_xlun",
-   "fieldtype": "Column Break"
-  },
-  {
-   "default": "3600",
-   "fieldname": "default_ttl",
-   "fieldtype": "Int",
-   "label": "TTL",
-   "non_negative": 1,
-   "reqd": 1
-  },
-  {
-   "fieldname": "root_domain_name",
-   "fieldtype": "Data",
-   "in_list_view": 1,
-   "label": "Root Domain Name",
-   "reqd": 1
-  },
-  {
-   "fieldname": "defaults_section",
-   "fieldtype": "Section Break",
-   "label": "Defaults"
-  },
   {
    "fieldname": "outgoing_tab",
    "fieldtype": "Tab Break",
@@ -110,6 +44,7 @@
    "default": "100",
    "fieldname": "max_recipients",
    "fieldtype": "Int",
+   "in_list_view": 1,
    "label": "Max Recipients",
    "non_negative": 1,
    "reqd": 1
@@ -147,21 +82,6 @@
    "reqd": 1
   },
   {
-   "default": "1000",
-   "fieldname": "max_batch_size",
-   "fieldtype": "Int",
-   "label": "Max Batch Size (Count)",
-   "reqd": 1
-  },
-  {
-   "depends_on": "eval: doc.root_domain_name",
-   "fieldname": "postmaster",
-   "fieldtype": "Link",
-   "label": "Postmaster",
-   "mandatory_depends_on": "eval: doc.send_notification_on_reject",
-   "options": "User"
-  },
-  {
    "fieldname": "column_break_l9fc",
    "fieldtype": "Column Break"
   },
@@ -169,6 +89,7 @@
    "default": "10",
    "fieldname": "max_headers",
    "fieldtype": "Int",
+   "in_list_view": 1,
    "label": "Max Headers",
    "non_negative": 1,
    "reqd": 1
@@ -201,60 +122,6 @@
    "label": "Send Notification on Reject"
   },
   {
-   "fieldname": "rmq_host",
-   "fieldtype": "Data",
-   "label": "Host",
-   "reqd": 1
-  },
-  {
-   "default": "5672",
-   "fieldname": "rmq_port",
-   "fieldtype": "Int",
-   "label": "Port",
-   "non_negative": 1,
-   "reqd": 1
-  },
-  {
-   "fieldname": "rmq_username",
-   "fieldtype": "Data",
-   "label": "Username"
-  },
-  {
-   "fieldname": "rmq_password",
-   "fieldtype": "Password",
-   "label": "Password"
-  },
-  {
-   "fieldname": "column_break_yebz",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "rabbitmq_amqp_tab",
-   "fieldtype": "Tab Break",
-   "label": "RabbitMQ (AMQP)"
-  },
-  {
-   "depends_on": "eval: !doc.__unsaved",
-   "fieldname": "test_rabbitmq_connection",
-   "fieldtype": "Button",
-   "label": "Test Connection"
-  },
-  {
-   "fieldname": "rmq_virtual_host",
-   "fieldtype": "Data",
-   "label": "Virtual Host",
-   "reqd": 1
-  },
-  {
-   "default": "2048",
-   "fieldname": "default_dkim_key_size",
-   "fieldtype": "Select",
-   "label": "DKIM Key Size (Bits)",
-   "non_negative": 1,
-   "options": "1024\n2048\n4096",
-   "reqd": 1
-  },
-  {
    "fieldname": "newsletter_section",
    "fieldtype": "Section Break",
    "label": "Newsletter"
@@ -263,7 +130,8 @@
    "default": "3",
    "fieldname": "default_newsletter_retention",
    "fieldtype": "Int",
-   "label": "Newsletter Retention (Days)",
+   "in_list_view": 1,
+   "label": "Default Retention (Days)",
    "non_negative": 1,
    "reqd": 1
   },
@@ -284,137 +152,41 @@
    "reqd": 1
   },
   {
-   "fieldname": "section_break_71vy",
+   "fieldname": "section_break_1kdf",
    "fieldtype": "Section Break"
   },
   {
-   "fieldname": "column_break_rm1i",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "dns_provider",
-   "fieldtype": "Select",
-   "label": "DNS Provider",
-   "options": "\nDigitalOcean"
-  },
-  {
-   "depends_on": "eval: doc.dns_provider",
-   "fieldname": "dns_provider_token",
-   "fieldtype": "Password",
-   "label": "DNS Provider Token",
-   "mandatory_depends_on": "eval: doc.dns_provider"
-  },
-  {
-   "fieldname": "spamassassin_tab",
-   "fieldtype": "Tab Break",
-   "label": "SpamAssassin"
-  },
-  {
-   "default": "127.0.0.1",
-   "fieldname": "spamd_host",
+   "default": "https://server.frappemail.com/",
+   "fieldname": "mail_server_host",
    "fieldtype": "Data",
-   "label": "Host",
-   "mandatory_depends_on": "eval: doc.enable_spam_detection",
-   "read_only_depends_on": "eval: !doc.enable_spam_detection"
+   "label": "Mail Server",
+   "reqd": 1
   },
   {
-   "default": "783",
-   "fieldname": "spamd_port",
-   "fieldtype": "Int",
-   "label": "Port",
-   "mandatory_depends_on": "eval: doc.enable_spam_detection",
-   "non_negative": 1,
-   "read_only_depends_on": "eval: !doc.enable_spam_detection"
+   "fieldname": "mail_server_api_key",
+   "fieldtype": "Data",
+   "label": "API Key",
+   "reqd": 1
   },
   {
-   "fieldname": "column_break_7l7w",
+   "fieldname": "mail_server_api_secret",
+   "fieldtype": "Password",
+   "label": "API Secret",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_awdi",
    "fieldtype": "Column Break"
   },
   {
-   "default": "0",
-   "fieldname": "enable_spam_detection",
-   "fieldtype": "Check",
-   "label": "Enable Spam Detection"
-  },
-  {
-   "fieldname": "section_break_f89w",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "column_break_rdyc",
+   "fieldname": "column_break_pcku",
    "fieldtype": "Column Break"
-  },
-  {
-   "default": "5",
-   "fieldname": "max_spam_score_for_inbound",
-   "fieldtype": "Float",
-   "label": "Max Score for Incoming",
-   "mandatory_depends_on": "eval: doc.scan_incoming_mail",
-   "precision": "1",
-   "read_only_depends_on": "eval: !doc.enable_spam_detection || !doc.scan_incoming_mail"
-  },
-  {
-   "default": "5",
-   "fieldname": "max_spam_score_for_outbound",
-   "fieldtype": "Float",
-   "label": "Max Score for Outgoing",
-   "mandatory_depends_on": "eval: doc.scan_outgoing_mail",
-   "precision": "1",
-   "read_only_depends_on": "eval: !doc.enable_spam_detection || !doc.scan_outgoing_mail"
-  },
-  {
-   "default": "Exclude Attachments",
-   "fieldname": "scanning_mode",
-   "fieldtype": "Select",
-   "label": "Scanning Mode",
-   "mandatory_depends_on": "eval: doc.enable_spam_detection",
-   "options": "\nExclude Attachments\nInclude Attachments\nHybrid Approach",
-   "read_only_depends_on": "eval: !doc.enable_spam_detection"
-  },
-  {
-   "default": "2",
-   "depends_on": "eval: doc.scanning_mode == \"Hybrid Approach\"",
-   "fieldname": "hybrid_scanning_threshold",
-   "fieldtype": "Float",
-   "label": "Hybrid Scanning Threshold",
-   "mandatory_depends_on": "eval: doc.scanning_mode == \"Hybrid Approach\"",
-   "precision": "1",
-   "read_only_depends_on": "eval: !doc.enable_spam_detection"
-  },
-  {
-   "default": "1",
-   "fieldname": "scan_incoming_mail",
-   "fieldtype": "Check",
-   "label": "Scan Incoming Mail",
-   "read_only_depends_on": "eval: !doc.enable_spam_detection"
-  },
-  {
-   "default": "1",
-   "fieldname": "scan_outgoing_mail",
-   "fieldtype": "Check",
-   "label": "Scan Outgoing Mail",
-   "read_only_depends_on": "eval: !doc.enable_spam_detection"
-  },
-  {
-   "fieldname": "section_break_viyu",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "column_break_1gdq",
-   "fieldtype": "Column Break"
-  },
-  {
-   "default": "1",
-   "fieldname": "block_spam_outgoing_mail",
-   "fieldtype": "Check",
-   "label": "Block Spam Outgoing Mail",
-   "read_only_depends_on": "eval: !doc.enable_spam_detection || !doc.scan_outgoing_mail"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-10-13 13:38:47.492049",
+ "modified": "2024-10-30 17:26:00.355671",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Settings",

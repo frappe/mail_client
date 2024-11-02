@@ -1,6 +1,7 @@
 import frappe
 from typing import Literal
 from frappe.utils.caching import request_cache
+from mail.utils.cache import get_user_incoming_mailboxes, get_user_outgoing_mailboxes
 
 
 @request_cache
@@ -10,20 +11,10 @@ def is_system_manager(user: str) -> bool:
 	return user == "Administrator" or has_role(user, "System Manager")
 
 
-def is_postmaster(user: str) -> bool:
-	"""Returns True if the user is Postmaster else False."""
-
-	from mail.utils.cache import get_postmaster
-
-	return user == get_postmaster()
-
-
 def get_user_mailboxes(
 	user: str, type: Literal["Incoming", "Outgoing"] | None = None
 ) -> list:
 	"""Returns the list of mailboxes associated with the user."""
-
-	from mail.utils.cache import get_user_incoming_mailboxes, get_user_outgoing_mailboxes
 
 	if type and type in ["Incoming", "Outgoing"]:
 		if type == "Incoming":

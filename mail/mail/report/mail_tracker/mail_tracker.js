@@ -7,7 +7,7 @@ frappe.query_reports["Mail Tracker"] = {
 			fieldname: "from_date",
 			label: __("From Date"),
 			fieldtype: "Date",
-			default: frappe.datetime.add_months(frappe.datetime.get_today(), -1),
+			default: frappe.datetime.add_days(frappe.datetime.get_today(), -7),
 			reqd: 1,
 		},
 		{
@@ -32,12 +32,7 @@ frappe.query_reports["Mail Tracker"] = {
 			fieldname: "status",
 			label: __("Status"),
 			fieldtype: "Select",
-			options: ["", "Pending", "Transferring", "Failed", "Transferred", "Queued", "Deferred", "Bounced", "Partially Sent", "Sent"],
-		},
-		{
-			fieldname: "agent",
-			label: __("Agent"),
-			fieldtype: "Data",
+			options: ["", "Pending", "Failed", "Queued", "Blocked", "Deferred", "Bounced", "Partially Sent", "Sent"],
 		},
 		{
 			fieldname: "domain_name",

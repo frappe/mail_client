@@ -49,7 +49,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-09-06 09:12:47.859958",
+ "modified": "2024-10-21 15:39:39.869636",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Contact",
@@ -68,12 +68,6 @@
   },
   {
    "create": 1,
-   "read": 1,
-   "role": "Postmaster",
-   "write": 1
-  },
-  {
-   "create": 1,
    "delete": 1,
    "export": 1,
    "print": 1,
@@ -86,12 +80,6 @@
    "permlevel": 1,
    "read": 1,
    "role": "System Manager",
-   "write": 1
-  },
-  {
-   "permlevel": 1,
-   "read": 1,
-   "role": "Postmaster",
    "write": 1
   },
   {

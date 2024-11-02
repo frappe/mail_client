@@ -11,7 +11,7 @@ class MailRecipient(Document):
 		self.name = str(uuid7())
 
 
-def on_doctype_update():
+def on_doctype_update() -> None:
 	frappe.db.add_unique(
 		"Mail Recipient",
 		["parent", "type", "email"],

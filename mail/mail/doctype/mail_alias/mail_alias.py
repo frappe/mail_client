@@ -4,10 +4,8 @@
 import frappe
 from frappe import _
 from frappe.model.document import Document
-from mail.utils.user import is_system_manager
-from mail.utils.cache import get_user_owned_domains
 from mail.utils.validation import (
-	validate_active_domain,
+	validate_domain_is_enabled_and_verified,
 	is_valid_email_for_domain,
 	validate_mailbox_for_incoming,
 )
@@ -19,19 +17,19 @@ class MailAlias(Document):
 		self.name = self.alias
 
 	def validate(self) -> None:
-		self.validate_email()
 		self.validate_domain()
+		self.validate_alias()
 		self.validate_mailboxes()
-
-	def validate_email(self) -> None:
-		"""Validates the email address."""
-
-		is_valid_email_for_domain(self.alias, self.domain_name, raise_exception=True)
 
 	def validate_domain(self) -> None:
 		"""Validates the domain."""
 
-		validate_active_domain(self.domain_name)
+		validate_domain_is_enabled_and_verified(self.domain_name)
+
+	def validate_alias(self) -> None:
+		"""Validates the alias."""
+
+		is_valid_email_for_domain(self.alias, self.domain_name, raise_exception=True)
 
 	def validate_mailboxes(self) -> None:
 		"""Validates the mailboxes."""
@@ -52,23 +50,3 @@ class MailAlias(Document):
 
 			validate_mailbox_for_incoming(mailbox.mailbox)
 			mailboxes.append(mailbox.mailbox)
-
-
-def has_permission(doc: "Document", ptype: str, user: str) -> bool:
-	if doc.doctype != "Mail Alias":
-		return False
-
-	return is_system_manager(user) or (doc.domain_name in get_user_owned_domains(user))
-
-
-def get_permission_query_condition(user: str | None = None) -> str:
-	if not user:
-		user = frappe.session.user
-
-	if is_system_manager(user):
-		return ""
-
-	if domains := ", ".join(repr(d) for d in get_user_owned_domains(user)):
-		return f"(`tabMail Alias`.domain_name IN ({domains}))"
-	else:
-		return "1=0"

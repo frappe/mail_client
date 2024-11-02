@@ -1,6 +1,5 @@
 {
  "actions": [],
- "autoname": "field:domain_name",
  "creation": "2023-12-23 15:18:36.906960",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -8,17 +7,20 @@
   "domain_name",
   "enabled",
   "is_verified",
-  "is_subdomain",
-  "is_root_domain",
   "column_break_lr3y",
-  "domain_owner",
-  "dkim_key_size",
+  "last_synced_at",
   "newsletter_retention",
   "dns_records_section",
-  "dns_records"
+  "dns_records",
+  "section_break_i51k",
+  "dkim_domain",
+  "dkim_selector",
+  "column_break_gv06",
+  "dkim_private_key"
  ],
  "fields": [
   {
+   "depends_on": "eval: doc.__islocal",
    "fieldname": "domain_name",
    "fieldtype": "Data",
    "label": "Domain Name",
@@ -26,17 +28,6 @@
    "reqd": 1,
    "set_only_once": 1,
    "unique": 1
-  },
-  {
-   "fieldname": "domain_owner",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "in_standard_filter": 1,
-   "label": "Domain Owner",
-   "no_copy": 1,
-   "options": "User",
-   "permlevel": 1,
-   "reqd": 1
   },
   {
    "fieldname": "column_break_lr3y",
@@ -75,37 +66,49 @@
    "search_index": 1
   },
   {
-   "default": "0",
-   "depends_on": "eval: doc.is_root_domain",
-   "fieldname": "is_root_domain",
-   "fieldtype": "Check",
-   "label": "Root Domain",
-   "no_copy": 1,
-   "read_only": 1,
-   "search_index": 1
-  },
-  {
-   "default": "0",
-   "depends_on": "eval: !doc.__islocal",
-   "fieldname": "is_subdomain",
-   "fieldtype": "Check",
-   "label": "Subdomain",
-   "no_copy": 1,
-   "read_only": 1,
-   "search_index": 1
-  },
-  {
-   "fieldname": "dkim_key_size",
-   "fieldtype": "Select",
-   "label": "DKIM Key Size (Bits)",
-   "non_negative": 1,
-   "options": "\n1024\n2048\n4096"
-  },
-  {
    "fieldname": "newsletter_retention",
    "fieldtype": "Int",
    "label": "Newsletter Retention (Days)",
    "non_negative": 1
+  },
+  {
+   "fieldname": "section_break_i51k",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "dkim_selector",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "DKIM Selector",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_gv06",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "dkim_private_key",
+   "fieldtype": "Password",
+   "hidden": 1,
+   "label": "DKIM Private Key",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "dkim_domain",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "DKIM Domain",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "last_synced_at",
+   "fieldtype": "Datetime",
+   "label": "Last Synced At",
+   "no_copy": 1,
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
@@ -131,11 +134,11 @@
    "link_fieldname": "domain_name"
   }
  ],
- "modified": "2024-10-08 11:52:46.083194",
+ "modified": "2024-10-28 16:26:48.249411",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Domain",
- "naming_rule": "By fieldname",
+ "naming_rule": "Set by user",
  "owner": "Administrator",
  "permissions": [
   {
@@ -147,30 +150,6 @@
    "report": 1,
    "role": "System Manager",
    "write": 1
-  },
-  {
-   "role": "Mailbox User",
-   "select": 1
-  },
-  {
-   "create": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "Domain Owner",
-   "write": 1
-  },
-  {
-   "permlevel": 1,
-   "read": 1,
-   "role": "System Manager",
-   "write": 1
-  },
-  {
-   "permlevel": 1,
-   "read": 1,
-   "role": "Domain Owner"
   }
  ],
  "sort_field": "modified",

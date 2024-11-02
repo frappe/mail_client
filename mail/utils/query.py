@@ -1,6 +1,43 @@
 import frappe
-from mail.utils.cache import get_user_owned_domains
+from frappe.query_builder import Order, Criterion
 from mail.utils.user import has_role, is_system_manager, get_user_mailboxes
+
+
+@frappe.whitelist()
+@frappe.validate_and_sanitize_search_inputs
+def get_sender(
+	doctype: str | None = None,
+	txt: str | None = None,
+	searchfield: str | None = None,
+	start: int = 0,
+	page_len: int = 20,
+	filters: dict | None = None,
+) -> list:
+	"""Returns the sender."""
+
+	MAILBOX = frappe.qb.DocType("Mailbox")
+	DOMAIN = frappe.qb.DocType("Mail Domain")
+	query = (
+		frappe.qb.from_(DOMAIN)
+		.left_join(MAILBOX)
+		.on(DOMAIN.name == MAILBOX.domain_name)
+		.select(MAILBOX.name)
+		.where(
+			(DOMAIN.enabled == 1)
+			& (DOMAIN.is_verified == 1)
+			& (MAILBOX.enabled == 1)
+			& (MAILBOX.outgoing == 1)
+			& (MAILBOX[searchfield].like(f"%{txt}%"))
+		)
+		.offset(start)
+		.limit(page_len)
+	)
+
+	user = frappe.session.user
+	if not is_system_manager(user):
+		query = query.where(MAILBOX.user == user)
+
+	return query.run(as_dict=False)
 
 
 @frappe.whitelist()
@@ -14,8 +51,6 @@ def get_outgoing_mails(
 	filters: dict | None = None,
 ) -> list:
 	"""Returns Outgoing Mails on which the user has select permission."""
-
-	from frappe.query_builder import Order, Criterion
 
 	user = frappe.session.user
 
@@ -31,11 +66,7 @@ def get_outgoing_mails(
 
 	if not is_system_manager(user):
 		conditions = []
-		domains = get_user_owned_domains(user)
 		mailboxes = get_user_mailboxes(user)
-
-		if has_role(user, "Domain Owner") and domains:
-			conditions.append(OM.domain_name.isin(domains))
 
 		if has_role(user, "Mailbox User") and mailboxes:
 			conditions.append(OM.sender.isin(mailboxes))
@@ -46,3 +77,31 @@ def get_outgoing_mails(
 		query = query.where((Criterion.any(conditions)))
 
 	return query.run(as_dict=False)
+
+
+@frappe.whitelist()
+@frappe.validate_and_sanitize_search_inputs
+def get_users_with_mailbox_user_role(
+	doctype: str | None = None,
+	txt: str | None = None,
+	searchfield: str | None = None,
+	start: int = 0,
+	page_len: int = 20,
+	filters: dict | None = None,
+) -> list:
+	"""Returns a list of users with Mailbox User role."""
+
+	USER = frappe.qb.DocType("User")
+	HAS_ROLE = frappe.qb.DocType("Has Role")
+	return (
+		frappe.qb.from_(USER)
+		.left_join(HAS_ROLE)
+		.on(USER.name == HAS_ROLE.parent)
+		.select(USER.name)
+		.where(
+			(USER.enabled == 1)
+			& (USER.name.like(f"%{txt}%"))
+			& (HAS_ROLE.role == "Mailbox User")
+			& (HAS_ROLE.parenttype == "User")
+		)
+	).run(as_dict=False)

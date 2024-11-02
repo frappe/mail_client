@@ -22,13 +22,13 @@
   "status",
   "from_ip",
   "from_host",
-  "spam_score",
-  "is_spam",
-  "is_rejected",
-  "rejection_message",
-  "column_break_htgl",
+  "column_break_pxhn",
   "domain_name",
-  "agent",
+  "oml",
+  "section_break_lpj2",
+  "is_rejected",
+  "column_break_uulh",
+  "rejection_message",
   "section_break_0jgu",
   "message_id",
   "in_reply_to",
@@ -37,9 +37,11 @@
   "section_break_z08o",
   "created_at",
   "received_at",
+  "fetched_at",
   "processed_at",
   "column_break_x0zs",
   "received_after",
+  "fetched_after",
   "processed_after",
   "section_break_5me5",
   "spf_pass",
@@ -50,7 +52,6 @@
   "dkim_description",
   "dmarc_description",
   "section_break_qijk",
-  "spam_check_response",
   "message",
   "amended_from"
  ],
@@ -66,16 +67,6 @@
    "options": "Draft\nRejected\nAccepted",
    "read_only": 1,
    "search_index": 1
-  },
-  {
-   "fieldname": "agent",
-   "fieldtype": "Data",
-   "label": "Agent",
-   "no_copy": 1,
-   "permlevel": 1,
-   "read_only": 1,
-   "search_index": 1,
-   "set_only_once": 1
   },
   {
    "fieldname": "amended_from",
@@ -118,10 +109,6 @@
    "no_copy": 1,
    "read_only": 1,
    "search_index": 1
-  },
-  {
-   "fieldname": "column_break_htgl",
-   "fieldtype": "Column Break"
   },
   {
    "fieldname": "section_break_0jgu",
@@ -241,6 +228,7 @@
    "fieldtype": "Float",
    "label": "Received After (Seconds)",
    "no_copy": 1,
+   "precision": "2",
    "read_only": 1
   },
   {
@@ -299,11 +287,12 @@
    "read_only": 1
   },
   {
-   "description": "Processed At - Received At",
+   "description": "Processed At - Fetched At",
    "fieldname": "processed_after",
    "fieldtype": "Float",
    "label": "Processed After (Seconds)",
    "no_copy": 1,
+   "precision": "2",
    "read_only": 1
   },
   {
@@ -311,16 +300,18 @@
    "depends_on": "eval: doc.is_rejected",
    "fieldname": "is_rejected",
    "fieldtype": "Check",
-   "hidden": 1,
-   "label": "Rejected",
+   "label": "is Rejected",
+   "no_copy": 1,
    "read_only": 1,
    "search_index": 1
   },
   {
    "depends_on": "eval: doc.is_rejected",
    "fieldname": "rejection_message",
-   "fieldtype": "Data",
-   "label": "Rejection Message"
+   "fieldtype": "Small Text",
+   "label": "Rejection Message",
+   "no_copy": 1,
+   "read_only": 1
   },
   {
    "default": "0",
@@ -329,8 +320,7 @@
    "fieldtype": "Check",
    "label": "SPF",
    "no_copy": 1,
-   "read_only": 1,
-   "search_index": 1
+   "read_only": 1
   },
   {
    "default": "0",
@@ -339,8 +329,7 @@
    "fieldtype": "Check",
    "label": "DKIM",
    "no_copy": 1,
-   "read_only": 1,
-   "search_index": 1
+   "read_only": 1
   },
   {
    "default": "0",
@@ -349,8 +338,7 @@
    "fieldtype": "Check",
    "label": "DMARC",
    "no_copy": 1,
-   "read_only": 1,
-   "search_index": 1
+   "read_only": 1
   },
   {
    "fieldname": "domain_name",
@@ -361,16 +349,6 @@
    "options": "Mail Domain",
    "read_only": 1,
    "search_index": 1
-  },
-  {
-   "default": "0",
-   "depends_on": "eval: doc.spam_check_response",
-   "fieldname": "spam_score",
-   "fieldtype": "Float",
-   "label": "Spam Score",
-   "no_copy": 1,
-   "precision": "1",
-   "read_only": 1
   },
   {
    "fieldname": "from_ip",
@@ -415,20 +393,38 @@
    "read_only": 1
   },
   {
-   "default": "0",
-   "depends_on": "eval: doc.is_spam",
-   "fieldname": "is_spam",
-   "fieldtype": "Check",
-   "hidden": 1,
-   "label": "Spam",
+   "fieldname": "column_break_pxhn",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_lpj2",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_uulh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "oml",
+   "fieldtype": "Data",
+   "label": "Outgoing Mail Log",
    "no_copy": 1,
    "read_only": 1
   },
   {
-   "fieldname": "spam_check_response",
-   "fieldtype": "Code",
-   "label": "Spam Check Response",
+   "fieldname": "fetched_at",
+   "fieldtype": "Datetime",
+   "label": "Fetched At",
    "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "description": "Fetched At - Received At",
+   "fieldname": "fetched_after",
+   "fieldtype": "Float",
+   "label": "Fetched After (Seconds)",
+   "no_copy": 1,
+   "precision": "2",
    "read_only": 1
   }
  ],
@@ -436,7 +432,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-10-18 16:35:37.107356",
+ "modified": "2024-10-29 16:10:08.960645",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Incoming Mail",
@@ -455,13 +451,6 @@
    "write": 1
   },
   {
-   "create": 1,
-   "read": 1,
-   "role": "Postmaster",
-   "submit": 1,
-   "write": 1
-  },
-  {
    "cancel": 1,
    "delete": 1,
    "export": 1,
@@ -476,12 +465,6 @@
    "permlevel": 1,
    "read": 1,
    "role": "System Manager",
-   "write": 1
-  },
-  {
-   "permlevel": 1,
-   "read": 1,
-   "role": "Postmaster",
    "write": 1
   }
  ],

@@ -4,7 +4,7 @@
 import frappe
 from frappe import _
 from frappe.model.document import Document
-from mail.utils.user import is_postmaster, is_system_manager
+from mail.utils.user import is_system_manager
 
 
 class MailContact(Document):
@@ -18,8 +18,8 @@ class MailContact(Document):
 	def set_user(self) -> None:
 		"""Set user as current user if not set."""
 
-		user = frappe.session.user
-		if not self.user or not is_system_manager(user):
+		if not self.user:
+			user = frappe.session.user
 			self.user = user
 
 	def validate_duplicate_contact(self) -> None:
@@ -52,7 +52,7 @@ def has_permission(doc: "Document", ptype: str, user: str) -> bool:
 	if doc.doctype != "Mail Contact":
 		return False
 
-	return (user == doc.user) or is_postmaster(user) or is_system_manager(user)
+	return (user == doc.user) or is_system_manager(user)
 
 
 def get_permission_query_condition(user: str | None = None) -> str:
@@ -65,7 +65,7 @@ def get_permission_query_condition(user: str | None = None) -> str:
 	return f"(`tabMail Contact`.`user` = {frappe.db.escape(user)})"
 
 
-def on_doctype_update():
+def on_doctype_update() -> None:
 	frappe.db.add_unique(
 		"Mail Contact", ["user", "email"], constraint_name="unique_user_email"
 	)

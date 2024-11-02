@@ -14,19 +14,12 @@
   "action_at",
   "action_after",
   "retries",
-  "details"
+  "response"
  ],
  "fields": [
   {
    "fieldname": "column_break_iqoo",
    "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "details",
-   "fieldtype": "Code",
-   "label": "Details",
-   "no_copy": 1,
-   "read_only": 1
   },
   {
    "fieldname": "display_name",
@@ -69,6 +62,7 @@
    "fieldtype": "Float",
    "label": "Action After (Seconds)",
    "no_copy": 1,
+   "precision": "2",
    "read_only": 1
   },
   {
@@ -89,12 +83,19 @@
    "options": "Email",
    "reqd": 1,
    "search_index": 1
+  },
+  {
+   "fieldname": "response",
+   "fieldtype": "Code",
+   "label": "Response",
+   "no_copy": 1,
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-10-14 13:04:35.052446",
+ "modified": "2024-10-26 11:14:20.285232",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Recipient",

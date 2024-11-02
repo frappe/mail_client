@@ -12,11 +12,18 @@ frappe.ui.form.on("Mailbox", {
 
 	set_queries(frm) {
 		frm.set_query("domain_name", () => ({
-            query: "mail.mail.doctype.mailbox.mailbox.get_domain",
+            filters: {
+                "enabled": 1,
+                "is_verified": 1,
+            }
         }));
 
 		frm.set_query("user", () => ({
-            query: "mail.mail.doctype.mailbox.mailbox.get_user",
+            query: "mail.utils.query.get_users_with_mailbox_user_role",
+            filters: {
+				enabled: 1,
+				role: "Mailbox User",
+			},
         }));
     },
 
@@ -40,7 +47,7 @@ frappe.ui.form.on("Mailbox", {
 
     delete_incoming_mails(frm) {
         frappe.call({
-			method: "mail.mail.doctype.incoming_mail.incoming_mail.delete_incoming_mails",
+			method: "mail.mail.doctype.mailbox.mailbox.delete_incoming_mails",
 			args: {
 				mailbox: frm.doc.name,
 			},
@@ -51,7 +58,7 @@ frappe.ui.form.on("Mailbox", {
 
     delete_outgoing_mails(frm) {
         frappe.call({
-			method: "mail.mail.doctype.outgoing_mail.outgoing_mail.delete_outgoing_mails",
+			method: "mail.mail.doctype.mailbox.mailbox.delete_outgoing_mails",
 			args: {
 				mailbox: frm.doc.name,
 			},

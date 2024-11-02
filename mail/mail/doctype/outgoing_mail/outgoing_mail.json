@@ -22,17 +22,15 @@
   "body_plain",
   "section_break_ubzr",
   "error_log",
+  "error_message",
   "more_info_tab",
   "status",
   "ip_address",
-  "spam_score",
   "via_api",
-  "is_spam",
   "is_newsletter",
   "column_break_d6p9",
   "domain_name",
-  "agent",
-  "queue_id",
+  "token",
   "section_break_quhp",
   "message_id",
   "in_reply_to",
@@ -47,6 +45,7 @@
   "submitted_after",
   "transfer_started_after",
   "transfer_completed_after",
+  "failed_count",
   "section_break_aafd",
   "tracking_id",
   "first_opened_at",
@@ -55,7 +54,6 @@
   "last_opened_at",
   "last_opened_from_ip",
   "section_break_kops",
-  "spam_check_response",
   "message",
   "section_break_eh7n",
   "amended_from"
@@ -104,7 +102,7 @@
    "in_standard_filter": 1,
    "label": "Status",
    "no_copy": 1,
-   "options": "Draft\nBlocked (Spam)\nPending\nTransferring\nFailed\nTransferred\nQueued\nDeferred\nBounced\nPartially Sent\nSent",
+   "options": "Draft\nPending\nFailed\nQueued\nBlocked\nDeferred\nBounced\nPartially Sent\nSent\nCancelled",
    "read_only": 1,
    "reqd": 1,
    "search_index": 1
@@ -128,23 +126,6 @@
   {
    "fieldname": "column_break_d6p9",
    "fieldtype": "Column Break"
-  },
-  {
-   "depends_on": "eval: !doc.__islocal",
-   "fieldname": "agent",
-   "fieldtype": "Data",
-   "label": "Agent",
-   "no_copy": 1,
-   "permlevel": 1,
-   "read_only": 1,
-   "search_index": 1
-  },
-  {
-   "fieldname": "error_log",
-   "fieldtype": "Code",
-   "label": "Error Log",
-   "no_copy": 1,
-   "read_only": 1
   },
   {
    "fieldname": "section_break_kops",
@@ -358,6 +339,7 @@
    "label": "Submitted After (Seconds)",
    "no_copy": 1,
    "non_negative": 1,
+   "precision": "2",
    "read_only": 1
   },
   {
@@ -367,14 +349,6 @@
    "fieldname": "display_name",
    "fieldtype": "Data",
    "label": "Display Name"
-  },
-  {
-   "fieldname": "queue_id",
-   "fieldtype": "Data",
-   "label": "Queue ID",
-   "no_copy": 1,
-   "read_only": 1,
-   "unique": 1
   },
   {
    "default": "0",
@@ -429,6 +403,7 @@
    "label": "Transfer Completed After (Seconds)",
    "no_copy": 1,
    "non_negative": 1,
+   "precision": "2",
    "read_only": 1
   },
   {
@@ -446,44 +421,47 @@
    "label": "Transfer Started After (Seconds)",
    "no_copy": 1,
    "non_negative": 1,
+   "precision": "2",
    "read_only": 1
   },
   {
-   "default": "0",
-   "depends_on": "eval: doc.spam_check_response",
-   "fieldname": "spam_score",
-   "fieldtype": "Float",
-   "label": "Spam Score",
-   "length": 255,
+   "fieldname": "token",
+   "fieldtype": "Data",
+   "label": "Token",
    "no_copy": 1,
-   "precision": "1",
-   "read_only": 1
+   "read_only": 1,
+   "unique": 1
   },
   {
-   "default": "0",
-   "depends_on": "eval: doc.is_spam",
-   "fieldname": "is_spam",
-   "fieldtype": "Check",
-   "hidden": 1,
-   "label": "Spam",
-   "length": 255,
-   "no_copy": 1,
-   "read_only": 1
-  },
-  {
-   "fieldname": "spam_check_response",
+   "fieldname": "error_message",
    "fieldtype": "Code",
-   "label": "Spam Check Response",
-   "length": 255,
+   "label": "Error Message",
    "no_copy": 1,
-   "precision": "1",
    "read_only": 1
+  },
+  {
+   "fieldname": "error_log",
+   "fieldtype": "Code",
+   "label": "Error Log",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "depends_on": "eval: doc.failed_count",
+   "fieldname": "failed_count",
+   "fieldtype": "Int",
+   "label": "Failed Count",
+   "no_copy": 1,
+   "non_negative": 1,
+   "read_only": 1,
+   "search_index": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-10-14 13:05:07.038311",
+ "modified": "2024-10-26 11:49:31.788673",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Outgoing Mail",
@@ -500,16 +478,6 @@
    "role": "System Manager",
    "submit": 1,
    "write": 1
-  },
-  {
-   "read": 1,
-   "role": "Postmaster",
-   "write": 1
-  },
-  {
-   "report": 1,
-   "role": "Domain Owner",
-   "select": 1
   },
   {
    "cancel": 1,

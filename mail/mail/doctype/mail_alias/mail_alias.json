@@ -1,6 +1,5 @@
 {
  "actions": [],
- "autoname": "field:alias",
  "creation": "2024-04-06 08:33:50.603200",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -29,9 +28,11 @@
    "label": "Domain Name",
    "options": "Mail Domain",
    "reqd": 1,
+   "search_index": 1,
    "set_only_once": 1
   },
   {
+   "depends_on": "eval: doc.__islocal",
    "fieldname": "alias",
    "fieldtype": "Data",
    "in_list_view": 1,
@@ -64,11 +65,11 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-05-20 11:49:53.983707",
+ "modified": "2024-10-21 14:20:19.566926",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Alias",
- "naming_rule": "By fieldname",
+ "naming_rule": "Set by user",
  "owner": "Administrator",
  "permissions": [
   {
@@ -79,15 +80,6 @@
    "read": 1,
    "report": 1,
    "role": "System Manager",
-   "write": 1
-  },
-  {
-   "create": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "Domain Owner",
    "write": 1
   }
  ],

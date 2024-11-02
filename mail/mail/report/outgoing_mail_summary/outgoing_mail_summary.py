@@ -4,10 +4,8 @@
 import json
 import frappe
 from frappe import _
-from frappe.utils import flt
 from datetime import datetime
 from frappe.query_builder import Order, Criterion
-from mail.utils.cache import get_user_owned_domains
 from frappe.query_builder.functions import Date, IfNull
 from mail.utils.user import has_role, is_system_manager, get_user_mailboxes
 
@@ -31,8 +29,8 @@ def get_columns() -> list[dict]:
 			"width": 100,
 		},
 		{
-			"label": _("Creation"),
-			"fieldname": "creation",
+			"label": _("Submitted At"),
+			"fieldname": "submitted_at",
 			"fieldtype": "Datetime",
 			"width": 180,
 		},
@@ -67,22 +65,10 @@ def get_columns() -> list[dict]:
 			"width": 100,
 		},
 		{
-			"label": _("Spam Score"),
-			"fieldname": "spam_score",
-			"fieldtype": "Float",
-			"width": 110,
-		},
-		{
 			"label": _("Response Message"),
 			"fieldname": "response",
 			"fieldtype": "Code",
 			"width": 500,
-		},
-		{
-			"label": _("Agent"),
-			"fieldname": "agent",
-			"fieldtype": "Data",
-			"width": 150,
 		},
 		{
 			"label": _("Domain Name"),
@@ -111,6 +97,12 @@ def get_columns() -> list[dict]:
 			"width": 200,
 		},
 		{
+			"label": _("Subject"),
+			"fieldname": "subject",
+			"fieldtype": "Code",
+			"width": 500,
+		},
+		{
 			"label": _("Message ID"),
 			"fieldname": "message_id",
 			"fieldtype": "Data",
@@ -131,30 +123,29 @@ def get_data(filters: dict | None = None) -> list[list]:
 		.on(OM.name == MR.parent)
 		.select(
 			OM.name,
-			OM.creation,
+			OM.submitted_at,
 			MR.status,
 			MR.retries,
 			OM.message_size,
 			OM.via_api,
 			OM.is_newsletter,
-			OM.spam_score,
-			MR.details.as_("response"),
-			OM.agent,
+			MR.response,
 			OM.domain_name,
 			OM.ip_address,
 			OM.sender,
 			MR.email.as_("recipient"),
+			OM.subject,
 			OM.message_id,
 		)
 		.where((OM.docstatus == 1) & (IfNull(MR.status, "") != ""))
-		.orderby(OM.creation, OM.created_at, order=Order.desc)
+		.orderby(OM.submitted_at, order=Order.desc)
 		.orderby(MR.idx, order=Order.asc)
 	)
 
 	if not filters.get("name") and not filters.get("message_id"):
 		query = query.where(
-			(Date(OM.created_at) >= Date(filters.get("from_date")))
-			& (Date(OM.created_at) <= Date(filters.get("to_date")))
+			(Date(OM.submitted_at) >= Date(filters.get("from_date")))
+			& (Date(OM.submitted_at) <= Date(filters.get("to_date")))
 		)
 
 	if not filters.get("include_newsletter"):
@@ -162,7 +153,6 @@ def get_data(filters: dict | None = None) -> list[list]:
 
 	for field in [
 		"name",
-		"agent",
 		"domain_name",
 		"ip_address",
 		"sender",
@@ -178,11 +168,7 @@ def get_data(filters: dict | None = None) -> list[list]:
 	user = frappe.session.user
 	if not is_system_manager(user):
 		conditions = []
-		domains = get_user_owned_domains(user)
 		mailboxes = get_user_mailboxes(user)
-
-		if has_role(user, "Domain Owner") and domains:
-			conditions.append(OM.domain_name.isin(domains))
 
 		if has_role(user, "Mailbox User") and mailboxes:
 			conditions.append(OM.sender.isin(mailboxes))
@@ -210,10 +196,10 @@ def get_chart(data: list) -> list[dict]:
 	labels, sent, deffered, bounced = [], [], [], []
 
 	for row in reversed(data):
-		if not isinstance(row["creation"], datetime):
+		if not isinstance(row["submitted_at"], datetime):
 			frappe.throw(_("Invalid date format"))
 
-		date = row["creation"].date().strftime("%d-%m-%Y")
+		date = row["submitted_at"].date().strftime("%d-%m-%Y")
 
 		if date not in labels:
 			labels.append(date)
@@ -259,16 +245,16 @@ def get_chart(data: list) -> list[dict]:
 
 
 def get_summary(data: list) -> list[dict]:
+	if not data:
+		return []
+
 	status_count = {}
-	total_spam_score = 0
 
 	for row in data:
 		status = row["status"]
 		if status in ["Sent", "Deferred", "Bounced"]:
 			status_count.setdefault(status, 0)
 			status_count[status] += 1
-
-		total_spam_score += row["spam_score"]
 
 	return [
 		{
@@ -288,11 +274,5 @@ def get_summary(data: list) -> list[dict]:
 			"datatype": "Int",
 			"value": status_count.get("Bounced", 0),
 			"indicator": "red",
-		},
-		{
-			"label": _("Average Spam Score"),
-			"datatype": "Float",
-			"value": flt(total_spam_score / len(data), 1) if data else 0,
-			"indicator": "black",
 		},
 	]

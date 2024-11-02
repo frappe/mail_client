@@ -9,7 +9,7 @@
  "idx": 0,
  "is_standard": "Yes",
  "letterhead": null,
- "modified": "2024-10-18 13:50:12.744195",
+ "modified": "2024-10-19 16:50:52.361821",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Outgoing Mail Summary",
@@ -21,12 +21,6 @@
  "roles": [
   {
    "role": "System Manager"
-  },
-  {
-   "role": "Postmaster"
-  },
-  {
-   "role": "Domain Owner"
   },
   {
    "role": "Mailbox User"

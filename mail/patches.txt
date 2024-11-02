@@ -1,11 +1,3 @@
 [pre_model_sync]
-execute:frappe.db.set_value("Mail Domain DNS Record", {}, "ttl", "3600")
-execute:frappe.db.set_single_value("Mail Settings", "default_ttl", "3600")
 
 [post_model_sync]
-mail.patches.v1_0.rename_field_dkim_bits
-mail.patches.v1_0.create_dkim_key_doc
-mail.patches.v1_0.rename_field_transferred_at
-mail.patches.v1_0.rename_field_transferred_after
-mail.patches.v1_0.move_mail_agents_to_mail_settings
-execute:frappe.db.set_value("Incoming Mail", {"status": "Delivered"}, "status", "Accepted")
