@@ -299,26 +299,19 @@ def fetch_emails_from_mail_server(domain_name: str) -> None:
 		receiver = parser.get_header("Delivered-To")
 		domain_name = receiver.split("@")[1]
 
-		if not is_active_domain(domain_name):
-			return create_incoming_mail(
-				oml=oml,
-				receiver=receiver,
-				message=message,
-				is_spam=is_spam,
-				is_rejected=1,
-				rejection_message="550 5.4.1 Recipient address rejected: Access denied.",
-			)
-
-		if is_mail_alias(receiver):
-			alias = frappe.get_cached_doc("Mail Alias", receiver)
-			if alias.enabled:
-				for mailbox in alias.mailboxes:
-					if is_active_mailbox(mailbox.mailbox):
-						create_incoming_mail(
-							oml=oml, receiver=mailbox.mailbox, message=message, is_spam=is_spam
-						)
-		elif is_active_mailbox(receiver):
-			create_incoming_mail(oml=oml, receiver=receiver, message=message, is_spam=is_spam)
+		if is_active_domain(domain_name):
+			if is_mail_alias(receiver):
+				alias = frappe.get_cached_doc("Mail Alias", receiver)
+				if alias.enabled:
+					for mailbox in alias.mailboxes:
+						if is_active_mailbox(mailbox.mailbox):
+							create_incoming_mail(
+								oml=oml, receiver=mailbox.mailbox, message=message, is_spam=is_spam
+							)
+					return
+			elif is_active_mailbox(receiver):
+				create_incoming_mail(oml=oml, receiver=receiver, message=message, is_spam=is_spam)
+				return
 
 		create_incoming_mail(
 			oml=oml,
