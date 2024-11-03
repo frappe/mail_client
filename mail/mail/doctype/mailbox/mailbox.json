@@ -97,7 +97,8 @@
    "default": "0",
    "fieldname": "track_outgoing_mail",
    "fieldtype": "Check",
-   "label": "Track Outgoing Mail"
+   "label": "Track Outgoing Mail",
+   "read_only_depends_on": "eval: !doc.outgoing"
   },
   {
    "default": "0",
@@ -170,7 +171,7 @@
    "link_fieldname": "sender"
   }
  ],
- "modified": "2024-10-21 13:53:45.415180",
+ "modified": "2024-11-03 13:10:51.681776",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mailbox",
