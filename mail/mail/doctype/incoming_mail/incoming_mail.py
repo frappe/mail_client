@@ -345,7 +345,11 @@ def fetch_emails_from_mail_server(domain_name: str) -> None:
 			process_email(mail["oml"], mail["message"], mail["is_spam"])
 
 		frappe.db.set_value(
-			"Mail Domain", domain_name, "last_synced_at", result["last_synced_at"]
+			"Mail Domain",
+			domain_name,
+			"last_synced_at",
+			result["last_synced_at"],
+			update_modified=False,
 		)
 
 	except Exception:
