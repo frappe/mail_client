@@ -28,6 +28,6 @@ def enqueue_fetch_emails_from_mail_server() -> None:
 
 	frappe.session.user = "Administrator"
 	for mail_domain in frappe.db.get_all(
-		"Mail Domain", filters={"enabled": 1, "verified": 1}, pluck="name"
+		"Mail Domain", filters={"enabled": 1, "is_verified": 1}, pluck="name"
 	):
 		enqueue_job(fetch_emails_from_mail_server, queue="long", domain_name=mail_domain)
