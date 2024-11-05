@@ -30,6 +30,7 @@ class IncomingMail(Document):
 
 	def validate(self) -> None:
 		self.validate_fetched_at()
+		self.validate_mandatory_fields()
 		if self.get("_action") == "submit":
 			self.process()
 
@@ -47,6 +48,15 @@ class IncomingMail(Document):
 
 		if not self.fetched_at:
 			self.fetched_at = now()
+
+	def validate_mandatory_fields(self) -> None:
+		"""Validates the mandatory fields."""
+
+		mandatory_fields = ["oml", "message"]
+		for field in mandatory_fields:
+			if not self.get(field):
+				field_label = frappe.get_meta(self.doctype).get_label(field)
+				frappe.throw(_(f"{field_label} is mandatory."))
 
 	def process(self) -> None:
 		"""Processes the Incoming Mail."""
@@ -259,7 +269,7 @@ def create_incoming_mail(
 
 	if not do_not_save:
 		doc.flags.ignore_links = True
-		doc.save()
+		doc.save(ignore_permissions=True)
 		if not do_not_submit:
 			try:
 				doc.submit()
@@ -272,8 +282,8 @@ def create_incoming_mail(
 	return doc
 
 
-def fetch_emails_from_mail_server(domain_name: str) -> None:
-	"""Fetches the emails from the mail server."""
+def process_incoming_mail(oml: str, message: str, is_spam: bool) -> None:
+	"""Processes the incoming mail."""
 
 	def is_active_domain(domain_name: str) -> bool:
 		"""Returns True if the domain is active, otherwise False."""
@@ -292,35 +302,36 @@ def fetch_emails_from_mail_server(domain_name: str) -> None:
 
 		return bool(frappe.db.exists("Mailbox", {"email": mailbox, "enabled": 1}))
 
-	def process_email(oml: str, message: str, is_spam: bool) -> None:
-		"""Processes the email."""
+	parser = EmailParser(message)
+	receiver = parser.get_header("Delivered-To")
+	domain_name = receiver.split("@")[1]
 
-		parser = EmailParser(message)
-		receiver = parser.get_header("Delivered-To")
-		domain_name = receiver.split("@")[1]
-
-		if is_active_domain(domain_name):
-			if is_mail_alias(receiver):
-				alias = frappe.get_cached_doc("Mail Alias", receiver)
-				if alias.enabled:
-					for mailbox in alias.mailboxes:
-						if is_active_mailbox(mailbox.mailbox):
-							create_incoming_mail(
-								oml=oml, receiver=mailbox.mailbox, message=message, is_spam=is_spam
-							)
-					return
-			elif is_active_mailbox(receiver):
-				create_incoming_mail(oml=oml, receiver=receiver, message=message, is_spam=is_spam)
+	if is_active_domain(domain_name):
+		if is_mail_alias(receiver):
+			alias = frappe.get_cached_doc("Mail Alias", receiver)
+			if alias.enabled:
+				for mailbox in alias.mailboxes:
+					if is_active_mailbox(mailbox.mailbox):
+						create_incoming_mail(
+							oml=oml, receiver=mailbox.mailbox, message=message, is_spam=is_spam
+						)
 				return
+		elif is_active_mailbox(receiver):
+			create_incoming_mail(oml=oml, receiver=receiver, message=message, is_spam=is_spam)
+			return
 
-		create_incoming_mail(
-			oml=oml,
-			receiver=receiver,
-			message=message,
-			is_spam=is_spam,
-			is_rejected=1,
-			rejection_message="550 5.4.1 Recipient address rejected: Access denied.",
-		)
+	create_incoming_mail(
+		oml=oml,
+		receiver=receiver,
+		message=message,
+		is_spam=is_spam,
+		is_rejected=1,
+		rejection_message="550 5.4.1 Recipient address rejected: Access denied.",
+	)
+
+
+def fetch_emails_from_mail_server(domain_name: str) -> None:
+	"""Fetches the emails from the mail server."""
 
 	max_failures = 3
 	total_failures = 0
@@ -335,7 +346,7 @@ def fetch_emails_from_mail_server(domain_name: str) -> None:
 		result = inbound_api.fetch(domain_name, last_synced_at=last_synced_at)
 
 		for mail in result["mails"]:
-			process_email(mail["oml"], mail["message"], mail["is_spam"])
+			process_incoming_mail(mail["oml"], mail["message"], mail["is_spam"])
 
 		frappe.db.set_value(
 			"Mail Domain",
