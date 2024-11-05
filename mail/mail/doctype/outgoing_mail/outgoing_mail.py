@@ -75,9 +75,14 @@ class OutgoingMail(Document):
 
 	def on_submit(self) -> None:
 		self.create_mail_contacts()
-		self._db_set(status="Pending", notify_update=True)
 
+		status = "Pending"
 		if self.via_api and not self.is_newsletter and self.submitted_after <= 5:
+			status = "Queuing"
+
+		self._db_set(status=status, notify_update=True)
+
+		if status == "Queuing":
 			frappe.enqueue_doc(
 				"Outgoing Mail", self.name, "transfer_to_mail_server", enqueue_after_commit=True
 			)
@@ -668,7 +673,7 @@ class OutgoingMail(Document):
 		"""Retries the failed mail."""
 
 		if self.docstatus == 1 and self.status == "Failed" and self.failed_count < 3:
-			self._db_set(status="Pending", error_log=None, error_message=None, commit=True)
+			self._db_set(status="Queuing", error_log=None, error_message=None, commit=True)
 			self.transfer_to_mail_server()
 
 	@frappe.whitelist()
@@ -676,10 +681,10 @@ class OutgoingMail(Document):
 		"""Transfers the email to the Mail Server."""
 
 		if not frappe.flags.force_transfer:
-			self.load_from_db()
+			self.reload()
 
-			# Ensure the document is submitted and in "Pending" status
-			if not (self.docstatus == 1 and self.status == "Pending" and self.failed_count < 3):
+			# Ensure the document is submitted and in "Queuing" status
+			if not (self.docstatus == 1 and self.status == "Queuing" and self.failed_count < 3):
 				return
 
 		try:
