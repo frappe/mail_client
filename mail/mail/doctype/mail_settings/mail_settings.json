@@ -10,6 +10,7 @@
   "column_break_awdi",
   "mail_server_api_key",
   "mail_server_api_secret",
+  "last_synced_at",
   "outgoing_tab",
   "max_recipients",
   "max_headers",
@@ -181,12 +182,21 @@
   {
    "fieldname": "column_break_pcku",
    "fieldtype": "Column Break"
+  },
+  {
+   "default": "now",
+   "fieldname": "last_synced_at",
+   "fieldtype": "Datetime",
+   "hidden": 1,
+   "label": "Last Synced At",
+   "no_copy": 1,
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-10-30 17:26:00.355671",
+ "modified": "2024-11-05 16:00:47.561767",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Settings",

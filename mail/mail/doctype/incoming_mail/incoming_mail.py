@@ -52,7 +52,7 @@ class IncomingMail(Document):
 	def validate_mandatory_fields(self) -> None:
 		"""Validates the mandatory fields."""
 
-		mandatory_fields = ["oml", "message"]
+		mandatory_fields = ["incoming_mail_log", "message"]
 		for field in mandatory_fields:
 			if not self.get(field):
 				field_label = frappe.get_meta(self.doctype).get_label(field)
@@ -248,7 +248,7 @@ def get_permission_query_condition(user: str | None = None) -> str:
 
 
 def create_incoming_mail(
-	oml: str,
+	incoming_mail_log: str,
 	receiver: str,
 	message: str,
 	is_spam: int = 0,
@@ -260,7 +260,7 @@ def create_incoming_mail(
 	"""Creates an Incoming Mail."""
 
 	doc = frappe.new_doc("Incoming Mail")
-	doc.oml = oml
+	doc.incoming_mail_log = incoming_mail_log
 	doc.receiver = receiver
 	doc.message = message
 	doc.is_spam = is_spam
@@ -282,7 +282,7 @@ def create_incoming_mail(
 	return doc
 
 
-def process_incoming_mail(oml: str, message: str, is_spam: bool) -> None:
+def process_incoming_mail(incoming_mail_log: str, message: str, is_spam: bool) -> None:
 	"""Processes the incoming mail."""
 
 	def is_active_domain(domain_name: str) -> bool:
@@ -313,15 +313,23 @@ def process_incoming_mail(oml: str, message: str, is_spam: bool) -> None:
 				for mailbox in alias.mailboxes:
 					if is_active_mailbox(mailbox.mailbox):
 						create_incoming_mail(
-							oml=oml, receiver=mailbox.mailbox, message=message, is_spam=is_spam
+							incoming_mail_log=incoming_mail_log,
+							receiver=mailbox.mailbox,
+							message=message,
+							is_spam=is_spam,
 						)
 				return
 		elif is_active_mailbox(receiver):
-			create_incoming_mail(oml=oml, receiver=receiver, message=message, is_spam=is_spam)
+			create_incoming_mail(
+				incoming_mail_log=incoming_mail_log,
+				receiver=receiver,
+				message=message,
+				is_spam=is_spam,
+			)
 			return
 
 	create_incoming_mail(
-		oml=oml,
+		incoming_mail_log=incoming_mail_log,
 		receiver=receiver,
 		message=message,
 		is_spam=is_spam,
@@ -330,36 +338,25 @@ def process_incoming_mail(oml: str, message: str, is_spam: bool) -> None:
 	)
 
 
-def fetch_emails_from_mail_server(domain_name: str) -> None:
+def fetch_emails_from_mail_server() -> None:
 	"""Fetches the emails from the mail server."""
-
-	max_failures = 3
-	total_failures = 0
 
 	try:
 		inbound_api = get_mail_server_inbound_api()
-		last_synced_at = frappe.db.get_value("Mail Domain", domain_name, "last_synced_at")
+		last_synced_at = frappe.db.get_single_value("Mail Settings", "last_synced_at")
 
 		if last_synced_at:
 			last_synced_at = add_or_update_tzinfo(last_synced_at)
 
-		result = inbound_api.fetch(domain_name, last_synced_at=last_synced_at)
+		result = inbound_api.fetch(last_synced_at=last_synced_at)
 
 		for mail in result["mails"]:
-			process_incoming_mail(mail["oml"], mail["message"], mail["is_spam"])
+			process_incoming_mail(mail["incoming_mail_log"], mail["message"], mail["is_spam"])
 
-		frappe.db.set_value(
-			"Mail Domain",
-			domain_name,
-			"last_synced_at",
-			result["last_synced_at"],
-			update_modified=False,
+		frappe.db.set_single_value(
+			"Mail Settings", "last_synced_at", result["last_synced_at"], update_modified=False
 		)
 
 	except Exception:
-		total_failures += 1
 		error_log = frappe.get_traceback(with_context=False)
 		frappe.log_error(title="Fetch Emails from Mail Server", message=error_log)
-
-		if total_failures < max_failures:
-			time.sleep(2**total_failures)

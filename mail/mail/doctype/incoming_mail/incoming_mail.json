@@ -24,7 +24,7 @@
   "from_host",
   "column_break_pxhn",
   "domain_name",
-  "oml",
+  "incoming_mail_log",
   "section_break_lpj2",
   "is_rejected",
   "column_break_uulh",
@@ -405,13 +405,6 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "oml",
-   "fieldtype": "Data",
-   "label": "Outgoing Mail Log",
-   "no_copy": 1,
-   "read_only": 1
-  },
-  {
    "fieldname": "fetched_at",
    "fieldtype": "Datetime",
    "label": "Fetched At",
@@ -426,13 +419,20 @@
    "no_copy": 1,
    "precision": "2",
    "read_only": 1
+  },
+  {
+   "fieldname": "incoming_mail_log",
+   "fieldtype": "Data",
+   "label": "Incoming Mail Log",
+   "no_copy": 1,
+   "read_only": 1
   }
  ],
  "in_create": 1,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-10-29 16:10:08.960645",
+ "modified": "2024-11-05 16:31:51.970776",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Incoming Mail",

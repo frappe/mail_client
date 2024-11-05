@@ -1,6 +1,7 @@
 import json
 import frappe
 from frappe import _
+from frappe.utils import get_datetime, convert_utc_to_system_timezone
 from mail.mail.doctype.incoming_mail.incoming_mail import process_incoming_mail
 
 
@@ -34,9 +35,13 @@ def receive_email() -> None:
 			frappe.throw(_("Invalid Inbound Token"))
 
 		process_incoming_mail(
-			oml=data["oml"],
+			incoming_mail_log=data["incoming_mail_log"],
 			message=data["message"],
 			is_spam=data["is_spam"],
+		)
+		last_synced_at = convert_utc_to_system_timezone(get_datetime(data["processed_at"]))
+		frappe.db.set_single_value(
+			"Mail Settings", "last_synced_at", last_synced_at, update_modified=False
 		)
 	except Exception:
 		error_log = frappe.get_traceback(with_context=False)

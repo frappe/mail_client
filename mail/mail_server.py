@@ -143,14 +143,13 @@ class MailServerInboundAPI(MailServerAPI):
 	"""Class to receive inbound emails from the Frappe Mail Server."""
 
 	def fetch(
-		self, domain_name: str, limit: int = 100, last_synced_at: str | None = None
+		self, limit: int = 100, last_synced_at: str | None = None
 	) -> dict[str, list[dict] | str]:
-		"""Fetches inbound emails for a domain from the Frappe Mail Server."""
+		"""Fetches inbound emails from the Frappe Mail Server."""
 
 		endpoint = "/api/method/mail_server.api.inbound.fetch"
-		data = {"domain_name": domain_name, "limit": limit, "last_synced_at": last_synced_at}
-		headers = {"X-Frappe-Mail-Site": frappe.utils.get_url()}
-		result = self.request("GET", endpoint=endpoint, data=data, headers=headers)
+		data = {"limit": limit, "last_synced_at": last_synced_at}
+		result = self.request("GET", endpoint=endpoint, data=data)
 		result["last_synced_at"] = convert_utc_to_system_timezone(
 			get_datetime(result["last_synced_at"])
 		)
