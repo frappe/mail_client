@@ -1,6 +1,7 @@
 import re
 from email import policy
 from typing import TYPE_CHECKING
+from urllib.parse import unquote
 from email.utils import parseaddr
 from email import message_from_string
 from mail.utils import parsedate_to_datetime
@@ -128,6 +129,7 @@ class EmailParser:
 			disposition = part.get("Content-Disposition")
 
 			if disposition and filename:
+				filename = unquote(filename)
 				disposition = disposition.lower()
 
 				if disposition.startswith("inline"):
