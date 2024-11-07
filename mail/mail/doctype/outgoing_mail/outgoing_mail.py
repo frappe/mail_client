@@ -659,8 +659,8 @@ class OutgoingMail(Document):
 		if not frappe.flags.force_transfer:
 			self.reload()
 
-			# Ensure the document is submitted and in "Queuing" status
-			if not (self.docstatus == 1 and self.status == "Queuing" and self.failed_count < 3):
+			# Ensure the document is submitted and has "Queuing" or "Pending" status
+			if not (self.docstatus == 1 and self.status in ["Queuing", "Pending"] and self.failed_count < 3):
 				return
 
 		try:
