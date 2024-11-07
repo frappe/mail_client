@@ -1,16 +1,17 @@
 # Copyright (c) 2024, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
+
 import frappe
 from frappe import _
-from typing import Tuple
-from frappe.utils import flt
-from frappe.query_builder import Order, Criterion
+from frappe.query_builder import Criterion, Order
 from frappe.query_builder.functions import Date, IfNull
-from mail.utils.user import has_role, is_system_manager, get_user_mailboxes
+from frappe.utils import flt
+
+from mail.utils.user import get_user_mailboxes, has_role, is_system_manager
 
 
-def execute(filters: dict | None = None) -> Tuple[list, list]:
+def execute(filters: dict | None = None) -> tuple[list, list]:
 	columns = get_columns()
 	data = get_data(filters)
 	summary = get_summary(data)
@@ -144,10 +145,7 @@ def get_data(filters: dict | None = None) -> list[list]:
 			(OM.transfer_started_after + OM.transfer_completed_after).as_("transfer_delay"),
 			MR.action_after.as_("action_delay"),
 			(
-				OM.submitted_after
-				+ OM.transfer_started_after
-				+ OM.transfer_completed_after
-				+ MR.action_after
+				OM.submitted_after + OM.transfer_started_after + OM.transfer_completed_after + MR.action_after
 			).as_("total_delay"),
 			OM.domain_name,
 			OM.ip_address,

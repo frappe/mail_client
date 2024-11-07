@@ -3,12 +3,13 @@
 
 import frappe
 from frappe import _
-from mail.utils.cache import delete_cache
 from frappe.model.document import Document
+
+from mail.utils.cache import delete_cache
 from mail.utils.user import has_role, is_system_manager
 from mail.utils.validation import (
-	validate_domain_is_enabled_and_verified,
 	is_valid_email_for_domain,
+	validate_domain_is_enabled_and_verified,
 )
 
 
@@ -46,9 +47,7 @@ class Mailbox(Document):
 				frappe.throw(_("User is mandatory."))
 
 		if not has_role(self.user, "Mailbox User") and not is_system_manager(self.user):
-			frappe.throw(
-				_("User {0} does not have Mailbox User role.").format(frappe.bold(self.user))
-			)
+			frappe.throw(_("User {0} does not have Mailbox User role.").format(frappe.bold(self.user)))
 
 	def validate_email(self) -> None:
 		"""Validates the email address."""

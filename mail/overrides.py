@@ -1,22 +1,16 @@
 import frappe
 from frappe import _
-from frappe.utils import flt, cint
+from frappe.utils import cint, flt
 
 
 def validate_file(doc, method):
 	"""Validates attachment attached to Outgoing Mail and Incoming Mail."""
 
 	def _throw(msg, raise_exception=True, indicator="red", alert=True):
-		frappe.msgprint(
-			msg, raise_exception=raise_exception, indicator=indicator, alert=alert
-		)
+		frappe.msgprint(msg, raise_exception=raise_exception, indicator=indicator, alert=alert)
 
-	if (
-		doc.attached_to_doctype in ["Outgoing Mail", "Incoming Mail"] and doc.attached_to_name
-	):
-		docstatus = cint(
-			frappe.db.get_value(doc.attached_to_doctype, doc.attached_to_name, "docstatus")
-		)
+	if doc.attached_to_doctype in ["Outgoing Mail", "Incoming Mail"] and doc.attached_to_name:
+		docstatus = cint(frappe.db.get_value(doc.attached_to_doctype, doc.attached_to_name, "docstatus"))
 
 		if method == "validate":
 			if doc.is_new() and docstatus > 0:

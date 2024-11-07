@@ -1,8 +1,9 @@
 import re
+
 import frappe
 from bs4 import BeautifulSoup
-from frappe.utils import is_html
 from frappe.translate import get_all_translations
+from frappe.utils import is_html
 
 
 @frappe.whitelist(allow_guest=True)
@@ -139,9 +140,7 @@ def get_list_thread(mail) -> list:
 		thread.append(mail)
 
 		if mail.in_reply_to_mail_name:
-			reply_mail = get_mail_details(
-				mail.in_reply_to_mail_name, mail.in_reply_to_mail_type, False
-			)
+			reply_mail = get_mail_details(mail.in_reply_to_mail_name, mail.in_reply_to_mail_type, False)
 			add_to_thread(reply_mail)
 		if mail.message_id:
 			replica_name = find_replica(mail, mail.mail_type)
@@ -197,9 +196,7 @@ def get_mail_thread(name, mail_type) -> list:
 		visited.add(mail.name)
 
 		if mail.in_reply_to_mail_name:
-			reply_mail = get_mail_details(
-				mail.in_reply_to_mail_name, mail.in_reply_to_mail_type, True
-			)
+			reply_mail = get_mail_details(mail.in_reply_to_mail_name, mail.in_reply_to_mail_type, True)
 			get_thread(reply_mail, thread)
 
 		replica = find_replica(mail, mail.mail_type)
@@ -262,9 +259,7 @@ def remove_duplicates_and_sort(thread) -> list:
 
 	seen = set()
 	thread = [x for x in thread if x["name"] not in seen and not seen.add(x["name"])]
-	thread = [
-		x for x in thread if x["message_id"] not in seen and not seen.add(x["message_id"])
-	]
+	thread = [x for x in thread if x["message_id"] not in seen and not seen.add(x["message_id"])]
 	thread.sort(key=lambda x: x.creation)
 	return thread
 

@@ -1,7 +1,9 @@
 import json
+from email.utils import parseaddr
+
 import frappe
 from frappe import _
-from email.utils import parseaddr
+
 from mail.mail.doctype.outgoing_mail.outgoing_mail import create_outgoing_mail
 
 

@@ -3,9 +3,10 @@
 
 import frappe
 from frappe import _
+from frappe.query_builder import Criterion, Order
 from frappe.query_builder.functions import Date
-from frappe.query_builder import Order, Criterion
-from mail.utils.user import has_role, is_system_manager, get_user_mailboxes
+
+from mail.utils.user import get_user_mailboxes, has_role, is_system_manager
 
 
 def execute(filters: dict | None = None) -> tuple:
@@ -113,11 +114,7 @@ def get_data(filters: dict | None = None) -> list[list]:
 		.orderby(OM.submitted_at, order=Order.desc)
 	)
 
-	if (
-		not filters.get("name")
-		and not filters.get("message_id")
-		and not filters.get("tracking_id")
-	):
+	if not filters.get("name") and not filters.get("message_id") and not filters.get("tracking_id"):
 		query = query.where(
 			(Date(OM.submitted_at) >= Date(filters.get("from_date")))
 			& (Date(OM.submitted_at) <= Date(filters.get("to_date")))

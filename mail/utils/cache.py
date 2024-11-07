@@ -1,11 +1,10 @@
-import frappe
-from frappe import _
 from typing import Any
 
+import frappe
+from frappe import _
 
-def _get_or_set(
-	name: str, getter: callable, expires_in_sec: int | None = 60 * 60
-) -> Any | None:
+
+def _get_or_set(name: str, getter: callable, expires_in_sec: int | None = 60 * 60) -> Any | None:
 	"""Get or set a value in the cache."""
 
 	value = frappe.cache.get_value(name)

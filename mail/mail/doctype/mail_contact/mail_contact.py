@@ -4,6 +4,7 @@
 import frappe
 from frappe import _
 from frappe.model.document import Document
+
 from mail.utils.user import is_system_manager
 
 
@@ -26,18 +27,14 @@ class MailContact(Document):
 		"""Validates if the contact is duplicate."""
 
 		if frappe.db.exists("Mail Contact", {"user": self.user, "email": self.email}):
-			frappe.throw(
-				_("Mail Contact with email {0} already exists.").format(frappe.bold(self.email))
-			)
+			frappe.throw(_("Mail Contact with email {0} already exists.").format(frappe.bold(self.email)))
 
 
 def create_mail_contact(user: str, email: str, display_name: str | None = None) -> None:
 	"""Creates the mail contact."""
 
 	if mail_contact := frappe.db.exists("Mail Contact", {"user": user, "email": email}):
-		current_display_name = frappe.get_cached_value(
-			"Mail Contact", mail_contact, "display_name"
-		)
+		current_display_name = frappe.get_cached_value("Mail Contact", mail_contact, "display_name")
 		if display_name != current_display_name:
 			frappe.db.set_value("Mail Contact", mail_contact, "display_name", display_name)
 	else:
@@ -66,6 +63,4 @@ def get_permission_query_condition(user: str | None = None) -> str:
 
 
 def on_doctype_update() -> None:
-	frappe.db.add_unique(
-		"Mail Contact", ["user", "email"], constraint_name="unique_user_email"
-	)
+	frappe.db.add_unique("Mail Contact", ["user", "email"], constraint_name="unique_user_email")

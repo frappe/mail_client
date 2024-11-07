@@ -45,9 +45,7 @@ def create_mail_sync_history(
 def get_mail_sync_history(source: str, user: str, mailbox: str) -> "MailSyncHistory":
 	"""Returns the Mail Sync History for the given source, user and mailbox."""
 
-	if name := frappe.db.exists(
-		"Mail Sync History", {"source": source, "user": user, "mailbox": mailbox}
-	):
+	if name := frappe.db.exists("Mail Sync History", {"source": source, "user": user, "mailbox": mailbox}):
 		return frappe.get_doc("Mail Sync History", name)
 
 	return create_mail_sync_history(source, user, mailbox, commit=True)

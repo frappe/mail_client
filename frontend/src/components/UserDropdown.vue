@@ -28,18 +28,14 @@
 					<div class="text-base font-medium text-gray-900 leading-none">
 						<span
 							v-if="
-								branding.data?.brand_name &&
-								branding.data?.brand_name != 'Frappe'
+								branding.data?.brand_name && branding.data?.brand_name != 'Frappe'
 							"
 						>
 							{{ branding.data?.brand_name }}
 						</span>
 						<span v-else> Mail </span>
 					</div>
-					<div
-						v-if="userResource"
-						class="mt-1 text-sm text-gray-700 leading-none"
-					>
+					<div v-if="userResource" class="mt-1 text-sm text-gray-700 leading-none">
 						{{ convertToTitleCase(userResource.data?.full_name) }}
 					</div>
 				</div>
@@ -62,13 +58,7 @@
 import Logo from '@/components/Icons/Logo.vue'
 import { sessionStore } from '@/stores/session'
 import { Dropdown } from 'frappe-ui'
-import {
-	ChevronDown,
-	LogIn,
-	LogOut,
-	User,
-	ArrowRightLeft,
-} from 'lucide-vue-next'
+import { ChevronDown, LogIn, LogOut, User, ArrowRightLeft } from 'lucide-vue-next'
 import { useRouter } from 'vue-router'
 import { convertToTitleCase } from '../utils'
 import { userStore } from '@/stores/user'

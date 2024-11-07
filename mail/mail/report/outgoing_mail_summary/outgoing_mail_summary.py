@@ -2,12 +2,14 @@
 # For license information, please see license.txt
 
 import json
+from datetime import datetime
+
 import frappe
 from frappe import _
-from datetime import datetime
-from frappe.query_builder import Order, Criterion
+from frappe.query_builder import Criterion, Order
 from frappe.query_builder.functions import Date, IfNull
-from mail.utils.user import has_role, is_system_manager, get_user_mailboxes
+
+from mail.utils.user import get_user_mailboxes, has_role, is_system_manager
 
 
 def execute(filters: dict | None = None) -> tuple:

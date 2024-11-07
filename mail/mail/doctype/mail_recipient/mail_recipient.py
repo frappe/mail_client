@@ -2,8 +2,8 @@
 # For license information, please see license.txt
 
 import frappe
-from uuid_utils import uuid7
 from frappe.model.document import Document
+from uuid_utils import uuid7
 
 
 class MailRecipient(Document):

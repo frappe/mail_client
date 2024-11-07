@@ -1,13 +1,14 @@
 import re
-from email import policy
+from email import message_from_string, policy
+from email.header import decode_header, make_header
+from email.utils import parseaddr
 from typing import TYPE_CHECKING
 from urllib.parse import unquote
-from email.utils import parseaddr
-from email import message_from_string
-from mail.utils import parsedate_to_datetime
+
 from frappe.utils import cint, get_datetime_str
 from frappe.utils.file_manager import save_file
-from email.header import decode_header, make_header
+
+from mail.utils import parsedate_to_datetime
 
 if TYPE_CHECKING:
 	from email.message import Message
@@ -98,9 +99,7 @@ class EmailParser:
 
 		return recipients
 
-	def save_attachments(
-		self, doctype: str, docname: str, is_private: bool = True
-	) -> None:
+	def save_attachments(self, doctype: str, docname: str, is_private: bool = True) -> None:
 		"""Saves the attachments of the email."""
 
 		def save_attachment(

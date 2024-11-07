@@ -1,6 +1,8 @@
-import frappe
 from typing import Literal
+
+import frappe
 from frappe.utils.caching import request_cache
+
 from mail.utils.cache import get_user_incoming_mailboxes, get_user_outgoing_mailboxes
 
 
@@ -11,9 +13,7 @@ def is_system_manager(user: str) -> bool:
 	return user == "Administrator" or has_role(user, "System Manager")
 
 
-def get_user_mailboxes(
-	user: str, type: Literal["Incoming", "Outgoing"] | None = None
-) -> list:
+def get_user_mailboxes(user: str, type: Literal["Incoming", "Outgoing"] | None = None) -> list:
 	"""Returns the list of mailboxes associated with the user."""
 
 	if type and type in ["Incoming", "Outgoing"]:
@@ -22,9 +22,7 @@ def get_user_mailboxes(
 		else:
 			return get_user_outgoing_mailboxes(user)
 
-	unique_mailboxes = set(get_user_incoming_mailboxes(user)) | set(
-		get_user_outgoing_mailboxes(user)
-	)
+	unique_mailboxes = set(get_user_incoming_mailboxes(user)) | set(get_user_outgoing_mailboxes(user))
 
 	return list(unique_mailboxes)
 

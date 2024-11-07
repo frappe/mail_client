@@ -50,10 +50,7 @@
 								<X class="h-4 w-4 stroke-1.5" />
 							</button>
 						</div>
-						<ComboboxOptions
-							class="my-1 max-h-[12rem] overflow-y-auto px-1.5"
-							static
-						>
+						<ComboboxOptions class="my-1 max-h-[12rem] overflow-y-auto px-1.5" static>
 							<div
 								class="mt-1.5"
 								v-for="group in groups"
@@ -122,12 +119,7 @@
 </template>
 
 <script setup>
-import {
-	Combobox,
-	ComboboxInput,
-	ComboboxOptions,
-	ComboboxOption,
-} from '@headlessui/vue'
+import { Combobox, ComboboxInput, ComboboxOptions, ComboboxOption } from '@headlessui/vue'
 import { Popover, Button } from 'frappe-ui'
 import { ChevronDown, X } from 'lucide-vue-next'
 import { ref, computed, useAttrs, useSlots, watch, nextTick } from 'vue'
@@ -193,9 +185,7 @@ function close() {
 const groups = computed(() => {
 	if (!props.options || props.options.length == 0) return []
 
-	let groups = props.options[0]?.group
-		? props.options
-		: [{ group: '', items: props.options }]
+	let groups = props.options[0]?.group ? props.options : [{ group: '', items: props.options }]
 
 	return groups
 		.map((group, i) => {
@@ -263,8 +253,7 @@ const inputClasses = computed(() => {
 
 	let variant = props.disabled ? 'disabled' : props.variant
 	let variantClasses = {
-		subtle:
-			'border border-gray-100 bg-gray-100 placeholder-gray-500 hover:border-gray-200 hover:bg-gray-200 focus:bg-white focus:border-gray-500 focus:shadow-sm focus:ring-0 focus-visible:ring-2 focus-visible:ring-gray-400',
+		subtle: 'border border-gray-100 bg-gray-100 placeholder-gray-500 hover:border-gray-200 hover:bg-gray-200 focus:bg-white focus:border-gray-500 focus:shadow-sm focus:ring-0 focus-visible:ring-2 focus-visible:ring-gray-400',
 		outline:
 			'border border-gray-300 bg-white placeholder-gray-500 hover:border-gray-400 hover:shadow-sm focus:bg-white focus:border-gray-500 focus:shadow-sm focus:ring-0 focus-visible:ring-2 focus-visible:ring-gray-400',
 		disabled: [

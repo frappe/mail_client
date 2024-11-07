@@ -27,9 +27,12 @@
 		>
 			<template #icon>
 				<span class="grid h-5 w-6 flex-shrink-0 place-items-center">
-                    <ArrowLeftFromLine class="h-4 w-4 text-gray-700 duration-300 ease-in-out" :class="{
-                        '[transform:rotateY(180deg)]': isSidebarCollapsed
-                    }" />
+					<ArrowLeftFromLine
+						class="h-4 w-4 text-gray-700 duration-300 ease-in-out"
+						:class="{
+							'[transform:rotateY(180deg)]': isSidebarCollapsed,
+						}"
+					/>
 				</span>
 			</template>
 		</SidebarLink>

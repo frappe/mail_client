@@ -4,8 +4,9 @@
 import frappe
 from frappe import _
 from frappe.model.document import Document
-from mail.mail_server import get_mail_server_domain_api
+
 from mail.mail.doctype.mailbox.mailbox import create_postmaster_mailbox
+from mail.mail_server import get_mail_server_domain_api
 
 
 class MailDomain(Document):
@@ -84,14 +85,10 @@ class MailDomain(Document):
 
 		if not errors:
 			self.is_verified = 1
-			frappe.msgprint(
-				_("DNS Records verified successfully."), indicator="green", alert=True
-			)
+			frappe.msgprint(_("DNS Records verified successfully."), indicator="green", alert=True)
 		else:
 			self.is_verified = 0
-			frappe.msgprint(
-				errors, title="DNS Verification Failed", indicator="red", as_list=True
-			)
+			frappe.msgprint(errors, title="DNS Verification Failed", indicator="red", as_list=True)
 
 		if save:
 			self.save()

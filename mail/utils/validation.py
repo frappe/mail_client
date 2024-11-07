@@ -1,4 +1,5 @@
 import re
+
 import frappe
 from frappe import _
 from frappe.utils.caching import request_cache
@@ -10,9 +11,7 @@ def is_valid_host(host: str) -> bool:
 	return bool(re.compile(r"^[a-zA-Z0-9_-]+$").match(host))
 
 
-def is_valid_email_for_domain(
-	email: str, domain_name: str, raise_exception: bool = False
-) -> bool:
+def is_valid_email_for_domain(email: str, domain_name: str, raise_exception: bool = False) -> bool:
 	"""Returns True if the email domain matches with the given domain else False."""
 
 	email_domain = email.split("@")[1]
@@ -36,9 +35,7 @@ def validate_domain_is_enabled_and_verified(domain_name: str) -> None:
 	if frappe.flags.ingore_domain_validation:
 		return
 
-	enabled, is_verified = frappe.db.get_value(
-		"Mail Domain", domain_name, ["enabled", "is_verified"]
-	)
+	enabled, is_verified = frappe.db.get_value("Mail Domain", domain_name, ["enabled", "is_verified"])
 
 	if not enabled:
 		frappe.throw(_("Domain {0} is disabled.").format(frappe.bold(domain_name)))
@@ -55,9 +52,7 @@ def validate_mailbox_for_outgoing(mailbox: str) -> None:
 	if not enabled:
 		frappe.throw(_("Mailbox {0} is disabled.").format(frappe.bold(mailbox)))
 	elif not outgoing:
-		frappe.throw(
-			_("Mailbox {0} is not allowed for Outgoing Mail.").format(frappe.bold(mailbox))
-		)
+		frappe.throw(_("Mailbox {0} is not allowed for Outgoing Mail.").format(frappe.bold(mailbox)))
 
 
 @request_cache
@@ -69,6 +64,4 @@ def validate_mailbox_for_incoming(mailbox: str) -> None:
 	if not enabled:
 		frappe.throw(_("Mailbox {0} is disabled.").format(frappe.bold(mailbox)))
 	elif not incoming:
-		frappe.throw(
-			_("Mailbox {0} is not allowed for Incoming Mail.").format(frappe.bold(mailbox))
-		)
+		frappe.throw(_("Mailbox {0} is not allowed for Incoming Mail.").format(frappe.bold(mailbox)))

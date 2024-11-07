@@ -3,10 +3,11 @@
 
 import frappe
 from frappe import _
-from frappe.utils import cint
-from frappe.model.document import Document
-from mail.mail_server import MailServerAuthAPI
 from frappe.core.api.file import get_max_file_size
+from frappe.model.document import Document
+from frappe.utils import cint
+
+from mail.mail_server import MailServerAuthAPI
 
 
 class MailSettings(Document):
@@ -61,6 +62,4 @@ def validate_mail_settings() -> None:
 	for field in mandatory_fields:
 		if not mail_settings.get(field):
 			field_label = frappe.get_meta("Mail Settings").get_label(field)
-			frappe.throw(
-				_("Please set the {0} in the Mail Settings.").format(frappe.bold(field_label))
-			)
+			frappe.throw(_("Please set the {0} in the Mail Settings.").format(frappe.bold(field_label)))

@@ -4,9 +4,10 @@
 import frappe
 from frappe import _
 from frappe.model.document import Document
+
 from mail.utils.validation import (
-	validate_domain_is_enabled_and_verified,
 	is_valid_email_for_domain,
+	validate_domain_is_enabled_and_verified,
 	validate_mailbox_for_incoming,
 )
 
@@ -38,14 +39,10 @@ class MailAlias(Document):
 
 		for mailbox in self.mailboxes:
 			if mailbox.mailbox == self.alias:
-				frappe.throw(
-					_("Row #{0}: Mailbox cannot be the same as the alias.").format(mailbox.idx)
-				)
+				frappe.throw(_("Row #{0}: Mailbox cannot be the same as the alias.").format(mailbox.idx))
 			elif mailbox.mailbox in mailboxes:
 				frappe.throw(
-					_("Row #{0}: Duplicate mailbox {1}.").format(
-						mailbox.idx, frappe.bold(mailbox.mailbox)
-					)
+					_("Row #{0}: Duplicate mailbox {1}.").format(mailbox.idx, frappe.bold(mailbox.mailbox))
 				)
 
 			validate_mailbox_for_incoming(mailbox.mailbox)

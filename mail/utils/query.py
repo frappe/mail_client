@@ -1,6 +1,7 @@
 import frappe
-from frappe.query_builder import Order, Criterion
-from mail.utils.user import has_role, is_system_manager, get_user_mailboxes
+from frappe.query_builder import Criterion, Order
+
+from mail.utils.user import get_user_mailboxes, has_role, is_system_manager
 
 
 @frappe.whitelist()
@@ -74,7 +75,7 @@ def get_outgoing_mails(
 		if not conditions:
 			return []
 
-		query = query.where((Criterion.any(conditions)))
+		query = query.where(Criterion.any(conditions))
 
 	return query.run(as_dict=False)
 

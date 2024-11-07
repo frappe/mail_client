@@ -5,15 +5,15 @@ frappe.listview_settings["Incoming Mail"] = {
 	refresh: (listview) => {
 		listview.page.add_inner_button("Fetch Emails", () => {
 			fetch_emails_from_mail_server(listview);
-		});;
+		});
 	},
 
 	get_indicator: (doc) => {
 		const status_colors = {
-			"Draft": "grey",
-			"Rejected": "red",
-			"Accepted": "green",
-			"Cancelled": "red",
+			Draft: "grey",
+			Rejected: "red",
+			Accepted: "green",
+			Cancelled: "red",
 		};
 		return [__(doc.status), status_colors[doc.status], "status,=," + doc.status];
 	},
@@ -29,6 +29,6 @@ function fetch_emails_from_mail_server(listview) {
 				message: __("{0} job has been created.", [__("Fetch Emails").bold()]),
 				indicator: "green",
 			});
-		}
+		},
 	});
 }
