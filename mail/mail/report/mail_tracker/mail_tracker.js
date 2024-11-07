@@ -2,7 +2,7 @@
 // For license information, please see license.txt
 
 frappe.query_reports["Mail Tracker"] = {
-	"filters": [
+	filters: [
 		{
 			fieldname: "from_date",
 			label: __("From Date"),
@@ -32,7 +32,17 @@ frappe.query_reports["Mail Tracker"] = {
 			fieldname: "status",
 			label: __("Status"),
 			fieldtype: "Select",
-			options: ["", "Pending", "Failed", "Queued", "Blocked", "Deferred", "Bounced", "Partially Sent", "Sent"],
+			options: [
+				"",
+				"Pending",
+				"Failed",
+				"Queued",
+				"Blocked",
+				"Deferred",
+				"Bounced",
+				"Partially Sent",
+				"Sent",
+			],
 		},
 		{
 			fieldname: "domain_name",
@@ -56,5 +66,5 @@ frappe.query_reports["Mail Tracker"] = {
 			label: __("Tracking ID"),
 			fieldtype: "Data",
 		},
-	]
+	],
 };

@@ -1,10 +1,11 @@
 import frappe
-from mail.utils import enqueue_job
+
 from mail.mail.doctype.incoming_mail.incoming_mail import fetch_emails_from_mail_server
 from mail.mail.doctype.outgoing_mail.outgoing_mail import (
-	transfer_emails_to_mail_server,
 	fetch_and_update_delivery_statuses,
+	transfer_emails_to_mail_server,
 )
+from mail.utils import enqueue_job
 
 
 def enqueue_transfer_emails_to_mail_server() -> None:

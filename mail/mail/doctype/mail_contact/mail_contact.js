@@ -3,12 +3,12 @@
 
 frappe.ui.form.on("Mail Contact", {
 	refresh(frm) {
-        frm.trigger("set_user");
+		frm.trigger("set_user");
 	},
 
-    set_user(frm) {
-        if (frm.doc.__islocal && !frm.doc.user && frappe.session.user) {
-            frm.set_value("user", frappe.session.user);
-        }
-    },
+	set_user(frm) {
+		if (frm.doc.__islocal && !frm.doc.user && frappe.session.user) {
+			frm.set_value("user", frappe.session.user);
+		}
+	},
 });

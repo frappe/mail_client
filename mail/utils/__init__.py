@@ -1,14 +1,15 @@
 import re
-import pytz
-import frappe
-from frappe import _
-from typing import Callable
-from bs4 import BeautifulSoup
+from collections.abc import Callable
 from datetime import datetime
-from frappe.utils.caching import request_cache
-from frappe.utils.background_jobs import get_jobs
 from email.utils import parsedate_to_datetime as parsedate
+
+import frappe
+import pytz
+from bs4 import BeautifulSoup
+from frappe import _
 from frappe.utils import get_datetime, get_datetime_str, get_system_timezone
+from frappe.utils.background_jobs import get_jobs
+from frappe.utils.caching import request_cache
 
 
 @request_cache
@@ -47,9 +48,7 @@ def get_in_reply_to(
 	"""Returns message_id of the mail to which the given mail is a reply to."""
 
 	if in_reply_to_mail_type and in_reply_to_mail_name:
-		return frappe.get_cached_value(
-			in_reply_to_mail_type, in_reply_to_mail_name, "message_id"
-		)
+		return frappe.get_cached_value(in_reply_to_mail_type, in_reply_to_mail_name, "message_id")
 
 	return None
 
@@ -63,9 +62,7 @@ def enqueue_job(method: str | Callable, **kwargs) -> None:
 		frappe.enqueue(method, **kwargs)
 
 
-def convert_to_utc(
-	date_time: datetime | str, from_timezone: str | None = None
-) -> "datetime":
+def convert_to_utc(date_time: datetime | str, from_timezone: str | None = None) -> "datetime":
 	"""Converts the given datetime to UTC timezone."""
 
 	dt = get_datetime(date_time)
@@ -76,9 +73,7 @@ def convert_to_utc(
 	return dt.astimezone(pytz.utc)
 
 
-def parsedate_to_datetime(
-	date_header: str, to_timezone: str | None = None
-) -> "datetime":
+def parsedate_to_datetime(date_header: str, to_timezone: str | None = None) -> "datetime":
 	"""Returns datetime object from parsed date header."""
 
 	dt = parsedate(date_header)
@@ -96,9 +91,7 @@ def parse_iso_datetime(
 	if not to_timezone:
 		to_timezone = get_system_timezone()
 
-	dt = datetime.fromisoformat(datetime_str.replace("Z", "+00:00")).astimezone(
-		pytz.timezone(to_timezone)
-	)
+	dt = datetime.fromisoformat(datetime_str.replace("Z", "+00:00")).astimezone(pytz.timezone(to_timezone))
 
 	return get_datetime_str(dt) if as_str else dt
 

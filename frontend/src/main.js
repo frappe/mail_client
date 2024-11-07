@@ -8,11 +8,7 @@ import dayjs from '@/utils/dayjs'
 import { userStore } from './stores/user'
 import translationPlugin from './translation'
 import { initSocket } from './socket'
-import {
-    setConfig,
-    frappeRequest,
-    pageMetaPlugin,
-} from 'frappe-ui'
+import { setConfig, frappeRequest, pageMetaPlugin } from 'frappe-ui'
 
 let pinia = createPinia()
 let app = createApp(App)

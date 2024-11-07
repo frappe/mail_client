@@ -10,6 +10,4 @@ class MailAliasMailbox(Document):
 
 
 def on_doctype_update() -> None:
-	frappe.db.add_unique(
-		"Mail Alias Mailbox", ["parent", "mailbox"], constraint_name="unique_parent_mailbox"
-	)
+	frappe.db.add_unique("Mail Alias Mailbox", ["parent", "mailbox"], constraint_name="unique_parent_mailbox")

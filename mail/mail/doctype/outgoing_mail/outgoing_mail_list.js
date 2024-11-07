@@ -4,17 +4,17 @@
 frappe.listview_settings["Outgoing Mail"] = {
 	get_indicator: (doc) => {
 		const status_colors = {
-			"Draft": "grey",
-			"Pending": "yellow",
-			"Queuing": "yellow",
-			"Failed": "red",
-			"Queued": "blue",
-			"Blocked": "red",
-			"Deferred": "orange",
-			"Bounced": "pink",
+			Draft: "grey",
+			Pending: "yellow",
+			Queuing: "yellow",
+			Failed: "red",
+			Queued: "blue",
+			Blocked: "red",
+			Deferred: "orange",
+			Bounced: "pink",
 			"Partially Sent": "purple",
-			"Sent": "green",
-			"Cancelled": "red",
+			Sent: "green",
+			Cancelled: "red",
 		};
 		return [__(doc.status), status_colors[doc.status], "status,=," + doc.status];
 	},

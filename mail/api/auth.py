@@ -1,5 +1,6 @@
 import frappe
 from frappe import _
+
 from mail.utils.user import has_role, is_mailbox_owner
 from mail.utils.validation import (
 	validate_mailbox_for_incoming,
@@ -8,9 +9,7 @@ from mail.utils.validation import (
 
 
 @frappe.whitelist(methods=["POST"])
-def validate(
-	mailbox: str | None = None, for_inbound: bool = False, for_outbound: bool = False
-) -> None:
+def validate(mailbox: str | None = None, for_inbound: bool = False, for_outbound: bool = False) -> None:
 	"""Validates the mailbox for inbound and outbound emails."""
 
 	if mailbox:
@@ -30,9 +29,7 @@ def validate_user() -> None:
 	user = frappe.session.user
 
 	if not has_role(user, "Mailbox User"):
-		frappe.throw(
-			_("User {0} is not allowed to access mailboxes.").format(frappe.bold(user))
-		)
+		frappe.throw(_("User {0} is not allowed to access mailboxes.").format(frappe.bold(user)))
 
 
 def validate_mailbox(mailbox: str) -> None:
@@ -42,7 +39,5 @@ def validate_mailbox(mailbox: str) -> None:
 
 	if not is_mailbox_owner(mailbox, user):
 		frappe.throw(
-			_("Mailbox {0} is not associated with user {1}").format(
-				frappe.bold(mailbox), frappe.bold(user)
-			)
+			_("Mailbox {0} is not associated with user {1}").format(frappe.bold(mailbox), frappe.bold(user))
 		)

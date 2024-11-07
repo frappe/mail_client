@@ -1,8 +1,9 @@
-import frappe
 from typing import Any
 from urllib.parse import urljoin
+
+import frappe
 from frappe.frappeclient import FrappeClient, FrappeOAuth2Client
-from frappe.utils import get_datetime, convert_utc_to_system_timezone
+from frappe.utils import convert_utc_to_system_timezone, get_datetime
 
 
 class MailServerAPI:
@@ -19,9 +20,7 @@ class MailServerAPI:
 		self.api_key = api_key
 		self.api_secret = api_secret
 		self.access_token = access_token
-		self.client = self.get_client(
-			self.server, self.api_key, self.api_secret, self.access_token
-		)
+		self.client = self.get_client(self.server, self.api_key, self.api_secret, self.access_token)
 
 	@staticmethod
 	def get_client(
@@ -87,9 +86,7 @@ class MailServerAuthAPI(MailServerAPI):
 class MailServerDomainAPI(MailServerAPI):
 	"""Class to manage domains in the Frappe Mail Server."""
 
-	def add_or_update_domain(
-		self, domain_name: str, mail_client_host: str | None = None
-	) -> dict:
+	def add_or_update_domain(self, domain_name: str, mail_client_host: str | None = None) -> dict:
 		"""Adds or updates a domain in the Frappe Mail Server."""
 
 		endpoint = "/api/method/mail_server.api.domain.add_or_update_domain"
@@ -142,17 +139,13 @@ class MailServerOutboundAPI(MailServerAPI):
 class MailServerInboundAPI(MailServerAPI):
 	"""Class to receive inbound emails from the Frappe Mail Server."""
 
-	def fetch(
-		self, limit: int = 100, last_synced_at: str | None = None
-	) -> dict[str, list[dict] | str]:
+	def fetch(self, limit: int = 100, last_synced_at: str | None = None) -> dict[str, list[dict] | str]:
 		"""Fetches inbound emails from the Frappe Mail Server."""
 
 		endpoint = "/api/method/mail_server.api.inbound.fetch"
 		data = {"limit": limit, "last_synced_at": last_synced_at}
 		result = self.request("GET", endpoint=endpoint, data=data)
-		result["last_synced_at"] = convert_utc_to_system_timezone(
-			get_datetime(result["last_synced_at"])
-		)
+		result["last_synced_at"] = convert_utc_to_system_timezone(get_datetime(result["last_synced_at"]))
 
 		return result
 

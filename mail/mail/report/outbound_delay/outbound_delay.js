@@ -2,7 +2,7 @@
 // For license information, please see license.txt
 
 frappe.query_reports["Outbound Delay"] = {
-	"filters": [
+	filters: [
 		{
 			fieldname: "from_date",
 			label: __("From Date"),
@@ -68,5 +68,5 @@ frappe.query_reports["Outbound Delay"] = {
 			fieldtype: "Check",
 			default: 0,
 		},
-	]
+	],
 };

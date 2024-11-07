@@ -3,37 +3,45 @@
 
 frappe.ui.form.on("Incoming Mail", {
 	refresh(frm) {
-        frm.trigger("add_actions");
+		frm.trigger("add_actions");
 	},
 
-    add_actions(frm) {
-        if (frm.doc.docstatus === 1) {
-            frm.add_custom_button(__("Reply"), () => {
-                frm.trigger("reply");
-            }, __("Actions"));
-            frm.add_custom_button(__("Reply All"), () => {
-                frm.trigger("reply_all");
-            }, __("Actions"));
-        }
-    },
+	add_actions(frm) {
+		if (frm.doc.docstatus === 1) {
+			frm.add_custom_button(
+				__("Reply"),
+				() => {
+					frm.trigger("reply");
+				},
+				__("Actions")
+			);
+			frm.add_custom_button(
+				__("Reply All"),
+				() => {
+					frm.trigger("reply_all");
+				},
+				__("Actions")
+			);
+		}
+	},
 
-    reply(frm) {
-        frappe.model.open_mapped_doc({
+	reply(frm) {
+		frappe.model.open_mapped_doc({
 			method: "mail.mail.doctype.incoming_mail.incoming_mail.reply_to_mail",
 			frm: frm,
-            args: {
-                all: false,
-            },
+			args: {
+				all: false,
+			},
 		});
-    },
+	},
 
-    reply_all(frm) {
-        frappe.model.open_mapped_doc({
+	reply_all(frm) {
+		frappe.model.open_mapped_doc({
 			method: "mail.mail.doctype.incoming_mail.incoming_mail.reply_to_mail",
 			frm: frm,
-            args: {
-                all: true,
-            },
+			args: {
+				all: true,
+			},
 		});
-    }
+	},
 });
