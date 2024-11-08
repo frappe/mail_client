@@ -1,9 +1,9 @@
 [project]
-name = "mail"
+name = "mail_client"
 authors = [
     { name = "Frappe Technologies Pvt. Ltd.", email = "developers@frappe.io"}
 ]
-description = "Frappe Mail"
+description = "Frappe Mail Client"
 requires-python = ">=3.10"
 readme = "README.md"
 dynamic = ["version"]

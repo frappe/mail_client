@@ -25,7 +25,7 @@ function translate(message) {
 
 function fetchTranslations(lang) {
 	createResource({
-		url: 'mail.api.mail.get_translations',
+		url: 'mail_client.api.client.get_translations',
 		cache: 'translations',
 		auto: true,
 		transform: (data) => {

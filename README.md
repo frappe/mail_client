@@ -3,7 +3,7 @@
   <h2>Frappe Mail</h2>
 </div>
 
-Frappe Mail is an open-source email platform built on the [Frappe Framework](https://github.com/frappe/frappe), designed to streamline end-to-end email management. It’s organized into three core components [Client](https://github.com/frappe/mail), [Server](https://github.com/frappe/mail_server), and [Agent](https://github.com/frappe/mail_agent). The Client generates email messages and passes them to the Server for processing. The Server handles essential validations, such as checking user quotas, enforcing limits, and running spam checks. If all checks are cleared, the email is pushed to [RabbitMQ](https://github.com/rabbitmq/rabbitmq-server). The Agent then takes over, with multiple agents available to consume emails from the queue and deliver them through a locally connected [Haraka MTA](https://github.com/haraka/haraka) instance. With simple APIs, Frappe Mail makes it easy to integrate reliable email functionality into your applications.
+Frappe Mail is an open-source email platform built on the [Frappe Framework](https://github.com/frappe/frappe), designed to streamline end-to-end email management. It’s organized into three core components [Client](https://github.com/frappe/mail_client), [Server](https://github.com/frappe/mail_server), and [Agent](https://github.com/frappe/mail_agent). The Client generates email messages and passes them to the Server for processing. The Server handles essential validations, such as checking user quotas, enforcing limits, and running spam checks. If all checks are cleared, the email is pushed to [RabbitMQ](https://github.com/rabbitmq/rabbitmq-server). The Agent then takes over, with multiple agents available to consume emails from the queue and deliver them through a locally connected [Haraka MTA](https://github.com/haraka/haraka) instance. With simple APIs, Frappe Mail makes it easy to integrate reliable email functionality into your applications.
 
 > Note: Frappe Mail Client is designed to work exclusively with the Frappe Mail Server and is not compatible with traditional email servers.
 
@@ -28,16 +28,16 @@ Frappe Mail is an open-source email platform built on the [Frappe Framework](htt
 
 You can install this app using the [bench](https://github.com/frappe/bench) CLI:
 
-1. Install Frappe Mail:
+1. Install Frappe Mail Client:
 
    ```bash
-   bench get-app mail
+   bench get-app mail_client
    ```
 
-2. Create a site with the mail app:
+2. Create a site with the `mail_client` app:
 
    ```bash
-   bench --site sitename.localhost install-app mail
+   bench --site sitename.localhost install-app mail_client
    ```
 
 3. Open the site in the browser:
@@ -48,7 +48,7 @@ You can install this app using the [bench](https://github.com/frappe/bench) CLI:
 
 ## Connecting to the Mail Server
 
-1. **Open Mail Settings:** In the Frappe Mail Client, navigate to **Mail Settings** to configure the connection to your Mail Server.
+1. **Open Mail Client Settings:** In the Frappe Mail Client, navigate to **Mail Client Settings** to configure the connection to your Mail Server.
 
 2. **Add Mail Server Details:** Enter the following details:
 
@@ -151,7 +151,7 @@ Frappe Mail provides three insightful reports to help you analyze email performa
 
 ## Receiving Emails
 
-When an email is sent to your registered domains, the Mail Server processes it and transfers it to your Frappe Mail Client after conducting a spam check. The email will be parsed and accepted if the recipient is valid; otherwise, it will be rejected. If the **Send Notification on Reject** option is enabled in the Mail Settings, a notification email will be sent to the sender when their email is rejected. Additionally, rejected emails are automatically deleted to conserve storage space, in accordance with the **Rejected Mail Retention** setting.
+When an email is sent to your registered domains, the Mail Server processes it and transfers it to your Frappe Mail Client after conducting a spam check. The email will be parsed and accepted if the recipient is valid; otherwise, it will be rejected. If the **Send Notification on Reject** option is enabled in the Mail Client Settings, a notification email will be sent to the sender when their email is rejected. Additionally, rejected emails are automatically deleted to conserve storage space, in accordance with the **Rejected Mail Retention** setting.
 
 ![mail-settings-incoming](docs/screenshots/mail-settings-incoming.png)
 
@@ -389,7 +389,7 @@ These endpoints are for retrieving received emails.
 This app uses `pre-commit` for code formatting and linting. Please [install pre-commit](https://pre-commit.com/#installation) and enable it for this repository:
 
 ```bash
-cd apps/mail
+cd apps/mail_client
 pre-commit install
 ```
 
@@ -402,4 +402,4 @@ Pre-commit is configured to use the following tools for checking and formatting 
 
 ## License
 
-[GNU Affero General Public License v3.0](https://github.com/frappe/mail/blob/develop/license.txt)
+[GNU Affero General Public License v3.0](https://github.com/frappe/mail_client/blob/develop/license.txt)
