@@ -426,15 +426,11 @@ class OutgoingMail(Document):
 				b"Message-ID",
 				b"In-Reply-To",
 			]
-			(
-				dkim_domain,
-				dkim_selector,
-				dkim_private_key,
-			) = self.get_dkim_domain_selector_and_private_key()
+			dkim_private_key = self.get_dkim_private_key()
 			dkim_signature = dkim_sign(
 				message=message.as_string().split("\n", 1)[-1].encode("utf-8"),
-				domain=dkim_domain.encode(),
-				selector=dkim_selector.encode(),
+				domain=self.domain_name.encode(),
+				selector=b"frappemail",
 				privkey=dkim_private_key.encode(),
 				include_headers=include_headers,
 			)
@@ -472,13 +468,10 @@ class OutgoingMail(Document):
 			for recipient in self.recipients:
 				create_mail_contact(self.runtime.mailbox.user, recipient.email, recipient.display_name)
 
-	def get_dkim_domain_selector_and_private_key(self) -> tuple[str, str, str]:
-		"""Returns the DKIM domain, selector, and private key."""
+	def get_dkim_private_key(self) -> str:
+		"""Returns the DKIM private key."""
 
-		dkim_domain = self.runtime.mail_domain.dkim_domain
-		dkim_selector = self.runtime.mail_domain.dkim_selector
-		dkim_private_key = self.runtime.mail_domain.get_password("dkim_private_key")
-		return dkim_domain, dkim_selector, dkim_private_key
+		return self.runtime.mail_domain.get_password("dkim_private_key")
 
 	def _add_recipient(self, type: str, recipient: str | list[str]) -> None:
 		"""Adds the recipients."""
