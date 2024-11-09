@@ -56,9 +56,7 @@ class MailDomain(Document):
 		for record in response["dns_records"]:
 			self.append("dns_records", record)
 
-		self.dkim_domain = response["dkim_domain"]
 		self.inbound_token = response["inbound_token"]
-		self.dkim_selector = response["dkim_selector"]
 		self.dkim_private_key = response["dkim_private_key"]
 
 	@frappe.whitelist()
