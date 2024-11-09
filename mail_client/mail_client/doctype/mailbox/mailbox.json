@@ -156,22 +156,22 @@
  "index_web_pages_for_search": 1,
  "links": [
   {
-   "group": "General",
+   "group": "Reference",
    "link_doctype": "Mail Alias",
    "link_fieldname": "mailbox"
   },
   {
-   "group": "General",
+   "group": "Reference",
    "link_doctype": "Incoming Mail",
    "link_fieldname": "receiver"
   },
   {
-   "group": "General",
+   "group": "Reference",
    "link_doctype": "Outgoing Mail",
    "link_fieldname": "sender"
   }
  ],
- "modified": "2024-11-03 13:10:51.681776",
+ "modified": "2024-11-09 21:32:39.060097",
  "modified_by": "Administrator",
  "module": "Mail Client",
  "name": "Mailbox",

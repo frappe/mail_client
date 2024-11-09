@@ -13,9 +13,6 @@
   "dns_records_section",
   "dns_records",
   "section_break_i51k",
-  "dkim_domain",
-  "dkim_selector",
-  "column_break_gv06",
   "dkim_private_key"
  ],
  "fields": [
@@ -76,30 +73,10 @@
    "fieldtype": "Section Break"
   },
   {
-   "fieldname": "dkim_selector",
-   "fieldtype": "Data",
-   "hidden": 1,
-   "label": "DKIM Selector",
-   "no_copy": 1,
-   "read_only": 1
-  },
-  {
-   "fieldname": "column_break_gv06",
-   "fieldtype": "Column Break"
-  },
-  {
    "fieldname": "dkim_private_key",
    "fieldtype": "Password",
    "hidden": 1,
    "label": "DKIM Private Key",
-   "no_copy": 1,
-   "read_only": 1
-  },
-  {
-   "fieldname": "dkim_domain",
-   "fieldtype": "Data",
-   "hidden": 1,
-   "label": "DKIM Domain",
    "no_copy": 1,
    "read_only": 1
   },
@@ -115,27 +92,27 @@
  "index_web_pages_for_search": 1,
  "links": [
   {
-   "group": "General",
+   "group": "Reference",
    "link_doctype": "Mailbox",
    "link_fieldname": "domain_name"
   },
   {
-   "group": "General",
+   "group": "Reference",
    "link_doctype": "Mail Alias",
    "link_fieldname": "domain_name"
   },
   {
-   "group": "General",
+   "group": "Reference",
    "link_doctype": "Incoming Mail",
    "link_fieldname": "domain_name"
   },
   {
-   "group": "General",
+   "group": "Reference",
    "link_doctype": "Outgoing Mail",
    "link_fieldname": "domain_name"
   }
  ],
- "modified": "2024-11-05 15:46:59.592782",
+ "modified": "2024-11-09 21:32:56.341864",
  "modified_by": "Administrator",
  "module": "Mail Client",
  "name": "Mail Domain",
