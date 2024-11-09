@@ -200,7 +200,7 @@ watch(show, () => {
 })
 
 const sendMail = createResource({
-	url: 'mail.api.outbound.send',
+	url: 'mail_client.api.outbound.send',
 	method: 'POST',
 	makeParams(values) {
 		return {

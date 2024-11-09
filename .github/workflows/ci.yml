@@ -8,7 +8,7 @@ on:
   pull_request:
 
 concurrency:
-  group: develop-mail-${{ github.event.number }}
+  group: develop-mail_client-${{ github.event.number }}
   cancel-in-progress: true
 
 jobs:
@@ -91,10 +91,10 @@ jobs:
       - name: Install
         working-directory: /home/runner/frappe-bench
         run: |
-          bench get-app mail $GITHUB_WORKSPACE
+          bench get-app mail_client $GITHUB_WORKSPACE
           bench setup requirements --dev
           bench new-site --db-root-password root --admin-password admin test_site
-          bench --site test_site install-app mail
+          bench --site test_site install-app mail_client
           bench build
         env:
           CI: 'Yes'
@@ -103,6 +103,6 @@ jobs:
         working-directory: /home/runner/frappe-bench
         run: |
           bench --site test_site set-config allow_tests true
-          bench --site test_site run-tests --app mail
+          bench --site test_site run-tests --app mail_client
         env:
           TYPE: server

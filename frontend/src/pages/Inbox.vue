@@ -77,7 +77,7 @@ const setCurrentMail = (mail) => {
 }
 
 const incomingMails = createListResource({
-	url: 'mail.api.mail.get_incoming_mails',
+	url: 'mail_client.api.client.get_incoming_mails',
 	doctype: 'Incoming Mail',
 	auto: true,
 	start: mailStart.value,

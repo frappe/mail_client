@@ -137,7 +137,7 @@ watchDebounced(
 )
 
 const filterOptions = createResource({
-	url: 'mail.api.mail.get_mail_contacts',
+	url: 'mail_client.api.client.get_mail_contacts',
 	makeParams(values) {
 		return {
 			txt: values.txt,
