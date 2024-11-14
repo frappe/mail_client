@@ -8,12 +8,14 @@
   "enabled",
   "is_verified",
   "column_break_lr3y",
-  "inbound_token",
+  "access_token",
   "newsletter_retention",
   "dns_records_section",
   "dns_records",
   "section_break_i51k",
-  "dkim_private_key"
+  "dkim_private_key",
+  "column_break_jqvh",
+  "dkim_public_key"
  ],
  "fields": [
   {
@@ -70,23 +72,35 @@
   },
   {
    "fieldname": "section_break_i51k",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "hidden": 1,
+   "label": "DKIM Keys"
   },
   {
    "fieldname": "dkim_private_key",
    "fieldtype": "Password",
-   "hidden": 1,
-   "label": "DKIM Private Key",
+   "label": "Private Key",
    "no_copy": 1,
    "read_only": 1
   },
   {
-   "fieldname": "inbound_token",
-   "fieldtype": "Password",
-   "hidden": 1,
-   "label": "Inbound Token",
+   "fieldname": "dkim_public_key",
+   "fieldtype": "Text",
+   "label": "Public Key",
    "no_copy": 1,
    "read_only": 1
+  },
+  {
+   "fieldname": "access_token",
+   "fieldtype": "Password",
+   "hidden": 1,
+   "label": "Access Token",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_jqvh",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -112,7 +126,7 @@
    "link_fieldname": "domain_name"
   }
  ],
- "modified": "2024-11-09 21:32:56.341864",
+ "modified": "2024-11-14 18:22:39.676626",
  "modified_by": "Administrator",
  "module": "Mail Client",
  "name": "Mail Domain",

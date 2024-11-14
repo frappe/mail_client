@@ -31,8 +31,8 @@ def receive_email() -> None:
 		if not mail_domain.enabled:
 			frappe.throw(_("Mail Domain {0} is disabled").format(data["domain_name"]))
 
-		if data["inbound_token"] != mail_domain.get_password("inbound_token"):
-			frappe.throw(_("Invalid Inbound Token"))
+		if data["access_token"] != mail_domain.get_password("access_token"):
+			frappe.throw(_("Invalid Access Token"))
 
 		process_incoming_mail(
 			incoming_mail_log=data["incoming_mail_log"],
