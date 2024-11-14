@@ -666,7 +666,10 @@ class OutgoingMail(Document):
 			message["X-Priority"] = "3"
 			message = message.as_string()
 
-			recipients = list(set([rcpt.email for rcpt in self.recipients]))
+			# Remove duplicate recipients while preserving the order by using `dict.fromkeys()`.
+			# This avoids using a set, which could change the order of recipients.
+			recipients = list(dict.fromkeys([rcpt.email for rcpt in self.recipients]))
+
 			outbound_api = get_mail_server_outbound_api()
 			token = outbound_api.send(self.name, recipients, message)
 

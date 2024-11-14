@@ -50,6 +50,7 @@ class MailServerAPI:
 		params: dict | None = None,
 		data: dict | None = None,
 		json: dict | None = None,
+		files: dict | None = None,
 		headers: dict[str, str] | None = None,
 		timeout: int | tuple[int, int] = (60, 120),
 	) -> Any | None:
@@ -60,12 +61,16 @@ class MailServerAPI:
 		headers = headers or {}
 		headers.update(self.client.headers)
 
+		if files:
+			headers.pop("content-type", None)
+
 		response = self.client.session.request(
 			method=method,
 			url=url,
 			params=params,
 			data=data,
 			json=json,
+			files=files,
 			headers=headers,
 			timeout=timeout,
 		)
@@ -114,13 +119,12 @@ class MailServerOutboundAPI(MailServerAPI):
 	def send(self, outgoing_mail: str, recipients: str | list[str], message: str) -> str:
 		"""Sends an email message to the recipients using the Frappe Mail Server."""
 
+		if isinstance(recipients, list):
+			recipients = ",".join(recipients)
+
 		endpoint = "/api/method/mail_server.api.outbound.send"
-		data = {
-			"outgoing_mail": outgoing_mail,
-			"recipients": recipients,
-			"message": message,
-		}
-		return self.request("POST", endpoint=endpoint, json=data)
+		data = {"outgoing_mail": outgoing_mail, "recipients": recipients}
+		return self.request("POST", endpoint=endpoint, data=data, files={"message": message})
 
 	def fetch_delivery_status(self, outgoing_mail: str, token: str) -> dict:
 		"""Fetches the delivery status of an email from the Frappe Mail Server."""
@@ -133,7 +137,7 @@ class MailServerOutboundAPI(MailServerAPI):
 		"""Fetches the delivery statuses of emails from the Frappe Mail Server."""
 
 		endpoint = "/api/method/mail_server.api.outbound.fetch_delivery_statuses"
-		return self.request("GET", endpoint=endpoint, json={"data": data})
+		return self.request("POST", endpoint=endpoint, json=data)
 
 
 class MailServerInboundAPI(MailServerAPI):
