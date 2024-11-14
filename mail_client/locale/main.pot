@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Mail Client VERSION\n"
 "Report-Msgid-Bugs-To: developers@frappe.io\n"
-"POT-Creation-Date: 2024-11-09 20:22+0553\n"
-"PO-Revision-Date: 2024-11-09 20:22+0553\n"
+"POT-Creation-Date: 2024-11-14 19:15+0553\n"
+"PO-Revision-Date: 2024-11-14 19:15+0553\n"
 "Last-Translator: developers@frappe.io\n"
 "Language-Team: developers@frappe.io\n"
 "MIME-Version: 1.0\n"
@@ -48,6 +48,11 @@ msgstr ""
 #. Option for the 'Status' (Select) field in DocType 'Incoming Mail'
 #: mail_client/mail_client/doctype/incoming_mail/incoming_mail.json
 msgid "Accepted"
+msgstr ""
+
+#. Label of the access_token (Password) field in DocType 'Mail Domain'
+#: mail_client/mail_client/doctype/mail_domain/mail_domain.json
+msgid "Access Token"
 msgstr ""
 
 #. Label of the action_after (Float) field in DocType 'Mail Recipient'
@@ -253,9 +258,10 @@ msgstr ""
 msgid "DKIM Description"
 msgstr ""
 
-#. Label of the dkim_private_key (Password) field in DocType 'Mail Domain'
+#. Label of the section_break_i51k (Section Break) field in DocType 'Mail
+#. Domain'
 #: mail_client/mail_client/doctype/mail_domain/mail_domain.json
-msgid "DKIM Private Key"
+msgid "DKIM Keys"
 msgstr ""
 
 #. Label of the dmarc_pass (Check) field in DocType 'Incoming Mail'
@@ -273,7 +279,7 @@ msgstr ""
 msgid "DNS Records"
 msgstr ""
 
-#: mail_client/mail_client/doctype/mail_domain/mail_domain.py:87
+#: mail_client/mail_client/doctype/mail_domain/mail_domain.py:89
 msgid "DNS Records verified successfully."
 msgstr ""
 
@@ -469,13 +475,6 @@ msgstr ""
 msgid "Future date is not allowed."
 msgstr ""
 
-#. Group in Mail Domain's connections
-#. Group in Mailbox's connections
-#: mail_client/mail_client/doctype/mail_domain/mail_domain.json
-#: mail_client/mail_client/doctype/mailbox/mailbox.json
-msgid "General"
-msgstr ""
-
 #. Label of the host (Data) field in DocType 'Mail Domain DNS Record'
 #: mail_client/mail_client/doctype/mail_domain_dns_record/mail_domain_dns_record.json
 msgid "Host"
@@ -525,11 +524,6 @@ msgstr ""
 msgid "In Reply To Mail {0} - {1} does not exist."
 msgstr ""
 
-#. Label of the inbound_token (Password) field in DocType 'Mail Domain'
-#: mail_client/mail_client/doctype/mail_domain/mail_domain.json
-msgid "Inbound Token"
-msgstr ""
-
 #. Option for the 'Folder' (Select) field in DocType 'Incoming Mail'
 #: mail_client/mail_client/doctype/incoming_mail/incoming_mail.json
 msgid "Inbox"
@@ -564,7 +558,7 @@ msgid "Incoming Mail Log"
 msgstr ""
 
 #: mail_client/api/webhook.py:35
-msgid "Invalid Inbound Token"
+msgid "Invalid Access Token"
 msgstr ""
 
 #: mail_client/mail_client/report/outgoing_mail_summary/outgoing_mail_summary.py:202
@@ -829,11 +823,11 @@ msgstr ""
 msgid "Newsletter Retention (Days)"
 msgstr ""
 
-#: mail_client/mail_client/doctype/mail_domain/mail_domain.py:34
+#: mail_client/mail_client/doctype/mail_domain/mail_domain.py:37
 msgid "Newsletter Retention must be greater than 0."
 msgstr ""
 
-#: mail_client/mail_client/doctype/mail_domain/mail_domain.py:41
+#: mail_client/mail_client/doctype/mail_domain/mail_domain.py:44
 msgid "Newsletter Retention must be less than or equal to {0}."
 msgstr ""
 
@@ -932,6 +926,11 @@ msgstr ""
 msgid "Priority"
 msgstr ""
 
+#. Label of the dkim_private_key (Password) field in DocType 'Mail Domain'
+#: mail_client/mail_client/doctype/mail_domain/mail_domain.json
+msgid "Private Key"
+msgstr ""
+
 #. Label of the processed_after (Float) field in DocType 'Incoming Mail'
 #: mail_client/mail_client/doctype/incoming_mail/incoming_mail.json
 msgid "Processed After (Seconds)"
@@ -946,6 +945,11 @@ msgstr ""
 #. 'Incoming Mail'
 #: mail_client/mail_client/doctype/incoming_mail/incoming_mail.json
 msgid "Processed At - Fetched At"
+msgstr ""
+
+#. Label of the dkim_public_key (Text) field in DocType 'Mail Domain'
+#: mail_client/mail_client/doctype/mail_domain/mail_domain.json
+msgid "Public Key"
 msgstr ""
 
 #. Option for the 'Status' (Select) field in DocType 'Outgoing Mail'
@@ -1007,11 +1011,18 @@ msgstr ""
 msgid "Recipients"
 msgstr ""
 
+#. Group in Mail Domain's connections
+#. Group in Mailbox's connections
+#: mail_client/mail_client/doctype/mail_domain/mail_domain.json
+#: mail_client/mail_client/doctype/mailbox/mailbox.json
+msgid "Reference"
+msgstr ""
+
 #: mail_client/mail_client/doctype/mail_domain/mail_domain.js:20
 msgid "Refresh DNS Records"
 msgstr ""
 
-#: mail_client/mail_client/doctype/mail_domain/mail_domain.js:56
+#: mail_client/mail_client/doctype/mail_domain/mail_domain.js:52
 msgid "Refreshing DNS Records..."
 msgstr ""
 
@@ -1385,7 +1396,7 @@ msgstr ""
 msgid "Verify DNS Records"
 msgstr ""
 
-#: mail_client/mail_client/doctype/mail_domain/mail_domain.js:39
+#: mail_client/mail_client/doctype/mail_domain/mail_domain.js:37
 msgid "Verifying DNS Records..."
 msgstr ""
 

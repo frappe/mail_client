@@ -18,7 +18,10 @@ class MailDomain(Document):
 		self.validate_newsletter_retention()
 
 		if self.is_new():
+			self.access_token = generate_access_token()
+			self.dkim_private_key, self.dkim_public_key = generate_dkim_keys()
 			self.add_or_update_domain_in_mail_server()
+			self.refresh_dns_records(do_not_save=True)
 
 		if not self.enabled:
 			self.is_verified = 0
@@ -51,16 +54,15 @@ class MailDomain(Document):
 		"""Adds or Updates the Domain in the Mail Server."""
 
 		domain_api = get_mail_server_domain_api()
-		response = domain_api.add_or_update_domain(self.domain_name, frappe.utils.get_url())
-
-		for record in response["dns_records"]:
-			self.append("dns_records", record)
-
-		self.inbound_token = response["inbound_token"]
-		self.dkim_private_key = response["dkim_private_key"]
+		domain_api.add_or_update_domain(
+			domain_name=self.domain_name,
+			access_token=self.access_token,
+			dkim_public_key=self.dkim_public_key,
+			mail_client_host=frappe.utils.get_url(),
+		)
 
 	@frappe.whitelist()
-	def refresh_dns_records(self) -> None:
+	def refresh_dns_records(self, do_not_save: bool = False) -> None:
 		"""Refreshes the DNS Records."""
 
 		self.is_verified = 0
@@ -72,10 +74,11 @@ class MailDomain(Document):
 		for record in dns_records:
 			self.append("dns_records", record)
 
-		self.save()
+		if not do_not_save:
+			self.save()
 
 	@frappe.whitelist()
-	def verify_dns_records(self, save: bool = True) -> None:
+	def verify_dns_records(self, do_not_save: bool = False) -> None:
 		"""Verifies the DNS Records."""
 
 		domain_api = get_mail_server_domain_api()
@@ -88,5 +91,52 @@ class MailDomain(Document):
 			self.is_verified = 0
 			frappe.msgprint(errors, title="DNS Verification Failed", indicator="red", as_list=True)
 
-		if save:
+		if not do_not_save:
 			self.save()
+
+
+def generate_access_token() -> str:
+	"""Generates and returns the Access Token."""
+
+	return frappe.generate_hash(length=32)
+
+
+def generate_dkim_keys(key_size: int = 2048) -> tuple[str, str]:
+	"""Generates and returns the DKIM Keys (Private and Public)."""
+
+	def get_filtered_dkim_key(key_pem: str) -> str:
+		"""Returns the filtered DKIM Key."""
+
+		key_pem = "".join(key_pem.split())
+		key_pem = (
+			key_pem.replace("-----BEGINPUBLICKEY-----", "")
+			.replace("-----ENDPUBLICKEY-----", "")
+			.replace("-----BEGINRSAPRIVATEKEY-----", "")
+			.replace("----ENDRSAPRIVATEKEY-----", "")
+		)
+
+		return key_pem
+
+	from cryptography.hazmat.backends import default_backend
+	from cryptography.hazmat.primitives import serialization
+	from cryptography.hazmat.primitives.asymmetric import rsa
+
+	private_key = rsa.generate_private_key(
+		public_exponent=65537, key_size=key_size, backend=default_backend()
+	)
+	public_key = private_key.public_key()
+
+	private_key_pem = private_key.private_bytes(
+		encoding=serialization.Encoding.PEM,
+		format=serialization.PrivateFormat.TraditionalOpenSSL,
+		encryption_algorithm=serialization.NoEncryption(),
+	).decode()
+	public_key_pem = public_key.public_bytes(
+		encoding=serialization.Encoding.PEM,
+		format=serialization.PublicFormat.SubjectPublicKeyInfo,
+	).decode()
+
+	private_key = private_key_pem
+	public_key = get_filtered_dkim_key(public_key_pem)
+
+	return private_key, public_key

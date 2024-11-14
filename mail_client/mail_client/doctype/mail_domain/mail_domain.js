@@ -32,9 +32,7 @@ frappe.ui.form.on("Mail Domain", {
 		frappe.call({
 			doc: frm.doc,
 			method: "verify_dns_records",
-			args: {
-				save: true,
-			},
+			args: {},
 			freeze: true,
 			freeze_message: __("Verifying DNS Records..."),
 			callback: (r) => {
@@ -49,9 +47,7 @@ frappe.ui.form.on("Mail Domain", {
 		frappe.call({
 			doc: frm.doc,
 			method: "refresh_dns_records",
-			args: {
-				save: true,
-			},
+			args: {},
 			freeze: true,
 			freeze_message: __("Refreshing DNS Records..."),
 			callback: (r) => {

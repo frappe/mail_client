@@ -91,11 +91,18 @@ class MailServerAuthAPI(MailServerAPI):
 class MailServerDomainAPI(MailServerAPI):
 	"""Class to manage domains in the Frappe Mail Server."""
 
-	def add_or_update_domain(self, domain_name: str, mail_client_host: str | None = None) -> dict:
-		"""Adds or updates a domain in the Frappe Mail Server."""
+	def add_or_update_domain(
+		self, domain_name: str, access_token: str, dkim_public_key: str, mail_client_host: str | None = None
+	) -> dict:
+		"""Adds or Updates a domain in the Frappe Mail Server."""
 
 		endpoint = "/api/method/mail_server.api.domain.add_or_update_domain"
-		data = {"domain_name": domain_name, "mail_client_host": mail_client_host}
+		data = {
+			"domain_name": domain_name,
+			"access_token": access_token,
+			"dkim_public_key": dkim_public_key,
+			"mail_client_host": mail_client_host,
+		}
 		return self.request("POST", endpoint=endpoint, data=data)
 
 	def get_dns_records(self, domain_name: str) -> list[dict] | None:
