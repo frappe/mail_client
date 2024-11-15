@@ -7,7 +7,7 @@ import frappe
 import pytz
 from bs4 import BeautifulSoup
 from frappe import _
-from frappe.utils import get_datetime, get_datetime_str, get_system_timezone
+from frappe.utils import convert_utc_to_system_timezone, get_datetime, get_datetime_str, get_system_timezone
 from frappe.utils.background_jobs import get_jobs
 from frappe.utils.caching import request_cache
 
@@ -73,14 +73,14 @@ def convert_to_utc(date_time: datetime | str, from_timezone: str | None = None) 
 	return dt.astimezone(pytz.utc)
 
 
-def parsedate_to_datetime(date_header: str, to_timezone: str | None = None) -> "datetime":
+def parsedate_to_datetime(date_header: str) -> "datetime":
 	"""Returns datetime object from parsed date header."""
 
-	dt = parsedate(date_header)
-	if not dt:
+	utc_dt = parsedate(date_header)
+	if not utc_dt:
 		frappe.throw(_("Invalid date format: {0}").format(date_header))
 
-	return dt.astimezone(pytz.timezone(to_timezone or get_system_timezone()))
+	return convert_utc_to_system_timezone(utc_dt)
 
 
 def parse_iso_datetime(
