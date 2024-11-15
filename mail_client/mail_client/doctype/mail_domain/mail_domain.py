@@ -18,6 +18,7 @@ class MailDomain(Document):
 		self.validate_newsletter_retention()
 
 		if self.is_new():
+			self.validate_duplicate()
 			self.access_token = generate_access_token()
 			self.dkim_private_key, self.dkim_public_key = generate_dkim_keys()
 			self.add_or_update_domain_in_mail_server()
@@ -49,6 +50,12 @@ class MailDomain(Document):
 			self.newsletter_retention = frappe.db.get_single_value(
 				"Mail Client Settings", "default_newsletter_retention", cache=True
 			)
+
+	def validate_duplicate(self) -> None:
+		"""Validate if the Mail Domain already exists."""
+
+		if frappe.db.exists("Mail Domain", {"domain_name": self.domain_name}):
+			frappe.throw(_("Mail Domain {0} already exists.").format(frappe.bold(self.domain_name)))
 
 	def add_or_update_domain_in_mail_server(self) -> None:
 		"""Adds or Updates the Domain in the Mail Server."""
@@ -93,6 +100,26 @@ class MailDomain(Document):
 
 		if not do_not_save:
 			self.save()
+
+	@frappe.whitelist()
+	def rotate_dkim_keys(self) -> None:
+		"""Rotates the DKIM Keys."""
+
+		frappe.only_for(["System Manager", "Administrator"])
+		self.dkim_private_key, self.dkim_public_key = generate_dkim_keys()
+		self.add_or_update_domain_in_mail_server()
+		self.save()
+		frappe.msgprint(_("DKIM Keys rotated successfully."), indicator="green", alert=True)
+
+	@frappe.whitelist()
+	def rotate_access_token(self) -> None:
+		"""Rotates the Access Token."""
+
+		frappe.only_for(["System Manager", "Administrator"])
+		self.access_token = generate_access_token()
+		self.add_or_update_domain_in_mail_server()
+		self.save()
+		frappe.msgprint(_("Access Token rotated successfully."), indicator="green", alert=True)
 
 
 def generate_access_token() -> str:
