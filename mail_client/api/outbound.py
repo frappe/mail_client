@@ -1,8 +1,8 @@
-import json
 from email.utils import parseaddr
 
 import frappe
 from frappe import _
+from frappe.utils import cint
 
 from mail_client.mail_client.doctype.outgoing_mail.outgoing_mail import create_outgoing_mail
 
@@ -20,6 +20,7 @@ def send(
 	in_reply_to_mail_name: str | None = None,
 	custom_headers: dict | None = None,
 	attachments: list[dict] | None = None,
+	is_newsletter: bool = False,
 ) -> str:
 	"""Send Mail."""
 
@@ -38,6 +39,7 @@ def send(
 		custom_headers=custom_headers,
 		attachments=attachments,
 		via_api=1,
+		is_newsletter=cint(is_newsletter),
 	)
 
 	return doc.name
@@ -47,107 +49,58 @@ def send(
 def send_raw(
 	from_: str,
 	to: str | list[str],
-	raw_message: str,
+	raw_message: str | None = None,
+	is_newsletter: bool = False,
 ) -> str:
 	"""Send Raw Mail."""
 
 	display_name, sender = parseaddr(from_)
+	raw_message = raw_message or get_message_from_files()
+	if not raw_message:
+		frappe.throw(_("The raw message is required."), frappe.MandatoryError)
+
 	doc = create_outgoing_mail(
 		sender=sender,
 		to=to,
 		display_name=display_name,
 		raw_message=raw_message,
 		via_api=1,
+		is_newsletter=cint(is_newsletter),
 	)
 
 	return doc.name
 
 
+# TODO: Remove
 @frappe.whitelist(methods=["POST"])
-def send_batch() -> list[str]:
-	"""Send Mails in Batch."""
-
-	mails = json.loads(frappe.request.data.decode())
-	validate_batch(mails, mandatory_fields=["from_", "to", "subject"])
-
-	documents = []
-	for mail in mails:
-		mail = get_mail_dict(mail)
-		doc = create_outgoing_mail(**mail)
-		documents.append(doc.name)
-
-	return documents
-
-
-@frappe.whitelist(methods=["POST"])
-def send_raw_batch() -> list[str]:
-	"""Send Raw Mails in Batch."""
-
-	mails = json.loads(frappe.request.data.decode())
-	validate_batch(mails, mandatory_fields=["from_", "to", "raw_message"])
-
-	documents = []
-	for mail in mails:
-		mail = get_mail_dict(mail)
-		doc = create_outgoing_mail(**mail)
-		documents.append(doc.name)
-
-	return documents
-
-
-@frappe.whitelist(methods=["POST"])
-def send_newsletter() -> None:
+def send_newsletter(
+	from_: str,
+	to: str | list[str],
+	raw_message: str | None = None,
+) -> str:
 	"""Send Newsletter."""
 
-	mails = json.loads(frappe.request.data.decode())
+	display_name, sender = parseaddr(from_)
+	raw_message = raw_message or get_message_from_files()
+	if not raw_message:
+		frappe.throw(_("The raw message is required."), frappe.MandatoryError)
 
-	if isinstance(mails, dict):
-		mails = [mails]
+	doc = create_outgoing_mail(
+		sender=sender,
+		to=to,
+		display_name=display_name,
+		raw_message=raw_message,
+		via_api=1,
+		is_newsletter=1,
+	)
 
-	validate_batch(mails, mandatory_fields=["from_", "to"])
-
-	for mail in mails:
-		mail = get_mail_dict(mail)
-		mail["is_newsletter"] = 1
-		create_outgoing_mail(**mail)
-
-
-def validate_batch(mails: list[dict], mandatory_fields: list[str]) -> None:
-	"""Validates the batch data."""
-
-	if len(mails) > 100:
-		raise frappe.ValidationError("Batch size cannot exceed 100.")
-
-	for mail in mails:
-		for field in mandatory_fields:
-			if not mail.get(field):
-				raise frappe.ValidationError(f"{field} is mandatory.")
+	return doc.name
 
 
-def get_mail_dict(data: dict) -> dict:
-	"""Returns the mail dict."""
+def get_message_from_files() -> str | None:
+	"""Returns the message from the files"""
 
-	display_name, sender = parseaddr(data["from_"])
-	mail = {
-		"sender": sender,
-		"to": data["to"],
-		"display_name": display_name,
-		"via_api": 1,
-	}
+	files = frappe._dict(frappe.request.files)
 
-	if data.get("raw_message"):
-		mail["raw_message"] = data["raw_message"]
-	else:
-		mail.update(
-			{
-				"subject": data["subject"],
-				"cc": data.get("cc"),
-				"bcc": data.get("bcc"),
-				"body_html": data.get("html"),
-				"reply_to": data.get("reply_to"),
-				"custom_headers": data.get("headers"),
-				"attachments": data.get("attachments"),
-			}
-		)
-
-	return mail
+	if files and files.get("raw_message"):
+		return files["raw_message"].read().decode("utf-8")
