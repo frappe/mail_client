@@ -101,6 +101,26 @@ class MailDomain(Document):
 		if not do_not_save:
 			self.save()
 
+	@frappe.whitelist()
+	def rotate_dkim_keys(self) -> None:
+		"""Rotates the DKIM Keys."""
+
+		frappe.only_for(["System Manager", "Administrator"])
+		self.dkim_private_key, self.dkim_public_key = generate_dkim_keys()
+		self.add_or_update_domain_in_mail_server()
+		self.save()
+		frappe.msgprint(_("DKIM Keys rotated successfully."), indicator="green", alert=True)
+
+	@frappe.whitelist()
+	def rotate_access_token(self) -> None:
+		"""Rotates the Access Token."""
+
+		frappe.only_for(["System Manager", "Administrator"])
+		self.access_token = generate_access_token()
+		self.add_or_update_domain_in_mail_server()
+		self.save()
+		frappe.msgprint(_("Access Token rotated successfully."), indicator="green", alert=True)
+
 
 def generate_access_token() -> str:
 	"""Generates and returns the Access Token."""
