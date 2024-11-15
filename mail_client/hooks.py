@@ -24,21 +24,6 @@ website_redirects = [
 		"redirect_http_status": 307,
 	},
 	{
-		"source": "/outbound/send-batch",
-		"target": "/api/method/mail_client.api.outbound.send_batch",
-		"redirect_http_status": 307,
-	},
-	{
-		"source": "/outbound/send-raw-batch",
-		"target": "/api/method/mail_client.api.outbound.send_raw_batch",
-		"redirect_http_status": 307,
-	},
-	{
-		"source": "/outbound/send-newsletter",
-		"target": "/api/method/mail_client.api.outbound.send_newsletter",
-		"redirect_http_status": 307,
-	},
-	{
 		"source": "/inbound/pull",
 		"target": "/api/method/mail_client.api.inbound.pull",
 		"redirect_http_status": 307,

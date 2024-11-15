@@ -222,6 +222,7 @@ These endpoints facilitate sending emails from the Frappe Mail Client.
 - `in_reply_to_mail_name` (str | None): Optional reference ID for the email being replied to.
 - `custom_headers` (dict | None): Optional custom headers.
 - `attachments` (list[dict] | None): List of attachments.
+- `is_newsletter` (bool): Optional flag to mark the email as a newsletter. Defaults to False.
 
 **Response:** Returns a UUID (name) of the created Outgoing Mail.
 
@@ -242,6 +243,7 @@ These endpoints facilitate sending emails from the Frappe Mail Client.
 - `from_` (str): Sender's email address.
 - `to` (str | list[str]): Recipient email(s).
 - `raw_message` (str): The complete raw MIME message.
+- `is_newsletter` (bool): Optional flag to mark the email as a newsletter. Defaults to False.
 
 **Response:** Returns the UUID (name) of the created Outgoing Mail.
 
@@ -249,72 +251,6 @@ These endpoints facilitate sending emails from the Frappe Mail Client.
 
 ```json
 { "message": "019300a4-91fc-741f-9fe5-9ade8976637f" }
-```
-
-#### 2.3 Send Batch
-
-**Endpoint:** `POST /outbound/send-batch` or `/api/method/mail.api.outbound.send_batch`
-
-**Description:** Sends multiple email messages in a batch.
-
-**Parameters:** JSON array of email details. Each entry contains `from_`, `to`, `subject`, etc., similar to `/outbound/send`.
-
-**Response:** Returns a list of UUIDs (names) for the created Outgoing Mails.
-
-**Example Response:**
-
-```json
-{
-  "message": [
-    "019300a4-91fc-741f-9fe5-9ade8976637f",
-    "019300a5-2062-7267-8966-603606f9b41b",
-    "01930081-3b5b-7ad4-a837-ff27f55bcbac"
-  ]
-}
-```
-
-#### 2.4 Send Raw Batch
-
-**Endpoint:** `POST /outbound/send-raw-batch` or `/api/method/mail.api.outbound.send_raw_batch`
-
-**Description:** Sends multiple raw MIME messages in a batch.
-
-**Parameters:** JSON array of `from_`, `to`, `raw_message`, similar to `/outbound/send-raw`.
-
-**Response:** Returns a list of UUIDs (names) for the created Outgoing Mails.
-
-**Example Response:**
-
-```json
-{
-  "message": [
-    "019300a4-91fc-741f-9fe5-9ade8976637f",
-    "019300a5-2062-7267-8966-603606f9b41b",
-    "01930081-3b5b-7ad4-a837-ff27f55bcbac"
-  ]
-}
-```
-
-#### 2.5 Send Newsletter
-
-**Endpoint:** `POST /outbound/send-newsletter` or `/api/method/mail.api.outbound.send_newsletter`
-
-**Description:** Sends low-priority newsletters. Works the same as batch email sending but with a priority setting.
-
-**Parameters:** JSON array of newsletter details similar to `/outbound/send-batch` or `/outbound/send-raw-batch`.
-
-**Response:** Returns a list of UUIDs (names) for the created newsletter Outgoing Mails.
-
-**Example Response:**
-
-```json
-{
-  "message": [
-    "019300a4-91fc-741f-9fe5-9ade8976637f",
-    "019300a5-2062-7267-8966-603606f9b41b",
-    "01930081-3b5b-7ad4-a837-ff27f55bcbac"
-  ]
-}
 ```
 
 ### 3. Inbound API
