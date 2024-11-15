@@ -18,6 +18,7 @@ class MailDomain(Document):
 		self.validate_newsletter_retention()
 
 		if self.is_new():
+			self.validate_duplicate()
 			self.access_token = generate_access_token()
 			self.dkim_private_key, self.dkim_public_key = generate_dkim_keys()
 			self.add_or_update_domain_in_mail_server()
@@ -49,6 +50,12 @@ class MailDomain(Document):
 			self.newsletter_retention = frappe.db.get_single_value(
 				"Mail Client Settings", "default_newsletter_retention", cache=True
 			)
+
+	def validate_duplicate(self) -> None:
+		"""Validate if the Mail Domain already exists."""
+
+		if frappe.db.exists("Mail Domain", {"domain_name": self.domain_name}):
+			frappe.throw(_("Mail Domain {0} already exists.").format(frappe.bold(self.domain_name)))
 
 	def add_or_update_domain_in_mail_server(self) -> None:
 		"""Adds or Updates the Domain in the Mail Server."""
