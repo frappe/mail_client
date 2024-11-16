@@ -126,7 +126,7 @@
    "link_fieldname": "domain_name"
   }
  ],
- "modified": "2024-11-14 18:22:39.676626",
+ "modified": "2024-11-16 15:34:25.472358",
  "modified_by": "Administrator",
  "module": "Mail Client",
  "name": "Mail Domain",
@@ -144,7 +144,7 @@
    "write": 1
   }
  ],
- "sort_field": "modified",
+ "sort_field": "creation",
  "sort_order": "DESC",
  "states": [],
  "track_changes": 1

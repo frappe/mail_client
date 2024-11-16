@@ -432,7 +432,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-11-05 16:31:51.970776",
+ "modified": "2024-11-16 15:35:14.385560",
  "modified_by": "Administrator",
  "module": "Mail Client",
  "name": "Incoming Mail",
@@ -469,7 +469,7 @@
   }
  ],
  "show_title_field_in_link": 1,
- "sort_field": "modified",
+ "sort_field": "creation",
  "sort_order": "DESC",
  "states": [],
  "title_field": "subject",

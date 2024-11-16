@@ -196,7 +196,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-11-05 16:00:47.561767",
+ "modified": "2024-11-16 15:34:43.923232",
  "modified_by": "Administrator",
  "module": "Mail Client",
  "name": "Mail Client Settings",
@@ -211,7 +211,7 @@
    "write": 1
   }
  ],
- "sort_field": "modified",
+ "sort_field": "creation",
  "sort_order": "DESC",
  "states": [],
  "track_changes": 1

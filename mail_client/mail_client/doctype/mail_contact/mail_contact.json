@@ -49,7 +49,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-10-21 15:39:39.869636",
+ "modified": "2024-11-16 15:35:35.197481",
  "modified_by": "Administrator",
  "module": "Mail Client",
  "name": "Mail Contact",
@@ -89,7 +89,7 @@
   }
  ],
  "show_title_field_in_link": 1,
- "sort_field": "modified",
+ "sort_field": "creation",
  "sort_order": "DESC",
  "states": [],
  "title_field": "email",

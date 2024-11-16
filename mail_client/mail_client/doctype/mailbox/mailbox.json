@@ -171,7 +171,7 @@
    "link_fieldname": "sender"
   }
  ],
- "modified": "2024-11-09 21:32:39.060097",
+ "modified": "2024-11-16 15:34:54.602967",
  "modified_by": "Administrator",
  "module": "Mail Client",
  "name": "Mailbox",
@@ -209,7 +209,7 @@
    "role": "Mailbox User"
   }
  ],
- "sort_field": "modified",
+ "sort_field": "creation",
  "sort_order": "DESC",
  "states": [],
  "track_changes": 1

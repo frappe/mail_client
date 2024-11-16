@@ -65,7 +65,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-10-21 14:20:19.566926",
+ "modified": "2024-11-16 15:35:24.773591",
  "modified_by": "Administrator",
  "module": "Mail Client",
  "name": "Mail Alias",
@@ -83,7 +83,7 @@
    "write": 1
   }
  ],
- "sort_field": "modified",
+ "sort_field": "creation",
  "sort_order": "DESC",
  "states": [],
  "track_changes": 1
