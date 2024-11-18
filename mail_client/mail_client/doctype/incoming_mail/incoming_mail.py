@@ -264,15 +264,22 @@ def create_incoming_mail(
 
 	if not do_not_save:
 		doc.flags.ignore_links = True
-		doc.save(ignore_permissions=True)
-		if not do_not_submit:
-			try:
+
+		try:
+			doc.insert(ignore_permissions=True)
+
+			if not do_not_submit:
 				doc.submit()
-			except Exception:
-				frappe.log_error(
-					title="Submit Incoming Mail",
-					message=frappe.get_traceback(with_context=True),
-				)
+		except frappe.UniqueValidationError:
+			frappe.log_error(
+				title="Duplicate Incoming Mail",
+				message=frappe.get_traceback(with_context=True),
+			)
+		except Exception:
+			frappe.log_error(
+				title="Create Incoming Mail",
+				message=frappe.get_traceback(with_context=True),
+			)
 
 	return doc
 
@@ -353,3 +360,9 @@ def fetch_emails_from_mail_server() -> None:
 	except Exception:
 		error_log = frappe.get_traceback(with_context=False)
 		frappe.log_error(title="Fetch Emails from Mail Server", message=error_log)
+
+
+def on_doctype_update() -> None:
+	frappe.db.add_unique(
+		"Incoming Mail", ["receiver", "incoming_mail_log"], constraint_name="unique_receiver_mail_log"
+	)

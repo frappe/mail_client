@@ -395,7 +395,8 @@
    "ignore_xss_filter": 1,
    "label": "In Reply To (Message ID)",
    "length": 255,
-   "read_only": 1
+   "read_only": 1,
+   "search_index": 1
   },
   {
    "fieldname": "column_break_pxhn",
@@ -430,7 +431,8 @@
    "fieldtype": "Data",
    "label": "Incoming Mail Log",
    "no_copy": 1,
-   "read_only": 1
+   "read_only": 1,
+   "search_index": 1
   },
   {
    "fieldname": "section_break_vtax",
@@ -441,7 +443,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-11-18 13:33:53.161839",
+ "modified": "2024-11-18 14:12:48.953159",
  "modified_by": "Administrator",
  "module": "Mail Client",
  "name": "Incoming Mail",
