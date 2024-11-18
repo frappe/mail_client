@@ -53,6 +53,7 @@
   "dmarc_description",
   "section_break_qijk",
   "message",
+  "section_break_vtax",
   "amended_from"
  ],
  "fields": [
@@ -119,8 +120,10 @@
    "fieldtype": "Column Break"
   },
   {
+   "collapsible": 1,
    "fieldname": "section_break_eomq",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "label": "Body"
   },
   {
    "fieldname": "display_name",
@@ -149,8 +152,10 @@
    "fieldtype": "Column Break"
   },
   {
+   "collapsible": 1,
    "fieldname": "section_break_qijk",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "label": "Message"
   },
   {
    "fieldname": "spf_description",
@@ -426,13 +431,17 @@
    "label": "Incoming Mail Log",
    "no_copy": 1,
    "read_only": 1
+  },
+  {
+   "fieldname": "section_break_vtax",
+   "fieldtype": "Section Break"
   }
  ],
  "in_create": 1,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-11-16 15:35:14.385560",
+ "modified": "2024-11-18 13:33:53.161839",
  "modified_by": "Administrator",
  "module": "Mail Client",
  "name": "Incoming Mail",

@@ -271,7 +271,7 @@ def create_incoming_mail(
 			except Exception:
 				frappe.log_error(
 					title="Submit Incoming Mail",
-					message=frappe.get_traceback(with_context=False),
+					message=frappe.get_traceback(with_context=True),
 				)
 
 	return doc

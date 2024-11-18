@@ -91,8 +91,11 @@
    "fieldtype": "Section Break"
   },
   {
+   "collapsible": 1,
+   "collapsible_depends_on": "eval: doc.docstatus == 0",
    "fieldname": "section_break_ijwo",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "label": "Body"
   },
   {
    "default": "Draft",
@@ -128,8 +131,10 @@
    "fieldtype": "Column Break"
   },
   {
+   "collapsible": 1,
    "fieldname": "section_break_kops",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "label": "Message"
   },
   {
    "fieldname": "body_plain",
@@ -152,8 +157,11 @@
    "options": "Mail Header"
   },
   {
+   "collapsible": 1,
+   "collapsible_depends_on": "eval: doc.custom_headers.length > 0",
    "fieldname": "section_break_atoq",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "label": "Custom Headers"
   },
   {
    "fieldname": "amended_from",
@@ -316,8 +324,10 @@
   {
    "fieldname": "raw_message",
    "fieldtype": "Code",
+   "hidden": 1,
    "label": "Raw Message",
-   "no_copy": 1
+   "no_copy": 1,
+   "read_only": 1
   },
   {
    "fieldname": "section_break_ubzr",
@@ -461,7 +471,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-11-16 15:35:03.128521",
+ "modified": "2024-11-18 13:43:57.642193",
  "modified_by": "Administrator",
  "module": "Mail Client",
  "name": "Outgoing Mail",
