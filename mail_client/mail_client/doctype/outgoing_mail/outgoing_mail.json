@@ -74,7 +74,8 @@
    "fieldtype": "Table",
    "label": "Recipients",
    "options": "Mail Recipient",
-   "reqd": 1
+   "reqd": 1,
+   "search_index": 1
   },
   {
    "fieldname": "subject",
@@ -154,7 +155,8 @@
    "fieldname": "custom_headers",
    "fieldtype": "Table",
    "label": "Custom Headers",
-   "options": "Mail Header"
+   "options": "Mail Header",
+   "search_index": 1
   },
   {
    "collapsible": 1,
@@ -471,7 +473,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-11-18 13:43:57.642193",
+ "modified": "2024-11-20 10:47:08.592108",
  "modified_by": "Administrator",
  "module": "Mail Client",
  "name": "Outgoing Mail",

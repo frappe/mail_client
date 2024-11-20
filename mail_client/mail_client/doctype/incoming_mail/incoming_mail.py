@@ -1,6 +1,7 @@
 # Copyright (c) 2024, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
+import time
 from email.utils import parseaddr
 from typing import TYPE_CHECKING
 
@@ -341,25 +342,36 @@ def process_incoming_mail(incoming_mail_log: str, message: str, is_spam: bool) -
 def fetch_emails_from_mail_server() -> None:
 	"""Fetches the emails from the mail server."""
 
+	max_failures = 3
+	total_failures = 0
+
 	try:
-		inbound_api = get_mail_server_inbound_api()
-		last_synced_at = frappe.db.get_single_value("Mail Client Settings", "last_synced_at")
+		while True:
+			inbound_api = get_mail_server_inbound_api()
+			last_synced_at = frappe.db.get_single_value("Mail Client Settings", "last_synced_at")
 
-		if last_synced_at:
-			last_synced_at = add_or_update_tzinfo(last_synced_at)
+			if last_synced_at:
+				last_synced_at = add_or_update_tzinfo(last_synced_at)
 
-		result = inbound_api.fetch(last_synced_at=last_synced_at)
+			result = inbound_api.fetch(last_synced_at=last_synced_at)
 
-		for mail in result["mails"]:
-			process_incoming_mail(mail["incoming_mail_log"], mail["message"], mail["is_spam"])
+			frappe.db.set_single_value(
+				"Mail Client Settings", "last_synced_at", result["last_synced_at"], update_modified=False
+			)
 
-		frappe.db.set_single_value(
-			"Mail Client Settings", "last_synced_at", result["last_synced_at"], update_modified=False
-		)
+			if not result["mails"]:
+				break
+
+			for mail in result["mails"]:
+				process_incoming_mail(mail["incoming_mail_log"], mail["message"], mail["is_spam"])
 
 	except Exception:
+		total_failures += 1
 		error_log = frappe.get_traceback(with_context=False)
 		frappe.log_error(title="Fetch Emails from Mail Server", message=error_log)
+
+		if total_failures < max_failures:
+			time.sleep(2**total_failures)
 
 
 def on_doctype_update() -> None:
