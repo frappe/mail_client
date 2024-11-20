@@ -148,7 +148,7 @@ has_permission = {
 }
 
 website_route_rules = [
-	{"from_route": "/client/<path:app_path>", "to_route": "client"},
+	{"from_route": "/mail/<path:app_path>", "to_route": "mail"},
 ]
 
 # DocType Class
@@ -290,7 +290,7 @@ add_to_apps_screen = [
 		"name": "mail_client",
 		"logo": "/assets/mail_client/images/logo.svg",
 		"title": "Mail Client",
-		"route": "/client",
-		"has_permission": "mail_client.api.client.check_app_permission",
+		"route": "/mail",
+		"has_permission": "mail_client.api.mail.check_app_permission",
 	}
 ]

@@ -5,13 +5,14 @@ from bs4 import BeautifulSoup
 from frappe.translate import get_all_translations
 from frappe.utils import is_html
 
-from mail_client.utils.user import has_role
+from mail_client.utils.user import has_role, is_system_manager
 
 
 def check_app_permission() -> bool:
 	"""Returns True if the user has permission to access the app."""
 
-	return has_role(frappe.session.user, "Mailbox User")
+	user = frappe.session.user
+	return has_role(user, "Mailbox User") or is_system_manager(user)
 
 
 @frappe.whitelist(allow_guest=True)

@@ -22,7 +22,7 @@ const routes = [
 ]
 
 let router = createRouter({
-	history: createWebHistory('/client'),
+	history: createWebHistory('/mail'),
 	routes,
 })
 

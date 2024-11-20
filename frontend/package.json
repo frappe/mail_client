@@ -6,7 +6,7 @@
     "dev": "vite",
     "serve": "vite preview",
     "build": "vite build --base=/assets/mail_client/frontend/ && yarn copy-html-entry",
-    "copy-html-entry": "cp ../mail_client/public/frontend/index.html ../mail_client/www/client.html"
+    "copy-html-entry": "cp ../mail_client/public/frontend/index.html ../mail_client/www/mail.html"
   },
   "dependencies": {
     "@vueuse/core": "^10.4.1",
