@@ -57,7 +57,7 @@ class IncomingMail(Document):
 		for field in mandatory_fields:
 			if not self.get(field):
 				field_label = frappe.get_meta(self.doctype).get_label(field)
-				frappe.throw(_(f"{field_label} is mandatory."))
+				frappe.throw(_("{0} is mandatory.").format(field_label))
 
 	def process(self) -> None:
 		"""Processes the Incoming Mail."""

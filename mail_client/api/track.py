@@ -11,7 +11,7 @@ def open() -> None:
 		id = frappe.request.args.get("id")
 
 		if not id:
-			frappe.throw(_(f"Tracking ID is required - {frappe.local.request_ip}."))
+			frappe.throw(_("Tracking ID is required - {0}.").format(frappe.local.request_ip))
 
 		now = frappe.utils.now()
 		OM = frappe.qb.DocType("Outgoing Mail")

@@ -148,7 +148,7 @@ has_permission = {
 }
 
 website_route_rules = [
-	{"from_route": "/mail_client/<path:app_path>", "to_route": "client"},
+	{"from_route": "/client/<path:app_path>", "to_route": "client"},
 ]
 
 # DocType Class
