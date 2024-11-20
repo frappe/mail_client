@@ -6,5 +6,5 @@ tags
 node_modules
 __pycache__
 mail_client/public/frontend
-mail_client/www/client.html
+mail_client/www/mail.html
 .vscode
