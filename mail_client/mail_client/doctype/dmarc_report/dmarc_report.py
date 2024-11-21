@@ -8,12 +8,10 @@ import frappe
 import xmltodict
 from frappe.model.document import Document
 from frappe.utils import cint, convert_utc_to_system_timezone, get_datetime_str
-from uuid_utils import uuid7
 
 
 class DMARCReport(Document):
-	def autoname(self) -> None:
-		self.name = self.report_id or str(uuid7())
+	pass
 
 
 def create_dmarc_report(xml_content: str) -> "DMARCReport":
@@ -66,8 +64,8 @@ def create_dmarc_report(xml_content: str) -> "DMARCReport":
 		source_ip = row["source_ip"]
 		count = row["count"]
 		disposition = policy_evaluated["disposition"]
-		dkim_result = policy_evaluated["dkim"]
-		spf_result = policy_evaluated["spf"]
+		dkim_result = policy_evaluated["dkim"].upper()
+		spf_result = policy_evaluated["spf"].upper()
 		header_from = identifiers["header_from"]
 
 		results = []
@@ -76,7 +74,8 @@ def create_dmarc_report(xml_content: str) -> "DMARCReport":
 				auth_result = [auth_result]
 
 			for result in auth_result:
-				result["auth_type"] = auth_type
+				result["auth_type"] = auth_type.upper()
+				result["result"] = result["result"].upper()
 				results.append(result)
 
 		doc.append(
@@ -95,11 +94,11 @@ def create_dmarc_report(xml_content: str) -> "DMARCReport":
 	doc.flags.ignore_links = True
 
 	try:
-		doc.insert(ignore_permissions=True)
+		doc.insert(ignore_permissions=True, ignore_if_duplicate=True)
 		return doc
-	except frappe.DuplicateEntryError:
+	except frappe.UniqueValidationError:
 		frappe.log_error(
 			title="Duplicate DMARC Report",
 			message=frappe.get_traceback(with_context=True),
 		)
-		return frappe.get_doc("DMARC Report", doc.name)
+		return frappe.get_doc("DMARC Report", {"report_id": doc.report_id})

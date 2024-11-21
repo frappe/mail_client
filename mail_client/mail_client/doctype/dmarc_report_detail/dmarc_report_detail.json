@@ -42,14 +42,14 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "DKIM Result",
-   "options": "\npass\nfail"
+   "options": "\nPASS\nFAIL"
   },
   {
    "fieldname": "spf_result",
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "SPF Result",
-   "options": "\npass\nfail"
+   "options": "\nPASS\nFAIL"
   },
   {
    "fieldname": "header_from",
@@ -86,7 +86,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-11-19 13:34:47.458647",
+ "modified": "2024-11-21 20:57:24.194305",
  "modified_by": "Administrator",
  "module": "Mail Client",
  "name": "DMARC Report Detail",

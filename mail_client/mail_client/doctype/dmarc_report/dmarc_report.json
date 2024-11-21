@@ -1,5 +1,6 @@
 {
  "actions": [],
+ "autoname": "hash",
  "creation": "2024-11-19 11:38:22.846485",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -8,6 +9,7 @@
   "domain_name",
   "policy_published",
   "column_break_kyq2",
+  "report_id",
   "organization",
   "email",
   "extra_contact_info",
@@ -107,16 +109,23 @@
    "no_copy": 1,
    "options": "DMARC Report Detail",
    "read_only": 1
+  },
+  {
+   "fieldname": "report_id",
+   "fieldtype": "Data",
+   "label": "Report ID",
+   "length": 255,
+   "unique": 1
   }
  ],
  "in_create": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-11-19 20:02:12.652268",
+ "modified": "2024-11-21 18:16:14.062611",
  "modified_by": "Administrator",
  "module": "Mail Client",
  "name": "DMARC Report",
- "naming_rule": "Set by user",
+ "naming_rule": "Random",
  "owner": "Administrator",
  "permissions": [
   {

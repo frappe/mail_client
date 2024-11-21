@@ -11,7 +11,7 @@ from frappe.utils import flt
 from mail_client.utils.user import get_user_mailboxes, has_role, is_system_manager
 
 
-def execute(filters: dict | None = None) -> tuple[list, list]:
+def execute(filters: dict | None = None) -> tuple:
 	columns = get_columns()
 	data = get_data(filters)
 	summary = get_summary(data)
