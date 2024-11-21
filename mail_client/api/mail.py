@@ -61,9 +61,11 @@ def get_translations() -> dict:
 def get_incoming_mails(start: int = 0) -> list:
 	"""Returns incoming mails for the current user."""
 
+	mailboxes = frappe.get_all("Mailbox", {"user": frappe.session.user}, pluck="name")
+
 	mails = frappe.get_all(
 		"Incoming Mail",
-		{"receiver": frappe.session.user, "docstatus": 1},
+		{"receiver": ["in", mailboxes], "docstatus": 1},
 		[
 			"name",
 			"sender",
@@ -92,11 +94,7 @@ def get_outgoing_mails(start: int = 0) -> list:
 
 	mails = frappe.get_all(
 		"Outgoing Mail",
-		{
-			"sender": ["in", mailboxes],
-			"docstatus": 1,
-			"folder": "Sent",
-		},
+		{"sender": ["in", mailboxes], "docstatus": 1, "folder": "Sent"},
 		[
 			"name",
 			"subject",
@@ -113,6 +111,7 @@ def get_outgoing_mails(start: int = 0) -> list:
 		start=start,
 		order_by="created_at desc",
 	)
+
 	return get_mail_list(mails, "Outgoing Mail")
 
 
@@ -358,3 +357,17 @@ def get_mail_contacts(txt=None) -> list:
 			contact.update(details)
 
 	return contacts
+
+
+@frappe.whitelist()
+def get_default_outgoing() -> str:
+	"""Returns default outgoing mailbox."""
+
+	return frappe.get_all(
+		"Mailbox",
+		{
+			"user": frappe.session.user,
+			"is_default": 1,
+		},
+		pluck="name",
+	)[0]

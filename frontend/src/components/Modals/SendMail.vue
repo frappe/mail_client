@@ -20,6 +20,14 @@
 				<template #top>
 					<div class="flex flex-col gap-3">
 						<div class="flex items-center gap-2 border-t pt-2.5">
+							<span class="text-xs text-gray-500">{{ __('From') }}:</span>
+							<Link
+								v-model="mail.from"
+								doctype="Mailbox"
+								:filters="{ user: user.data.name }"
+							/>
+						</div>
+						<div class="flex items-center gap-2">
 							<span class="text-xs text-gray-500">{{ __('To') }}:</span>
 							<MultiselectInput
 								class="flex-1 text-sm"
@@ -151,6 +159,7 @@ import {
 } from 'frappe-ui'
 import { reactive, watch, inject, ref, nextTick, computed } from 'vue'
 import { Paperclip, Laugh } from 'lucide-vue-next'
+import Link from '@/components/Controls/Link.vue'
 import EmojiPicker from '@/components/EmojiPicker.vue'
 import MultiselectInput from '@/components/Controls/MultiselectInput.vue'
 import { EditorContent } from '@tiptap/vue-3'
@@ -178,6 +187,7 @@ const props = defineProps({
 })
 
 const mail = reactive({
+	from: '',
 	to: '',
 	cc: '',
 	bcc: '',
@@ -199,12 +209,20 @@ watch(show, () => {
 	}
 })
 
+const defaultOutgoing = createResource({
+	url: 'mail_client.api.mail.get_default_outgoing',
+	auto: true,
+	onSuccess(data) {
+		mail.from = data
+	},
+})
+
 const sendMail = createResource({
 	url: 'mail_client.api.outbound.send',
 	method: 'POST',
 	makeParams(values) {
 		return {
-			from_: `${user.data?.full_name} <${user.data?.name}>`,
+			from_: `${user.data?.full_name} <${mail.from}>`,
 			...mail,
 		}
 	},
