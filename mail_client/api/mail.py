@@ -88,12 +88,14 @@ def get_incoming_mails(start: int = 0) -> list:
 def get_outgoing_mails(start: int = 0) -> list:
 	"""Returns outgoing mails for the current user."""
 
+	mailboxes = frappe.get_all("Mailbox", {"user": frappe.session.user}, pluck="name")
+
 	mails = frappe.get_all(
 		"Outgoing Mail",
 		{
-			"sender": frappe.session.user,
+			"sender": ["in", mailboxes],
 			"docstatus": 1,
-			"status": "Sent",
+			"folder": "Sent",
 		},
 		[
 			"name",
@@ -153,8 +155,9 @@ def get_list_thread(mail) -> list:
 			add_to_thread(reply_mail)
 		if mail.message_id:
 			replica_name = find_replica(mail, mail.mail_type)
-			replica = get_mail_details(replica_name, reverse_type(mail.mail_type), False)
-			add_to_thread(replica)
+			if replica_name:
+				replica = get_mail_details(replica_name, reverse_type(mail.mail_type), False)
+				add_to_thread(replica)
 
 	add_to_thread(mail)
 	return thread
@@ -217,7 +220,8 @@ def get_mail_thread(name, mail_type) -> list:
 		else:
 			replies = []
 			replies += gather_thread_replies(name)
-			replies += gather_thread_replies(original_replica)
+			if original_replica:
+				replies += gather_thread_replies(original_replica)
 
 			for reply in replies:
 				if reply.name not in visited:
