@@ -246,11 +246,12 @@ const defaultOutgoing = createResource({
 })
 
 const createDraftMail = createResource({
-	url: 'mail_client.api.outbound.create_draft_mail',
+	url: 'mail_client.api.outbound.send',
 	method: 'POST',
 	makeParams(values) {
 		return {
 			from_: `${user.data?.full_name} <${mail.from}>`,
+			do_not_submit: true,
 			...mail,
 		}
 	},
