@@ -76,11 +76,6 @@ class OutgoingMail(Document):
 			self.validate_max_message_size()
 
 	def on_submit(self) -> None:
-		if not self.recipients:
-			frappe.throw(
-				_("Please add at least one recipient before sending the mail."), frappe.MandatoryError
-			)
-
 		self.create_mail_contacts()
 
 		status = "Pending"
@@ -175,6 +170,14 @@ class OutgoingMail(Document):
 
 	def validate_recipients(self) -> None:
 		"""Validates the recipients."""
+
+		if not self.recipients:
+			if self.get("_action") == "submit":
+				frappe.throw(
+					_("Please add at least one recipient before sending the mail."), frappe.MandatoryError
+				)
+
+			return
 
 		max_recipients = self.runtime.client_settings.max_recipients
 		if len(self.recipients) > max_recipients:
@@ -478,7 +481,7 @@ class OutgoingMail(Document):
 
 		return self.runtime.mail_domain.get_password("dkim_private_key")
 
-	def _add_recipient(self, type: str, recipient: str | list[str]) -> None:
+	def _add_recipient(self, type: str, recipient: str | list[str] | None = None) -> None:
 		"""Adds the recipients."""
 
 		if not recipient:
