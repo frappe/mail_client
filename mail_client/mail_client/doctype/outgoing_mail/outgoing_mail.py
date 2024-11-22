@@ -76,6 +76,11 @@ class OutgoingMail(Document):
 			self.validate_max_message_size()
 
 	def on_submit(self) -> None:
+		if not self.recipients:
+			frappe.throw(
+				_("Please add at least one recipient before sending the mail."), frappe.MandatoryError
+			)
+
 		self.create_mail_contacts()
 
 		status = "Pending"
