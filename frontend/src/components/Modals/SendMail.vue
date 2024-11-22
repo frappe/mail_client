@@ -203,14 +203,15 @@ const props = defineProps({
 	},
 })
 
-const mail = reactive({
-	from: '',
+const emptyMail = {
 	to: '',
 	cc: '',
 	bcc: '',
 	subject: '',
 	html: '',
-})
+}
+
+const mail = reactive({ ...emptyMail })
 
 watch(show, () => {
 	if (show.value && props.replyDetails) {
@@ -274,6 +275,8 @@ const updateDraftMail = createResource({
 		if (!isSendMail.value) return
 		isSendMail.value = false
 		show.value = false
+		mailID.value = null
+		Object.assign(mail, emptyMail)
 	},
 })
 
