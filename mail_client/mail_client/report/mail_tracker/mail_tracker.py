@@ -91,7 +91,7 @@ def get_columns() -> list[dict]:
 	]
 
 
-def get_data(filters: dict | None = None) -> list[list]:
+def get_data(filters: dict | None = None) -> list[dict]:
 	filters = filters or {}
 
 	OM = frappe.qb.DocType("Outgoing Mail")
