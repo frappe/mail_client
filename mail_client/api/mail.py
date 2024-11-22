@@ -384,6 +384,7 @@ def update_draft_mail(
 	bcc: str | list[str] | None = None,
 	html: str | None = None,
 	attachments: list[dict] | None = None,
+	do_submit: bool = False,
 ):
 	"""Update draft mail."""
 
@@ -400,6 +401,9 @@ def update_draft_mail(
 	doc.body_html = html
 	doc.save()
 	doc._add_attachment(attachments)
+
+	if do_submit:
+		doc.submit()
 
 
 @frappe.whitelist()

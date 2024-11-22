@@ -176,6 +176,7 @@ const bccInput = ref(null)
 const cc = ref(false)
 const bcc = ref(false)
 const emoji = ref()
+const isSendMail = ref(false)
 
 const editor = computed(() => {
 	return textEditor.value.editor
@@ -264,8 +265,14 @@ const updateDraftMail = createResource({
 		return {
 			mail_id: mailID.value,
 			from_: `${user.data?.full_name} <${mail.from}>`,
+			do_submit: isSendMail.value,
 			...mail,
 		}
+	},
+	onSuccess() {
+		if (!isSendMail.value) return
+		isSendMail.value = false
+		show.value = false
 	},
 })
 
@@ -277,27 +284,14 @@ const deleteDraftMail = createResource({
 			mail_id: mailID.value,
 		}
 	},
-})
-
-const sendMail = createResource({
-	url: 'mail_client.api.outbound.send',
-	method: 'POST',
-	makeParams(values) {
-		return {
-			mail_id: mailID.value,
-		}
+	onSuccess() {
+		mailID.value = null
 	},
 })
 
 const send = () => {
-	sendMail.submit(
-		{},
-		{
-			onSuccess() {
-				show.value = false
-			},
-		}
-	)
+	isSendMail.value = true
+	updateDraftMail.submit()
 }
 
 const toggleCC = () => {
