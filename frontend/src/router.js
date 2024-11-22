@@ -19,6 +19,11 @@ const routes = [
 		name: 'Sent',
 		component: () => import('@/pages/Sent.vue'),
 	},
+	{
+		path: '/drafts',
+		name: 'Drafts',
+		component: () => import('@/pages/Drafts.vue'),
+	},
 ]
 
 let router = createRouter({

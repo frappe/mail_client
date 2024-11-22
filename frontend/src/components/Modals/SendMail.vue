@@ -158,6 +158,7 @@ import {
 	Button,
 } from 'frappe-ui'
 import { reactive, watch, inject, ref, nextTick, computed } from 'vue'
+import { watchDebounced } from '@vueuse/core'
 import { Paperclip, Laugh } from 'lucide-vue-next'
 import Link from '@/components/Controls/Link.vue'
 import EmojiPicker from '@/components/EmojiPicker.vue'
@@ -168,6 +169,7 @@ import { validateEmail } from '@/utils'
 const user = inject('$user')
 const attachments = defineModel('attachments')
 const show = defineModel()
+const mailID = ref(null)
 const textEditor = ref(null)
 const ccInput = ref(null)
 const bccInput = ref(null)
@@ -177,6 +179,20 @@ const emoji = ref()
 
 const editor = computed(() => {
 	return textEditor.value.editor
+})
+
+const isMailEmpty = computed(() => {
+	const isSubjectEmpty = !mail.subject.length
+	let isHtmlEmpty = true
+	if (mail.html) {
+		const element = document.createElement('div')
+		element.innerHTML = mail.html
+		isHtmlEmpty = !element.textContent.trim()
+		isHtmlEmpty = Array.from(element.children).some((d) => !d.textContent.trim())
+	}
+	const isRecipientsEmpty = [mail.to, mail.cc, mail.bcc].every((d) => !d.length)
+
+	return isSubjectEmpty && isHtmlEmpty && isRecipientsEmpty
 })
 
 const props = defineProps({
@@ -209,6 +225,17 @@ watch(show, () => {
 	}
 })
 
+watchDebounced(
+	mail,
+	() => {
+		if (mailID.value) {
+			if (isMailEmpty.value) deleteDraftMail.submit()
+			else updateDraftMail.submit()
+		} else if (!isMailEmpty.value) createDraftMail.submit()
+	},
+	{ debounce: 1000 }
+)
+
 const defaultOutgoing = createResource({
 	url: 'mail_client.api.mail.get_default_outgoing',
 	auto: true,
@@ -217,13 +244,47 @@ const defaultOutgoing = createResource({
 	},
 })
 
-const sendMail = createResource({
-	url: 'mail_client.api.outbound.send',
+const createDraftMail = createResource({
+	url: 'mail_client.api.outbound.create_draft_mail',
 	method: 'POST',
 	makeParams(values) {
 		return {
 			from_: `${user.data?.full_name} <${mail.from}>`,
 			...mail,
+		}
+	},
+	onSuccess(data) {
+		mailID.value = data
+	},
+})
+
+const updateDraftMail = createResource({
+	url: 'mail_client.api.mail.update_draft_mail',
+	makeParams(values) {
+		return {
+			mail_id: mailID.value,
+			from_: `${user.data?.full_name} <${mail.from}>`,
+			...mail,
+		}
+	},
+})
+
+const deleteDraftMail = createResource({
+	url: 'mail_client.api.mail.delete_mail',
+	makeParams(values) {
+		return {
+			mail_type: 'Outgoing Mail',
+			mail_id: mailID.value,
+		}
+	},
+})
+
+const sendMail = createResource({
+	url: 'mail_client.api.outbound.send',
+	method: 'POST',
+	makeParams(values) {
+		return {
+			mail_id: mailID.value,
 		}
 	},
 })

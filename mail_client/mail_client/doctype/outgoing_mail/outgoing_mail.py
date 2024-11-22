@@ -476,15 +476,17 @@ class OutgoingMail(Document):
 	def _add_recipient(self, type: str, recipient: str | list[str]) -> None:
 		"""Adds the recipients."""
 
-		if recipient:
-			recipients = [recipient] if isinstance(recipient, str) else recipient
-			for rcpt in recipients:
-				display_name, email = parseaddr(rcpt)
+		if not recipient:
+			return
 
-				if not email:
-					frappe.throw(_("Invalid format for recipient {0}.").format(frappe.bold(rcpt)))
+		recipients = [recipient] if isinstance(recipient, str) else recipient
+		for rcpt in recipients:
+			display_name, email = parseaddr(rcpt)
 
-				self.append("recipients", {"type": type, "email": email, "display_name": display_name})
+			if not email:
+				frappe.throw(_("Invalid format for recipient {0}.").format(frappe.bold(rcpt)))
+
+			self.append("recipients", {"type": type, "email": email, "display_name": display_name})
 
 	def _get_recipients(self, type: str | None = None, as_list: bool = False) -> str | list[str]:
 		"""Returns the recipients."""

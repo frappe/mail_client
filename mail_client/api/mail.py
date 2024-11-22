@@ -1,9 +1,10 @@
 import re
+from email.utils import parseaddr
 
 import frappe
 from bs4 import BeautifulSoup
 from frappe.translate import get_all_translations
-from frappe.utils import is_html
+from frappe.utils import cint, is_html
 
 from mail_client.utils.user import has_role, is_system_manager
 
@@ -250,7 +251,7 @@ def get_thread_from_replies(mail_type, mail_name) -> list:
 	"""Returns the thread from the replies."""
 
 	replies = []
-	emails = frappe.get_all(mail_type, {"in_reply_to_mail_name": mail_name}, pluck="name")
+	emails = frappe.get_all(mail_type, {"in_reply_to_mail_name": mail_name, "docstatus": 1}, pluck="name")
 	for email in emails:
 		reply = get_mail_details(email, mail_type, True)
 		reply.mail_type = mail_type
@@ -371,3 +372,38 @@ def get_default_outgoing() -> str:
 		},
 		pluck="name",
 	)[0]
+
+
+@frappe.whitelist()
+def update_draft_mail(
+	mail_id: str,
+	from_: str,
+	to: str | list[str],
+	subject: str,
+	cc: str | list[str] | None = None,
+	bcc: str | list[str] | None = None,
+	html: str | None = None,
+	attachments: list[dict] | None = None,
+):
+	"""Update draft mail."""
+
+	display_name, sender = parseaddr(from_)
+
+	doc = frappe.get_doc("Outgoing Mail", mail_id)
+	doc.sender = sender
+	doc.display_name = display_name
+	doc.recipients = []
+	doc._add_recipient("To", to)
+	doc._add_recipient("Cc", cc)
+	doc._add_recipient("Bcc", bcc)
+	doc.subject = subject
+	doc.body_html = html
+	doc.save()
+	doc._add_attachment(attachments)
+
+
+@frappe.whitelist()
+def delete_mail(mail_type: str, mail_id: str):
+	"""Delete mail."""
+
+	frappe.delete_doc(mail_type, mail_id)

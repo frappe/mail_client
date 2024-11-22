@@ -8,6 +8,45 @@ from mail_client.mail_client.doctype.outgoing_mail.outgoing_mail import create_o
 
 
 @frappe.whitelist(methods=["POST"])
+def create_draft_mail(
+	from_: str,
+	to: str | list[str],
+	subject: str,
+	cc: str | list[str] | None = None,
+	bcc: str | list[str] | None = None,
+	html: str | None = None,
+	reply_to: str | list[str] | None = None,
+	in_reply_to_mail_type: str | None = None,
+	in_reply_to_mail_name: str | None = None,
+	custom_headers: dict | None = None,
+	attachments: list[dict] | None = None,
+	is_newsletter: bool = False,
+) -> str:
+	"""Create draft mail."""
+
+	display_name, sender = parseaddr(from_)
+	doc = create_outgoing_mail(
+		sender=sender,
+		to=to,
+		display_name=display_name,
+		cc=cc,
+		bcc=bcc,
+		subject=subject,
+		body_html=html,
+		reply_to=reply_to,
+		in_reply_to_mail_type=in_reply_to_mail_type,
+		in_reply_to_mail_name=in_reply_to_mail_name,
+		custom_headers=custom_headers,
+		attachments=attachments,
+		via_api=1,
+		is_newsletter=cint(is_newsletter),
+		do_not_submit=True,
+	)
+
+	return doc.name
+
+
+@frappe.whitelist(methods=["POST"])
 def send(
 	from_: str,
 	to: str | list[str],
