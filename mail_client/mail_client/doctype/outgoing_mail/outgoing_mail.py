@@ -38,6 +38,7 @@ from mail_client.mail_client.doctype.mail_contact.mail_contact import create_mai
 from mail_client.mail_server import get_mail_server_outbound_api
 from mail_client.utils import (
 	convert_html_to_text,
+	get_host_by_ip,
 	get_in_reply_to,
 	get_in_reply_to_mail,
 	parsedate_to_datetime,
@@ -367,6 +368,10 @@ class OutgoingMail(Document):
 
 		def _add_headers(message: MIMEMultipart | Message) -> None:
 			"""Adds the headers to the message."""
+
+			received_header_value = f"from {get_host_by_ip(self.ip_address) or 'unknown-host'} ({self.ip_address}) by {frappe.local.site} (Frappe Mail Client) via API; {formatdate()}"
+			received_header = ("Received", received_header_value)
+			message._headers.insert(0, received_header)
 
 			if self.custom_headers:
 				for header in self.custom_headers:
