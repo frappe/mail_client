@@ -41,7 +41,20 @@
 							</span>
 						</div>
 					</div>
-					<div v-if="mail.folder === 'Drafts'"></div>
+					<div
+						v-if="mail.folder === 'Drafts'"
+						class="flex items-center self-start space-x-2"
+					>
+						<MailDate :datetime="mail.modified" />
+						<Tooltip :text="__('Edit')">
+							<Button
+								icon="edit"
+								variant="ghost"
+								@click="openModal('editDraft', mail.name)"
+							>
+							</Button>
+						</Tooltip>
+					</div>
 					<div v-else class="flex items-center self-start space-x-2">
 						<MailDate :datetime="mail.creation" />
 						<Tooltip :text="__('Reply')">
@@ -83,7 +96,7 @@
 			{{ __('No emails to show') }}
 		</div>
 	</div>
-	<SendMail v-model="showSendModal" :replyDetails="replyDetails" />
+	<SendMail v-model="showSendModal" :mailID="draftMailID" :replyDetails="replyDetails" />
 </template>
 <script setup>
 import { createResource, Avatar, Button, Tooltip } from 'frappe-ui'
@@ -93,6 +106,7 @@ import SendMail from '@/components/Modals/SendMail.vue'
 import MailDate from '@/components/MailDate.vue'
 
 const showSendModal = ref(false)
+const draftMailID = ref(null)
 const dayjs = inject('$dayjs')
 
 const props = defineProps({
@@ -137,6 +151,11 @@ const mailBody = (bodyHTML) => {
 }
 
 const openModal = (type, mail) => {
+	if (type === 'editDraft') {
+		draftMailID.value = mail
+		showSendModal.value = true
+		return
+	}
 	if (props.type == 'Incoming Mail') {
 		replyDetails.to = mail.sender
 	} else {
@@ -175,6 +194,10 @@ watch(
 		mailThread.reload({ mailID: newName })
 	}
 )
+
+watch(showSendModal, (value) => {
+	if (!value) mailThread.reload()
+})
 </script>
 <style>
 .prose

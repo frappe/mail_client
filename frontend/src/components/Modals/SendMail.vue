@@ -152,6 +152,7 @@ import {
 	Dialog,
 	TextEditor,
 	createResource,
+	createDocumentResource,
 	FileUploader,
 	TextEditorFixedMenu,
 	TextInput,
@@ -197,6 +198,10 @@ const isMailEmpty = computed(() => {
 })
 
 const props = defineProps({
+	mailID: {
+		type: String,
+		required: false,
+	},
 	replyDetails: {
 		type: Object,
 		required: false,
@@ -214,19 +219,34 @@ const emptyMail = {
 const mail = reactive({ ...emptyMail })
 
 watch(show, () => {
-	if (show.value && props.replyDetails) {
-		mail.to = props.replyDetails.to.split(',').filter((item) => item != '')
-		mail.cc = props.replyDetails.cc.split(',').filter((item) => item != '')
-		mail.bcc = props.replyDetails.bcc.split(',').filter((item) => item != '')
-		cc.value = mail.cc.length > 0 ? true : false
-		bcc.value = mail.bcc.length > 0 ? true : false
-		mail.subject = props.replyDetails.subject
-		mail.html = props.replyDetails.html
-		mail.in_reply_to_mail_type = props.replyDetails.in_reply_to_mail_type
-		mail.in_reply_to_mail_name = props.replyDetails.in_reply_to_mail_name
+	if (!show.value) {
+		mailID.value = null
+		Object.assign(mail, emptyMail)
+		return
 	}
+
+	if (props.mailID) getDraftMail(props.mailID)
+
+	if (!props.replyDetails) return
+
+	mail.to = props.replyDetails.to.split(',').filter((item) => item != '')
+	mail.cc = props.replyDetails.cc.split(',').filter((item) => item != '')
+	mail.bcc = props.replyDetails.bcc.split(',').filter((item) => item != '')
+	cc.value = mail.cc.length > 0 ? true : false
+	bcc.value = mail.bcc.length > 0 ? true : false
+	mail.subject = props.replyDetails.subject
+	mail.html = props.replyDetails.html
+	mail.in_reply_to_mail_type = props.replyDetails.in_reply_to_mail_type
+	mail.in_reply_to_mail_name = props.replyDetails.in_reply_to_mail_name
 })
 
+watch(
+	() => props.mailID,
+	(val) => {
+		// TODO: use documentresource directly
+		if (val) getDraftMail(val)
+	}
+)
 watchDebounced(
 	mail,
 	() => {
@@ -251,6 +271,7 @@ const createDraftMail = createResource({
 	method: 'POST',
 	makeParams(values) {
 		return {
+			// TODO: use display_name
 			from_: `${user.data?.full_name} <${mail.from}>`,
 			do_not_submit: true,
 			...mail,
@@ -275,8 +296,6 @@ const updateDraftMail = createResource({
 		if (!isSendMail.value) return
 		isSendMail.value = false
 		show.value = false
-		mailID.value = null
-		Object.assign(mail, emptyMail)
 	},
 })
 
@@ -292,6 +311,34 @@ const deleteDraftMail = createResource({
 		mailID.value = null
 	},
 })
+
+const getDraftMail = (name) =>
+	createDocumentResource({
+		doctype: 'Outgoing Mail',
+		name: name,
+		onSuccess(data) {
+			const mailDetails = {
+				from_: `${data.display_name} <${data.sender}>`,
+				subject: data.subject,
+				html: data.body_html,
+				in_reply_to_mail_name: data.in_reply_to_mail_name,
+				in_reply_to_mail_type: data.in_reply_to_mail_type,
+			}
+			for (const recipient of data.recipients) {
+				const recipientType = recipient.type.toLowerCase()
+				if (recipientType in mailDetails) {
+					mailDetails[recipientType].push(recipient.email)
+				} else {
+					mailDetails[recipientType] = [recipient.email]
+				}
+			}
+			mailID.value = name
+			Object.assign(mail, mailDetails)
+			if (mailDetails.cc) cc.value = true
+			if (mailDetails.bcc) bcc.value = true
+			// TODO: don't trigger updateDraftMail
+		},
+	})
 
 const send = () => {
 	isSendMail.value = true
