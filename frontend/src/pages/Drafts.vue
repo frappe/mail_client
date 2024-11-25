@@ -17,14 +17,14 @@
 			</Breadcrumbs>
 			<HeaderActions />
 		</header>
-		<div v-if="outgoingMails.data" class="flex h-[calc(100vh-3.2rem)]">
+		<div v-if="draftMails.data" class="flex h-[calc(100vh-3.2rem)]">
 			<div
 				@scroll="loadMoreEmails"
 				ref="mailSidebar"
 				class="mailSidebar border-r w-1/3 p-2 sticky top-16 overflow-y-scroll overscroll-contain"
 			>
 				<div
-					v-for="(mail, idx) in outgoingMails.data"
+					v-for="(mail, idx) in draftMails.data"
 					@click="openMail(mail)"
 					class="flex flex-col space-y-1 cursor-pointer"
 					:class="{ 'bg-gray-200 rounded': mail.name == currentMail }"
@@ -33,7 +33,7 @@
 					<div
 						:class="{
 							'mx-4 h-[0.25px] border-b border-gray-100':
-								idx < outgoingMails.data.length - 1,
+								idx < draftMails.data.length - 1,
 						}"
 					></div>
 				</div>
@@ -67,13 +67,13 @@ const currentMail = ref(JSON.parse(sessionStorage.getItem('currentOutgoingMail')
 
 onMounted(() => {
 	socket.on('outgoing_mail_sent', (data) => {
-		outgoingMails.reload()
+		draftMails.reload()
 		outgoingMailCount.reload()
 	})
 })
 
-const outgoingMails = createListResource({
-	url: 'mail_client.api.mail.get_outgoing_mails',
+const draftMails = createListResource({
+	url: 'mail_client.api.mail.get_draft_mails',
 	doctype: 'Outgoing Mail',
 	auto: true,
 	start: mailStart.value,
@@ -104,7 +104,7 @@ const outgoingMailCount = createResource({
 })
 
 const loadMoreEmails = useDebounceFn(() => {
-	if (outgoingMails.hasNextPage) outgoingMails.next()
+	if (draftMails.hasNextPage) outgoingMails.next()
 }, 500)
 
 const setCurrentMail = (mail) => {

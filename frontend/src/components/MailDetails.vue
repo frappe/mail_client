@@ -41,7 +41,8 @@
 							</span>
 						</div>
 					</div>
-					<div class="flex items-center self-start space-x-2">
+					<div v-if="mail.folder === 'Drafts'"></div>
+					<div v-else class="flex items-center self-start space-x-2">
 						<MailDate :datetime="mail.creation" />
 						<Tooltip :text="__('Reply')">
 							<Button variant="ghost" @click="openModal('reply', mail)">

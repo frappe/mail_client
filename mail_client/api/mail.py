@@ -88,14 +88,28 @@ def get_incoming_mails(start: int = 0) -> list:
 
 
 @frappe.whitelist()
-def get_outgoing_mails(start: int = 0) -> list:
+def get_sent_mails(start: int = 0) -> list:
+	"""Returns mails from Sent frolder for the current user."""
+
+	return get_outgoing_mails("Sent", start)
+
+
+@frappe.whitelist()
+def get_draft_mails(start: int = 0) -> list:
+	"""Returns mails from Drafts folder for the current user."""
+
+	return get_outgoing_mails("Drafts", start)
+
+
+def get_outgoing_mails(folder: str, start: int = 0) -> list:
 	"""Returns outgoing mails for the current user."""
 
 	mailboxes = get_user_mailboxes(frappe.session.user, "Outgoing")
+	docstatus = 0 if folder == "Drafts" else 1
 
 	mails = frappe.get_all(
 		"Outgoing Mail",
-		{"sender": ["in", mailboxes], "docstatus": 1, "folder": "Sent"},
+		{"sender": ["in", mailboxes], "docstatus": docstatus, "folder": folder},
 		[
 			"name",
 			"subject",
@@ -291,6 +305,7 @@ def get_mail_details(name: str, type: str, include_all_details: bool = False) ->
 		"message_id",
 		"in_reply_to_mail_name",
 		"in_reply_to_mail_type",
+		"folder",
 	]
 
 	mail = frappe.db.get_value(type, name, fields, as_dict=1)
