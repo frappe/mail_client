@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 from frappe.translate import get_all_translations
 from frappe.utils import is_html
 
+from mail_client.utils.cache import get_user_default_mailbox
 from mail_client.utils.user import get_user_mailboxes, has_role, is_system_manager
 
 
@@ -302,6 +303,7 @@ def get_mail_details(name: str, type: str, include_all_details: bool = False) ->
 		"sender",
 		"display_name",
 		"creation",
+		"modified",
 		"message_id",
 		"in_reply_to_mail_name",
 		"in_reply_to_mail_type",
@@ -379,7 +381,7 @@ def get_mail_contacts(txt=None) -> list:
 def get_default_outgoing() -> str | None:
 	"""Returns default outgoing mailbox."""
 
-	return frappe.db.exists({"doctype": "Mailbox", "user": frappe.session.user, "is_default": 1})
+	return get_user_default_mailbox(frappe.session.user)
 
 
 @frappe.whitelist()
