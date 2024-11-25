@@ -4,9 +4,9 @@ from email.utils import parseaddr
 import frappe
 from bs4 import BeautifulSoup
 from frappe.translate import get_all_translations
-from frappe.utils import cint, is_html
+from frappe.utils import is_html
 
-from mail_client.utils.user import has_role, is_system_manager
+from mail_client.utils.user import get_user_mailboxes, has_role, is_system_manager
 
 
 def check_app_permission() -> bool:
@@ -62,7 +62,7 @@ def get_translations() -> dict:
 def get_incoming_mails(start: int = 0) -> list:
 	"""Returns incoming mails for the current user."""
 
-	mailboxes = frappe.get_all("Mailbox", {"user": frappe.session.user}, pluck="name")
+	mailboxes = get_user_mailboxes(frappe.session.user, "Incoming")
 
 	mails = frappe.get_all(
 		"Incoming Mail",
@@ -91,7 +91,7 @@ def get_incoming_mails(start: int = 0) -> list:
 def get_outgoing_mails(start: int = 0) -> list:
 	"""Returns outgoing mails for the current user."""
 
-	mailboxes = frappe.get_all("Mailbox", {"user": frappe.session.user}, pluck="name")
+	mailboxes = get_user_mailboxes(frappe.session.user, "Outgoing")
 
 	mails = frappe.get_all(
 		"Outgoing Mail",
@@ -361,17 +361,10 @@ def get_mail_contacts(txt=None) -> list:
 
 
 @frappe.whitelist()
-def get_default_outgoing() -> str:
+def get_default_outgoing() -> str | None:
 	"""Returns default outgoing mailbox."""
 
-	return frappe.get_all(
-		"Mailbox",
-		{
-			"user": frappe.session.user,
-			"is_default": 1,
-		},
-		pluck="name",
-	)[0]
+	return frappe.db.exists({"doctype": "Mailbox", "user": frappe.session.user, "is_default": 1})
 
 
 @frappe.whitelist()
@@ -390,6 +383,7 @@ def update_draft_mail(
 
 	display_name, sender = parseaddr(from_)
 
+	# TODO: don't rewrite full doc
 	doc = frappe.get_doc("Outgoing Mail", mail_id)
 	doc.sender = sender
 	doc.display_name = display_name

@@ -242,7 +242,7 @@ const defaultOutgoing = createResource({
 	url: 'mail_client.api.mail.get_default_outgoing',
 	auto: true,
 	onSuccess(data) {
-		mail.from = data
+		if (data) mail.from = data
 	},
 })
 
