@@ -5,11 +5,11 @@
 		>
 			<Breadcrumbs :items="breadcrumbs">
 				<template #suffix>
-					<div v-if="outgoingMailCount.data" class="self-end text-xs text-gray-600 ml-2">
+					<div v-if="draftMailsCount.data" class="self-end text-xs text-gray-600 ml-2">
 						{{
 							__('{0} {1}').format(
-								formatNumber(outgoingMailCount.data),
-								outgoingMailCount.data == 1 ? singularize('messages') : 'messages'
+								formatNumber(draftMailsCount.data),
+								draftMailsCount.data == 1 ? singularize('messages') : 'messages'
 							)
 						}}
 					</div>
@@ -68,7 +68,7 @@ const currentMail = ref(JSON.parse(sessionStorage.getItem('currentOutgoingMail')
 onMounted(() => {
 	socket.on('outgoing_mail_sent', (data) => {
 		draftMails.reload()
-		outgoingMailCount.reload()
+		draftMailsCount.reload()
 	})
 })
 
@@ -78,7 +78,7 @@ const draftMails = createListResource({
 	auto: true,
 	start: mailStart.value,
 	pageLength: 50,
-	cache: ['outgoing', user.data?.name],
+	cache: ['draftMails', user.data?.name],
 	onSuccess(data) {
 		mailList.value = mailList.value.concat(data)
 		mailStart.value = mailStart.value + data.length
@@ -88,18 +88,18 @@ const draftMails = createListResource({
 	},
 })
 
-const outgoingMailCount = createResource({
+const draftMailsCount = createResource({
 	url: 'frappe.client.get_count',
 	makeParams(values) {
 		return {
 			doctype: 'Outgoing Mail',
 			filters: {
 				sender: user.data?.name,
-				folder: 'Sent',
+				folder: 'Drafts',
 			},
 		}
 	},
-	cache: ['outgoingMailCount', user.data?.name],
+	cache: ['draftMailsCount', user.data?.name],
 	auto: true,
 })
 

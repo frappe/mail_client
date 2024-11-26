@@ -196,6 +196,7 @@ watch(
 )
 
 watch(showSendModal, (value) => {
+	// TODO: fix this
 	if (!value) mailThread.reload()
 })
 </script>

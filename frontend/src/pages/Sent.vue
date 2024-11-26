@@ -5,11 +5,11 @@
 		>
 			<Breadcrumbs :items="breadcrumbs">
 				<template #suffix>
-					<div v-if="outgoingMailCount.data" class="self-end text-xs text-gray-600 ml-2">
+					<div v-if="sentMailsCount.data" class="self-end text-xs text-gray-600 ml-2">
 						{{
 							__('{0} {1}').format(
-								formatNumber(outgoingMailCount.data),
-								outgoingMailCount.data == 1 ? singularize('messages') : 'messages'
+								formatNumber(sentMailsCount.data),
+								sentMailsCount.data == 1 ? singularize('messages') : 'messages'
 							)
 						}}
 					</div>
@@ -17,14 +17,14 @@
 			</Breadcrumbs>
 			<HeaderActions />
 		</header>
-		<div v-if="outgoingMails.data" class="flex h-[calc(100vh-3.2rem)]">
+		<div v-if="sentMails.data" class="flex h-[calc(100vh-3.2rem)]">
 			<div
 				@scroll="loadMoreEmails"
 				ref="mailSidebar"
 				class="mailSidebar border-r w-1/3 p-2 sticky top-16 overflow-y-scroll overscroll-contain"
 			>
 				<div
-					v-for="(mail, idx) in outgoingMails.data"
+					v-for="(mail, idx) in sentMails.data"
 					@click="openMail(mail)"
 					class="flex flex-col space-y-1 cursor-pointer"
 					:class="{ 'bg-gray-200 rounded': mail.name == currentMail }"
@@ -33,7 +33,7 @@
 					<div
 						:class="{
 							'mx-4 h-[0.25px] border-b border-gray-100':
-								idx < outgoingMails.data.length - 1,
+								idx < sentMails.data.length - 1,
 						}"
 					></div>
 				</div>
@@ -67,18 +67,18 @@ const currentMail = ref(JSON.parse(sessionStorage.getItem('currentOutgoingMail')
 
 onMounted(() => {
 	socket.on('outgoing_mail_sent', (data) => {
-		outgoingMails.reload()
-		outgoingMailCount.reload()
+		sentMails.reload()
+		sentMailsCount.reload()
 	})
 })
 
-const outgoingMails = createListResource({
+const sentMails = createListResource({
 	url: 'mail_client.api.mail.get_sent_mails',
 	doctype: 'Outgoing Mail',
 	auto: true,
 	start: mailStart.value,
 	pageLength: 50,
-	cache: ['outgoing', user.data?.name],
+	cache: ['sentMails', user.data?.name],
 	onSuccess(data) {
 		mailList.value = mailList.value.concat(data)
 		mailStart.value = mailStart.value + data.length
@@ -88,7 +88,7 @@ const outgoingMails = createListResource({
 	},
 })
 
-const outgoingMailCount = createResource({
+const sentMailsCount = createResource({
 	url: 'frappe.client.get_count',
 	makeParams(values) {
 		return {
@@ -99,12 +99,12 @@ const outgoingMailCount = createResource({
 			},
 		}
 	},
-	cache: ['outgoingMailCount', user.data?.name],
+	cache: ['sentMailsCount', user.data?.name],
 	auto: true,
 })
 
 const loadMoreEmails = useDebounceFn(() => {
-	if (outgoingMails.hasNextPage) outgoingMails.next()
+	if (sentMails.hasNextPage) outgoingMails.next()
 }, 500)
 
 const setCurrentMail = (mail) => {
