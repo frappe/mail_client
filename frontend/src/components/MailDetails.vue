@@ -96,7 +96,12 @@
 			{{ __('No emails to show') }}
 		</div>
 	</div>
-	<SendMail v-model="showSendModal" :mailID="draftMailID" :replyDetails="replyDetails" />
+	<SendMail
+		v-model="showSendModal"
+		:mailID="draftMailID"
+		:replyDetails="replyDetails"
+		@reloadMailThread="mailThread.reload()"
+	/>
 </template>
 <script setup>
 import { createResource, Avatar, Button, Tooltip } from 'frappe-ui'
@@ -194,11 +199,6 @@ watch(
 		mailThread.reload({ mailID: newName })
 	}
 )
-
-watch(showSendModal, (value) => {
-	// TODO: fix this
-	if (!value) mailThread.reload()
-})
 </script>
 <style>
 .prose

@@ -208,6 +208,8 @@ const props = defineProps({
 	},
 })
 
+const emit = defineEmits(['reloadMailThread'])
+
 const emptyMail = {
 	to: '',
 	cc: '',
@@ -218,11 +220,13 @@ const emptyMail = {
 
 const mail = reactive({ ...emptyMail })
 
-watch(show, () => {
+watch(show, async () => {
 	if (!show.value) {
 		if (mailID.value) {
-			if (isMailEmpty.value) deleteDraftMail.submit()
-			else updateDraftMail.submit()
+			if (isMailEmpty.value) await deleteDraftMail.submit()
+			else await updateDraftMail.submit()
+			emit('reloadMailThread')
+
 			mailID.value = null
 			Object.assign(mail, emptyMail)
 		}
@@ -303,6 +307,7 @@ const updateDraftMail = createResource({
 	},
 })
 
+// TODO: delete using documentresource directly
 const deleteDraftMail = createResource({
 	url: 'mail_client.api.mail.delete_mail',
 	makeParams(values) {
