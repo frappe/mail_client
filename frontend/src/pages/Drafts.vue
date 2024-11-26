@@ -63,7 +63,7 @@ const socket = inject('$socket')
 const user = inject('$user')
 const mailStart = ref(0)
 const mailList = ref([])
-const currentMail = ref(JSON.parse(sessionStorage.getItem('currentOutgoingMail')))
+const currentMail = ref(JSON.parse(sessionStorage.getItem('currentDraftMail')))
 
 onMounted(() => {
 	socket.on('outgoing_mail_sent', (data) => {
@@ -83,7 +83,7 @@ const draftMails = createListResource({
 		mailList.value = mailList.value.concat(data)
 		mailStart.value = mailStart.value + data.length
 		if (!currentMail.value && mailList.value.length) {
-			setCurrentMail(mailList.value[0].name)
+			openMail(mailList.value[0])
 		}
 	},
 })
@@ -108,7 +108,7 @@ const loadMoreEmails = useDebounceFn(() => {
 }, 500)
 
 const setCurrentMail = (mail) => {
-	sessionStorage.setItem('currentOutgoingMail', JSON.stringify(mail))
+	sessionStorage.setItem('currentDraftMail', JSON.stringify(mail))
 }
 
 const openMail = (mail) => {
