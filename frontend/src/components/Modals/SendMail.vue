@@ -220,8 +220,12 @@ const mail = reactive({ ...emptyMail })
 
 watch(show, () => {
 	if (!show.value) {
-		mailID.value = null
-		Object.assign(mail, emptyMail)
+		if (mailID.value) {
+			if (isMailEmpty.value) deleteDraftMail.submit()
+			else updateDraftMail.submit()
+			mailID.value = null
+			Object.assign(mail, emptyMail)
+		}
 		return
 	}
 
