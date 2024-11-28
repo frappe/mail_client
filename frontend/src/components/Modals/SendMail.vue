@@ -166,6 +166,7 @@ import EmojiPicker from '@/components/EmojiPicker.vue'
 import MultiselectInput from '@/components/Controls/MultiselectInput.vue'
 import { EditorContent } from '@tiptap/vue-3'
 import { validateEmail } from '@/utils'
+import { userStore } from '@/stores/user'
 
 const user = inject('$user')
 const attachments = defineModel('attachments')
@@ -178,6 +179,7 @@ const cc = ref(false)
 const bcc = ref(false)
 const emoji = ref()
 const isSendMail = ref(false)
+const { setCurrentMail } = userStore()
 
 const editor = computed(() => {
 	return textEditor.value.editor
@@ -318,6 +320,7 @@ const deleteDraftMail = createResource({
 	},
 	onSuccess() {
 		mailID.value = null
+		setCurrentMail('draft', null)
 	},
 })
 

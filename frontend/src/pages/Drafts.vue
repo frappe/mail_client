@@ -25,9 +25,9 @@
 			>
 				<div
 					v-for="(mail, idx) in draftMails.data"
-					@click="openMail(mail)"
+					@click="setCurrentMail('draft', mail.name)"
 					class="flex flex-col space-y-1 cursor-pointer"
-					:class="{ 'bg-gray-200 rounded': mail.name == currentMail }"
+					:class="{ 'bg-gray-200 rounded': mail.name == currentMail.draft }"
 				>
 					<SidebarDetail :mail="mail" />
 					<div
@@ -45,32 +45,44 @@
 				/>
 			</div>
 			<div class="flex-1 overflow-auto w-2/3">
-				<MailDetails :mailID="currentMail" type="Outgoing Mail" />
+				<MailDetails :mailID="currentMail.draft" type="Outgoing Mail" />
 			</div>
 		</div>
 	</div>
 </template>
 <script setup>
 import { Breadcrumbs, createResource, createListResource } from 'frappe-ui'
-import { computed, inject, ref, onMounted } from 'vue'
+import { computed, inject, ref, watch, onMounted } from 'vue'
 import HeaderActions from '@/components/HeaderActions.vue'
 import { formatNumber, startResizing, singularize } from '@/utils'
 import MailDetails from '@/components/MailDetails.vue'
 import { useDebounceFn } from '@vueuse/core'
 import SidebarDetail from '@/components/SidebarDetail.vue'
+import { userStore } from '@/stores/user'
 
 const socket = inject('$socket')
 const user = inject('$user')
 const mailStart = ref(0)
 const mailList = ref([])
-const currentMail = ref(JSON.parse(sessionStorage.getItem('currentDraftMail')))
+const { currentMail, setCurrentMail } = userStore()
+
+const reloadDrafts = () => {
+	draftMails.reload()
+	draftMailsCount.reload()
+}
 
 onMounted(() => {
 	socket.on('outgoing_mail_sent', (data) => {
-		draftMails.reload()
-		draftMailsCount.reload()
+		reloadDrafts()
 	})
 })
+
+watch(
+	() => currentMail.draft,
+	(val) => {
+		if (!val) reloadDrafts()
+	}
+)
 
 const draftMails = createListResource({
 	url: 'mail_client.api.mail.get_draft_mails',
@@ -82,8 +94,8 @@ const draftMails = createListResource({
 	onSuccess(data) {
 		mailList.value = mailList.value.concat(data)
 		mailStart.value = mailStart.value + data.length
-		if (!currentMail.value && mailList.value.length) {
-			openMail(mailList.value[0])
+		if (!currentMail.draft && mailList.value.length) {
+			setCurrentMail('draft', mailList.value[0].name)
 		}
 	},
 })
@@ -106,15 +118,6 @@ const draftMailsCount = createResource({
 const loadMoreEmails = useDebounceFn(() => {
 	if (draftMails.hasNextPage) outgoingMails.next()
 }, 500)
-
-const setCurrentMail = (mail) => {
-	sessionStorage.setItem('currentDraftMail', JSON.stringify(mail))
-}
-
-const openMail = (mail) => {
-	currentMail.value = mail.name
-	setCurrentMail(mail.name)
-}
 
 const breadcrumbs = computed(() => {
 	return [

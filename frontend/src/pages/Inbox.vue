@@ -25,9 +25,9 @@
 			>
 				<div
 					v-for="(mail, idx) in incomingMails.data"
-					@click="openMail(mail)"
+					@click="setCurrentMail('incoming', mail.name)"
 					class="flex flex-col space-y-1 cursor-pointer"
-					:class="{ 'bg-gray-200 rounded': mail.name == currentMail }"
+					:class="{ 'bg-gray-200 rounded': mail.name == currentMail.incoming }"
 				>
 					<SidebarDetail :mail="mail" />
 					<div
@@ -45,7 +45,7 @@
 				/>
 			</div>
 			<div class="flex-1 overflow-auto w-2/3">
-				<MailDetails :mailID="currentMail" type="Incoming Mail" />
+				<MailDetails :mailID="currentMail.incoming" type="Incoming Mail" />
 			</div>
 		</div>
 	</div>
@@ -58,12 +58,13 @@ import HeaderActions from '@/components/HeaderActions.vue'
 import MailDetails from '@/components/MailDetails.vue'
 import { useDebounceFn } from '@vueuse/core'
 import SidebarDetail from '@/components/SidebarDetail.vue'
+import { userStore } from '@/stores/user'
 
 const socket = inject('$socket')
 const user = inject('$user')
 const mailStart = ref(0)
 const mailList = ref([])
-const currentMail = ref(JSON.parse(sessionStorage.getItem('currentIncomingMail')))
+const { currentMail, setCurrentMail } = userStore()
 
 onMounted(() => {
 	socket.on('incoming_mail_received', (data) => {
@@ -71,10 +72,6 @@ onMounted(() => {
 		incomingMailCount.reload()
 	})
 })
-
-const setCurrentMail = (mail) => {
-	sessionStorage.setItem('currentIncomingMail', JSON.stringify(mail))
-}
 
 const incomingMails = createListResource({
 	url: 'mail_client.api.mail.get_incoming_mails',
@@ -86,9 +83,8 @@ const incomingMails = createListResource({
 	onSuccess(data) {
 		mailList.value = mailList.value.concat(data)
 		mailStart.value = mailStart.value + data.length
-		if (!currentMail.value && mailList.value.length) {
-			currentMail.value = mailList.value[0].name
-			setCurrentMail(mailList.value[0].name)
+		if (!currentMail.incoming && mailList.value.length) {
+			setCurrentMail('incoming', mailList.value[0].name)
 		}
 	},
 })
@@ -110,11 +106,6 @@ const incomingMailCount = createResource({
 const loadMoreEmails = useDebounceFn(() => {
 	if (incomingMails.hasNextPage) incomingMails.next()
 }, 500)
-
-const openMail = (mail = null) => {
-	currentMail.value = mail.name
-	setCurrentMail(mail.name)
-}
 
 const breadcrumbs = computed(() => {
 	return [

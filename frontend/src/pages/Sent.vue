@@ -25,9 +25,9 @@
 			>
 				<div
 					v-for="(mail, idx) in sentMails.data"
-					@click="openMail(mail)"
+					@click="setCurrentMail('sent', mail.name)"
 					class="flex flex-col space-y-1 cursor-pointer"
-					:class="{ 'bg-gray-200 rounded': mail.name == currentMail }"
+					:class="{ 'bg-gray-200 rounded': mail.name == currentMail.sent }"
 				>
 					<SidebarDetail :mail="mail" />
 					<div
@@ -45,7 +45,7 @@
 				/>
 			</div>
 			<div class="flex-1 overflow-auto w-2/3">
-				<MailDetails :mailID="currentMail" type="Outgoing Mail" />
+				<MailDetails :mailID="currentMail.sent" type="Outgoing Mail" />
 			</div>
 		</div>
 	</div>
@@ -58,12 +58,13 @@ import { formatNumber, startResizing, singularize } from '@/utils'
 import MailDetails from '@/components/MailDetails.vue'
 import { useDebounceFn } from '@vueuse/core'
 import SidebarDetail from '@/components/SidebarDetail.vue'
+import { userStore } from '@/stores/user'
 
 const socket = inject('$socket')
 const user = inject('$user')
 const mailStart = ref(0)
 const mailList = ref([])
-const currentMail = ref(JSON.parse(sessionStorage.getItem('currentSentMail')))
+const { currentMail, setCurrentMail } = userStore()
 
 onMounted(() => {
 	socket.on('outgoing_mail_sent', (data) => {
@@ -82,8 +83,8 @@ const sentMails = createListResource({
 	onSuccess(data) {
 		mailList.value = mailList.value.concat(data)
 		mailStart.value = mailStart.value + data.length
-		if (!currentMail.value && mailList.value.length) {
-			openMail(mailList.value[0])
+		if (!currentMail.sent && mailList.value.length) {
+			setCurrentMail('sent', mailList.value[0].name)
 		}
 	},
 })
@@ -106,15 +107,6 @@ const sentMailsCount = createResource({
 const loadMoreEmails = useDebounceFn(() => {
 	if (sentMails.hasNextPage) outgoingMails.next()
 }, 500)
-
-const setCurrentMail = (mail) => {
-	sessionStorage.setItem('currentSentMail', JSON.stringify(mail))
-}
-
-const openMail = (mail) => {
-	currentMail.value = mail.name
-	setCurrentMail(mail.name)
-}
 
 const breadcrumbs = computed(() => {
 	return [
