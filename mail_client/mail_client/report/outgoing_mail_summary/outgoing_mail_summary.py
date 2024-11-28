@@ -155,13 +155,18 @@ def get_data(filters: dict | None = None) -> list[dict]:
 
 	for field in [
 		"name",
-		"domain_name",
 		"ip_address",
-		"sender",
 		"message_id",
 	]:
 		if filters.get(field):
 			query = query.where(OM[field] == filters.get(field))
+
+	for field in [
+		"domain_name",
+		"sender",
+	]:
+		if filters.get(field):
+			query = query.where(OM[field].isin(filters.get(field)))
 
 	for field in ["status", "email"]:
 		if filters.get(field):
