@@ -63,7 +63,6 @@ import { userStore } from '@/stores/user'
 const socket = inject('$socket')
 const user = inject('$user')
 const mailStart = ref(0)
-const mailList = ref([])
 const { currentMail, setCurrentMail } = userStore()
 
 onMounted(() => {
@@ -80,10 +79,8 @@ const incomingMails = createListResource({
 	start: mailStart.value,
 	cache: ['incoming', user.data?.name],
 	onSuccess(data) {
-		mailList.value = mailList.value.concat(data)
-		mailStart.value = mailStart.value + data.length
-		if (!currentMail.incoming && mailList.value.length)
-			setCurrentMail('incoming', mailList.value[0].name)
+		mailStart.value = data.length
+		if (!currentMail.incoming && data.length) setCurrentMail('incoming', data[0].name)
 	},
 })
 

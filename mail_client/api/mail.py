@@ -106,7 +106,13 @@ def get_outgoing_mails(folder: str, start: int = 0) -> list:
 	"""Returns outgoing mails for the current user."""
 
 	mailboxes = get_user_mailboxes(frappe.session.user, "Outgoing")
-	docstatus = 0 if folder == "Drafts" else 1
+
+	if folder == "Drafts":
+		docstatus = 0
+		order_by = "modified desc"
+	else:
+		docstatus = 1
+		order_by = "created_at desc"
 
 	mails = frappe.get_all(
 		"Outgoing Mail",
@@ -125,7 +131,7 @@ def get_outgoing_mails(folder: str, start: int = 0) -> list:
 		],
 		limit=50,
 		start=start,
-		order_by="created_at desc",
+		order_by=order_by,
 	)
 
 	return get_mail_list(mails, "Outgoing Mail")
