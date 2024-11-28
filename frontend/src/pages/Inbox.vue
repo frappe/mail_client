@@ -78,14 +78,12 @@ const incomingMails = createListResource({
 	doctype: 'Incoming Mail',
 	auto: true,
 	start: mailStart.value,
-	pageLength: 50,
 	cache: ['incoming', user.data?.name],
 	onSuccess(data) {
 		mailList.value = mailList.value.concat(data)
 		mailStart.value = mailStart.value + data.length
-		if (!currentMail.incoming && mailList.value.length) {
+		if (!currentMail.incoming && mailList.value.length)
 			setCurrentMail('incoming', mailList.value[0].name)
-		}
 	},
 })
 

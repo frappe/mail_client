@@ -80,7 +80,7 @@ onMounted(() => {
 watch(
 	() => currentMail.draft,
 	(val) => {
-		if (!val) reloadDrafts()
+		reloadDrafts()
 	}
 )
 
@@ -89,14 +89,12 @@ const draftMails = createListResource({
 	doctype: 'Outgoing Mail',
 	auto: true,
 	start: mailStart.value,
-	pageLength: 50,
 	cache: ['draftMails', user.data?.name],
 	onSuccess(data) {
 		mailList.value = mailList.value.concat(data)
 		mailStart.value = mailStart.value + data.length
-		if (!currentMail.draft && mailList.value.length) {
+		if (!currentMail.draft && mailList.value.length)
 			setCurrentMail('draft', mailList.value[0].name)
-		}
 	},
 })
 
@@ -116,7 +114,7 @@ const draftMailsCount = createResource({
 })
 
 const loadMoreEmails = useDebounceFn(() => {
-	if (draftMails.hasNextPage) outgoingMails.next()
+	if (draftMails.hasNextPage) draftMails.next()
 }, 500)
 
 const breadcrumbs = computed(() => {

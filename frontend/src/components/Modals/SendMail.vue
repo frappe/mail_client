@@ -265,7 +265,7 @@ watchDebounced(
 			else updateDraftMail.submit()
 		} else if (!isMailEmpty.value) createDraftMail.submit()
 	},
-	{ debounce: 1000 }
+	{ debounce: 1500 }
 )
 
 const defaultOutgoing = createResource({
@@ -289,6 +289,7 @@ const createDraftMail = createResource({
 	},
 	onSuccess(data) {
 		mailID.value = data
+		setCurrentMail('draft', data)
 	},
 })
 

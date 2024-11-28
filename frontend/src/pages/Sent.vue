@@ -78,14 +78,12 @@ const sentMails = createListResource({
 	doctype: 'Outgoing Mail',
 	auto: true,
 	start: mailStart.value,
-	pageLength: 50,
 	cache: ['sentMails', user.data?.name],
 	onSuccess(data) {
 		mailList.value = mailList.value.concat(data)
 		mailStart.value = mailStart.value + data.length
-		if (!currentMail.sent && mailList.value.length) {
+		if (!currentMail.sent && mailList.value.length)
 			setCurrentMail('sent', mailList.value[0].name)
-		}
 	},
 })
 
@@ -105,7 +103,7 @@ const sentMailsCount = createResource({
 })
 
 const loadMoreEmails = useDebounceFn(() => {
-	if (sentMails.hasNextPage) outgoingMails.next()
+	if (sentMails.hasNextPage) sentMails.next()
 }, 500)
 
 const breadcrumbs = computed(() => {
