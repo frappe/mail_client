@@ -1,5 +1,5 @@
 <template>
-	<div v-if="mailThread.data?.length" class="p-3">
+	<div v-if="props.mailID" class="p-3">
 		<div
 			class="p-3 mb-4"
 			v-for="mail in mailThread.data"
@@ -136,13 +136,13 @@ const replyDetails = reactive({
 
 const mailThread = createResource({
 	url: 'mail_client.api.mail.get_mail_thread',
-	makeParams(values) {
+	makeParams() {
 		return {
-			name: values?.mailID || props.mailID,
+			name: props.mailID,
 			mail_type: props.type,
 		}
 	},
-	auto: props.mailID ? true : false,
+	auto: !!props.mailID,
 })
 
 const mailBody = (bodyHTML) => {
@@ -196,7 +196,7 @@ const getReplyHtml = (html, creation) => {
 watch(
 	() => props.mailID,
 	(newName) => {
-		mailThread.reload({ mailID: newName })
+		if (newName) mailThread.reload()
 	}
 )
 </script>
