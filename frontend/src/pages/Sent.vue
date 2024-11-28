@@ -62,7 +62,6 @@ import { userStore } from '@/stores/user'
 
 const socket = inject('$socket')
 const user = inject('$user')
-const mailStart = ref(0)
 const { currentMail, setCurrentMail } = userStore()
 
 onMounted(() => {
@@ -76,10 +75,9 @@ const sentMails = createListResource({
 	url: 'mail_client.api.mail.get_sent_mails',
 	doctype: 'Outgoing Mail',
 	auto: true,
-	start: mailStart.value,
+	pageLength: 50,
 	cache: ['sentMails', user.data?.name],
 	onSuccess(data) {
-		mailStart.value = data.length
 		if (!currentMail.sent && data.length) setCurrentMail('sent', data[0].name)
 	},
 })

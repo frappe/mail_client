@@ -62,7 +62,6 @@ import { userStore } from '@/stores/user'
 
 const socket = inject('$socket')
 const user = inject('$user')
-const mailStart = ref(0)
 const { currentMail, setCurrentMail } = userStore()
 
 const reloadDrafts = () => {
@@ -87,10 +86,9 @@ const draftMails = createListResource({
 	url: 'mail_client.api.mail.get_draft_mails',
 	doctype: 'Outgoing Mail',
 	auto: true,
-	start: mailStart.value,
+	pageLength: 50,
 	cache: ['draftMails', user.data?.name],
 	onSuccess(data) {
-		mailStart.value = data.length
 		if (!currentMail.draft && data.length) setCurrentMail('draft', data[0].name)
 	},
 })
