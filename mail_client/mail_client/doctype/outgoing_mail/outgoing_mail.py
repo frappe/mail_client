@@ -646,7 +646,7 @@ class OutgoingMail(Document):
 	def retry_failed(self) -> None:
 		"""Retries the failed mail."""
 
-		if self.docstatus == 1 and self.status == "Failed" and self.failed_count < 3:
+		if self.docstatus == 1 and self.status == "Failed" and self.failed_count < 5:
 			self._db_set(status="Queuing", error_log=None, error_message=None, commit=True)
 			self.transfer_to_mail_server()
 
@@ -658,7 +658,7 @@ class OutgoingMail(Document):
 			self.reload()
 
 			# Ensure the document is submitted and has "Queuing" or "Pending" status
-			if not (self.docstatus == 1 and self.status in ["Queuing", "Pending"] and self.failed_count < 3):
+			if not (self.docstatus == 1 and self.status in ["Queuing", "Pending"] and self.failed_count < 5):
 				return
 
 		try:
@@ -888,7 +888,7 @@ def transfer_emails_to_mail_server() -> None:
 				OM.submitted_at,
 				GroupConcat(MR.email).as_("recipients"),
 			)
-			.where((OM.docstatus == 1) & (OM.failed_count < 3) & (OM.status.isin(["Pending", "Failed"])))
+			.where((OM.docstatus == 1) & (OM.failed_count < 5) & (OM.status.isin(["Pending", "Failed"])))
 			.groupby(OM.name)
 			.orderby(OM.submitted_at)
 			.limit(batch_size)
