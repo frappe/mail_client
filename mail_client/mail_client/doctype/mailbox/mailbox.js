@@ -28,11 +28,7 @@ frappe.ui.form.on("Mailbox", {
 	},
 
 	add_actions(frm) {
-		if (
-			frm.doc.__islocal ||
-			!has_common(frappe.user_roles, ["Administrator", "System Manager"])
-		)
-			return;
+		if (frm.doc.__islocal || !frappe.user_roles.includes("System Manager")) return;
 
 		frm.add_custom_button(
 			__("Delete Incoming Mails"),
