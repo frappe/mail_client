@@ -508,6 +508,18 @@ class OutgoingMail(Document):
 
 		return recipients if as_list else ", ".join(recipients)
 
+	def _update_recipients(self, type: str, recipients: list[str] | None = None) -> None:
+		"""Updates the recipients by comparing new and old list."""
+
+		prev_recipients = self._get_recipients(type, as_list=True)
+		for d in recipients:
+			if d not in prev_recipients:
+				self._add_recipient(type, d)
+
+		for d in self.recipients:
+			if d.type == type and d.email not in recipients:
+				self.recipients.remove(d)
+
 	def _add_attachment(self, attachment: dict | list[dict]) -> None:
 		"""Adds the attachments."""
 

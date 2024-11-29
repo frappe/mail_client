@@ -406,14 +406,12 @@ def update_draft_mail(
 
 	display_name, sender = parseaddr(from_)
 
-	# TODO: don't rewrite full doc
 	doc = frappe.get_doc("Outgoing Mail", mail_id)
 	doc.sender = sender
 	doc.display_name = display_name
-	doc.recipients = []
-	doc._add_recipient("To", to)
-	doc._add_recipient("Cc", cc)
-	doc._add_recipient("Bcc", bcc)
+	doc._update_recipients("To", to)
+	doc._update_recipients("Cc", cc)
+	doc._update_recipients("Bcc", bcc)
 	doc.subject = subject
 	doc.body_html = html
 	doc.save()
