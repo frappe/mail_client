@@ -100,7 +100,7 @@ const draftMailsCount = createResource({
 			doctype: 'Outgoing Mail',
 			filters: {
 				sender: user.data?.name,
-				folder: 'Drafts',
+				status: 'Draft',
 			},
 		}
 	},

@@ -138,7 +138,7 @@
 							</div>
 							<div class="mt-2 flex items-center justify-end space-x-2 sm:mt-0">
 								<Button :label="__('Discard')" @click="discardMail" />
-								<Button @click="send()" variant="solid" :label="__('Send')" />
+								<Button @click="send" variant="solid" :label="__('Send')" />
 							</div>
 						</div>
 					</div>
@@ -286,7 +286,7 @@ const createDraftMail = createResource({
 	method: 'POST',
 	makeParams(values) {
 		return {
-			// TODO: use display_name
+			// TODO: use mailbox display_name
 			from_: `${user.data?.full_name} <${mail.from}>`,
 			do_not_submit: true,
 			...mail,
@@ -317,11 +317,11 @@ const updateDraftMail = createResource({
 
 // TODO: delete using documentresource directly
 const deleteDraftMail = createResource({
-	url: 'mail_client.api.mail.delete_mail',
+	url: 'frappe.client.delete',
 	makeParams(values) {
 		return {
-			mail_type: 'Outgoing Mail',
-			mail_id: mailID.value,
+			doctype: 'Outgoing Mail',
+			name: mailID.value,
 		}
 	},
 	onSuccess() {

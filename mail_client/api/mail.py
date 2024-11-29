@@ -90,24 +90,24 @@ def get_incoming_mails(start: int = 0) -> list:
 
 @frappe.whitelist()
 def get_sent_mails(start: int = 0) -> list:
-	"""Returns mails from Sent frolder for the current user."""
+	"""Returns sent mails for the current user."""
 
 	return get_outgoing_mails("Sent", start)
 
 
 @frappe.whitelist()
 def get_draft_mails(start: int = 0) -> list:
-	"""Returns mails from Drafts folder for the current user."""
+	"""Returns draft mails for the current user."""
 
-	return get_outgoing_mails("Drafts", start)
+	return get_outgoing_mails("Draft", start)
 
 
-def get_outgoing_mails(folder: str, start: int = 0) -> list:
+def get_outgoing_mails(status: str, start: int = 0) -> list:
 	"""Returns outgoing mails for the current user."""
 
 	mailboxes = get_user_mailboxes(frappe.session.user, "Outgoing")
 
-	if folder == "Drafts":
+	if status == "Draft":
 		docstatus = 0
 		order_by = "modified desc"
 	else:
@@ -116,7 +116,7 @@ def get_outgoing_mails(folder: str, start: int = 0) -> list:
 
 	mails = frappe.get_all(
 		"Outgoing Mail",
-		{"sender": ["in", mailboxes], "docstatus": docstatus, "folder": folder},
+		{"sender": ["in", mailboxes], "docstatus": docstatus, "status": status},
 		[
 			"name",
 			"subject",
@@ -419,10 +419,3 @@ def update_draft_mail(
 
 	if do_submit:
 		doc.submit()
-
-
-@frappe.whitelist()
-def delete_mail(mail_type: str, mail_id: str):
-	"""Delete mail."""
-
-	frappe.delete_doc(mail_type, mail_id)

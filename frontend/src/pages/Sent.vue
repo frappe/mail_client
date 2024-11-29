@@ -89,7 +89,7 @@ const sentMailsCount = createResource({
 			doctype: 'Outgoing Mail',
 			filters: {
 				sender: user.data?.name,
-				folder: 'Sent',
+				status: 'Sent',
 			},
 		}
 	},
