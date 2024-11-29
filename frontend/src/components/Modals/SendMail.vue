@@ -137,7 +137,7 @@
 								</FileUploader>
 							</div>
 							<div class="mt-2 flex items-center justify-end space-x-2 sm:mt-0">
-								<Button :label="__('Discard')" @click="() => (show = false)" />
+								<Button :label="__('Discard')" @click="discardMail" />
 								<Button @click="send()" variant="solid" :label="__('Send')" />
 							</div>
 						</div>
@@ -211,6 +211,11 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['reloadMailThread'])
+
+const discardMail = async () => {
+	if (mailID.value) await deleteDraftMail.submit()
+	show.value = false
+}
 
 const emptyMail = {
 	to: '',
@@ -321,6 +326,7 @@ const deleteDraftMail = createResource({
 	},
 	onSuccess() {
 		mailID.value = null
+		Object.assign(mail, emptyMail)
 		setCurrentMail('draft', null)
 	},
 })
