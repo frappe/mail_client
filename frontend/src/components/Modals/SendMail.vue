@@ -159,7 +159,7 @@ import {
 	Button,
 } from 'frappe-ui'
 import { reactive, watch, inject, ref, nextTick, computed } from 'vue'
-import { watchDebounced } from '@vueuse/core'
+import { useDebounceFn } from '@vueuse/core'
 import { Paperclip, Laugh } from 'lucide-vue-next'
 import Link from '@/components/Controls/Link.vue'
 import EmojiPicker from '@/components/EmojiPicker.vue'
@@ -217,6 +217,13 @@ const discardMail = async () => {
 	show.value = false
 }
 
+const syncMail = useDebounceFn(() => {
+	if (mailID.value) {
+		if (isMailEmpty.value) deleteDraftMail.submit()
+		else updateDraftMail.submit()
+	} else if (!isMailEmpty.value) createDraftMail.submit()
+}, 1500)
+
 const emptyMail = {
 	to: '',
 	cc: '',
@@ -227,23 +234,15 @@ const emptyMail = {
 
 const mail = reactive({ ...emptyMail })
 
-watch(show, async () => {
-	if (!show.value) {
-		if (mailID.value) {
-			if (isMailEmpty.value) await deleteDraftMail.submit()
-			else await updateDraftMail.submit()
-			emit('reloadMailThread')
-
-			mailID.value = null
-			Object.assign(mail, emptyMail)
-		}
-		return
+watch(show, () => {
+	if (!show.value) return
+	if (props.mailID) getDraftMail(props.mailID)
+	else {
+		mailID.value = null
+		Object.assign(mail, emptyMail)
 	}
 
-	if (props.mailID) getDraftMail(props.mailID)
-
 	if (!props.replyDetails) return
-
 	mail.to = props.replyDetails.to.split(',').filter((item) => item != '')
 	mail.cc = props.replyDetails.cc.split(',').filter((item) => item != '')
 	mail.bcc = props.replyDetails.bcc.split(',').filter((item) => item != '')
@@ -262,16 +261,8 @@ watch(
 		if (val) getDraftMail(val)
 	}
 )
-watchDebounced(
-	mail,
-	() => {
-		if (mailID.value) {
-			if (isMailEmpty.value) deleteDraftMail.submit()
-			else updateDraftMail.submit()
-		} else if (!isMailEmpty.value) createDraftMail.submit()
-	},
-	{ debounce: 1500 }
-)
+
+watch(mail, syncMail)
 
 const defaultOutgoing = createResource({
 	url: 'mail_client.api.mail.get_default_outgoing',
@@ -309,6 +300,7 @@ const updateDraftMail = createResource({
 		}
 	},
 	onSuccess() {
+		if (!show.value) emit('reloadMailThread')
 		if (!isSendMail.value) return
 		isSendMail.value = false
 		show.value = false
