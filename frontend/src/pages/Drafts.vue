@@ -15,7 +15,7 @@
 					</div>
 				</template>
 			</Breadcrumbs>
-			<HeaderActions />
+			<HeaderActions @reloadMails="reloadDrafts" />
 		</header>
 		<div v-if="draftMails.data" class="flex h-[calc(100vh-3.2rem)]">
 			<div
@@ -48,7 +48,7 @@
 				<MailDetails
 					:mailID="currentMail.draft"
 					type="Outgoing Mail"
-					@resetCurrentMail="setCurrentMail('draft', null)"
+					@reloadMails="reloadDrafts"
 				/>
 			</div>
 		</div>
@@ -72,8 +72,6 @@ const reloadDrafts = () => {
 	draftMails.reload()
 	draftMailsCount.reload()
 }
-
-watch(() => currentMail.draft, reloadDrafts)
 
 const draftMails = createListResource({
 	url: 'mail_client.api.mail.get_draft_mails',
