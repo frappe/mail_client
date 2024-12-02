@@ -333,8 +333,10 @@
    "read_only": 1
   },
   {
+   "collapsible": 1,
    "fieldname": "section_break_ubzr",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "label": "Error"
   },
   {
    "fieldname": "submitted_at",
@@ -483,7 +485,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-11-29 17:49:22.379818",
+ "modified": "2024-12-02 13:23:32.322784",
  "modified_by": "Administrator",
  "module": "Mail Client",
  "name": "Outgoing Mail",

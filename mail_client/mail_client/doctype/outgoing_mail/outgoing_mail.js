@@ -9,6 +9,7 @@ frappe.ui.form.on("Outgoing Mail", {
 	refresh(frm) {
 		frm.trigger("hide_amend_button");
 		frm.trigger("add_actions");
+		frm.trigger("add_comments");
 		frm.trigger("set_sender");
 	},
 
@@ -66,6 +67,12 @@ frappe.ui.form.on("Outgoing Mail", {
 					__("Actions")
 				);
 			}
+		}
+	},
+
+	add_comments(frm) {
+		if (!frm.doc.__islocal && frm.doc.status == "Blocked" && frm.doc.error_message) {
+			frm.dashboard.add_comment(__(frm.doc.error_message), "red", true);
 		}
 	},
 
