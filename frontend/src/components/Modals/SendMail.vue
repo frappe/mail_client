@@ -179,7 +179,10 @@ const cc = ref(false)
 const bcc = ref(false)
 const emoji = ref()
 const isSendMail = ref(false)
+const isMailWatcherActive = ref(true)
 const { setCurrentMail } = userStore()
+
+const SYNC_DEBOUNCE_TIME = 1500
 
 const editor = computed(() => {
 	return textEditor.value.editor
@@ -218,11 +221,12 @@ const discardMail = async () => {
 }
 
 const syncMail = useDebounceFn(() => {
+	if (!isMailWatcherActive.value) return
 	if (mailID.value) {
 		if (isMailEmpty.value) deleteDraftMail.submit()
 		else updateDraftMail.submit()
 	} else if (!isMailEmpty.value) createDraftMail.submit()
-}, 1500)
+}, SYNC_DEBOUNCE_TIME)
 
 const emptyMail = {
 	to: '',
@@ -328,6 +332,7 @@ const getDraftMail = (name) =>
 		doctype: 'Outgoing Mail',
 		name: name,
 		onSuccess(data) {
+			isMailWatcherActive.value = false
 			const mailDetails = {
 				from_: `${data.display_name} <${data.sender}>`,
 				subject: data.subject,
@@ -347,7 +352,9 @@ const getDraftMail = (name) =>
 			Object.assign(mail, mailDetails)
 			if (mailDetails.cc) cc.value = true
 			if (mailDetails.bcc) bcc.value = true
-			// TODO: don't trigger updateDraftMail
+			setTimeout(() => {
+				isMailWatcherActive.value = true
+			}, SYNC_DEBOUNCE_TIME + 1)
 		},
 	})
 
