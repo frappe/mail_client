@@ -524,7 +524,7 @@ class OutgoingMail(Document):
 			if d not in prev_recipients:
 				self._add_recipient(type, d)
 
-		for d in self.recipients:
+		for d in self.recipients[:]:
 			if d.type == type and d.email not in recipients:
 				self.recipients.remove(d)
 
