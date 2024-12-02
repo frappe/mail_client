@@ -100,7 +100,7 @@
 		v-model="showSendModal"
 		:mailID="draftMailID"
 		:replyDetails="replyDetails"
-		@reloadMails="reloadMails"
+		@reloadMails="emit('reloadMails')"
 	/>
 </template>
 <script setup>
@@ -147,10 +147,10 @@ const mailThread = createResource({
 	auto: !!props.mailID,
 })
 
-const reloadMails = () => {
-	emit('reloadMails')
-	mailThread.reload()
+const reloadThread = () => {
+	if (props.mailID) mailThread.reload()
 }
+defineExpose({ reloadThread })
 
 const mailBody = (bodyHTML) => {
 	bodyHTML = bodyHTML.replace(/<br\s*\/?>/, '')
@@ -200,12 +200,7 @@ const getReplyHtml = (html, creation) => {
 	return `<br><blockquote>${replyHeader} <br> ${html}</blockquote>`
 }
 
-watch(
-	() => props.mailID,
-	(newName) => {
-		if (newName) mailThread.reload()
-	}
-)
+watch(() => props.mailID, reloadThread)
 </script>
 <style>
 .prose

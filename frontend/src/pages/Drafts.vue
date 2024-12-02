@@ -46,6 +46,7 @@
 			</div>
 			<div class="flex-1 overflow-auto w-2/3">
 				<MailDetails
+					ref="mailDetails"
 					:mailID="currentMail.draft"
 					type="Outgoing Mail"
 					@reloadMails="reloadDrafts"
@@ -56,7 +57,7 @@
 </template>
 <script setup>
 import { Breadcrumbs, createResource, createListResource } from 'frappe-ui'
-import { computed, inject, watch } from 'vue'
+import { ref, computed, inject, watch } from 'vue'
 import HeaderActions from '@/components/HeaderActions.vue'
 import { formatNumber, startResizing, singularize } from '@/utils'
 import MailDetails from '@/components/MailDetails.vue'
@@ -64,6 +65,7 @@ import { useDebounceFn } from '@vueuse/core'
 import SidebarDetail from '@/components/SidebarDetail.vue'
 import { userStore } from '@/stores/user'
 
+const mailDetails = ref(null)
 const socket = inject('$socket')
 const user = inject('$user')
 const { currentMail, setCurrentMail } = userStore()
@@ -80,7 +82,9 @@ const draftMails = createListResource({
 	pageLength: 50,
 	cache: ['draftMails', user.data?.name],
 	onSuccess(data) {
-		if (!currentMail.draft && data.length) setCurrentMail('draft', data[0].name)
+		if (!data.length) return
+		if (!currentMail.draft) setCurrentMail('draft', data[0].name)
+		mailDetails.value?.reloadThread()
 	},
 })
 
