@@ -46,6 +46,7 @@
   "transfer_started_after",
   "transfer_completed_after",
   "failed_count",
+  "retry_after",
   "section_break_aafd",
   "tracking_id",
   "first_opened_at",
@@ -331,8 +332,10 @@
    "read_only": 1
   },
   {
+   "collapsible": 1,
    "fieldname": "section_break_ubzr",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "label": "Error"
   },
   {
    "fieldname": "submitted_at",
@@ -467,12 +470,21 @@
    "non_negative": 1,
    "read_only": 1,
    "search_index": 1
+  },
+  {
+   "depends_on": "eval: doc.failed_count",
+   "fieldname": "retry_after",
+   "fieldtype": "Datetime",
+   "label": "Retry After",
+   "no_copy": 1,
+   "read_only": 1,
+   "search_index": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-11-22 14:34:10.362892",
+ "modified": "2024-12-02 14:23:32.322784",
  "modified_by": "Administrator",
  "module": "Mail Client",
  "name": "Outgoing Mail",

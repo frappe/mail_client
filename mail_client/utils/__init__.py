@@ -1,4 +1,5 @@
 import re
+import socket
 from collections.abc import Callable
 from datetime import datetime
 from email.utils import parsedate_to_datetime as parsedate
@@ -108,3 +109,17 @@ def add_or_update_tzinfo(date_time: datetime | str, timezone: str | None = None)
 		date_time = date_time.astimezone(target_tz)
 
 	return str(date_time)
+
+
+def get_host_by_ip(ip_address: str, raise_exception: bool = False) -> str | None:
+	"""Returns host for the given IP address."""
+
+	err_msg = None
+
+	try:
+		return socket.gethostbyaddr(ip_address)[0]
+	except Exception as e:
+		err_msg = _(str(e))
+
+	if raise_exception and err_msg:
+		frappe.throw(err_msg)

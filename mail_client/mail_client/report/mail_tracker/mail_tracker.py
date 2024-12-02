@@ -91,7 +91,7 @@ def get_columns() -> list[dict]:
 	]
 
 
-def get_data(filters: dict | None = None) -> list[list]:
+def get_data(filters: dict | None = None) -> list[dict]:
 	filters = filters or {}
 
 	OM = frappe.qb.DocType("Outgoing Mail")
@@ -123,13 +123,18 @@ def get_data(filters: dict | None = None) -> list[list]:
 	for field in [
 		"name",
 		"status",
-		"domain_name",
-		"sender",
 		"message_id",
 		"tracking_id",
 	]:
 		if filters.get(field):
 			query = query.where(OM[field] == filters.get(field))
+
+	for field in [
+		"domain_name",
+		"sender",
+	]:
+		if filters.get(field):
+			query = query.where(OM[field].isin(filters.get(field)))
 
 	user = frappe.session.user
 	if not is_system_manager(user):

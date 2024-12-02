@@ -11,7 +11,7 @@ from frappe.utils import flt
 from mail_client.utils.user import get_user_mailboxes, has_role, is_system_manager
 
 
-def execute(filters: dict | None = None) -> tuple[list, list]:
+def execute(filters: dict | None = None) -> tuple:
 	columns = get_columns()
 	data = get_data(filters)
 	summary = get_summary(data)
@@ -123,7 +123,7 @@ def get_columns() -> list[dict]:
 	]
 
 
-def get_data(filters: dict | None = None) -> list[list]:
+def get_data(filters: dict | None = None) -> list[dict]:
 	filters = filters or {}
 
 	OM = frappe.qb.DocType("Outgoing Mail")
@@ -169,13 +169,18 @@ def get_data(filters: dict | None = None) -> list[list]:
 
 	for field in [
 		"name",
-		"domain_name",
 		"ip_address",
-		"sender",
 		"message_id",
 	]:
 		if filters.get(field):
 			query = query.where(OM[field] == filters.get(field))
+
+	for field in [
+		"domain_name",
+		"sender",
+	]:
+		if filters.get(field):
+			query = query.where(OM[field].isin(filters.get(field)))
 
 	for field in ["status", "email"]:
 		if filters.get(field):

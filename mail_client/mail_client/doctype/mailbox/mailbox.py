@@ -183,8 +183,7 @@ def has_permission(doc: "Document", ptype: str, user: str) -> bool:
 def delete_incoming_mails(mailbox: str) -> None:
 	"""Deletes the incoming mails for the given mailbox."""
 
-	if not is_system_manager(frappe.session.user):
-		frappe.throw(_("Only System Manager can delete Incoming Mails."))
+	frappe.only_for("System Manager")
 
 	if mailbox:
 		frappe.db.delete("Incoming Mail", {"receiver": mailbox})
@@ -194,8 +193,7 @@ def delete_incoming_mails(mailbox: str) -> None:
 def delete_outgoing_mails(mailbox: str) -> None:
 	"""Deletes the outgoing mails for the given mailbox."""
 
-	if not is_system_manager(frappe.session.user):
-		frappe.throw(_("Only System Manager can delete Outgoing Mails."))
+	frappe.only_for("System Manager")
 
 	if mailbox:
 		frappe.db.delete("Outgoing Mail", {"sender": mailbox})

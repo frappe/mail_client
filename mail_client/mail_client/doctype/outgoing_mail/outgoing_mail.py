@@ -23,6 +23,7 @@ from frappe.model.document import Document
 from frappe.query_builder import Interval
 from frappe.query_builder.functions import GroupConcat, IfNull, Now
 from frappe.utils import (
+	add_to_date,
 	convert_utc_to_system_timezone,
 	flt,
 	get_datetime,
@@ -38,6 +39,7 @@ from mail_client.mail_client.doctype.mail_contact.mail_contact import create_mai
 from mail_client.mail_server import get_mail_server_outbound_api
 from mail_client.utils import (
 	convert_html_to_text,
+	get_host_by_ip,
 	get_in_reply_to,
 	get_in_reply_to_mail,
 	parsedate_to_datetime,
@@ -46,6 +48,8 @@ from mail_client.utils.cache import get_user_default_mailbox
 from mail_client.utils.email_parser import EmailParser
 from mail_client.utils.user import get_user_mailboxes, is_mailbox_owner, is_system_manager
 from mail_client.utils.validation import validate_mailbox_for_outgoing
+
+MAX_FAILED_COUNT = 5
 
 
 class OutgoingMail(Document):
@@ -376,6 +380,10 @@ class OutgoingMail(Document):
 		def _add_headers(message: MIMEMultipart | Message) -> None:
 			"""Adds the headers to the message."""
 
+			received_header_value = f"from {get_host_by_ip(self.ip_address) or 'unknown-host'} ({self.ip_address}) by {frappe.local.site} (Frappe Mail Client) via API; {formatdate()}"
+			received_header = ("Received", received_header_value)
+			message._headers.insert(0, received_header)
+
 			if self.custom_headers:
 				for header in self.custom_headers:
 					message.add_header(header.key, header.value)
@@ -663,7 +671,7 @@ class OutgoingMail(Document):
 	def retry_failed(self) -> None:
 		"""Retries the failed mail."""
 
-		if self.docstatus == 1 and self.status == "Failed" and self.failed_count < 3:
+		if self.docstatus == 1 and self.status == "Failed" and self.failed_count < MAX_FAILED_COUNT:
 			self._db_set(status="Queuing", error_log=None, error_message=None, commit=True)
 			self.transfer_to_mail_server()
 
@@ -675,7 +683,11 @@ class OutgoingMail(Document):
 			self.reload()
 
 			# Ensure the document is submitted and has "Queuing" or "Pending" status
-			if not (self.docstatus == 1 and self.status in ["Queuing", "Pending"] and self.failed_count < 3):
+			if not (
+				self.docstatus == 1
+				and self.status in ["Queuing", "Pending"]
+				and self.failed_count < MAX_FAILED_COUNT
+			):
 				return
 
 		try:
@@ -709,10 +721,12 @@ class OutgoingMail(Document):
 			)
 		except Exception:
 			error_log = frappe.get_traceback(with_context=False)
+			failed_count = self.failed_count + 1
 			self._db_set(
 				status="Failed",
 				error_log=error_log,
-				failed_count=self.failed_count + 1,
+				failed_count=failed_count,
+				retry_after=get_retry_after(failed_count),
 				commit=True,
 				notify_update=True,
 			)
@@ -775,6 +789,13 @@ def add_tracking_pixel(body_html: str, tracking_id: str) -> str:
 		body_html = f"<html><body>{tracking_pixel}{body_html}</body></html>"
 
 	return body_html
+
+
+def get_retry_after(failed_count: int) -> str:
+	"""Returns the retry after datetime."""
+
+	retry_after_minutes = failed_count * (failed_count + 1)  # 2, 6, 12, 20, 30 ...
+	return add_to_date(now(), minutes=retry_after_minutes)
 
 
 def create_outgoing_mail(
@@ -903,9 +924,15 @@ def transfer_emails_to_mail_server() -> None:
 				OM.name,
 				OM.message,
 				OM.submitted_at,
+				OM.failed_count,
 				GroupConcat(MR.email).as_("recipients"),
 			)
-			.where((OM.docstatus == 1) & (OM.failed_count < 3) & (OM.status.isin(["Pending", "Failed"])))
+			.where(
+				(OM.docstatus == 1)
+				& (OM.failed_count < MAX_FAILED_COUNT)
+				& ((OM.retry_after.isnull()) | (OM.retry_after <= Now()))
+				& (OM.status.isin(["Pending", "Failed"]))
+			)
 			.groupby(OM.name)
 			.orderby(OM.submitted_at)
 			.limit(batch_size)
@@ -947,15 +974,20 @@ def transfer_emails_to_mail_server() -> None:
 					)
 				except Exception:
 					batch_failures += 1
+					failed_count = mail["failed_count"] + 1
+
 					error_log = frappe.get_traceback(with_context=False)
-					(
-						frappe.qb.update(OM)
-						.set(OM.status, "Failed")
-						.set(OM.error_log, error_log)
-						.set(OM.error_message, None)
-						.set(OM.failed_count, OM.failed_count + 1)
-						.where(OM.name == mail["name"])
-					).run()
+					frappe.db.set_value(
+						"Outgoing Mail",
+						mail["name"],
+						{
+							"status": "Failed",
+							"error_log": error_log,
+							"error_message": None,
+							"failed_count": failed_count,
+							"retry_after": get_retry_after(failed_count),
+						},
+					)
 
 					if batch_failures >= batch_failure_threshold:
 						return

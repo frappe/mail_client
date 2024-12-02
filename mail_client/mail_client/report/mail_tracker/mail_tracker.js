@@ -47,14 +47,18 @@ frappe.query_reports["Mail Tracker"] = {
 		{
 			fieldname: "domain_name",
 			label: __("Domain Name"),
-			fieldtype: "Link",
-			options: "Mail Domain",
+			fieldtype: "MultiSelectList",
+			get_data: (txt) => {
+				return frappe.db.get_link_options("Mail Domain", txt);
+			},
 		},
 		{
 			fieldname: "sender",
 			label: __("Sender"),
-			fieldtype: "Link",
-			options: "Mailbox",
+			fieldtype: "MultiSelectList",
+			get_data: (txt) => {
+				return frappe.db.get_link_options("Mailbox", txt);
+			},
 		},
 		{
 			fieldname: "message_id",
