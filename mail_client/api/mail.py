@@ -112,6 +112,7 @@ def get_outgoing_mails(status: str, start: int = 0) -> list:
 		order_by = "modified desc"
 	else:
 		docstatus = 1
+		# TODO: fix sorting
 		order_by = "created_at desc"
 
 	mails = frappe.get_all(

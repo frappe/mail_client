@@ -222,10 +222,8 @@ const discardMail = async () => {
 
 const syncMail = useDebounceFn(() => {
 	if (!isMailWatcherActive.value) return
-	if (mailID.value) {
-		if (isMailEmpty.value) deleteDraftMail.submit()
-		else updateDraftMail.submit()
-	} else if (!isMailEmpty.value) createDraftMail.submit()
+	if (mailID.value) updateDraftMail.submit()
+	else if (!isMailEmpty.value) createDraftMail.submit()
 }, SYNC_DEBOUNCE_TIME)
 
 const emptyMail = {
