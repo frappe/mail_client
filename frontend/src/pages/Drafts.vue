@@ -45,14 +45,18 @@
 				/>
 			</div>
 			<div class="flex-1 overflow-auto w-2/3">
-				<MailDetails :mailID="currentMail.draft" type="Outgoing Mail" />
+				<MailDetails
+					:mailID="currentMail.draft"
+					type="Outgoing Mail"
+					@resetCurrentMail="setCurrentMail('draft', null)"
+				/>
 			</div>
 		</div>
 	</div>
 </template>
 <script setup>
 import { Breadcrumbs, createResource, createListResource } from 'frappe-ui'
-import { computed, inject, ref, watch, onMounted } from 'vue'
+import { computed, inject, watch } from 'vue'
 import HeaderActions from '@/components/HeaderActions.vue'
 import { formatNumber, startResizing, singularize } from '@/utils'
 import MailDetails from '@/components/MailDetails.vue'
@@ -69,18 +73,7 @@ const reloadDrafts = () => {
 	draftMailsCount.reload()
 }
 
-onMounted(() => {
-	socket.on('outgoing_mail_sent', (data) => {
-		reloadDrafts()
-	})
-})
-
-watch(
-	() => currentMail.draft,
-	(val) => {
-		reloadDrafts()
-	}
-)
+watch(() => currentMail.draft, reloadDrafts)
 
 const draftMails = createListResource({
 	url: 'mail_client.api.mail.get_draft_mails',

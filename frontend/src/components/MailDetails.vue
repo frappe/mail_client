@@ -100,7 +100,7 @@
 		v-model="showSendModal"
 		:mailID="draftMailID"
 		:replyDetails="replyDetails"
-		@reloadMailThread="mailThread.reload()"
+		@resetCurrentMail="emit('resetCurrentMail')"
 	/>
 </template>
 <script setup>
@@ -124,6 +124,8 @@ const props = defineProps({
 		required: true,
 	},
 })
+
+const emit = defineEmits(['resetCurrentMail'])
 
 const replyDetails = reactive({
 	to: '',

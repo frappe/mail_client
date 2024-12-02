@@ -213,7 +213,7 @@ const props = defineProps({
 	},
 })
 
-const emit = defineEmits(['reloadMailThread'])
+const emit = defineEmits(['resetCurrentMail'])
 
 const discardMail = async () => {
 	if (mailID.value) await deleteDraftMail.submit()
@@ -303,8 +303,8 @@ const updateDraftMail = createResource({
 			...mail,
 		}
 	},
-	onSuccess() {
-		if (!show.value) emit('reloadMailThread')
+	onSuccess(data) {
+		if (data.docstatus) emit('resetCurrentMail')
 		if (!isSendMail.value) return
 		isSendMail.value = false
 		show.value = false
