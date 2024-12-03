@@ -10,8 +10,8 @@ from mail_client.mail_client.doctype.outgoing_mail.outgoing_mail import create_o
 @frappe.whitelist(methods=["POST"])
 def send(
 	from_: str,
-	to: str | list[str],
 	subject: str,
+	to: str | list[str] | None = None,
 	cc: str | list[str] | None = None,
 	bcc: str | list[str] | None = None,
 	html: str | None = None,
@@ -21,14 +21,15 @@ def send(
 	custom_headers: dict | None = None,
 	attachments: list[dict] | None = None,
 	is_newsletter: bool = False,
+	do_not_submit: bool = False,
 ) -> str:
 	"""Send Mail."""
 
 	display_name, sender = parseaddr(from_)
 	doc = create_outgoing_mail(
 		sender=sender,
-		to=to,
 		display_name=display_name,
+		to=to,
 		cc=cc,
 		bcc=bcc,
 		subject=subject,
@@ -40,6 +41,7 @@ def send(
 		attachments=attachments,
 		via_api=1,
 		is_newsletter=cint(is_newsletter),
+		do_not_submit=do_not_submit,
 	)
 
 	return doc.name

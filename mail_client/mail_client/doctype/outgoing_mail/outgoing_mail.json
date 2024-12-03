@@ -75,7 +75,6 @@
    "fieldtype": "Table",
    "label": "Recipients",
    "options": "Mail Recipient",
-   "reqd": 1,
    "search_index": 1
   },
   {
@@ -485,7 +484,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-12-02 13:23:32.322784",
+ "modified": "2024-12-02 14:23:32.322784",
  "modified_by": "Administrator",
  "module": "Mail Client",
  "name": "Outgoing Mail",

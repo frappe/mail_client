@@ -1,5 +1,5 @@
 <template>
-	<div v-if="mailThread.data?.length" class="p-3">
+	<div v-if="props.mailID" class="p-3">
 		<div
 			class="p-3 mb-4"
 			v-for="mail in mailThread.data"
@@ -41,7 +41,21 @@
 							</span>
 						</div>
 					</div>
-					<div class="flex items-center self-start space-x-2">
+					<div
+						v-if="mail.folder === 'Drafts'"
+						class="flex items-center self-start space-x-2"
+					>
+						<MailDate :datetime="mail.modified" />
+						<Tooltip :text="__('Edit')">
+							<Button
+								icon="edit"
+								variant="ghost"
+								@click="openModal('editDraft', mail.name)"
+							>
+							</Button>
+						</Tooltip>
+					</div>
+					<div v-else class="flex items-center self-start space-x-2">
 						<MailDate :datetime="mail.creation" />
 						<Tooltip :text="__('Reply')">
 							<Button variant="ghost" @click="openModal('reply', mail)">
@@ -82,7 +96,12 @@
 			{{ __('No emails to show') }}
 		</div>
 	</div>
-	<SendMail v-model="showSendModal" :replyDetails="replyDetails" />
+	<SendMail
+		v-model="showSendModal"
+		:mailID="draftMailID"
+		:replyDetails="replyDetails"
+		@reloadMails="emit('reloadMails')"
+	/>
 </template>
 <script setup>
 import { createResource, Avatar, Button, Tooltip } from 'frappe-ui'
@@ -92,6 +111,7 @@ import SendMail from '@/components/Modals/SendMail.vue'
 import MailDate from '@/components/MailDate.vue'
 
 const showSendModal = ref(false)
+const draftMailID = ref(null)
 const dayjs = inject('$dayjs')
 
 const props = defineProps({
@@ -105,6 +125,8 @@ const props = defineProps({
 	},
 })
 
+const emit = defineEmits(['reloadMails'])
+
 const replyDetails = reactive({
 	to: '',
 	cc: '',
@@ -116,14 +138,19 @@ const replyDetails = reactive({
 
 const mailThread = createResource({
 	url: 'mail_client.api.mail.get_mail_thread',
-	makeParams(values) {
+	makeParams() {
 		return {
-			name: values?.mailID || props.mailID,
+			name: props.mailID,
 			mail_type: props.type,
 		}
 	},
-	auto: props.mailID ? true : false,
+	auto: !!props.mailID,
 })
+
+const reloadThread = () => {
+	if (props.mailID) mailThread.reload()
+}
+defineExpose({ reloadThread })
 
 const mailBody = (bodyHTML) => {
 	bodyHTML = bodyHTML.replace(/<br\s*\/?>/, '')
@@ -136,6 +163,11 @@ const mailBody = (bodyHTML) => {
 }
 
 const openModal = (type, mail) => {
+	if (type === 'editDraft') {
+		draftMailID.value = mail
+		showSendModal.value = true
+		return
+	}
 	if (props.type == 'Incoming Mail') {
 		replyDetails.to = mail.sender
 	} else {
@@ -168,12 +200,7 @@ const getReplyHtml = (html, creation) => {
 	return `<br><blockquote>${replyHeader} <br> ${html}</blockquote>`
 }
 
-watch(
-	() => props.mailID,
-	(newName) => {
-		mailThread.reload({ mailID: newName })
-	}
-)
+watch(() => props.mailID, reloadThread)
 </script>
 <style>
 .prose

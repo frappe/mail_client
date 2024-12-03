@@ -28,6 +28,12 @@ export function getSidebarLinks() {
 			to: 'Sent',
 			activeFor: ['Sent'],
 		},
+		{
+			label: 'Drafts',
+			icon: 'Edit3',
+			to: 'Drafts',
+			activeFor: ['Drafts'],
+		},
 	]
 }
 

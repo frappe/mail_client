@@ -1,6 +1,7 @@
 import router from '@/router'
 import { defineStore } from 'pinia'
 import { createResource } from 'frappe-ui'
+import { reactive } from 'vue'
 
 export const userStore = defineStore('mail-users', () => {
 	let userResource = createResource({
@@ -13,7 +14,22 @@ export const userStore = defineStore('mail-users', () => {
 		auto: true,
 	})
 
-	return {
-		userResource,
+	const currentMail = reactive({
+		incoming: JSON.parse(sessionStorage.getItem('currentIncomingMail')) || null,
+		sent: JSON.parse(sessionStorage.getItem('currentSentMail')) || null,
+		draft: JSON.parse(sessionStorage.getItem('currentDraftMail')) || null,
+	})
+
+	const setCurrentMail = (folder, mail) => {
+		const itemName = `current${folder.charAt(0).toUpperCase() + folder.slice(1)}Mail`
+		if (!mail) {
+			currentMail[folder] = null
+			sessionStorage.removeItem(itemName)
+			return
+		}
+		currentMail[folder] = mail
+		sessionStorage.setItem(itemName, JSON.stringify(mail))
 	}
+
+	return { userResource, currentMail, setCurrentMail }
 })

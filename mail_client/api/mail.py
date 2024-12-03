@@ -1,11 +1,13 @@
 import re
+from email.utils import parseaddr
 
 import frappe
 from bs4 import BeautifulSoup
 from frappe.translate import get_all_translations
 from frappe.utils import is_html
 
-from mail_client.utils.user import has_role, is_system_manager
+from mail_client.utils.cache import get_user_default_mailbox
+from mail_client.utils.user import get_user_mailboxes, has_role, is_system_manager
 
 
 def check_app_permission() -> bool:
@@ -61,7 +63,7 @@ def get_translations() -> dict:
 def get_incoming_mails(start: int = 0) -> list:
 	"""Returns incoming mails for the current user."""
 
-	mailboxes = frappe.get_all("Mailbox", {"user": frappe.session.user}, pluck="name")
+	mailboxes = get_user_mailboxes(frappe.session.user, "Incoming")
 
 	mails = frappe.get_all(
 		"Incoming Mail",
@@ -87,14 +89,35 @@ def get_incoming_mails(start: int = 0) -> list:
 
 
 @frappe.whitelist()
-def get_outgoing_mails(start: int = 0) -> list:
+def get_sent_mails(start: int = 0) -> list:
+	"""Returns sent mails for the current user."""
+
+	return get_outgoing_mails("Sent", start)
+
+
+@frappe.whitelist()
+def get_draft_mails(start: int = 0) -> list:
+	"""Returns draft mails for the current user."""
+
+	return get_outgoing_mails("Draft", start)
+
+
+def get_outgoing_mails(status: str, start: int = 0) -> list:
 	"""Returns outgoing mails for the current user."""
 
-	mailboxes = frappe.get_all("Mailbox", {"user": frappe.session.user}, pluck="name")
+	mailboxes = get_user_mailboxes(frappe.session.user, "Outgoing")
+
+	if status == "Draft":
+		docstatus = 0
+		order_by = "modified desc"
+	else:
+		docstatus = 1
+		# TODO: fix sorting
+		order_by = "created_at desc"
 
 	mails = frappe.get_all(
 		"Outgoing Mail",
-		{"sender": ["in", mailboxes], "docstatus": 1, "folder": "Sent"},
+		{"sender": ["in", mailboxes], "docstatus": docstatus, "status": status},
 		[
 			"name",
 			"subject",
@@ -109,7 +132,7 @@ def get_outgoing_mails(start: int = 0) -> list:
 		],
 		limit=50,
 		start=start,
-		order_by="created_at desc",
+		order_by=order_by,
 	)
 
 	return get_mail_list(mails, "Outgoing Mail")
@@ -250,7 +273,7 @@ def get_thread_from_replies(mail_type, mail_name) -> list:
 	"""Returns the thread from the replies."""
 
 	replies = []
-	emails = frappe.get_all(mail_type, {"in_reply_to_mail_name": mail_name}, pluck="name")
+	emails = frappe.get_all(mail_type, {"in_reply_to_mail_name": mail_name, "docstatus": 1}, pluck="name")
 	for email in emails:
 		reply = get_mail_details(email, mail_type, True)
 		reply.mail_type = mail_type
@@ -287,9 +310,11 @@ def get_mail_details(name: str, type: str, include_all_details: bool = False) ->
 		"sender",
 		"display_name",
 		"creation",
+		"modified",
 		"message_id",
 		"in_reply_to_mail_name",
 		"in_reply_to_mail_type",
+		"folder",
 	]
 
 	mail = frappe.db.get_value(type, name, fields, as_dict=1)
@@ -360,14 +385,38 @@ def get_mail_contacts(txt=None) -> list:
 
 
 @frappe.whitelist()
-def get_default_outgoing() -> str:
+def get_default_outgoing() -> str | None:
 	"""Returns default outgoing mailbox."""
 
-	return frappe.get_all(
-		"Mailbox",
-		{
-			"user": frappe.session.user,
-			"is_default": 1,
-		},
-		pluck="name",
-	)[0]
+	return get_user_default_mailbox(frappe.session.user)
+
+
+@frappe.whitelist()
+def update_draft_mail(
+	mail_id: str,
+	from_: str,
+	to: str | list[str],
+	subject: str,
+	cc: str | list[str] | None = None,
+	bcc: str | list[str] | None = None,
+	html: str | None = None,
+	attachments: list[dict] | None = None,
+	do_submit: bool = False,
+):
+	"""Update draft mail."""
+
+	display_name, sender = parseaddr(from_)
+
+	doc = frappe.get_doc("Outgoing Mail", mail_id)
+	doc.sender = sender
+	doc.display_name = display_name
+	doc._update_recipients("To", to)
+	doc._update_recipients("Cc", cc)
+	doc._update_recipients("Bcc", bcc)
+	doc.subject = subject
+	doc.body_html = html
+	doc.save()
+	doc._add_attachment(attachments)
+
+	if do_submit:
+		doc.submit()

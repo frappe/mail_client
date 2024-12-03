@@ -175,6 +175,14 @@ class OutgoingMail(Document):
 	def validate_recipients(self) -> None:
 		"""Validates the recipients."""
 
+		if not self.recipients:
+			if self.get("_action") == "submit":
+				frappe.throw(
+					_("Please add at least one recipient before sending the mail."), frappe.MandatoryError
+				)
+
+			return
+
 		max_recipients = self.runtime.client_settings.max_recipients
 		if len(self.recipients) > max_recipients:
 			frappe.throw(
@@ -481,18 +489,20 @@ class OutgoingMail(Document):
 
 		return self.runtime.mail_domain.get_password("dkim_private_key")
 
-	def _add_recipient(self, type: str, recipient: str | list[str]) -> None:
+	def _add_recipient(self, type: str, recipient: str | list[str] | None = None) -> None:
 		"""Adds the recipients."""
 
-		if recipient:
-			recipients = [recipient] if isinstance(recipient, str) else recipient
-			for rcpt in recipients:
-				display_name, email = parseaddr(rcpt)
+		if not recipient:
+			return
 
-				if not email:
-					frappe.throw(_("Invalid format for recipient {0}.").format(frappe.bold(rcpt)))
+		recipients = [recipient] if isinstance(recipient, str) else recipient
+		for rcpt in recipients:
+			display_name, email = parseaddr(rcpt)
 
-				self.append("recipients", {"type": type, "email": email, "display_name": display_name})
+			if not email:
+				frappe.throw(_("Invalid format for recipient {0}.").format(frappe.bold(rcpt)))
+
+			self.append("recipients", {"type": type, "email": email, "display_name": display_name})
 
 	def _get_recipients(self, type: str | None = None, as_list: bool = False) -> str | list[str]:
 		"""Returns the recipients."""
@@ -505,6 +515,18 @@ class OutgoingMail(Document):
 			recipients.append(formataddr((recipient.display_name, recipient.email)))
 
 		return recipients if as_list else ", ".join(recipients)
+
+	def _update_recipients(self, type: str, recipients: list[str] | None = None) -> None:
+		"""Updates the recipients by comparing new and old list."""
+
+		prev_recipients = self._get_recipients(type, as_list=True)
+		for d in recipients:
+			if d not in prev_recipients:
+				self._add_recipient(type, d)
+
+		for d in self.recipients[:]:
+			if d.type == type and d.email not in recipients:
+				self.recipients.remove(d)
 
 	def _add_attachment(self, attachment: dict | list[dict]) -> None:
 		"""Adds the attachments."""

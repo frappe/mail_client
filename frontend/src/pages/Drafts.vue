@@ -5,35 +5,35 @@
 		>
 			<Breadcrumbs :items="breadcrumbs">
 				<template #suffix>
-					<div v-if="sentMailsCount.data" class="self-end text-xs text-gray-600 ml-2">
+					<div v-if="draftMailsCount.data" class="self-end text-xs text-gray-600 ml-2">
 						{{
 							__('{0} {1}').format(
-								formatNumber(sentMailsCount.data),
-								sentMailsCount.data == 1 ? singularize('messages') : 'messages'
+								formatNumber(draftMailsCount.data),
+								draftMailsCount.data == 1 ? singularize('messages') : 'messages'
 							)
 						}}
 					</div>
 				</template>
 			</Breadcrumbs>
-			<HeaderActions />
+			<HeaderActions @reloadMails="reloadDrafts" />
 		</header>
-		<div v-if="sentMails.data" class="flex h-[calc(100vh-3.2rem)]">
+		<div v-if="draftMails.data" class="flex h-[calc(100vh-3.2rem)]">
 			<div
 				@scroll="loadMoreEmails"
 				ref="mailSidebar"
 				class="mailSidebar border-r w-1/3 p-2 sticky top-16 overflow-y-scroll overscroll-contain"
 			>
 				<div
-					v-for="(mail, idx) in sentMails.data"
-					@click="setCurrentMail('sent', mail.name)"
+					v-for="(mail, idx) in draftMails.data"
+					@click="setCurrentMail('draft', mail.name)"
 					class="flex flex-col space-y-1 cursor-pointer"
-					:class="{ 'bg-gray-200 rounded': mail.name == currentMail.sent }"
+					:class="{ 'bg-gray-200 rounded': mail.name == currentMail.draft }"
 				>
 					<SidebarDetail :mail="mail" />
 					<div
 						:class="{
 							'mx-4 h-[0.25px] border-b border-gray-100':
-								idx < sentMails.data.length - 1,
+								idx < draftMails.data.length - 1,
 						}"
 					></div>
 				</div>
@@ -45,14 +45,19 @@
 				/>
 			</div>
 			<div class="flex-1 overflow-auto w-2/3">
-				<MailDetails :mailID="currentMail.sent" type="Outgoing Mail" />
+				<MailDetails
+					ref="mailDetails"
+					:mailID="currentMail.draft"
+					type="Outgoing Mail"
+					@reloadMails="reloadDrafts"
+				/>
 			</div>
 		</div>
 	</div>
 </template>
 <script setup>
 import { Breadcrumbs, createResource, createListResource } from 'frappe-ui'
-import { computed, inject, ref, onMounted } from 'vue'
+import { ref, computed, inject, watch } from 'vue'
 import HeaderActions from '@/components/HeaderActions.vue'
 import { formatNumber, startResizing, singularize } from '@/utils'
 import MailDetails from '@/components/MailDetails.vue'
@@ -60,52 +65,53 @@ import { useDebounceFn } from '@vueuse/core'
 import SidebarDetail from '@/components/SidebarDetail.vue'
 import { userStore } from '@/stores/user'
 
+const mailDetails = ref(null)
 const socket = inject('$socket')
 const user = inject('$user')
 const { currentMail, setCurrentMail } = userStore()
 
-onMounted(() => {
-	socket.on('outgoing_mail_sent', (data) => {
-		sentMails.reload()
-		sentMailsCount.reload()
-	})
-})
+const reloadDrafts = () => {
+	draftMails.reload()
+	draftMailsCount.reload()
+}
 
-const sentMails = createListResource({
-	url: 'mail_client.api.mail.get_sent_mails',
+const draftMails = createListResource({
+	url: 'mail_client.api.mail.get_draft_mails',
 	doctype: 'Outgoing Mail',
 	auto: true,
 	pageLength: 50,
-	cache: ['sentMails', user.data?.name],
+	cache: ['draftMails', user.data?.name],
 	onSuccess(data) {
-		if (!currentMail.sent && data.length) setCurrentMail('sent', data[0].name)
+		if (!data.length) return
+		if (!currentMail.draft) setCurrentMail('draft', data[0].name)
+		mailDetails.value?.reloadThread()
 	},
 })
 
-const sentMailsCount = createResource({
+const draftMailsCount = createResource({
 	url: 'frappe.client.get_count',
 	makeParams(values) {
 		return {
 			doctype: 'Outgoing Mail',
 			filters: {
 				sender: user.data?.name,
-				status: 'Sent',
+				status: 'Draft',
 			},
 		}
 	},
-	cache: ['sentMailsCount', user.data?.name],
+	cache: ['draftMailsCount', user.data?.name],
 	auto: true,
 })
 
 const loadMoreEmails = useDebounceFn(() => {
-	if (sentMails.hasNextPage) sentMails.next()
+	if (draftMails.hasNextPage) draftMails.next()
 }, 500)
 
 const breadcrumbs = computed(() => {
 	return [
 		{
-			label: 'Sent',
-			route: { name: 'Sent' },
+			label: `Drafts`,
+			route: { name: 'Drafts' },
 		},
 	]
 })

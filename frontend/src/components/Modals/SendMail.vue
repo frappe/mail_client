@@ -137,8 +137,8 @@
 								</FileUploader>
 							</div>
 							<div class="mt-2 flex items-center justify-end space-x-2 sm:mt-0">
-								<Button :label="__('Discard')" @click="() => (show = false)" />
-								<Button @click="send()" variant="solid" :label="__('Send')" />
+								<Button :label="__('Discard')" @click="discardMail" />
+								<Button @click="send" variant="solid" :label="__('Send')" />
 							</div>
 						</div>
 					</div>
@@ -152,91 +152,215 @@ import {
 	Dialog,
 	TextEditor,
 	createResource,
+	createDocumentResource,
 	FileUploader,
 	TextEditorFixedMenu,
 	TextInput,
 	Button,
 } from 'frappe-ui'
 import { reactive, watch, inject, ref, nextTick, computed } from 'vue'
+import { useDebounceFn } from '@vueuse/core'
 import { Paperclip, Laugh } from 'lucide-vue-next'
 import Link from '@/components/Controls/Link.vue'
 import EmojiPicker from '@/components/EmojiPicker.vue'
 import MultiselectInput from '@/components/Controls/MultiselectInput.vue'
 import { EditorContent } from '@tiptap/vue-3'
 import { validateEmail } from '@/utils'
+import { userStore } from '@/stores/user'
 
 const user = inject('$user')
 const attachments = defineModel('attachments')
 const show = defineModel()
+const mailID = ref(null)
 const textEditor = ref(null)
 const ccInput = ref(null)
 const bccInput = ref(null)
 const cc = ref(false)
 const bcc = ref(false)
 const emoji = ref()
+const isSend = ref(false)
+const isMailWatcherActive = ref(true)
+const { setCurrentMail } = userStore()
+
+const SYNC_DEBOUNCE_TIME = 1500
 
 const editor = computed(() => {
 	return textEditor.value.editor
 })
 
+const isMailEmpty = computed(() => {
+	const isSubjectEmpty = !mail.subject.length
+	let isHtmlEmpty = true
+	if (mail.html) {
+		const element = document.createElement('div')
+		element.innerHTML = mail.html
+		isHtmlEmpty = !element.textContent.trim()
+		isHtmlEmpty = Array.from(element.children).some((d) => !d.textContent.trim())
+	}
+	const isRecipientsEmpty = [mail.to, mail.cc, mail.bcc].every((d) => !d.length)
+
+	return isSubjectEmpty && isHtmlEmpty && isRecipientsEmpty
+})
+
 const props = defineProps({
+	mailID: {
+		type: String,
+		required: false,
+	},
 	replyDetails: {
 		type: Object,
 		required: false,
 	},
 })
 
-const mail = reactive({
-	from: '',
+const emit = defineEmits(['reloadMails'])
+
+const discardMail = async () => {
+	if (mailID.value) await deleteDraftMail.submit()
+	else if (!isMailEmpty.value) Object.assign(mail, emptyMail)
+	show.value = false
+}
+
+const syncMail = useDebounceFn(() => {
+	if (!isMailWatcherActive.value) return
+	if (mailID.value) updateDraftMail.submit()
+	else if (!isMailEmpty.value) createDraftMail.submit()
+}, SYNC_DEBOUNCE_TIME)
+
+const emptyMail = {
 	to: '',
 	cc: '',
 	bcc: '',
 	subject: '',
 	html: '',
-})
+}
+
+const mail = reactive({ ...emptyMail })
 
 watch(show, () => {
-	if (show.value && props.replyDetails) {
-		mail.to = props.replyDetails.to.split(',').filter((item) => item != '')
-		mail.cc = props.replyDetails.cc.split(',').filter((item) => item != '')
-		mail.bcc = props.replyDetails.bcc.split(',').filter((item) => item != '')
-		cc.value = mail.cc.length > 0 ? true : false
-		bcc.value = mail.bcc.length > 0 ? true : false
-		mail.subject = props.replyDetails.subject
-		mail.html = props.replyDetails.html
-		mail.in_reply_to_mail_type = props.replyDetails.in_reply_to_mail_type
-		mail.in_reply_to_mail_name = props.replyDetails.in_reply_to_mail_name
+	if (!show.value) return
+	if (props.mailID) getDraftMail(props.mailID)
+	else {
+		mailID.value = null
+		Object.assign(mail, emptyMail)
 	}
+
+	if (!props.replyDetails) return
+	mail.to = props.replyDetails.to.split(',').filter((item) => item != '')
+	mail.cc = props.replyDetails.cc.split(',').filter((item) => item != '')
+	mail.bcc = props.replyDetails.bcc.split(',').filter((item) => item != '')
+	cc.value = mail.cc.length > 0 ? true : false
+	bcc.value = mail.bcc.length > 0 ? true : false
+	mail.subject = props.replyDetails.subject
+	mail.html = props.replyDetails.html
+	mail.in_reply_to_mail_type = props.replyDetails.in_reply_to_mail_type
+	mail.in_reply_to_mail_name = props.replyDetails.in_reply_to_mail_name
 })
+
+watch(
+	() => props.mailID,
+	(val) => {
+		// TODO: use documentresource directly
+		if (val) getDraftMail(val)
+	}
+)
+
+watch(mail, syncMail)
 
 const defaultOutgoing = createResource({
 	url: 'mail_client.api.mail.get_default_outgoing',
 	auto: true,
 	onSuccess(data) {
-		mail.from = data
+		if (data) mail.from = data
 	},
 })
 
-const sendMail = createResource({
+const createDraftMail = createResource({
 	url: 'mail_client.api.outbound.send',
 	method: 'POST',
 	makeParams(values) {
 		return {
+			// TODO: use mailbox display_name
 			from_: `${user.data?.full_name} <${mail.from}>`,
+			do_not_submit: !isSend.value,
 			...mail,
+		}
+	},
+	onSuccess(data) {
+		if (isSend.value) Object.assign(mail, emptyMail)
+		else {
+			mailID.value = data
+			setCurrentMail('draft', data)
+			emit('reloadMails')
 		}
 	},
 })
 
-const send = () => {
-	sendMail.submit(
-		{},
-		{
-			onSuccess() {
-				show.value = false
-			},
+const updateDraftMail = createResource({
+	url: 'mail_client.api.mail.update_draft_mail',
+	makeParams(values) {
+		return {
+			mail_id: mailID.value,
+			from_: `${user.data?.full_name} <${mail.from}>`,
+			do_submit: isSend.value,
+			...mail,
 		}
-	)
+	},
+	onSuccess() {
+		if (isSend.value) setCurrentMail('draft', null)
+		emit('reloadMails')
+	},
+})
+
+// TODO: delete using documentresource directly
+const deleteDraftMail = createResource({
+	url: 'frappe.client.delete',
+	makeParams(values) {
+		return {
+			doctype: 'Outgoing Mail',
+			name: mailID.value,
+		}
+	},
+	onSuccess() {
+		setCurrentMail('draft', null)
+		emit('reloadMails')
+	},
+})
+
+const getDraftMail = (name) =>
+	createDocumentResource({
+		doctype: 'Outgoing Mail',
+		name: name,
+		onSuccess(data) {
+			isMailWatcherActive.value = false
+			const mailDetails = {
+				from_: `${data.display_name} <${data.sender}>`,
+				subject: data.subject,
+				html: data.body_html,
+				in_reply_to_mail_name: data.in_reply_to_mail_name,
+				in_reply_to_mail_type: data.in_reply_to_mail_type,
+			}
+			for (const recipient of data.recipients) {
+				const recipientType = recipient.type.toLowerCase()
+				if (recipientType in mailDetails) mailDetails[recipientType].push(recipient.email)
+				else mailDetails[recipientType] = [recipient.email]
+			}
+			mailID.value = name
+			Object.assign(mail, mailDetails)
+			if (mailDetails.cc) cc.value = true
+			if (mailDetails.bcc) bcc.value = true
+			setTimeout(() => {
+				isMailWatcherActive.value = true
+			}, SYNC_DEBOUNCE_TIME + 1)
+		},
+	})
+
+const send = async () => {
+	isSend.value = true
+	if (mailID.value) await updateDraftMail.submit()
+	else await createDraftMail.submit()
+	isSend.value = false
+	show.value = false
 }
 
 const toggleCC = () => {
