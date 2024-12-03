@@ -14,7 +14,8 @@
   "action_at",
   "action_after",
   "retries",
-  "response"
+  "response",
+  "error_message"
  ],
  "fields": [
   {
@@ -33,7 +34,7 @@
    "in_list_view": 1,
    "label": "Status",
    "no_copy": 1,
-   "options": "\nDeferred\nBounced\nSent",
+   "options": "\nBlocked\nDeferred\nBounced\nSent",
    "read_only": 1,
    "search_index": 1
   },
@@ -56,7 +57,7 @@
    "read_only": 1
   },
   {
-   "depends_on": "eval: doc.status",
+   "depends_on": "eval: doc.action_at",
    "description": "Action At - Transfer Completed At",
    "fieldname": "action_after",
    "fieldtype": "Float",
@@ -90,12 +91,19 @@
    "label": "Response",
    "no_copy": 1,
    "read_only": 1
+  },
+  {
+   "fieldname": "error_message",
+   "fieldtype": "Code",
+   "label": "Error Message",
+   "no_copy": 1,
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-10-26 11:14:20.285232",
+ "modified": "2024-12-03 18:07:48.333983",
  "modified_by": "Administrator",
  "module": "Mail Client",
  "name": "Mail Recipient",
