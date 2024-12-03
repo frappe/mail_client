@@ -179,6 +179,8 @@ scheduler_events = {
 	#     "mail_client.tasks.all"
 	# ],
 	"daily": [
+		"mail_client.tasks.enqueue_fetch_emails_from_mail_server",
+		"mail_client.tasks.enqueue_fetch_and_update_delivery_statuses",
 		"mail_client.mail_client.doctype.outgoing_mail.outgoing_mail.delete_newsletters",
 		"mail_client.mail_client.doctype.incoming_mail.incoming_mail.delete_rejected_mails",
 	],
@@ -194,10 +196,6 @@ scheduler_events = {
 	"cron": {
 		"* * * * *": [
 			"mail_client.tasks.enqueue_transfer_emails_to_mail_server",
-		],
-		"*/30 * * * *": [
-			"mail_client.tasks.enqueue_fetch_emails_from_mail_server",
-			"mail_client.tasks.enqueue_fetch_and_update_delivery_statuses",
 		],
 	},
 }
