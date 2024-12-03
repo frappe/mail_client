@@ -420,5 +420,3 @@ def update_draft_mail(
 
 	if do_submit:
 		doc.submit()
-
-	return doc

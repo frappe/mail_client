@@ -178,7 +178,7 @@ const bccInput = ref(null)
 const cc = ref(false)
 const bcc = ref(false)
 const emoji = ref()
-const isSendMail = ref(false)
+const isSend = ref(false)
 const isMailWatcherActive = ref(true)
 const { setCurrentMail } = userStore()
 
@@ -281,14 +281,17 @@ const createDraftMail = createResource({
 		return {
 			// TODO: use mailbox display_name
 			from_: `${user.data?.full_name} <${mail.from}>`,
-			do_not_submit: true,
+			do_not_submit: !isSend.value,
 			...mail,
 		}
 	},
 	onSuccess(data) {
-		mailID.value = data
-		setCurrentMail('draft', data)
-		emit('reloadMails')
+		if (isSend.value) Object.assign(mail, emptyMail)
+		else {
+			mailID.value = data
+			setCurrentMail('draft', data)
+			emit('reloadMails')
+		}
 	},
 })
 
@@ -298,18 +301,13 @@ const updateDraftMail = createResource({
 		return {
 			mail_id: mailID.value,
 			from_: `${user.data?.full_name} <${mail.from}>`,
-			do_submit: isSendMail.value,
+			do_submit: isSend.value,
 			...mail,
 		}
 	},
-	onSuccess(data) {
-		if (data.docstatus) setCurrentMail('draft', null)
+	onSuccess() {
+		if (isSend.value) setCurrentMail('draft', null)
 		emit('reloadMails')
-
-		if (isSendMail.value) {
-			isSendMail.value = false
-			show.value = false
-		}
 	},
 })
 
@@ -343,11 +341,8 @@ const getDraftMail = (name) =>
 			}
 			for (const recipient of data.recipients) {
 				const recipientType = recipient.type.toLowerCase()
-				if (recipientType in mailDetails) {
-					mailDetails[recipientType].push(recipient.email)
-				} else {
-					mailDetails[recipientType] = [recipient.email]
-				}
+				if (recipientType in mailDetails) mailDetails[recipientType].push(recipient.email)
+				else mailDetails[recipientType] = [recipient.email]
 			}
 			mailID.value = name
 			Object.assign(mail, mailDetails)
@@ -359,9 +354,12 @@ const getDraftMail = (name) =>
 		},
 	})
 
-const send = () => {
-	isSendMail.value = true
-	updateDraftMail.submit()
+const send = async () => {
+	isSend.value = true
+	if (mailID.value) await updateDraftMail.submit()
+	else await createDraftMail.submit()
+	isSend.value = false
+	show.value = false
 }
 
 const toggleCC = () => {
