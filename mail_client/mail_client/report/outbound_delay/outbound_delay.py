@@ -182,9 +182,10 @@ def get_data(filters: dict | None = None) -> list[dict]:
 		if filters.get(field):
 			query = query.where(OM[field].isin(filters.get(field)))
 
-	for field in ["status", "email"]:
-		if filters.get(field):
-			query = query.where(MR[field] == filters.get(field))
+	if filters.get("email"):
+		query = query.where(MR["email"] == filters.get("email"))
+	if filters.get("status"):
+		query = query.where(MR["status"].isin(filters.get("status")))
 
 	user = frappe.session.user
 	if not is_system_manager(user):

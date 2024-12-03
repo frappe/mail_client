@@ -31,18 +31,20 @@ frappe.query_reports["Mail Tracker"] = {
 		{
 			fieldname: "status",
 			label: __("Status"),
-			fieldtype: "Select",
-			options: [
-				"",
-				"Pending",
-				"Failed",
-				"Queued",
-				"Blocked",
-				"Deferred",
-				"Bounced",
-				"Partially Sent",
-				"Sent",
-			],
+			fieldtype: "MultiSelectList",
+			get_data: (txt) => {
+				return [
+					"",
+					"Pending",
+					"Failed",
+					"Queued",
+					"Blocked",
+					"Deferred",
+					"Bounced",
+					"Partially Sent",
+					"Sent",
+				];
+			},
 		},
 		{
 			fieldname: "domain_name",

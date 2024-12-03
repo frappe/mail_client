@@ -31,8 +31,10 @@ frappe.query_reports["Outbound Delay"] = {
 		{
 			fieldname: "status",
 			label: __("Status"),
-			fieldtype: "Select",
-			options: ["", "Blocked", "Deferred", "Bounced", "Sent"],
+			fieldtype: "MultiSelectList",
+			get_data: (txt) => {
+				return ["", "Blocked", "Deferred", "Bounced", "Sent"];
+			},
 		},
 		{
 			fieldname: "domain_name",

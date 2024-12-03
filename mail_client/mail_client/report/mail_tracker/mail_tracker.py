@@ -122,7 +122,6 @@ def get_data(filters: dict | None = None) -> list[dict]:
 
 	for field in [
 		"name",
-		"status",
 		"message_id",
 		"tracking_id",
 	]:
@@ -130,6 +129,7 @@ def get_data(filters: dict | None = None) -> list[dict]:
 			query = query.where(OM[field] == filters.get(field))
 
 	for field in [
+		"status",
 		"domain_name",
 		"sender",
 	]:
