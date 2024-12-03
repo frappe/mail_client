@@ -631,12 +631,16 @@ class OutgoingMail(Document):
 			for rcpt in self.recipients:
 				if _rcpt := recipients_map.get(rcpt.email):
 					rcpt.status = _rcpt["status"]
-					rcpt.action_at = convert_utc_to_system_timezone(get_datetime(_rcpt["action_at"])).replace(
-						tzinfo=None
-					)
-					rcpt.action_after = time_diff_in_seconds(rcpt.action_at, self.transfer_completed_at)
 					rcpt.retries = _rcpt["retries"]
 					rcpt.response = _rcpt["response"]
+					rcpt.error_message = _rcpt["error_message"]
+
+					if rcpt.status in ["Sent", "Bounced", "Deferred"]:
+						rcpt.action_at = convert_utc_to_system_timezone(
+							get_datetime(_rcpt["action_at"])
+						).replace(tzinfo=None)
+						rcpt.action_after = time_diff_in_seconds(rcpt.action_at, self.transfer_completed_at)
+
 					rcpt.db_update()
 
 		self._db_set(
