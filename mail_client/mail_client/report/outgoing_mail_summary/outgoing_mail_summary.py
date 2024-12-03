@@ -67,8 +67,8 @@ def get_columns() -> list[dict]:
 			"width": 100,
 		},
 		{
-			"label": _("Response Message"),
-			"fieldname": "response",
+			"label": _("Response/Error Message"),
+			"fieldname": "response_or_error_message",
 			"fieldtype": "Code",
 			"width": 500,
 		},
@@ -132,6 +132,7 @@ def get_data(filters: dict | None = None) -> list[dict]:
 			OM.via_api,
 			OM.is_newsletter,
 			MR.response,
+			MR.error_message,
 			OM.domain_name,
 			OM.ip_address,
 			OM.sender,
@@ -188,19 +189,22 @@ def get_data(filters: dict | None = None) -> list[dict]:
 	data = query.run(as_dict=True)
 
 	for row in data:
-		response = json.loads(row["response"])
-		row["response"] = (
-			response.get("dsn_msg")
-			or response.get("reason")
-			or response.get("dsn_smtp_response")
-			or response.get("response")
-		)
+		if row["response"]:
+			response = json.loads(row.pop("response"))
+			row["response_or_error_message"] = (
+				response.get("dsn_msg")
+				or response.get("reason")
+				or response.get("dsn_smtp_response")
+				or response.get("response")
+			)
+		elif row["error_message"]:
+			row["response_or_error_message"] = row.pop("error_message")
 
 	return data
 
 
 def get_chart(data: list) -> list[dict]:
-	labels, sent, deffered, bounced = [], [], [], []
+	labels, sent, deffered, bounced, blocked = [], [], [], [], []
 
 	for row in reversed(data):
 		if not isinstance(row["submitted_at"], datetime):
@@ -215,18 +219,27 @@ def get_chart(data: list) -> list[dict]:
 				sent.append(1)
 				deffered.append(0)
 				bounced.append(0)
+				blocked.append(0)
 			elif row["status"] == "Deferred":
 				sent.append(0)
 				deffered.append(1)
 				bounced.append(0)
+				blocked.append(0)
 			elif row["status"] == "Bounced":
 				sent.append(0)
 				deffered.append(0)
 				bounced.append(1)
+				blocked.append(0)
+			elif row["status"] == "Blocked":
+				sent.append(0)
+				deffered.append(0)
+				bounced.append(0)
+				blocked.append(1)
 			else:
 				sent.append(0)
 				deffered.append(0)
 				bounced.append(0)
+				blocked.append(0)
 		else:
 			idx = labels.index(date)
 			if row["status"] == "Sent":
@@ -235,6 +248,8 @@ def get_chart(data: list) -> list[dict]:
 				deffered[idx] += 1
 			elif row["status"] == "Bounced":
 				bounced[idx] += 1
+			elif row["status"] == "Blocked":
+				blocked[idx] += 1
 
 	return {
 		"data": {
@@ -243,6 +258,7 @@ def get_chart(data: list) -> list[dict]:
 				{"name": "bounced", "values": bounced},
 				{"name": "deffered", "values": deffered},
 				{"name": "sent", "values": sent},
+				{"name": "blocked", "values": blocked},
 			],
 		},
 		"fieldtype": "Int",
@@ -259,7 +275,7 @@ def get_summary(data: list) -> list[dict]:
 
 	for row in data:
 		status = row["status"]
-		if status in ["Sent", "Deferred", "Bounced"]:
+		if status in ["Sent", "Deferred", "Bounced", "Blocked"]:
 			status_count.setdefault(status, 0)
 			status_count[status] += 1
 
@@ -281,5 +297,11 @@ def get_summary(data: list) -> list[dict]:
 			"datatype": "Int",
 			"value": status_count.get("Bounced", 0),
 			"indicator": "red",
+		},
+		{
+			"label": _("Blocked"),
+			"datatype": "Int",
+			"value": status_count.get("Blocked", 0),
+			"indicator": "grey",
 		},
 	]

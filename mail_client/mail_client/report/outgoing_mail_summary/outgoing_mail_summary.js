@@ -32,7 +32,7 @@ frappe.query_reports["Outgoing Mail Summary"] = {
 			fieldname: "status",
 			label: __("Status"),
 			fieldtype: "Select",
-			options: ["", "Deferred", "Bounced", "Sent"],
+			options: ["", "Blocked", "Deferred", "Bounced", "Sent"],
 		},
 		{
 			fieldname: "domain_name",
