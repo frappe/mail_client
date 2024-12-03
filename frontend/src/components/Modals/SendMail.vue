@@ -217,6 +217,7 @@ const emit = defineEmits(['reloadMails'])
 
 const discardMail = async () => {
 	if (mailID.value) await deleteDraftMail.submit()
+	else if (!isMailEmpty.value) Object.assign(mail, emptyMail)
 	show.value = false
 }
 
