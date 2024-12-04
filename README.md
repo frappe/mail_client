@@ -21,6 +21,7 @@ Frappe Mail is an open-source email platform built on the [Frappe Framework](htt
   - [Auth](#1-auth-api)
   - [Outbound](#2-outbound-api)
   - [Inbound](#3-inbound-api)
+- [Frontend UI](#frontend-ui)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -319,6 +320,23 @@ These endpoints are for retrieving received emails.
   }
 }
 ```
+
+## Frontend UI
+
+Frappe Mail Client ships with its own frontend UI that can be used for managing emails.
+
+![Send Mail](docs/screenshots/send-mail.png)
+
+<details>
+<summary>More screenshots</summary>
+
+![Inbox](docs/screenshots/inbox-page.png)
+
+![Sent](docs/screenshots/sent-page.png)
+
+![Drafts](docs/screenshots/drafts-page.png)
+
+</details>
 
 ## Contributing
 
