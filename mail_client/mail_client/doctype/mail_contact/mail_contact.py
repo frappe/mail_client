@@ -42,7 +42,7 @@ def create_mail_contact(user: str, email: str, display_name: str | None = None) 
 		doc.user = user
 		doc.email = email
 		doc.display_name = display_name
-		doc.insert()
+		doc.insert(ignore_permissions=True)
 
 
 def has_permission(doc: "Document", ptype: str, user: str) -> bool:
