@@ -101,7 +101,7 @@ def get_columns() -> list[dict]:
 		{
 			"label": _("Subject"),
 			"fieldname": "subject",
-			"fieldtype": "Code",
+			"fieldtype": "Data",
 			"width": 500,
 		},
 		{
