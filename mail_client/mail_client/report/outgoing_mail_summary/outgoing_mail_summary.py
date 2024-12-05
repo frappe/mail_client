@@ -151,9 +151,6 @@ def get_data(filters: dict | None = None) -> list[dict]:
 			& (Date(OM.submitted_at) <= Date(filters.get("to_date")))
 		)
 
-	if not filters.get("include_newsletter"):
-		query = query.where(OM.is_newsletter == 0)
-
 	for field in [
 		"name",
 		"ip_address",
@@ -168,6 +165,11 @@ def get_data(filters: dict | None = None) -> list[dict]:
 	]:
 		if filters.get(field):
 			query = query.where(OM[field].isin(filters.get(field)))
+
+	if not filters.get("include_newsletter"):
+		query = query.where(OM.is_newsletter == 0)
+	if filters.get("subject"):
+		query = query.where(OM.subject.like(f"%{filters.get('subject')}%"))
 
 	if filters.get("email"):
 		query = query.where(MR["email"] == filters.get("email"))
