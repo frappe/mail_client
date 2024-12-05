@@ -52,21 +52,31 @@
 			</button>
 		</template>
 	</Dropdown>
+	<Settings v-model="showSettings" />
 </template>
 
 <script setup>
+import { ref } from 'vue'
 import Logo from '@/components/Icons/Logo.vue'
+import Settings from '@/components/Modals/Settings.vue'
 import { sessionStore } from '@/stores/session'
 import { Dropdown } from 'frappe-ui'
-import { ChevronDown, LogIn, LogOut, User, ArrowRightLeft } from 'lucide-vue-next'
-import { useRouter } from 'vue-router'
+import {
+	ChevronDown,
+	LogIn,
+	LogOut,
+	ArrowRightLeft,
+	Settings as SettingsIcon,
+} from 'lucide-vue-next'
 import { convertToTitleCase } from '../utils'
 import { userStore } from '@/stores/user'
 
-const router = useRouter()
 const { logout, branding } = sessionStore()
-let { userResource } = userStore()
-let { isLoggedIn } = sessionStore()
+const { userResource } = userStore()
+const { isLoggedIn } = sessionStore()
+const showSettings = ref(false)
+
+defineOptions({ inheritAttrs: false })
 
 const props = defineProps({
 	isCollapsed: {
@@ -87,6 +97,16 @@ const userDropdownOptions = [
 			let system_user = cookies.get('system_user')
 			if (system_user === 'yes') return true
 			else return false
+		},
+	},
+	{
+		icon: SettingsIcon,
+		label: 'Settings',
+		onClick: () => {
+			showSettings.value = true
+		},
+		condition: () => {
+			return isLoggedIn
 		},
 	},
 	{
