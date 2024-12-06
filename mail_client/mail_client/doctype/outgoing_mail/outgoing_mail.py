@@ -29,6 +29,7 @@ from frappe.utils import (
 	get_datetime,
 	get_datetime_str,
 	now,
+	now_datetime,
 	time_diff_in_seconds,
 	validate_email_address,
 )
@@ -934,7 +935,7 @@ def transfer_emails_to_mail_server() -> None:
 			.where(
 				(OM.docstatus == 1)
 				& (OM.failed_count < MAX_FAILED_COUNT)
-				& ((OM.retry_after.isnull()) | (OM.retry_after <= Now()))
+				& ((OM.retry_after.isnull()) | (OM.retry_after <= now_datetime()))
 				& (OM.status.isin(["Pending", "Failed"]))
 			)
 			.groupby(OM.name)
