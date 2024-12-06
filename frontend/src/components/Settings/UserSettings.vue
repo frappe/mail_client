@@ -22,18 +22,7 @@
 		/>
 	</div>
 
-	<label v-if="userResource.data?.api_key" class="block pt-2 text-sm">
-		<span class="mb-2 block leading-4 text-gray-700">API Key</span>
-		<button
-			class="border-2 rounded-lg bg-gray-100 p-2 w-full flex items-center"
-			@click="copyToClipBoard('key', userResource.data?.api_keyapiSecret)"
-		>
-			<span class="text-gray-800">{{ userResource.data?.api_key }}</span>
-			<span class="border rounded bg-white p-1 text-gray-600 text-xs ml-auto">
-				{{ copyMessage.key }}
-			</span>
-		</button>
-	</label>
+	<Copy v-if="userResource.data?.api_key" label="API Key" :value="userResource.data?.api_key" />
 
 	<div v-else class="mt-2">
 		<p class="text-base">You don't have an API key yet. Generate one to access the API.</p>
@@ -44,53 +33,20 @@
 			<p class="text-base">
 				Please copy the API secret now. You won’t be able to see it again!
 			</p>
-			<label class="block pt-2 text-sm">
-				<span class="mb-2 block leading-4 text-gray-700">API Key</span>
-				<button
-					class="border-2 rounded-lg bg-gray-100 p-2 w-full flex items-center"
-					@click="copyToClipBoard('key', userResource.data?.api_keyapiSecret)"
-				>
-					<span class="text-gray-800">{{ userResource.data?.api_key }}</span>
-					<span class="border rounded bg-white p-1 text-gray-600 text-xs ml-auto">
-						{{ copyMessage.key }}
-					</span>
-				</button>
-			</label>
-			<label class="block pt-2 text-sm">
-				<span class="mb-2 block leading-4 text-gray-700">API Secret</span>
-				<button
-					class="border-2 rounded-lg bg-gray-100 p-2 w-full flex items-center"
-					@click="copyToClipBoard('secret', apiSecret)"
-				>
-					<span class="text-gray-800">{{ apiSecret }}</span>
-					<span class="border rounded bg-white p-1 text-gray-600 text-xs ml-auto">
-						{{ copyMessage.secret }}
-					</span>
-				</button>
-			</label>
+			<Copy label="API Key" :value="userResource.data?.api_key" />
+			<Copy label="API Secret" :value="apiSecret" />
 		</template>
 	</Dialog>
 </template>
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref } from 'vue'
+import Copy from '@/components/Controls/Copy.vue'
 import { Avatar, Button, Dialog, createResource } from 'frappe-ui'
 import { userStore } from '@/stores/user'
 
 const { userResource } = userStore()
 const showSecret = ref(false)
 const apiSecret = ref('')
-const copyMessage = reactive({
-	key: 'Copy',
-	secret: 'Copy',
-})
-
-const copyToClipBoard = async (field, text) => {
-	await navigator.clipboard.writeText(text)
-	copyMessage[field] = 'Copied!'
-	setTimeout(() => {
-		copyMessage[field] = 'Copy'
-	}, 2000)
-}
 
 const generateKeys = createResource({
 	url: 'frappe.core.doctype.user.user.generate_keys',
