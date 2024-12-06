@@ -180,7 +180,7 @@ const bcc = ref(false)
 const emoji = ref()
 const isSend = ref(false)
 const isMailWatcherActive = ref(true)
-const { setCurrentMail } = userStore()
+const { defaultOutgoing, setCurrentMail } = userStore()
 
 const SYNC_DEBOUNCE_TIME = 1500
 
@@ -228,6 +228,7 @@ const syncMail = useDebounceFn(() => {
 }, SYNC_DEBOUNCE_TIME)
 
 const emptyMail = {
+	from: defaultOutgoing.data,
 	to: '',
 	cc: '',
 	bcc: '',
@@ -267,18 +268,10 @@ watch(
 
 watch(mail, syncMail)
 
-const defaultOutgoing = createResource({
-	url: 'mail_client.api.mail.get_default_outgoing',
-	auto: true,
-	onSuccess(data) {
-		if (data) mail.from = data
-	},
-})
-
 const createDraftMail = createResource({
 	url: 'mail_client.api.outbound.send',
 	method: 'POST',
-	makeParams(values) {
+	makeParams() {
 		return {
 			// TODO: use mailbox display_name
 			from_: `${user.data?.full_name} <${mail.from}>`,
