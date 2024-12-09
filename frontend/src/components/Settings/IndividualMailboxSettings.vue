@@ -39,6 +39,7 @@
 	</div>
 </template>
 <script setup>
+import { watch } from 'vue'
 import { Switch, createDocumentResource } from 'frappe-ui'
 
 const props = defineProps({
@@ -64,4 +65,12 @@ const mailbox = createDocumentResource({
 		}
 	},
 })
+
+watch(
+	() => props.mailbox,
+	() => {
+		mailbox.name = props.mailbox
+		mailbox.reload()
+	}
+)
 </script>
