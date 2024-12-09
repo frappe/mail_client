@@ -1,9 +1,8 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from email.utils import formataddr
 from typing import TYPE_CHECKING
 
 import frappe
-import pytz
 from frappe import _
 from frappe.utils import cint, convert_utc_to_system_timezone, now
 
@@ -78,7 +77,7 @@ def convert_to_system_timezone(last_synced_at: str) -> datetime | None:
 
 	if last_synced_at:
 		dt = datetime.fromisoformat(last_synced_at)
-		dt_utc = dt.astimezone(pytz.utc)
+		dt_utc = dt.astimezone(timezone.utc)
 		return convert_utc_to_system_timezone(dt_utc)
 
 
