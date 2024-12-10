@@ -4,13 +4,18 @@ import { createResource } from 'frappe-ui'
 import { reactive } from 'vue'
 
 export const userStore = defineStore('mail-users', () => {
-	let userResource = createResource({
+	const userResource = createResource({
 		url: 'mail_client.api.mail.get_user_info',
 		onError(error) {
 			if (error && error.exc_type === 'AuthenticationError') {
 				router.push('/login')
 			}
 		},
+		auto: true,
+	})
+
+	const defaultOutgoing = createResource({
+		url: 'mail_client.api.mail.get_default_outgoing',
 		auto: true,
 	})
 
@@ -31,5 +36,5 @@ export const userStore = defineStore('mail-users', () => {
 		sessionStorage.setItem(itemName, JSON.stringify(mail))
 	}
 
-	return { userResource, currentMail, setCurrentMail }
+	return { userResource, defaultOutgoing, currentMail, setCurrentMail }
 })
