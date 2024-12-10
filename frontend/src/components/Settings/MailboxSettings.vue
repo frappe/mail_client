@@ -71,7 +71,7 @@
 	</div>
 </template>
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { Switch, TextInput, createDocumentResource } from 'frappe-ui'
 import Link from '@/components/Controls/Link.vue'
 import { userStore } from '@/stores/user'
@@ -79,14 +79,18 @@ import { userStore } from '@/stores/user'
 const { userResource, defaultOutgoing } = userStore()
 const email = ref(defaultOutgoing.data)
 
-watch(email, () => {
+const fetchMailbox = () => {
 	mailbox.name = email.value
 	mailbox.reload()
-})
+}
+
+onMounted(fetchMailbox)
+watch(email, fetchMailbox)
 
 const mailbox = createDocumentResource({
 	doctype: 'Mailbox',
 	name: email.value,
+	auto: false,
 	transform(data) {
 		for (const d of [
 			'enabled',
