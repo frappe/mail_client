@@ -99,22 +99,22 @@
 					<div class="flex flex-col gap-2">
 						<div class="flex flex-wrap gap-2">
 							<!-- <AttachmentItem
-                                v-for="a in attachments"
-                                :key="a.file_url"
-                                :label="a.file_name"`
-                            >
-                                <template #suffix>
-                                <FeatherIcon
-                                    class="h-3.5"
-                                    name="x"
-                                    @click.stop="removeAttachment(a)"
-                                />
-                                </template>
-                            </AttachmentItem> -->
+								v-for="a in attachments"
+								:key="a.file_url"
+								:label="a.file_name"
+							>
+								<template #suffix>
+									<FeatherIcon
+										class="h-3.5"
+										name="x"
+										@click.stop="removeAttachment(a)"
+									/>
+								</template>
+							</AttachmentItem> -->
 						</div>
 						<div class="flex justify-between gap-2 overflow-hidden border-t py-2.5">
 							<div class="flex gap-1 items-center overflow-x-auto">
-								<!--  <TextEditorFixedMenu :buttons="textEditorMenuButtons" /> -->
+								<TextEditorFixedMenu :buttons="textEditorMenuButtons" />
 								<EmojiPicker
 									v-model="emoji"
 									v-slot="{ togglePopover }"
@@ -169,7 +169,6 @@ import { validateEmail } from '@/utils'
 import { userStore } from '@/stores/user'
 
 const user = inject('$user')
-const attachments = defineModel('attachments')
 const show = defineModel()
 const mailID = ref(null)
 const textEditor = ref(null)
@@ -291,7 +290,7 @@ const createDraftMail = createResource({
 
 const updateDraftMail = createResource({
 	url: 'mail_client.api.mail.update_draft_mail',
-	makeParams(values) {
+	makeParams() {
 		return {
 			mail_id: mailID.value,
 			from_: `${user.data?.full_name} <${mail.from}>`,
@@ -308,7 +307,7 @@ const updateDraftMail = createResource({
 // TODO: delete using documentresource directly
 const deleteDraftMail = createResource({
 	url: 'frappe.client.delete',
-	makeParams(values) {
+	makeParams() {
 		return {
 			doctype: 'Outgoing Mail',
 			name: mailID.value,
@@ -378,20 +377,20 @@ const textEditorMenuButtons = [
 	'Separator',
 	'Bold',
 	'Italic',
-	'Separator',
-	'Bullet List',
-	'Numbered List',
+	'FontColor',
 	'Separator',
 	'Align Left',
 	'Align Center',
 	'Align Right',
-	'FontColor',
 	'Separator',
-	'Image',
-	'Video',
-	'Link',
+	'Bullet List',
+	'Numbered List',
+	'Separator',
 	'Blockquote',
 	'Code',
+	'Separator',
+	'Image',
+	'Link',
 	'Horizontal Rule',
 	[
 		'InsertTable',
