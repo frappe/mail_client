@@ -97,21 +97,22 @@
 				</template>
 				<template v-slot:bottom>
 					<div class="flex flex-col gap-2">
-						<div class="flex flex-wrap gap-2">
-							<!-- <AttachmentItem
-								v-for="a in attachments"
-								:key="a.file_url"
-								:label="a.file_name"
-							>
-								<template #suffix>
-									<FeatherIcon
-										class="h-3.5"
-										name="x"
-										@click.stop="removeAttachment(a)"
-									/>
-								</template>
-							</AttachmentItem> -->
+						<!-- Attachments -->
+						<div
+							class="bg-gray-100 rounded p-2.5 text-gray-700 text-sm flex items-center cursor-pointer"
+							v-for="(file, index) in attachments.data"
+							:key="index"
+						>
+							<span class="font-medium mr-1">{{ file.file_name || file.name }}</span>
+							<span class="font-extralight">({{ file.file_size }})</span>
+							<FeatherIcon
+								class="h-3.5 w-3.5 ml-auto"
+								name="x"
+								@click="removeAttachment.submit({ name: file.name })"
+							/>
 						</div>
+
+						<!-- Text Editor Buttons -->
 						<div class="flex justify-between gap-2 overflow-hidden border-t py-2.5">
 							<div class="flex gap-1 items-center overflow-x-auto">
 								<TextEditorFixedMenu :buttons="textEditorMenuButtons" />
@@ -126,7 +127,7 @@
 										</template>
 									</Button>
 								</EmojiPicker>
-								<FileUploader @success="(f) => attachments.push(f)">
+								<FileUploader @success="">
 									<template #default="{ openFileSelector }">
 										<Button variant="ghost" @click="openFileSelector()">
 											<template #icon>
@@ -150,6 +151,7 @@
 <script setup>
 import {
 	Dialog,
+	FeatherIcon,
 	TextEditor,
 	createResource,
 	createDocumentResource,
@@ -228,9 +230,9 @@ const syncMail = useDebounceFn(() => {
 
 const emptyMail = {
 	from: defaultOutgoing.data,
-	to: '',
-	cc: '',
-	bcc: '',
+	to: [],
+	cc: [],
+	bcc: [],
 	subject: '',
 	html: '',
 }
@@ -319,6 +321,27 @@ const deleteDraftMail = createResource({
 	},
 })
 
+const attachments = createResource({
+	url: 'mail_client.api.mail.get_attachments',
+	makeParams() {
+		return {
+			dt: 'Outgoing Mail',
+			dn: mailID.value,
+		}
+	},
+})
+
+const removeAttachment = createResource({
+	url: 'frappe.client.delete',
+	method: 'DELETE',
+	makeParams(values) {
+		return { doctype: 'File', name: values.name }
+	},
+	onSuccess() {
+		attachments.fetch()
+	},
+})
+
 const getDraftMail = (name) =>
 	createDocumentResource({
 		doctype: 'Outgoing Mail',
@@ -338,6 +361,7 @@ const getDraftMail = (name) =>
 				else mailDetails[recipientType] = [recipient.email]
 			}
 			mailID.value = name
+			attachments.fetch()
 			Object.assign(mail, mailDetails)
 			if (mailDetails.cc) cc.value = true
 			if (mailDetails.bcc) bcc.value = true
