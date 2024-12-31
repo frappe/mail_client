@@ -241,9 +241,9 @@ const syncMail = useDebounceFn(() => {
 
 const emptyMail = {
 	from: defaultOutgoing.data,
-	to: [],
-	cc: [],
-	bcc: [],
+	to: '',
+	cc: '',
+	bcc: '',
 	subject: '',
 	html: '',
 }
@@ -420,9 +420,6 @@ const textEditorMenuButtons = [
 	'Separator',
 	'Bullet List',
 	'Numbered List',
-	'Separator',
-	'Blockquote',
-	'Code',
 	'Separator',
 	'Image',
 	'Link',
