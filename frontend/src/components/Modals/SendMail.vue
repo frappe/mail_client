@@ -104,7 +104,9 @@
 							:key="index"
 						>
 							<span class="font-medium mr-1">{{ file.file_name || file.name }}</span>
-							<span class="font-extralight">({{ file.file_size }})</span>
+							<span class="font-extralight">
+								({{ formatBytes(file.file_size) }})
+							</span>
 							<FeatherIcon
 								class="h-3.5 w-3.5 ml-auto"
 								name="x"
@@ -127,7 +129,14 @@
 										</template>
 									</Button>
 								</EmojiPicker>
-								<FileUploader @success="">
+								<FileUploader
+									:upload-args="{
+										doctype: 'Outgoing Mail',
+										docname: mailID,
+										private: true,
+									}"
+									@success="attachments.fetch()"
+								>
 									<template #default="{ openFileSelector }">
 										<Button variant="ghost" @click="openFileSelector()">
 											<template #icon>
@@ -167,7 +176,7 @@ import Link from '@/components/Controls/Link.vue'
 import EmojiPicker from '@/components/EmojiPicker.vue'
 import MultiselectInput from '@/components/Controls/MultiselectInput.vue'
 import { EditorContent } from '@tiptap/vue-3'
-import { validateEmail } from '@/utils'
+import { validateEmail, formatBytes } from '@/utils'
 import { userStore } from '@/stores/user'
 
 const user = inject('$user')
