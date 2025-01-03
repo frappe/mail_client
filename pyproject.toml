@@ -11,6 +11,7 @@ dependencies = [
     # "frappe~=15.0.0" # Installed and managed by bench.
     "dkimpy~=1.1.5",
     "dnspython~=2.4.2",
+    "xmltodict~=0.14.2",
     "uuid-utils~=0.6.1",
     "python-digitalocean~=1.17.0",
 ]
