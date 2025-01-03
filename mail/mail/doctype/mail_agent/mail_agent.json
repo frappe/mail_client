@@ -1,0 +1,187 @@
+{
+ "actions": [],
+ "creation": "2024-10-07 14:22:45.181308",
+ "default_view": "List",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_excr",
+  "enabled",
+  "is_primary",
+  "enable_inbound",
+  "enable_outbound",
+  "column_break_0mtp",
+  "agent_group",
+  "agent",
+  "section_break_0gph",
+  "base_url",
+  "api_key",
+  "column_break_q7yu",
+  "username",
+  "password",
+  "section_break_3jtz",
+  "ipv4_addresses",
+  "column_break_mgw4",
+  "ipv6_addresses"
+ ],
+ "fields": [
+  {
+   "fieldname": "agent",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Agent",
+   "no_copy": 1,
+   "reqd": 1,
+   "set_only_once": 1,
+   "unique": 1
+  },
+  {
+   "default": "1",
+   "depends_on": "eval: !doc.__islocal",
+   "fieldname": "enabled",
+   "fieldtype": "Check",
+   "label": "Enabled",
+   "search_index": 1
+  },
+  {
+   "fieldname": "section_break_excr",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "section_break_3jtz",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_mgw4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "agent_group",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Agent Group",
+   "options": "Mail Agent Group",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "column_break_0mtp",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "fieldname": "enable_inbound",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Inbound",
+   "search_index": 1
+  },
+  {
+   "default": "1",
+   "fieldname": "enable_outbound",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Outbound",
+   "search_index": 1
+  },
+  {
+   "fieldname": "section_break_0gph",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "admin",
+   "fieldname": "username",
+   "fieldtype": "Data",
+   "label": "Username",
+   "no_copy": 1
+  },
+  {
+   "fieldname": "password",
+   "fieldtype": "Password",
+   "label": "Password",
+   "no_copy": 1
+  },
+  {
+   "fieldname": "api_key",
+   "fieldtype": "Password",
+   "label": "API Key",
+   "no_copy": 1
+  },
+  {
+   "fieldname": "column_break_q7yu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "base_url",
+   "fieldtype": "Data",
+   "label": "Base URL",
+   "no_copy": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "ipv4_addresses",
+   "fieldtype": "Small Text",
+   "in_standard_filter": 1,
+   "label": "IPv4 Addresses",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "ipv6_addresses",
+   "fieldtype": "Small Text",
+   "in_standard_filter": 1,
+   "label": "IPv6 Addresses",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "is_primary",
+   "fieldtype": "Check",
+   "label": "Primary",
+   "no_copy": 1,
+   "search_index": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [
+  {
+   "group": "Reference",
+   "link_doctype": "Mail Agent Job",
+   "link_fieldname": "agent"
+  },
+  {
+   "group": "Reference",
+   "link_doctype": "Outgoing Mail",
+   "link_fieldname": "agent"
+  },
+  {
+   "group": "Reference",
+   "link_doctype": "Incoming Mail",
+   "link_fieldname": "agent"
+  }
+ ],
+ "modified": "2024-12-30 13:04:47.589520",
+ "modified_by": "Administrator",
+ "module": "Mail",
+ "name": "Mail Agent",
+ "naming_rule": "Set by user",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "write": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

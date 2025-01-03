@@ -1,5 +1,7 @@
 import re
+import secrets
 import socket
+import string
 from collections.abc import Callable
 from datetime import datetime, timezone
 from email.utils import parsedate_to_datetime as parsedate
@@ -58,6 +60,13 @@ def verify_dns_record(fqdn: str, type: str, expected_value: str, debug: bool = F
 			if debug:
 				frappe.msgprint(f"Expected: {expected_value} Got: {data}")
 	return False
+
+
+def generate_secret(length: int = 32):
+	"""Generates a random secret key."""
+
+	characters = string.ascii_letters + string.digits
+	return "".join(secrets.choice(characters) for _ in range(length))
 
 
 @request_cache
