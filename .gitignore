@@ -5,6 +5,6 @@
 tags
 node_modules
 __pycache__
-mail_client/public/frontend
-mail_client/www/mail.html
+mail/public/frontend
+mail/www/mail.html
 .vscode

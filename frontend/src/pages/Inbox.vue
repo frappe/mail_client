@@ -72,7 +72,7 @@ onMounted(() => {
 })
 
 const incomingMails = createListResource({
-	url: 'mail_client.api.mail.get_incoming_mails',
+	url: 'mail.api.mail.get_incoming_mails',
 	doctype: 'Incoming Mail',
 	auto: true,
 	pageLength: 50,
