@@ -1,0 +1,181 @@
+{
+ "actions": [],
+ "autoname": "hash",
+ "creation": "2024-12-30 12:45:53.179423",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_nukc",
+  "agent",
+  "status",
+  "column_break_u0ac",
+  "endpoint",
+  "method",
+  "section_break_bpxp",
+  "started_at",
+  "ended_at",
+  "column_break_zwxg",
+  "duration",
+  "section_break_b0pd",
+  "request_headers",
+  "request_params",
+  "request_data",
+  "request_json",
+  "response_json",
+  "section_break_66yy",
+  "error_log"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_nukc",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "agent",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Agent",
+   "options": "Mail Agent",
+   "reqd": 1,
+   "search_index": 1,
+   "set_only_once": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "no_copy": 1,
+   "options": "\nFailed\nCompleted",
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "column_break_u0ac",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_b0pd",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "section_break_bpxp",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "started_at",
+   "fieldtype": "Datetime",
+   "label": "Started At",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "ended_at",
+   "fieldtype": "Datetime",
+   "label": "Ended At",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_zwxg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_66yy",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "error_log",
+   "fieldtype": "Code",
+   "label": "Error Log",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "endpoint",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Endpoint",
+   "no_copy": 1,
+   "reqd": 1,
+   "set_only_once": 1
+  },
+  {
+   "fieldname": "method",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Method",
+   "no_copy": 1,
+   "options": "\nGET\nPOST\nPATCH\nDELETE",
+   "reqd": 1,
+   "set_only_once": 1
+  },
+  {
+   "fieldname": "request_data",
+   "fieldtype": "JSON",
+   "label": "Request (Data)",
+   "set_only_once": 1
+  },
+  {
+   "fieldname": "duration",
+   "fieldtype": "Float",
+   "label": "Duration (Seconds)",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "request_headers",
+   "fieldtype": "JSON",
+   "label": "Request (Headers)",
+   "set_only_once": 1
+  },
+  {
+   "fieldname": "request_params",
+   "fieldtype": "JSON",
+   "label": "Request (Params)",
+   "set_only_once": 1
+  },
+  {
+   "fieldname": "request_json",
+   "fieldtype": "JSON",
+   "label": "Request (JSON)",
+   "set_only_once": 1
+  },
+  {
+   "fieldname": "response_json",
+   "fieldtype": "JSON",
+   "label": "Response (JSON)",
+   "no_copy": 1,
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-12-30 18:57:34.469733",
+ "modified_by": "Administrator",
+ "module": "Mail",
+ "name": "Mail Agent Job",
+ "naming_rule": "Random",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}
