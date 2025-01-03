@@ -1,0 +1,128 @@
+{
+ "actions": [],
+ "creation": "2024-10-20 21:15:42.850504",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_krzj",
+  "enabled",
+  "inbound",
+  "outbound",
+  "column_break_fkha",
+  "agent_group",
+  "priority",
+  "section_break_0q8l",
+  "ipv4_addresses",
+  "column_break_79yp",
+  "ipv6_addresses"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_krzj",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "1",
+   "depends_on": "eval: !doc.__islocal",
+   "fieldname": "enabled",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Enabled",
+   "search_index": 1
+  },
+  {
+   "fieldname": "column_break_fkha",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval: doc.inbound",
+   "fieldname": "priority",
+   "fieldtype": "Int",
+   "in_standard_filter": 1,
+   "label": "Priority",
+   "mandatory_depends_on": "eval: doc.inbound",
+   "no_copy": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "section_break_0q8l",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_79yp",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "agent_group",
+   "fieldtype": "Data",
+   "label": "Agent Group",
+   "no_copy": 1,
+   "reqd": 1,
+   "set_only_once": 1,
+   "unique": 1
+  },
+  {
+   "default": "1",
+   "fieldname": "inbound",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Inbound",
+   "search_index": 1
+  },
+  {
+   "default": "1",
+   "fieldname": "outbound",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Outbound",
+   "search_index": 1
+  },
+  {
+   "fieldname": "ipv4_addresses",
+   "fieldtype": "Small Text",
+   "in_standard_filter": 1,
+   "label": "IPv4 Addresses",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "ipv6_addresses",
+   "fieldtype": "Small Text",
+   "in_standard_filter": 1,
+   "label": "IPv6 Addresses",
+   "no_copy": 1,
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [
+  {
+   "group": "Reference",
+   "link_doctype": "Mail Agent",
+   "link_fieldname": "agent_group"
+  }
+ ],
+ "modified": "2024-12-23 13:45:28.393030",
+ "modified_by": "Administrator",
+ "module": "Mail",
+ "name": "Mail Agent Group",
+ "naming_rule": "Set by user",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}
