@@ -43,6 +43,20 @@ def get_dns_record(fqdn: str, type: str = "A", raise_exception: bool = False) ->
 		frappe.throw(err_msg)
 
 
+def get_host_by_ip(ip_address: str, raise_exception: bool = False) -> str | None:
+	"""Returns host for the given IP address."""
+
+	err_msg = None
+
+	try:
+		return socket.gethostbyaddr(ip_address)[0]
+	except Exception as e:
+		err_msg = _(str(e))
+
+	if raise_exception and err_msg:
+		frappe.throw(err_msg)
+
+
 def verify_dns_record(fqdn: str, type: str, expected_value: str, debug: bool = False) -> bool:
 	"""Verifies the DNS Record."""
 
@@ -165,17 +179,3 @@ def add_or_update_tzinfo(date_time: datetime | str, timezone: str | None = None)
 		date_time = date_time.astimezone(target_tz)
 
 	return str(date_time)
-
-
-def get_host_by_ip(ip_address: str, raise_exception: bool = False) -> str | None:
-	"""Returns host for the given IP address."""
-
-	err_msg = None
-
-	try:
-		return socket.gethostbyaddr(ip_address)[0]
-	except Exception as e:
-		err_msg = _(str(e))
-
-	if raise_exception and err_msg:
-		frappe.throw(err_msg)

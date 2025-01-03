@@ -57,6 +57,11 @@ class EmailParser:
 		if reply_to := self.message.get("Reply-To"):
 			return remove_whitespace_characters(reply_to)
 
+	def get_priority(self) -> int:
+		"""Returns the priority of the email."""
+
+		return cint(self.get_header("X-Priority"))
+
 	def get_header(self, header: str) -> str | None:
 		"""Returns the value of the header."""
 
@@ -191,6 +196,11 @@ class EmailParser:
 						break
 
 		return result
+
+	def get_message(self) -> str:
+		"""Returns the email message as a string."""
+
+		return self.message.as_string()
 
 
 def remove_whitespace_characters(text: str) -> str:
