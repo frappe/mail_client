@@ -72,7 +72,7 @@ onMounted(() => {
 })
 
 const sentMails = createListResource({
-	url: 'mail_client.api.mail.get_sent_mails',
+	url: 'mail.api.mail.get_sent_mails',
 	doctype: 'Outgoing Mail',
 	auto: true,
 	pageLength: 50,

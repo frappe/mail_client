@@ -1,0 +1,32 @@
+{
+ "actions": [],
+ "creation": "2024-04-06 08:34:39.585832",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "mailbox"
+ ],
+ "fields": [
+  {
+   "fieldname": "mailbox",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Mailbox",
+   "options": "Mailbox",
+   "reqd": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2024-04-07 13:58:27.070251",
+ "modified_by": "Administrator",
+ "module": "Mail",
+ "name": "Mail Alias Mailbox",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

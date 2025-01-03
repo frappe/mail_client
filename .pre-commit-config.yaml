@@ -8,7 +8,7 @@ repos:
     rev: v4.3.0
     hooks:
       - id: trailing-whitespace
-        files: "mail_client.*"
+        files: "mail.*"
         exclude: ".*json$|.*txt$|.*csv|.*md|.*svg"
       - id: check-yaml
       - id: no-commit-to-branch
@@ -38,11 +38,11 @@ repos:
         # Ignore any files that might contain jinja / bundles
         exclude: |
             (?x)^(
-                mail_client/public/dist/.*|
+                mail/public/dist/.*|
                 .*node_modules.*|
                 .*boilerplate.*|
-                mail_client/templates/includes/.*|
-                mail_client/public/js/lib/.*
+                mail/templates/includes/.*|
+                mail/public/js/lib/.*
             )$
 
 
@@ -55,12 +55,12 @@ repos:
         # Ignore any files that might contain jinja / bundles
         exclude: |
             (?x)^(
-                mail_client/public/dist/.*|
+                mail/public/dist/.*|
                 cypress/.*|
                 .*node_modules.*|
                 .*boilerplate.*|
-                mail_client/templates/includes/.*|
-                mail_client/public/js/lib/.*
+                mail/templates/includes/.*|
+                mail/public/js/lib/.*
             )$
 
 ci:

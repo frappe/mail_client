@@ -20,7 +20,7 @@ export default defineConfig({
 		},
 	},
 	build: {
-		outDir: `../mail_client/public/frontend`,
+		outDir: `../mail/public/frontend`,
 		emptyOutDir: true,
 		commonjsOptions: {
 			include: [/tailwind.config.js/, /node_modules/],

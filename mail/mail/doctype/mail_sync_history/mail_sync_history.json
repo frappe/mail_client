@@ -1,0 +1,84 @@
+{
+ "actions": [],
+ "autoname": "hash",
+ "creation": "2024-06-16 16:52:39.577298",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "user",
+  "source",
+  "column_break_6jsu",
+  "mailbox",
+  "last_synced_at",
+  "last_synced_mail"
+ ],
+ "fields": [
+  {
+   "fieldname": "user",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "User",
+   "options": "User",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "mailbox",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Mailbox",
+   "options": "Mailbox",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "column_break_6jsu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "source",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Source",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "last_synced_at",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Last Synced At",
+   "search_index": 1
+  },
+  {
+   "fieldname": "last_synced_mail",
+   "fieldtype": "Data",
+   "label": "Last Synced Mail"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-08-12 12:17:37.936534",
+ "modified_by": "Administrator",
+ "module": "Mail",
+ "name": "Mail Sync History",
+ "naming_rule": "Random",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

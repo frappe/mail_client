@@ -269,7 +269,7 @@ watch(
 watch(mail, syncMail)
 
 const createDraftMail = createResource({
-	url: 'mail_client.api.outbound.send',
+	url: 'mail.api.outbound.send',
 	method: 'POST',
 	makeParams() {
 		return {
@@ -290,7 +290,7 @@ const createDraftMail = createResource({
 })
 
 const updateDraftMail = createResource({
-	url: 'mail_client.api.mail.update_draft_mail',
+	url: 'mail.api.mail.update_draft_mail',
 	makeParams(values) {
 		return {
 			mail_id: mailID.value,

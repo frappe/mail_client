@@ -34,8 +34,8 @@ npm manifest:
     "scripts": {
       "dev": "vite",
       "serve": "vite preview",
-      "build": "vite build --base=/assets/mail_client/frontend/ && yarn copy-html-entry",
-      "copy-html-entry": "cp ../mail_client/public/frontend/index.html ../mail_client/www/mail.html"
+      "build": "vite build --base=/assets/mail/frontend/ && yarn copy-html-entry",
+      "copy-html-entry": "cp ../mail/public/frontend/index.html ../mail/www/mail.html"
     },
     "dependencies": {
       "feather-icons": "^4.28.0",
