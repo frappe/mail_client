@@ -40,6 +40,15 @@ def delete_cache(name: str, key: str | None = None) -> None:
 		frappe.cache.hdel(name, key)
 
 
+def get_root_domain_name() -> str | None:
+	"""Returns the root domain name."""
+
+	def getter() -> str | None:
+		return frappe.db.get_single_value("Mail Settings", "root_domain_name")
+
+	return _get_or_set("root_domain_name", getter, expires_in_sec=None)
+
+
 def get_postmaster_for_domain(domain_name: str) -> str:
 	"""Returns the postmaster for the domain."""
 

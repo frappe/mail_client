@@ -5,12 +5,59 @@ from datetime import datetime, timezone
 from email.utils import parsedate_to_datetime as parsedate
 from zoneinfo import ZoneInfo
 
+import dns.resolver
 import frappe
 from bs4 import BeautifulSoup
 from frappe import _
 from frappe.utils import convert_utc_to_system_timezone, get_datetime, get_datetime_str, get_system_timezone
 from frappe.utils.background_jobs import get_jobs
 from frappe.utils.caching import request_cache
+
+
+def get_dns_record(fqdn: str, type: str = "A", raise_exception: bool = False) -> dns.resolver.Answer | None:
+	"""Returns DNS record for the given FQDN and type."""
+
+	err_msg = None
+
+	try:
+		resolver = dns.resolver.Resolver(configure=False)
+		resolver.nameservers = [
+			"1.1.1.1",
+			"8.8.4.4",
+			"8.8.8.8",
+			"9.9.9.9",
+		]
+
+		r = resolver.resolve(fqdn, type)
+		return r
+	except dns.resolver.NXDOMAIN:
+		err_msg = _("{0} does not exist.").format(frappe.bold(fqdn))
+	except dns.resolver.NoAnswer:
+		err_msg = _("No answer for {0}.").format(frappe.bold(fqdn))
+	except dns.exception.DNSException as e:
+		err_msg = _(str(e))
+
+	if raise_exception and err_msg:
+		frappe.throw(err_msg)
+
+
+def verify_dns_record(fqdn: str, type: str, expected_value: str, debug: bool = False) -> bool:
+	"""Verifies the DNS Record."""
+
+	if result := get_dns_record(fqdn, type):
+		for data in result:
+			if data:
+				if type == "MX":
+					data = data.exchange
+				data = data.to_text().replace('"', "")
+				if type == "TXT" and "._domainkey." in fqdn:
+					data = data.replace(" ", "")
+					expected_value = expected_value.replace(" ", "")
+				if data == expected_value:
+					return True
+			if debug:
+				frappe.msgprint(f"Expected: {expected_value} Got: {data}")
+	return False
 
 
 @request_cache
