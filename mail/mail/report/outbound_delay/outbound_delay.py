@@ -59,6 +59,12 @@ def get_columns() -> list[dict]:
 			"width": 60,
 		},
 		{
+			"label": _("Priority"),
+			"fieldname": "priority",
+			"fieldtype": "Int",
+			"width": 80,
+		},
+		{
 			"label": _("Newsletter"),
 			"fieldname": "is_newsletter",
 			"fieldtype": "Check",
@@ -93,6 +99,13 @@ def get_columns() -> list[dict]:
 			"fieldname": "domain_name",
 			"fieldtype": "Link",
 			"options": "Mail Domain",
+			"width": 150,
+		},
+		{
+			"label": _("Agent"),
+			"fieldname": "agent",
+			"fieldtype": "Link",
+			"options": "Mail Agent",
 			"width": 150,
 		},
 		{
@@ -140,6 +153,7 @@ def get_data(filters: dict | None = None) -> list[dict]:
 			MR.retries,
 			OM.message_size,
 			OM.via_api,
+			OM.priority,
 			OM.is_newsletter,
 			OM.submitted_after.as_("submission_delay"),
 			(OM.transfer_started_after + OM.transfer_completed_after).as_("transfer_delay"),
@@ -148,6 +162,7 @@ def get_data(filters: dict | None = None) -> list[dict]:
 				OM.submitted_after + OM.transfer_started_after + OM.transfer_completed_after + MR.action_after
 			).as_("total_delay"),
 			OM.domain_name,
+			OM.agent,
 			OM.ip_address,
 			OM.sender,
 			MR.email.as_("recipient"),
@@ -169,6 +184,7 @@ def get_data(filters: dict | None = None) -> list[dict]:
 
 	for field in [
 		"name",
+		"priority",
 		"ip_address",
 		"message_id",
 	]:
@@ -177,6 +193,7 @@ def get_data(filters: dict | None = None) -> list[dict]:
 
 	for field in [
 		"domain_name",
+		"agent",
 		"sender",
 	]:
 		if filters.get(field):
