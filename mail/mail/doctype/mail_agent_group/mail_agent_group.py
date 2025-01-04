@@ -5,7 +5,7 @@ import frappe
 from frappe import _
 from frappe.model.document import Document
 
-from mail.utils import get_dns_record
+from mail.utils.dns import get_dns_record
 
 
 class MailAgentGroup(Document):

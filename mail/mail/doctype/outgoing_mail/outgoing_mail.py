@@ -40,12 +40,12 @@ from mail.mail.doctype.mail_contact.mail_contact import create_mail_contact
 from mail.mail_server import get_mail_server_outbound_api
 from mail.utils import (
 	convert_html_to_text,
-	get_host_by_ip,
 	get_in_reply_to,
 	get_in_reply_to_mail,
-	parsedate_to_datetime,
 )
 from mail.utils.cache import get_user_default_mailbox
+from mail.utils.dns import get_host_by_ip
+from mail.utils.dt import parsedate_to_datetime
 from mail.utils.email_parser import EmailParser
 from mail.utils.user import get_user_mailboxes, is_mailbox_owner, is_system_manager
 from mail.utils.validation import validate_mailbox_for_outgoing

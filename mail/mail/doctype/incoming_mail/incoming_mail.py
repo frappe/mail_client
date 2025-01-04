@@ -16,8 +16,9 @@ from uuid_utils import uuid7
 from mail.mail.doctype.mail_contact.mail_contact import create_mail_contact
 from mail.mail.doctype.outgoing_mail.outgoing_mail import create_outgoing_mail
 from mail.mail_server import get_mail_server_inbound_api
-from mail.utils import add_or_update_tzinfo, get_in_reply_to_mail, parse_iso_datetime
+from mail.utils import get_in_reply_to_mail
 from mail.utils.cache import get_postmaster_for_domain
+from mail.utils.dt import add_or_update_tzinfo, parse_iso_datetime
 from mail.utils.email_parser import EmailParser, extract_ip_and_host
 from mail.utils.user import get_user_mailboxes, is_mailbox_owner, is_system_manager
 

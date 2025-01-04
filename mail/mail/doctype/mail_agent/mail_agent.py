@@ -13,7 +13,8 @@ from mail.mail.doctype.dns_record.dns_record import create_or_update_dns_record
 from mail.mail.doctype.mail_settings.mail_settings import (
 	validate_mail_settings,
 )
-from mail.utils import generate_secret, get_dns_record
+from mail.utils import generate_secret
+from mail.utils.dns import get_dns_record
 
 
 class MailAgent(Document):

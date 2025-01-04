@@ -5,7 +5,6 @@ import frappe
 from frappe import _
 from frappe.model.document import Document
 
-from mail.utils.cache import delete_cache
 from mail.utils.user import has_role, is_system_manager
 from mail.utils.validation import (
 	is_valid_email_for_domain,
@@ -26,11 +25,11 @@ class Mailbox(Document):
 		self.validate_default_mailbox()
 
 	def on_update(self) -> None:
-		delete_cache(f"user|{self.user}")
+		frappe.cache.delete_value(f"user|{self.user}")
 
 	def on_trash(self) -> None:
 		self.validate_against_mail_alias()
-		delete_cache(f"user|{self.user}")
+		frappe.cache.delete_value(f"user|{self.user}")
 
 	def validate_domain(self) -> None:
 		"""Validates the domain."""

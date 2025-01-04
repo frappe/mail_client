@@ -14,7 +14,7 @@ from frappe.query_builder import Interval
 from frappe.query_builder.functions import Now
 from frappe.utils import now, time_diff_in_seconds
 
-from mail.utils import get_host_by_ip
+from mail.utils.dns import get_host_by_ip
 
 
 class SpamCheckLog(Document):

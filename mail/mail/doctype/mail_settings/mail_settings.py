@@ -5,7 +5,6 @@ import frappe
 from frappe import _
 from frappe.model.document import Document
 
-from mail.utils.cache import delete_cache
 from mail.utils.validation import is_valid_host
 
 
@@ -16,7 +15,7 @@ class MailSettings(Document):
 		self.validate_spf_host()
 
 	def on_update(self) -> None:
-		delete_cache("root_domain_name")
+		frappe.cache.delete_value("root_domain_name")
 
 		if self.has_value_changed("root_domain_name"):
 			create_dmarc_dns_record_for_external_domains()

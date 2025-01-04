@@ -8,7 +8,7 @@ from urllib.parse import unquote
 from frappe.utils import cint, get_datetime_str
 from frappe.utils.file_manager import save_file
 
-from mail.utils import parsedate_to_datetime
+from mail.utils.dt import parsedate_to_datetime
 
 if TYPE_CHECKING:
 	from email.message import Message
