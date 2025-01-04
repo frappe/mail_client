@@ -59,7 +59,7 @@
    "fieldname": "attached_to_doctype",
    "fieldtype": "Select",
    "label": "Attached To DocType",
-   "options": "\nMail Domain"
+   "options": "\nDKIM Key"
   },
   {
    "fieldname": "column_break_topm",
@@ -136,7 +136,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-11-16 15:38:59.571132",
+ "modified": "2025-01-04 23:06:39.128271",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "DNS Record",

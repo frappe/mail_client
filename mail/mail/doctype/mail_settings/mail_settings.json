@@ -11,6 +11,8 @@
   "dns_provider",
   "dns_provider_token",
   "section_break_l9un",
+  "default_dkim_key_size",
+  "column_break_rwnw",
   "default_ttl",
   "spamassassin_tab",
   "section_break_hgqa",
@@ -167,12 +169,24 @@
    "mandatory_depends_on": "eval: doc.enable_spamd_for_outbound",
    "precision": "1",
    "read_only_depends_on": "eval: !doc.enable_spamd || !doc.enable_spamd_for_outbound"
+  },
+  {
+   "default": "2048",
+   "fieldname": "default_dkim_key_size",
+   "fieldtype": "Select",
+   "label": "DKIM Key Size",
+   "options": "\n2048\n4096",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_rwnw",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-01-03 14:44:34.023066",
+ "modified": "2025-01-04 23:10:33.605690",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Settings",
