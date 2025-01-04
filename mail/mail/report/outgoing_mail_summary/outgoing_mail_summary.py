@@ -55,10 +55,23 @@ def get_columns() -> list[dict]:
 			"width": 120,
 		},
 		{
+			"label": _("Spam Score"),
+			"fieldname": "spam_score",
+			"fieldtype": "Float",
+			"precision": 1,
+			"width": 110,
+		},
+		{
 			"label": _("API"),
 			"fieldname": "via_api",
 			"fieldtype": "Check",
 			"width": 60,
+		},
+		{
+			"label": _("Priority"),
+			"fieldname": "priority",
+			"fieldtype": "Int",
+			"width": 80,
 		},
 		{
 			"label": _("Newsletter"),
@@ -77,6 +90,13 @@ def get_columns() -> list[dict]:
 			"fieldname": "domain_name",
 			"fieldtype": "Link",
 			"options": "Mail Domain",
+			"width": 150,
+		},
+		{
+			"label": _("Agent"),
+			"fieldname": "agent",
+			"fieldtype": "Link",
+			"options": "Mail Agent",
 			"width": 150,
 		},
 		{
@@ -129,11 +149,14 @@ def get_data(filters: dict | None = None) -> list[dict]:
 			MR.status,
 			MR.retries,
 			OM.message_size,
+			OM.spam_score,
 			OM.via_api,
+			OM.priority,
 			OM.is_newsletter,
 			MR.response,
 			MR.error_message,
 			OM.domain_name,
+			OM.agent,
 			OM.ip_address,
 			OM.sender,
 			MR.email.as_("recipient"),
@@ -153,6 +176,7 @@ def get_data(filters: dict | None = None) -> list[dict]:
 
 	for field in [
 		"name",
+		"priority",
 		"ip_address",
 		"message_id",
 	]:
@@ -161,7 +185,7 @@ def get_data(filters: dict | None = None) -> list[dict]:
 
 	for field in [
 		"domain_name",
-		"sender",
+		"agent",
 	]:
 		if filters.get(field):
 			query = query.where(OM[field].isin(filters.get(field)))
