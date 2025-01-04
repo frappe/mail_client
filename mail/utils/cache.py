@@ -108,3 +108,23 @@ def get_user_default_mailbox(user: str) -> str | None:
 		return frappe.db.get_value("Mailbox", {"user": user, "is_default": 1}, "name")
 
 	return _hget_or_hset(f"user|{user}", "default_mailbox", getter)
+
+
+def get_blacklist_for_ip_group(ip_group: str) -> list:
+	"""Returns the blacklist for the IP group."""
+
+	def getter() -> list:
+		IP_BLACKLIST = frappe.qb.DocType("IP Blacklist")
+		return (
+			frappe.qb.from_(IP_BLACKLIST)
+			.select(
+				IP_BLACKLIST.name,
+				IP_BLACKLIST.is_blacklisted,
+				IP_BLACKLIST.ip_address,
+				IP_BLACKLIST.ip_address_expanded,
+				IP_BLACKLIST.blacklist_reason,
+			)
+			.where(IP_BLACKLIST.ip_group == ip_group)
+		).run(as_dict=True)
+
+	return _get_or_set(f"blacklist|{ip_group}", getter, expires_in_sec=24 * 60 * 60)
