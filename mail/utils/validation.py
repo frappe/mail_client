@@ -3,6 +3,7 @@ import re
 import frappe
 from frappe import _
 from frappe.utils.caching import request_cache
+from validate_email_address import validate_email
 
 
 def is_valid_host(host: str) -> bool:
@@ -26,6 +27,14 @@ def is_valid_email_for_domain(email: str, domain_name: str, raise_exception: boo
 
 		return False
 	return True
+
+
+def validate_email_address(
+	email: str, check_mx: bool = True, verify: bool = True, smtp_timeout: int = 10
+) -> bool:
+	"""Validates the email address by checking MX records and RCPT TO."""
+
+	return bool(validate_email(email=email, check_mx=check_mx, verify=verify, smtp_timeout=smtp_timeout))
 
 
 @request_cache

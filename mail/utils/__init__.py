@@ -13,7 +13,9 @@ from bs4 import BeautifulSoup
 from frappe import _
 from frappe.utils import convert_utc_to_system_timezone, get_datetime, get_datetime_str, get_system_timezone
 from frappe.utils.background_jobs import get_jobs
-from frappe.utils.caching import request_cache
+from frappe.utils.caching import redis_cache, request_cache
+
+from mail.utils.validation import validate_email_address
 
 
 def get_dns_record(fqdn: str, type: str = "A", raise_exception: bool = False) -> dns.resolver.Answer | None:
@@ -76,63 +78,6 @@ def verify_dns_record(fqdn: str, type: str, expected_value: str, debug: bool = F
 	return False
 
 
-def generate_secret(length: int = 32):
-	"""Generates a random secret key."""
-
-	characters = string.ascii_letters + string.digits
-	return "".join(secrets.choice(characters) for _ in range(length))
-
-
-@request_cache
-def convert_html_to_text(html: str) -> str:
-	"""Returns plain text from HTML content."""
-
-	text = ""
-
-	if html:
-		soup = BeautifulSoup(html, "html.parser")
-		text = soup.get_text()
-		text = re.sub(r"\s+", " ", text).strip()
-
-	return text
-
-
-def get_in_reply_to_mail(
-	message_id: str | None = None,
-) -> tuple[str, str] | tuple[None, None]:
-	"""Returns mail type and name of the mail to which the given message is a reply to."""
-
-	if message_id:
-		for in_reply_to_mail_type in ["Outgoing Mail", "Incoming Mail"]:
-			if in_reply_to_mail_name := frappe.db.get_value(
-				in_reply_to_mail_type, {"message_id": message_id}, "name"
-			):
-				return in_reply_to_mail_type, in_reply_to_mail_name
-
-	return None, None
-
-
-def get_in_reply_to(
-	in_reply_to_mail_type: str | None = None,
-	in_reply_to_mail_name: str | None = None,
-) -> str | None:
-	"""Returns message_id of the mail to which the given mail is a reply to."""
-
-	if in_reply_to_mail_type and in_reply_to_mail_name:
-		return frappe.get_cached_value(in_reply_to_mail_type, in_reply_to_mail_name, "message_id")
-
-	return None
-
-
-def enqueue_job(method: str | Callable, **kwargs) -> None:
-	"""Enqueues a background job."""
-
-	site = frappe.local.site
-	jobs = get_jobs(site=site)
-	if not jobs or method not in jobs[site]:
-		frappe.enqueue(method, **kwargs)
-
-
 def convert_to_utc(date_time: datetime | str, from_timezone: str | None = None) -> "datetime":
 	"""Converts the given datetime to UTC timezone."""
 
@@ -179,3 +124,68 @@ def add_or_update_tzinfo(date_time: datetime | str, timezone: str | None = None)
 		date_time = date_time.astimezone(target_tz)
 
 	return str(date_time)
+
+
+def generate_secret(length: int = 32):
+	"""Generates a random secret key."""
+
+	characters = string.ascii_letters + string.digits
+	return "".join(secrets.choice(characters) for _ in range(length))
+
+
+def enqueue_job(method: str | Callable, **kwargs) -> None:
+	"""Enqueues a background job."""
+
+	site = frappe.local.site
+	jobs = get_jobs(site=site)
+	if not jobs or method not in jobs[site]:
+		frappe.enqueue(method, **kwargs)
+
+
+@request_cache
+def convert_html_to_text(html: str) -> str:
+	"""Returns plain text from HTML content."""
+
+	text = ""
+
+	if html:
+		soup = BeautifulSoup(html, "html.parser")
+		text = soup.get_text()
+		text = re.sub(r"\s+", " ", text).strip()
+
+	return text
+
+
+def get_in_reply_to_mail(
+	message_id: str | None = None,
+) -> tuple[str, str] | tuple[None, None]:
+	"""Returns mail type and name of the mail to which the given message is a reply to."""
+
+	if message_id:
+		for in_reply_to_mail_type in ["Outgoing Mail", "Incoming Mail"]:
+			if in_reply_to_mail_name := frappe.db.get_value(
+				in_reply_to_mail_type, {"message_id": message_id}, "name"
+			):
+				return in_reply_to_mail_type, in_reply_to_mail_name
+
+	return None, None
+
+
+def get_in_reply_to(
+	in_reply_to_mail_type: str | None = None,
+	in_reply_to_mail_name: str | None = None,
+) -> str | None:
+	"""Returns message_id of the mail to which the given mail is a reply to."""
+
+	if in_reply_to_mail_type and in_reply_to_mail_name:
+		return frappe.get_cached_value(in_reply_to_mail_type, in_reply_to_mail_name, "message_id")
+
+	return None
+
+
+@frappe.whitelist()
+@redis_cache(ttl=3600)
+def check_deliverability(email: str) -> bool:
+	"""Wrapper function of `utils.validation.validate_email_address` for caching."""
+
+	return validate_email_address(email, check_mx=True, verify=True, smtp_timeout=10)
