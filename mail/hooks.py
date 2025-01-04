@@ -292,7 +292,7 @@ default_log_clearing_doctypes = {"Spam Check Log": 7}
 fixtures = [
 	{
 		"dt": "Role",
-		"filters": [["role_name", "in", ["Mailbox User"]]],
+		"filters": [["role_name", "in", ["Domain Owner", "Mailbox User"]]],
 	},
 ]
 
