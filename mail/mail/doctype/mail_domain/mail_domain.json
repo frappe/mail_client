@@ -10,7 +10,7 @@
   "is_verified",
   "is_subdomain",
   "column_break_lr3y",
-  "dkim_key_size",
+  "dkim_rsa_key_size",
   "newsletter_retention",
   "dns_records_section",
   "dns_records"
@@ -69,12 +69,6 @@
    "non_negative": 1
   },
   {
-   "fieldname": "dkim_key_size",
-   "fieldtype": "Select",
-   "label": "DKIM Key Size",
-   "options": "\n2048\n4096"
-  },
-  {
    "fieldname": "section_break_ceuu",
    "fieldtype": "Section Break"
   },
@@ -86,6 +80,12 @@
    "label": "Subdomain",
    "no_copy": 1,
    "read_only": 1
+  },
+  {
+   "fieldname": "dkim_rsa_key_size",
+   "fieldtype": "Select",
+   "label": "DKIM RSA Key Size",
+   "options": "\n2048\n4096"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -116,7 +116,7 @@
    "link_fieldname": "domain_name"
   }
  ],
- "modified": "2025-01-05 10:38:03.188966",
+ "modified": "2025-01-05 12:07:54.486802",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Domain",

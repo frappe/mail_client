@@ -17,21 +17,21 @@ class MailDomain(Document):
 		self.name = self.domain_name
 
 	def validate(self) -> None:
-		self.validate_dkim_key_size()
+		self.validate_dkim_rsa_key_size()
 		self.validate_newsletter_retention()
 		self.validate_is_verified()
 		self.validate_is_subdomain()
 
-		if self.is_new() or self.has_value_changed("dkim_key_size"):
-			create_dkim_key(self.domain_name, cint(self.dkim_key_size))
+		if self.is_new() or self.has_value_changed("dkim_rsa_key_size"):
+			create_dkim_key(self.domain_name, cint(self.dkim_rsa_key_size))
 			self.refresh_dns_records(do_not_save=True)
 
-	def validate_dkim_key_size(self) -> None:
+	def validate_dkim_rsa_key_size(self) -> None:
 		"""Validates the DKIM Key Size."""
 
-		if not self.dkim_key_size:
-			self.dkim_key_size = frappe.db.get_single_value(
-				"Mail Settings", "default_dkim_key_size", cache=True
+		if not self.dkim_rsa_key_size:
+			self.dkim_rsa_key_size = frappe.db.get_single_value(
+				"Mail Settings", "default_dkim_rsa_key_size", cache=True
 			)
 
 	def validate_newsletter_retention(self) -> None:
@@ -107,7 +107,7 @@ class MailDomain(Document):
 	def rotate_dkim_keys(self) -> None:
 		"""Rotates the DKIM Keys."""
 
-		create_dkim_key(self.domain_name, cint(self.dkim_key_size))
+		create_dkim_key(self.domain_name, cint(self.dkim_rsa_key_size))
 		frappe.msgprint(_("DKIM Keys rotated successfully."), indicator="green", alert=True)
 
 
@@ -128,13 +128,24 @@ def get_dns_records(domain_name: str) -> list[dict]:
 		},
 	)
 
-	# DKIM Record
+	# DKIM Records
+	# RSA
 	records.append(
 		{
 			"category": "Sending Record",
 			"type": "CNAME",
-			"host": f"frappemail._domainkey.{domain_name}",
-			"value": f"{domain_name.replace('.', '-')}._domainkey.{mail_settings.root_domain_name}.",
+			"host": f"frappemail-r._domainkey.{domain_name}",
+			"value": f"{domain_name.replace('.', '-')}-r._domainkey.{mail_settings.root_domain_name}.",
+			"ttl": mail_settings.default_ttl,
+		}
+	)
+	# Ed25519
+	records.append(
+		{
+			"category": "Sending Record",
+			"type": "CNAME",
+			"host": f"frappemail-e._domainkey.{domain_name}",
+			"value": f"{domain_name.replace('.', '-')}-e._domainkey.{mail_settings.root_domain_name}.",
 			"ttl": mail_settings.default_ttl,
 		}
 	)

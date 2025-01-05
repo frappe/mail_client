@@ -9,11 +9,15 @@
   "section_break_cu1l",
   "domain_name",
   "column_break_mylf",
-  "key_size",
-  "section_break_ktxa",
-  "private_key",
-  "column_break_hqz9",
-  "public_key"
+  "rsa_key_size",
+  "public_keys_section",
+  "rsa_public_key",
+  "column_break_o2lm",
+  "ed25519_public_key",
+  "private_keys_section",
+  "rsa_private_key",
+  "column_break_jkdk",
+  "ed25519_private_key"
  ],
  "fields": [
   {
@@ -50,38 +54,65 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "key_size",
+   "fieldname": "rsa_key_size",
    "fieldtype": "Select",
    "in_list_view": 1,
    "in_standard_filter": 1,
-   "label": "Key Size (Bits)",
+   "label": "RSA Key Size",
    "no_copy": 1,
-   "options": "\n1024\n2048\n4096",
+   "options": "\n2048\n4096",
    "set_only_once": 1
   },
   {
-   "fieldname": "section_break_ktxa",
-   "fieldtype": "Section Break"
+   "fieldname": "public_keys_section",
+   "fieldtype": "Section Break",
+   "label": "Public Keys"
   },
   {
-   "fieldname": "private_key",
+   "collapsible": 1,
+   "fieldname": "private_keys_section",
+   "fieldtype": "Section Break",
+   "label": "Private Keys"
+  },
+  {
+   "fieldname": "rsa_private_key",
    "fieldtype": "Text",
-   "label": "Private Key",
+   "label": "RSA Private Key",
    "no_copy": 1,
    "read_only": 1,
    "set_only_once": 1
   },
   {
-   "fieldname": "column_break_hqz9",
+   "fieldname": "rsa_public_key",
+   "fieldtype": "Text",
+   "label": "RSA Public Key",
+   "no_copy": 1,
+   "read_only": 1,
+   "set_only_once": 1
+  },
+  {
+   "fieldname": "ed25519_public_key",
+   "fieldtype": "Text",
+   "label": "Ed25519 Public Key",
+   "no_copy": 1,
+   "read_only": 1,
+   "set_only_once": 1
+  },
+  {
+   "fieldname": "ed25519_private_key",
+   "fieldtype": "Text",
+   "label": "Ed25519 Private Key",
+   "no_copy": 1,
+   "read_only": 1,
+   "set_only_once": 1
+  },
+  {
+   "fieldname": "column_break_o2lm",
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "public_key",
-   "fieldtype": "Text",
-   "label": "Public Key",
-   "no_copy": 1,
-   "read_only": 1,
-   "set_only_once": 1
+   "fieldname": "column_break_jkdk",
+   "fieldtype": "Column Break"
   }
  ],
  "in_create": 1,
@@ -93,7 +124,7 @@
    "link_fieldname": "attached_to_docname"
   }
  ],
- "modified": "2025-01-04 23:18:40.297249",
+ "modified": "2025-01-05 13:13:54.370351",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "DKIM Key",
