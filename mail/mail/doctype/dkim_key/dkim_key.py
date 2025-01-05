@@ -55,6 +55,7 @@ class DKIMKey(Document):
 			host=f"{self.domain_name.replace('.', '-')}._domainkey",
 			type="TXT",
 			value=f"v=DKIM1; k=rsa; p={self.public_key}",
+			ttl=300,
 			category="Sending Record",
 			attached_to_doctype=self.doctype,
 			attached_to_docname=self.name,

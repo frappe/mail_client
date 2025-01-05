@@ -4,18 +4,16 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "section_break_ceuu",
   "domain_name",
   "enabled",
   "is_verified",
+  "is_subdomain",
   "column_break_lr3y",
-  "access_token",
+  "dkim_key_size",
   "newsletter_retention",
   "dns_records_section",
-  "dns_records",
-  "section_break_i51k",
-  "dkim_private_key",
-  "column_break_jqvh",
-  "dkim_public_key"
+  "dns_records"
  ],
  "fields": [
   {
@@ -71,36 +69,23 @@
    "non_negative": 1
   },
   {
-   "fieldname": "section_break_i51k",
-   "fieldtype": "Section Break",
-   "hidden": 1,
-   "label": "DKIM Keys"
+   "fieldname": "dkim_key_size",
+   "fieldtype": "Select",
+   "label": "DKIM Key Size",
+   "options": "\n2048\n4096"
   },
   {
-   "fieldname": "dkim_private_key",
-   "fieldtype": "Password",
-   "label": "Private Key",
+   "fieldname": "section_break_ceuu",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval: !doc.__islocal",
+   "fieldname": "is_subdomain",
+   "fieldtype": "Check",
+   "label": "Subdomain",
    "no_copy": 1,
    "read_only": 1
-  },
-  {
-   "fieldname": "dkim_public_key",
-   "fieldtype": "Text",
-   "label": "Public Key",
-   "no_copy": 1,
-   "read_only": 1
-  },
-  {
-   "fieldname": "access_token",
-   "fieldtype": "Password",
-   "hidden": 1,
-   "label": "Access Token",
-   "no_copy": 1,
-   "read_only": 1
-  },
-  {
-   "fieldname": "column_break_jqvh",
-   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -117,6 +102,11 @@
   },
   {
    "group": "Reference",
+   "link_doctype": "DKIM Key",
+   "link_fieldname": "domain_name"
+  },
+  {
+   "group": "Reference",
    "link_doctype": "Incoming Mail",
    "link_fieldname": "domain_name"
   },
@@ -126,7 +116,7 @@
    "link_fieldname": "domain_name"
   }
  ],
- "modified": "2024-11-16 15:34:25.472358",
+ "modified": "2025-01-05 10:38:03.188966",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Domain",
