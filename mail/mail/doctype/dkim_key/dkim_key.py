@@ -10,6 +10,11 @@ from frappe.utils import cint, random_string
 from frappe.utils.caching import request_cache
 
 from mail.mail.doctype.dns_record.dns_record import create_or_update_dns_record
+from mail.mail.doctype.mail_agent_job.mail_agent_job import (
+	create_dkim_key_on_agents,
+	delete_dkim_key_from_agents,
+)
+from mail.utils import get_dkim_host
 
 
 class DKIMKey(Document):
@@ -24,10 +29,13 @@ class DKIMKey(Document):
 	def after_insert(self) -> None:
 		self.create_or_update_dns_record()
 		self.disable_existing_dkim_keys()
+		create_dkim_key_on_agents(self.domain_name, self.rsa_private_key, self.ed25519_private_key)
 
 	def on_trash(self) -> None:
 		if frappe.session.user != "Administrator":
 			frappe.throw(_("Only Administrator can delete DKIM Key."))
+
+		delete_dkim_key_from_agents(self.domain_name)
 
 	def validate_domain_name(self) -> None:
 		"""Validates the Domain Name."""
@@ -56,7 +64,7 @@ class DKIMKey(Document):
 
 		# RSA
 		create_or_update_dns_record(
-			host=f"{self.domain_name.replace('.', '-')}-r._domainkey",
+			host=f"{get_dkim_host(self.domain_name, 'rsa')}._domainkey",
 			type="TXT",
 			value=f"v=DKIM1; k=rsa; h=sha256; p={self.rsa_public_key}",
 			ttl=300,
@@ -67,7 +75,7 @@ class DKIMKey(Document):
 
 		# Ed25519
 		create_or_update_dns_record(
-			host=f"{self.domain_name.replace('.', '-')}-e._domainkey",
+			host=f"{get_dkim_host(self.domain_name, 'ed25519')}._domainkey",
 			type="TXT",
 			value=f"v=DKIM1; k=ed25519; h=sha256; p={self.ed25519_public_key}",
 			ttl=300,
@@ -79,16 +87,10 @@ class DKIMKey(Document):
 	def disable_existing_dkim_keys(self) -> None:
 		"""Disables the existing DKIM Keys."""
 
-		DKIM_KEY = frappe.qb.DocType("DKIM Key")
-		(
-			frappe.qb.update(DKIM_KEY)
-			.set(DKIM_KEY.enabled, 0)
-			.where(
-				(DKIM_KEY.enabled == 1)
-				& (DKIM_KEY.name != self.name)
-				& (DKIM_KEY.domain_name == self.domain_name)
-			)
-		).run()
+		filters = {"enabled": 1, "domain_name": self.domain_name, "name": ["!=", self.name]}
+		if frappe.db.exists("DKIM Key", filters):
+			frappe.db.set_value("DKIM Key", filters, "enabled", 0)
+			delete_dkim_key_from_agents(self.domain_name)
 
 
 def create_dkim_key(domain_name: str, rsa_key_size: int | None = None) -> "DKIMKey":

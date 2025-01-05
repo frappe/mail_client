@@ -9,7 +9,7 @@ from frappe.utils import cint
 
 from mail.mail.doctype.dkim_key.dkim_key import create_dkim_key
 from mail.mail.doctype.mail_agent_job.mail_agent_job import create_domain_on_agents, delete_domain_from_agents
-from mail.utils import get_dmarc_address
+from mail.utils import get_dkim_host, get_dkim_selector, get_dmarc_address
 from mail.utils.dns import verify_dns_record
 
 
@@ -145,8 +145,8 @@ def get_dns_records(domain_name: str) -> list[dict]:
 		{
 			"category": "Sending Record",
 			"type": "CNAME",
-			"host": f"frappemail-r._domainkey.{domain_name}",
-			"value": f"{domain_name.replace('.', '-')}-r._domainkey.{mail_settings.root_domain_name}.",
+			"host": f"{get_dkim_selector('rsa')}._domainkey.{domain_name}",
+			"value": f"{get_dkim_host(domain_name, 'rsa')}._domainkey.{mail_settings.root_domain_name}.",
 			"ttl": mail_settings.default_ttl,
 		}
 	)
@@ -155,8 +155,8 @@ def get_dns_records(domain_name: str) -> list[dict]:
 		{
 			"category": "Sending Record",
 			"type": "CNAME",
-			"host": f"frappemail-e._domainkey.{domain_name}",
-			"value": f"{domain_name.replace('.', '-')}-e._domainkey.{mail_settings.root_domain_name}.",
+			"host": f"{get_dkim_selector('ed25519')}._domainkey.{domain_name}",
+			"value": f"{get_dkim_host(domain_name, 'ed25519')}._domainkey.{mail_settings.root_domain_name}.",
 			"ttl": mail_settings.default_ttl,
 		}
 	)

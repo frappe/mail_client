@@ -1,6 +1,7 @@
 # Copyright (c) 2024, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
+import json
 from urllib.parse import quote
 
 import frappe
@@ -9,6 +10,7 @@ from frappe.model.document import Document
 from frappe.utils import now, time_diff_in_seconds
 
 from mail.agent import AgentAPI, Principal
+from mail.utils import get_dkim_host, get_dkim_selector
 
 
 class MailAgentJob(Document):
@@ -102,4 +104,84 @@ def delete_domain_from_agents(domain_name: str, agents: list[str] | None = None)
 		agent_job.agent = agent
 		agent_job.method = "DELETE"
 		agent_job.endpoint = f"/api/principal/{domain_name}"
+		agent_job.insert()
+
+
+def create_dkim_key_on_agents(
+	domain_name: str, rsa_private_key: str, ed25519_private_key: str, agents: list[str] | None = None
+) -> None:
+	"""Creates a DKIM Key on all primary agents."""
+
+	primary_agents = agents or frappe.db.get_all(
+		"Mail Agent", filters={"enabled": 1, "is_primary": 1}, pluck="name"
+	)
+
+	if not primary_agents:
+		return
+
+	for agent in primary_agents:
+		agent_job = frappe.new_doc("Mail Agent Job")
+		agent_job.agent = agent
+		agent_job.method = "POST"
+		agent_job.endpoint = "/api/settings"
+		agent_job.request_data = json.dumps(
+			[
+				{
+					"type": "Insert",
+					"prefix": f"signature.{get_dkim_host(domain_name, 'rsa')}",
+					"values": [
+						["report", "true"],
+						["selector", get_dkim_selector("rsa")],
+						["canonicalization", "relaxed/relaxed"],
+						["private-key", rsa_private_key],
+						["algorithm", "rsa-sha256"],
+						["domain", domain_name],
+					],
+					"assert_empty": True,
+				},
+				{
+					"type": "Insert",
+					"prefix": f"signature.{get_dkim_host(domain_name, 'ed25519')}",
+					"values": [
+						["report", "true"],
+						["selector", get_dkim_selector("ed25519")],
+						["canonicalization", "relaxed/relaxed"],
+						["private-key", ed25519_private_key],
+						["algorithm", "ed25519-sha256"],
+						["domain", domain_name],
+					],
+					"assert_empty": True,
+				},
+			]
+		)
+		agent_job.insert()
+
+
+def delete_dkim_key_from_agents(domain_name: str, agents: list[str] | None = None) -> None:
+	"""Deletes a DKIM Key from all primary agents."""
+
+	primary_agents = agents or frappe.db.get_all(
+		"Mail Agent", filters={"enabled": 1, "is_primary": 1}, pluck="name"
+	)
+
+	if not primary_agents:
+		return
+
+	for agent in primary_agents:
+		agent_job = frappe.new_doc("Mail Agent Job")
+		agent_job.agent = agent
+		agent_job.method = "POST"
+		agent_job.endpoint = "/api/settings"
+		agent_job.request_data = json.dumps(
+			[
+				{
+					"type": "Clear",
+					"prefix": f"signature.{get_dkim_host(domain_name, 'rsa')}",
+				},
+				{
+					"type": "Clear",
+					"prefix": f"signature.{get_dkim_host(domain_name, 'ed25519')}",
+				},
+			]
+		)
 		agent_job.insert()

@@ -5,6 +5,7 @@ import string
 import zipfile
 from collections.abc import Callable
 from io import BytesIO
+from typing import Literal
 
 import frappe
 from bs4 import BeautifulSoup
@@ -116,7 +117,28 @@ def check_deliverability(email: str) -> bool:
 	return validate_email_address(email, check_mx=True, verify=True, smtp_timeout=10)
 
 
+def get_dkim_host(domain_name: str, type: Literal["rsa", "ed25519"]) -> str:
+	"""
+	Returns DKIM host.
+	e.g. example-com-r for RSA and example-com-e for Ed25519.
+	"""
+
+	return f"{domain_name.replace('.', '-')}-{type[0]}"
+
+
+def get_dkim_selector(key_type: Literal["rsa", "ed25519"]) -> str:
+	"""
+	Returns DKIM selector.
+	e.g. frappemail-r for RSA and frappemail-e for Ed25519.
+	"""
+
+	return f"frappemail-{key_type[0]}"
+
+
 def get_dmarc_address() -> str:
-	"""Returns DMARC address."""
+	"""
+	Returns DMARC address.
+	e.g. dmarc@rootdomain.com
+	"""
 
 	return f"dmarc@{get_root_domain_name()}"
