@@ -1,12 +1,14 @@
 # Copyright (c) 2023, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
+
 import frappe
 from frappe import _
 from frappe.model.document import Document
 from frappe.utils import cint
 
 from mail.mail.doctype.dkim_key.dkim_key import create_dkim_key
+from mail.mail.doctype.mail_agent_job.mail_agent_job import create_domain_on_agents, delete_domain_from_agents
 from mail.utils import get_dmarc_address
 from mail.utils.dns import verify_dns_record
 
@@ -25,6 +27,15 @@ class MailDomain(Document):
 		if self.is_new() or self.has_value_changed("dkim_rsa_key_size"):
 			create_dkim_key(self.domain_name, cint(self.dkim_rsa_key_size))
 			self.refresh_dns_records(do_not_save=True)
+
+	def after_insert(self) -> None:
+		create_domain_on_agents(domain_name=self.domain_name)
+
+	def on_trash(self) -> None:
+		if frappe.session.user != "Administrator":
+			frappe.throw(_("Only Administrator can delete Mail Domain."))
+
+		delete_domain_from_agents(domain_name=self.domain_name)
 
 	def validate_dkim_rsa_key_size(self) -> None:
 		"""Validates the DKIM Key Size."""

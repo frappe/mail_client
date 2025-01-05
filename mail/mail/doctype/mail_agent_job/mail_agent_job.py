@@ -8,7 +8,7 @@ from frappe import _
 from frappe.model.document import Document
 from frappe.utils import now, time_diff_in_seconds
 
-from mail.agent import AgentAPI
+from mail.agent import AgentAPI, Principal
 
 
 class MailAgentJob(Document):
@@ -65,3 +65,41 @@ class MailAgentJob(Document):
 			self.ended_at = now()
 			self.duration = time_diff_in_seconds(self.ended_at, self.started_at)
 			self.db_update()
+
+
+def create_domain_on_agents(domain_name: str, agents: list[str] | None = None) -> None:
+	"""Creates a domain on all primary agents."""
+
+	primary_agents = agents or frappe.db.get_all(
+		"Mail Agent", filters={"enabled": 1, "is_primary": 1}, pluck="name"
+	)
+
+	if not primary_agents:
+		return
+
+	principal = Principal(name=domain_name, type="domain").__dict__
+	for agent in primary_agents:
+		agent_job = frappe.new_doc("Mail Agent Job")
+		agent_job.agent = agent
+		agent_job.method = "POST"
+		agent_job.endpoint = "/api/principal"
+		agent_job.request_json = principal
+		agent_job.insert()
+
+
+def delete_domain_from_agents(domain_name: str, agents: list[str] | None = None) -> None:
+	"""Deletes a domain from all primary agents."""
+
+	primary_agents = agents or frappe.db.get_all(
+		"Mail Agent", filters={"enabled": 1, "is_primary": 1}, pluck="name"
+	)
+
+	if not primary_agents:
+		return
+
+	for agent in primary_agents:
+		agent_job = frappe.new_doc("Mail Agent Job")
+		agent_job.agent = agent
+		agent_job.method = "DELETE"
+		agent_job.endpoint = f"/api/principal/{domain_name}"
+		agent_job.insert()
