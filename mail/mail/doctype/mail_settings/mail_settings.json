@@ -12,8 +12,11 @@
   "dns_provider_token",
   "section_break_l9un",
   "default_dkim_key_size",
+  "default_newsletter_retention",
   "column_break_rwnw",
   "default_ttl",
+  "limits_section",
+  "max_newsletter_retention",
   "spamassassin_tab",
   "section_break_hgqa",
   "enable_spamd",
@@ -181,12 +184,33 @@
   {
    "fieldname": "column_break_rwnw",
    "fieldtype": "Column Break"
+  },
+  {
+   "default": "7",
+   "fieldname": "max_newsletter_retention",
+   "fieldtype": "Int",
+   "label": "Maximum Newsletter Retention (Days)",
+   "non_negative": 1,
+   "reqd": 1
+  },
+  {
+   "default": "3",
+   "fieldname": "default_newsletter_retention",
+   "fieldtype": "Int",
+   "label": "Newsletter Retention (Days)",
+   "non_negative": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "limits_section",
+   "fieldtype": "Section Break",
+   "label": "Limits"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-01-04 23:10:33.605690",
+ "modified": "2025-01-05 09:05:46.530412",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Settings",
@@ -205,5 +229,6 @@
  ],
  "sort_field": "creation",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "track_changes": 1
 }
