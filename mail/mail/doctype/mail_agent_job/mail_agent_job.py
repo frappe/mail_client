@@ -185,3 +185,90 @@ def delete_dkim_key_from_agents(domain_name: str, agents: list[str] | None = Non
 			]
 		)
 		agent_job.insert()
+
+
+def create_account_on_agents(
+	email: str, display_name: str, secret: str, agents: list[str] | None = None
+) -> None:
+	"""Creates an account on all primary agents."""
+
+	primary_agents = agents or frappe.db.get_all(
+		"Mail Agent", filters={"enabled": 1, "is_primary": 1}, pluck="name"
+	)
+
+	if not primary_agents:
+		return
+
+	principal = Principal(
+		name=email,
+		type="individual",
+		description=display_name,
+		secrets=[secret],
+		emails=[email],
+		roles=["user"],
+	).__dict__
+	for agent in primary_agents:
+		agent_job = frappe.new_doc("Mail Agent Job")
+		agent_job.agent = agent
+		agent_job.method = "POST"
+		agent_job.endpoint = "/api/principal"
+		agent_job.request_json = principal
+		agent_job.insert()
+
+
+def patch_account_on_agents(
+	email: str, display_name: str, new_secret: str, old_secret: str, agents: list[str] | None = None
+) -> None:
+	"""Patches an account on all primary agents."""
+
+	primary_agents = agents or frappe.db.get_all(
+		"Mail Agent", filters={"enabled": 1, "is_primary": 1}, pluck="name"
+	)
+
+	if not primary_agents:
+		return
+
+	request_data = json.dumps(
+		[
+			{
+				"action": "set",
+				"field": "description",
+				"value": display_name,
+			},
+			{
+				"action": "addItem",
+				"field": "secrets",
+				"value": new_secret,
+			},
+			{
+				"action": "removeItem",
+				"field": "secrets",
+				"value": old_secret,
+			},
+		]
+	)
+	for agent in primary_agents:
+		agent_job = frappe.new_doc("Mail Agent Job")
+		agent_job.agent = agent
+		agent_job.method = "PATCH"
+		agent_job.endpoint = f"/api/principal/{email}"
+		agent_job.request_data = request_data
+		agent_job.insert()
+
+
+def delete_account_from_agents(email: str, agents: list[str] | None = None) -> None:
+	"""Deletes an account from all primary agents."""
+
+	primary_agents = agents or frappe.db.get_all(
+		"Mail Agent", filters={"enabled": 1, "is_primary": 1}, pluck="name"
+	)
+
+	if not primary_agents:
+		return
+
+	for agent in primary_agents:
+		agent_job = frappe.new_doc("Mail Agent Job")
+		agent_job.agent = agent
+		agent_job.method = "DELETE"
+		agent_job.endpoint = f"/api/principal/{email}"
+		agent_job.insert()
