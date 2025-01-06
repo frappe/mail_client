@@ -69,44 +69,6 @@ class MailAgentJob(Document):
 			self.db_update()
 
 
-def create_domain_on_agents(domain_name: str, agents: list[str] | None = None) -> None:
-	"""Creates a domain on all primary agents."""
-
-	primary_agents = agents or frappe.db.get_all(
-		"Mail Agent", filters={"enabled": 1, "is_primary": 1}, pluck="name"
-	)
-
-	if not primary_agents:
-		return
-
-	principal = Principal(name=domain_name, type="domain").__dict__
-	for agent in primary_agents:
-		agent_job = frappe.new_doc("Mail Agent Job")
-		agent_job.agent = agent
-		agent_job.method = "POST"
-		agent_job.endpoint = "/api/principal"
-		agent_job.request_json = principal
-		agent_job.insert()
-
-
-def delete_domain_from_agents(domain_name: str, agents: list[str] | None = None) -> None:
-	"""Deletes a domain from all primary agents."""
-
-	primary_agents = agents or frappe.db.get_all(
-		"Mail Agent", filters={"enabled": 1, "is_primary": 1}, pluck="name"
-	)
-
-	if not primary_agents:
-		return
-
-	for agent in primary_agents:
-		agent_job = frappe.new_doc("Mail Agent Job")
-		agent_job.agent = agent
-		agent_job.method = "DELETE"
-		agent_job.endpoint = f"/api/principal/{domain_name}"
-		agent_job.insert()
-
-
 def create_dkim_key_on_agents(
 	domain_name: str, rsa_private_key: str, ed25519_private_key: str, agents: list[str] | None = None
 ) -> None:
@@ -184,6 +146,44 @@ def delete_dkim_key_from_agents(domain_name: str, agents: list[str] | None = Non
 				},
 			]
 		)
+		agent_job.insert()
+
+
+def create_domain_on_agents(domain_name: str, agents: list[str] | None = None) -> None:
+	"""Creates a domain on all primary agents."""
+
+	primary_agents = agents or frappe.db.get_all(
+		"Mail Agent", filters={"enabled": 1, "is_primary": 1}, pluck="name"
+	)
+
+	if not primary_agents:
+		return
+
+	principal = Principal(name=domain_name, type="domain").__dict__
+	for agent in primary_agents:
+		agent_job = frappe.new_doc("Mail Agent Job")
+		agent_job.agent = agent
+		agent_job.method = "POST"
+		agent_job.endpoint = "/api/principal"
+		agent_job.request_json = principal
+		agent_job.insert()
+
+
+def delete_domain_from_agents(domain_name: str, agents: list[str] | None = None) -> None:
+	"""Deletes a domain from all primary agents."""
+
+	primary_agents = agents or frappe.db.get_all(
+		"Mail Agent", filters={"enabled": 1, "is_primary": 1}, pluck="name"
+	)
+
+	if not primary_agents:
+		return
+
+	for agent in primary_agents:
+		agent_job = frappe.new_doc("Mail Agent Job")
+		agent_job.agent = agent
+		agent_job.method = "DELETE"
+		agent_job.endpoint = f"/api/principal/{domain_name}"
 		agent_job.insert()
 
 
@@ -272,6 +272,66 @@ def delete_account_from_agents(email: str, agents: list[str] | None = None) -> N
 		agent_job.method = "DELETE"
 		agent_job.endpoint = f"/api/principal/{email}"
 		agent_job.insert()
+
+
+def create_group_on_agents(email: str, display_name: str, agents: list[str] | None = None) -> None:
+	"""Creates a group on all primary agents."""
+
+	primary_agents = agents or frappe.db.get_all(
+		"Mail Agent", filters={"enabled": 1, "is_primary": 1}, pluck="name"
+	)
+
+	if not primary_agents:
+		return
+
+	principal = Principal(
+		name=email,
+		type="group",
+		description=display_name,
+		emails=[email],
+		enabledPermissions=["email-send", "email-receive"],
+	).__dict__
+	for agent in primary_agents:
+		agent_job = frappe.new_doc("Mail Agent Job")
+		agent_job.agent = agent
+		agent_job.method = "POST"
+		agent_job.endpoint = "/api/principal"
+		agent_job.request_json = principal
+		agent_job.insert()
+
+
+def patch_group_on_agents(email: str, display_name: str, agents: list[str] | None = None) -> None:
+	"""Patches a group on all primary agents."""
+
+	primary_agents = agents or frappe.db.get_all(
+		"Mail Agent", filters={"enabled": 1, "is_primary": 1}, pluck="name"
+	)
+
+	if not primary_agents:
+		return
+
+	request_data = json.dumps(
+		[
+			{
+				"action": "set",
+				"field": "description",
+				"value": display_name,
+			}
+		]
+	)
+	for agent in primary_agents:
+		agent_job = frappe.new_doc("Mail Agent Job")
+		agent_job.agent = agent
+		agent_job.method = "PATCH"
+		agent_job.endpoint = f"/api/principal/{email}"
+		agent_job.request_data = request_data
+		agent_job.insert()
+
+
+def delete_group_from_agents(email: str, agents: list[str] | None = None) -> None:
+	"""Deletes a group from all primary agents."""
+
+	delete_account_from_agents(email, agents)
 
 
 def create_alias_on_agents(account: str, alias: str, agents: list[str] | None = None) -> None:

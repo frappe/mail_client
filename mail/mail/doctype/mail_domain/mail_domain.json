@@ -92,7 +92,12 @@
  "links": [
   {
    "group": "Reference",
-   "link_doctype": "Mailbox",
+   "link_doctype": "Mail Account",
+   "link_fieldname": "domain_name"
+  },
+  {
+   "group": "Reference",
+   "link_doctype": "Mail Group",
    "link_fieldname": "domain_name"
   },
   {
@@ -106,17 +111,22 @@
    "link_fieldname": "domain_name"
   },
   {
-   "group": "Reference",
+   "group": "Mail",
    "link_doctype": "Incoming Mail",
    "link_fieldname": "domain_name"
   },
   {
-   "group": "Reference",
+   "group": "Mail",
    "link_doctype": "Outgoing Mail",
+   "link_fieldname": "domain_name"
+  },
+  {
+   "group": "Report",
+   "link_doctype": "DMARC Report",
    "link_fieldname": "domain_name"
   }
  ],
- "modified": "2025-01-05 12:07:54.486802",
+ "modified": "2025-01-06 15:35:35.811831",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Domain",
