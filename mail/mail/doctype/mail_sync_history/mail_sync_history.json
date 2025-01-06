@@ -58,7 +58,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-12 12:17:37.936534",
+ "modified": "2025-01-06 14:04:19.848389",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Sync History",
@@ -80,5 +80,6 @@
  ],
  "sort_field": "creation",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "track_changes": 1
 }

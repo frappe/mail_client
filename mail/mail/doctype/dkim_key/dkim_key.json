@@ -124,7 +124,7 @@
    "link_fieldname": "attached_to_docname"
   }
  ],
- "modified": "2025-01-05 13:13:54.370351",
+ "modified": "2025-01-06 14:04:17.764275",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "DKIM Key",
@@ -145,5 +145,6 @@
  ],
  "sort_field": "creation",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "track_changes": 1
 }

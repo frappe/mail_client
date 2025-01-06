@@ -132,7 +132,7 @@
  "in_create": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-11-28 10:47:28.652910",
+ "modified": "2025-01-06 14:04:18.474653",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "DMARC Report",
@@ -154,5 +154,6 @@
  ],
  "sort_field": "creation",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "track_changes": 1
 }

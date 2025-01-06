@@ -155,7 +155,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-12-30 18:57:34.469733",
+ "modified": "2025-01-06 14:04:18.075040",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Agent Job",
@@ -177,5 +177,6 @@
  ],
  "sort_field": "creation",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "track_changes": 1
 }
