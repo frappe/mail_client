@@ -9,7 +9,11 @@ from mail.mail.doctype.mail_agent_job.mail_agent_job import (
 	delete_alias_from_agents,
 	patch_alias_on_agents,
 )
-from mail.utils.validation import is_valid_email_for_domain, validate_domain_is_enabled_and_verified
+from mail.utils.validation import (
+	is_email_assigned,
+	is_valid_email_for_domain,
+	validate_domain_is_enabled_and_verified,
+)
 
 
 class MailAlias(Document):
@@ -51,4 +55,5 @@ class MailAlias(Document):
 	def validate_email(self) -> None:
 		"""Validates the email address."""
 
+		is_email_assigned(self.email, self.doctype, raise_exception=True)
 		is_valid_email_for_domain(self.email, self.domain_name, raise_exception=True)

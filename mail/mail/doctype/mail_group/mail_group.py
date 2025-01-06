@@ -10,6 +10,7 @@ from mail.mail.doctype.mail_agent_job.mail_agent_job import (
 	patch_group_on_agents,
 )
 from mail.utils.validation import (
+	is_email_assigned,
 	is_valid_email_for_domain,
 	validate_domain_is_enabled_and_verified,
 )
@@ -45,6 +46,7 @@ class MailGroup(Document):
 	def validate_email(self) -> None:
 		"""Validates the email address."""
 
+		is_email_assigned(self.email, self.doctype, raise_exception=True)
 		is_valid_email_for_domain(self.email, self.domain_name, raise_exception=True)
 
 	def validate_display_name(self) -> None:
