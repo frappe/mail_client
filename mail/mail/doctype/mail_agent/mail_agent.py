@@ -32,6 +32,7 @@ class MailAgent(Document):
 		self.validate_api_key()
 
 	def on_update(self) -> None:
+		frappe.cache.delete_value("primary_agents")
 		if self.has_value_changed("enabled") or self.has_value_changed("enable_outbound"):
 			create_or_update_spf_dns_record()
 

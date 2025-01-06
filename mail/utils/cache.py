@@ -104,3 +104,17 @@ def get_blacklist_for_ip_group(ip_group: str) -> list:
 		).run(as_dict=True)
 
 	return frappe.cache.get_value(f"blacklist|{ip_group}", generator)
+
+
+def get_primary_agents() -> list:
+	"""Returns the primary agents."""
+
+	def generator() -> list:
+		MAIL_AGENT = frappe.qb.DocType("Mail Agent")
+		return (
+			frappe.qb.from_(MAIL_AGENT)
+			.select("name")
+			.where((MAIL_AGENT.enabled == 1) & (MAIL_AGENT.is_primary == 1))
+		).run(pluck="name")
+
+	return frappe.cache.get_value("primary_agents", generator)
