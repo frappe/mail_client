@@ -137,8 +137,14 @@
   }
  ],
  "index_web_pages_for_search": 1,
- "links": [],
- "modified": "2025-01-06 12:08:44.295441",
+ "links": [
+  {
+   "group": "Reference",
+   "link_doctype": "Mail Alias",
+   "link_fieldname": "alias_for_name"
+  }
+ ],
+ "modified": "2025-01-06 13:58:27.192625",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Account",
