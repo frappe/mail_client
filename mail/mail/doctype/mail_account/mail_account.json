@@ -142,9 +142,14 @@
    "group": "Reference",
    "link_doctype": "Mail Alias",
    "link_fieldname": "alias_for_name"
+  },
+  {
+   "group": "Reference",
+   "link_doctype": "Mail Group Member",
+   "link_fieldname": "member_name"
   }
  ],
- "modified": "2025-01-06 13:58:27.192625",
+ "modified": "2025-01-06 18:20:48.241975",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Account",

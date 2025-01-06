@@ -381,3 +381,70 @@ def delete_alias_from_agents(account: str, alias: str, agents: list[str] | None 
 		agent_job.endpoint = f"/api/principal/{account}"
 		agent_job.request_data = request_data
 		agent_job.insert()
+
+
+def create_member_on_agents(group: str, member: str, is_group: bool, agents: list[str] | None = None) -> None:
+	"""Creates a group member on all primary agents."""
+
+	primary_agents = agents or frappe.db.get_all(
+		"Mail Agent", filters={"enabled": 1, "is_primary": 1}, pluck="name"
+	)
+
+	if not primary_agents:
+		return
+
+	endpoint = None
+	request_data = None
+	if is_group:
+		endpoint = f"/api/principal/{member}"
+		request_data = json.dumps([{"action": "addItem", "field": "memberOf", "value": group}])
+	else:
+		endpoint = f"/api/principal/{group}"
+		request_data = json.dumps([{"action": "addItem", "field": "members", "value": member}])
+
+	for agent in primary_agents:
+		agent_job = frappe.new_doc("Mail Agent Job")
+		agent_job.agent = agent
+		agent_job.method = "PATCH"
+		agent_job.endpoint = endpoint
+		agent_job.request_data = request_data
+		agent_job.insert()
+
+
+def patch_member_on_agents(
+	new_group: str, old_group: str, member: str, is_group: bool, agents: list[str] | None = None
+) -> None:
+	"""Patches a group member on all primary agents."""
+
+	delete_account_from_agents(old_group, member, is_group, agents)
+	create_alias_on_agents(new_group, member, is_group, agents)
+
+
+def delete_member_from_agents(
+	group: str, member: str, is_group: bool, agents: list[str] | None = None
+) -> None:
+	"""Deletes a group member from all primary agents."""
+
+	primary_agents = agents or frappe.db.get_all(
+		"Mail Agent", filters={"enabled": 1, "is_primary": 1}, pluck="name"
+	)
+
+	if not primary_agents:
+		return
+
+	endpoint = None
+	request_data = None
+	if is_group:
+		endpoint = f"/api/principal/{member}"
+		request_data = json.dumps([{"action": "removeItem", "field": "memberOf", "value": group}])
+	else:
+		endpoint = f"/api/principal/{group}"
+		request_data = json.dumps([{"action": "removeItem", "field": "members", "value": member}])
+
+	for agent in primary_agents:
+		agent_job = frappe.new_doc("Mail Agent Job")
+		agent_job.agent = agent
+		agent_job.method = "PATCH"
+		agent_job.endpoint = endpoint
+		agent_job.request_data = request_data
+		agent_job.insert()
