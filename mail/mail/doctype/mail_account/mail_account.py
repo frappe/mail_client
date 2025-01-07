@@ -27,6 +27,7 @@ class MailAccount(Document):
 		self.name = self.email
 
 	def validate(self) -> None:
+		self.validate_enabled()
 		self.validate_domain()
 		self.validate_user()
 		self.validate_email()
@@ -36,19 +37,33 @@ class MailAccount(Document):
 	def on_update(self) -> None:
 		frappe.cache.delete_value(f"user|{self.user}")
 
-		if self.has_value_changed("email"):
-			create_account_on_agents(self.email, self.display_name, self.secret)
-			return
-
-		has_value_changed = self.has_value_changed("display_name") or self.has_value_changed("secret")
-		if has_value_changed:
-			patch_account_on_agents(
-				self.email, self.display_name, self.secret, self.get_doc_before_save().secret
-			)
+		if self.enabled:
+			if self.has_value_changed("enabled") or self.has_value_changed("email"):
+				create_account_on_agents(self.email, self.display_name, self.secret)
+			elif self.has_value_changed("display_name") or self.has_value_changed("secret"):
+				patch_account_on_agents(
+					self.email, self.display_name, self.secret, self.get_doc_before_save().secret
+				)
+		elif self.has_value_changed("enabled"):
+			delete_account_from_agents(self.email)
 
 	def on_trash(self) -> None:
 		frappe.cache.delete_value(f"user|{self.user}")
 		delete_account_from_agents(self.email)
+
+	def validate_enabled(self) -> None:
+		"""Validates the enabled field."""
+
+		if self.enabled:
+			return
+
+		if alias := frappe.db.exists(
+			"Mail Alias", {"enabled": 1, "alias_for_type": self.doctype, "alias_for_name": self.name}
+		):
+			frappe.throw(_("Mail Alias {0} is enabled. Please disable it first.").format(frappe.bold(alias)))
+
+		if frappe.db.exists("Mail Group Member", {"member_type": self.doctype, "member_name": self.name}):
+			frappe.throw(_("This account is linked to a mail group. Please remove it first."))
 
 	def validate_domain(self) -> None:
 		"""Validates the domain."""
