@@ -329,7 +329,7 @@ def patch_alias_on_agents(
 ) -> None:
 	"""Patches an alias on all primary agents."""
 
-	delete_account_from_agents(old_email, alias, agents)
+	delete_alias_from_agents(old_email, alias, agents)
 	create_alias_on_agents(new_email, alias, agents)
 
 
@@ -374,8 +374,8 @@ def patch_member_on_agents(
 ) -> None:
 	"""Patches a group member on all primary agents."""
 
-	delete_account_from_agents(old_email, member, is_group, agents)
-	create_alias_on_agents(new_email, member, is_group, agents)
+	delete_member_from_agents(old_email, member, is_group, agents)
+	create_member_on_agents(new_email, member, is_group, agents)
 
 
 def delete_member_from_agents(

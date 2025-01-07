@@ -27,12 +27,15 @@ class MailAlias(Document):
 		self.validate_email()
 
 	def on_update(self) -> None:
-		if self.has_value_changed("email"):
-			create_alias_on_agents(self.alias_for_name, self.email)
-			return
-
-		if self.has_value_changed("alias_for_name"):
-			patch_alias_on_agents(self.alias_for_name, self.get_doc_before_save().alias_for_name, self.email)
+		if self.enabled:
+			if self.has_value_changed("enabled") or self.has_value_changed("email"):
+				create_alias_on_agents(self.alias_for_name, self.email)
+			elif self.has_value_changed("alias_for_name"):
+				patch_alias_on_agents(
+					self.alias_for_name, self.get_doc_before_save().alias_for_name, self.email
+				)
+		elif self.has_value_changed("enabled"):
+			delete_alias_from_agents(self.alias_for_name, self.email)
 
 	def on_trash(self) -> None:
 		delete_alias_from_agents(self.alias_for_name, self.email)
