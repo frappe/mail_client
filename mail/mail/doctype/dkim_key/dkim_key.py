@@ -22,26 +22,26 @@ class DKIMKey(Document):
 		self.name = f"{self.domain_name.replace('.', '-')}-{random_string(length=10)}"
 
 	def validate(self) -> None:
-		self.validate_domain_name()
 		self.validate_rsa_key_size()
-		self.generate_dkim_keys()
 
-	def after_insert(self) -> None:
-		self.create_or_update_dns_record()
-		self.disable_existing_dkim_keys()
-		create_dkim_key_on_agents(self.domain_name, self.rsa_private_key, self.ed25519_private_key)
+		if self.is_new():
+			self.generate_dkim_keys()
+
+	def on_update(self) -> None:
+		if self.enabled:
+			if self.has_value_changed("enabled"):
+				self.create_or_update_dns_record()
+				self.disable_existing_dkim_keys()
+				create_dkim_key_on_agents(self.domain_name, self.rsa_private_key, self.ed25519_private_key)
+		elif self.has_value_changed("enabled"):
+			delete_dkim_key_from_agents(self.domain_name)
 
 	def on_trash(self) -> None:
 		if frappe.session.user != "Administrator":
 			frappe.throw(_("Only Administrator can delete DKIM Key."))
 
-		delete_dkim_key_from_agents(self.domain_name)
-
-	def validate_domain_name(self) -> None:
-		"""Validates the Domain Name."""
-
-		if not self.domain_name:
-			frappe.throw(_("Domain Name is mandatory"))
+		if self.enabled:
+			delete_dkim_key_from_agents(self.domain_name)
 
 	def validate_rsa_key_size(self) -> None:
 		"""Validates the Key Size."""
@@ -88,9 +88,10 @@ class DKIMKey(Document):
 		"""Disables the existing DKIM Keys."""
 
 		filters = {"enabled": 1, "domain_name": self.domain_name, "name": ["!=", self.name]}
-		if frappe.db.exists("DKIM Key", filters):
-			frappe.db.set_value("DKIM Key", filters, "enabled", 0)
-			delete_dkim_key_from_agents(self.domain_name)
+		for dkim_key in frappe.db.get_all("DKIM Key", filters, pluck="name"):
+			dkim_key = frappe.get_doc("DKIM Key", dkim_key)
+			dkim_key.enabled = 0
+			dkim_key.save(ignore_permissions=True)
 
 
 def create_dkim_key(domain_name: str, rsa_key_size: int | None = None) -> "DKIMKey":

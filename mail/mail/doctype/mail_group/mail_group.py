@@ -37,7 +37,8 @@ class MailGroup(Document):
 			delete_group_from_agents(self.email)
 
 	def on_trash(self) -> None:
-		delete_group_from_agents(self.email)
+		if self.enabled:
+			delete_group_from_agents(self.email)
 
 	def validate_enabled(self) -> None:
 		"""Validates the enabled field."""

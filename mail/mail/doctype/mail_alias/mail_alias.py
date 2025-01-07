@@ -38,7 +38,8 @@ class MailAlias(Document):
 			delete_alias_from_agents(self.alias_for_name, self.email)
 
 	def on_trash(self) -> None:
-		delete_alias_from_agents(self.alias_for_name, self.email)
+		if self.enabled:
+			delete_alias_from_agents(self.alias_for_name, self.email)
 
 	def validate_alias_for_name(self) -> None:
 		"""Validates the alias for name."""

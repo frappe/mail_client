@@ -49,7 +49,9 @@ class MailAccount(Document):
 
 	def on_trash(self) -> None:
 		frappe.cache.delete_value(f"user|{self.user}")
-		delete_account_from_agents(self.email)
+
+		if self.enabled:
+			delete_account_from_agents(self.email)
 
 	def validate_enabled(self) -> None:
 		"""Validates the enabled field."""
