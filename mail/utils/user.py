@@ -28,10 +28,10 @@ def get_user_mailboxes(user: str, type: Literal["Incoming", "Outgoing"] | None =
 
 
 @request_cache
-def is_mailbox_owner(mailbox: str, user: str) -> bool:
-	"""Returns True if the mailbox is associated with the user else False."""
+def is_mail_account_owner(account: str, user: str) -> bool:
+	"""Returns True if the mail account is associated with the user else False."""
 
-	return frappe.db.get_value("Mailbox", mailbox, "user") == user
+	return frappe.db.get_value("Mail Account", account, "user") == user
 
 
 @request_cache

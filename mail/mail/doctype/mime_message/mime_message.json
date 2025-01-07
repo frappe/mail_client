@@ -34,7 +34,7 @@
   {
    "group": "Reference",
    "link_doctype": "Outgoing Mail",
-   "link_fieldname": "message"
+   "link_fieldname": "_message"
   },
   {
    "group": "Reference",
@@ -42,7 +42,7 @@
    "link_fieldname": "_message"
   }
  ],
- "modified": "2025-01-07 12:51:54.162433",
+ "modified": "2025-01-07 17:44:37.287109",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "MIME Message",

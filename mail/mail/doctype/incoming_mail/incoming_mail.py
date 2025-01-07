@@ -20,7 +20,7 @@ from mail.utils import get_in_reply_to_mail
 from mail.utils.cache import get_postmaster_for_domain
 from mail.utils.dt import add_or_update_tzinfo, parse_iso_datetime
 from mail.utils.email_parser import EmailParser, extract_ip_and_host
-from mail.utils.user import get_user_mailboxes, is_mailbox_owner, is_system_manager
+from mail.utils.user import get_user_mailboxes, is_mail_account_owner, is_system_manager
 
 if TYPE_CHECKING:
 	from mail.mail.doctype.outgoing_mail.outgoing_mail import OutgoingMail
@@ -221,7 +221,7 @@ def has_permission(doc: "Document", ptype: str, user: str) -> bool:
 		return False
 
 	user_is_system_manager = is_system_manager(user)
-	user_is_mailbox_owner = is_mailbox_owner(doc.receiver, user)
+	user_is_mailbox_owner = is_mail_account_owner(doc.receiver, user)
 
 	if ptype in ["create", "submit"]:
 		return user_is_system_manager

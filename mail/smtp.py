@@ -190,6 +190,14 @@ class SMTPConnectionPool:
 			self._cleanup_thread.join()
 			self._cleanup_thread = None
 
+	@staticmethod
+	def _is_connection_active(connection: type[SMTP] | type[SMTP_SSL]) -> bool:
+		try:
+			connection.noop()
+			return True
+		except (SMTPServerDisconnected, OSError):
+			return False
+
 
 class SMTPContext:
 	def __init__(

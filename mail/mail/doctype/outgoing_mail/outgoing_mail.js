@@ -27,11 +27,11 @@ frappe.ui.form.on("Outgoing Mail", {
 
 	add_actions(frm) {
 		if (frm.doc.docstatus === 1) {
-			if (frm.doc.status === "Pending") {
+			if (frm.doc.status === "In Progress") {
 				frm.add_custom_button(
 					__("Transfer Now"),
 					() => {
-						frm.trigger("transfer_to_mail_server");
+						frm.trigger("transfer_to_mail_agent");
 					},
 					__("Actions")
 				);
@@ -40,14 +40,6 @@ frappe.ui.form.on("Outgoing Mail", {
 					__("Retry"),
 					() => {
 						frm.trigger("retry_failed");
-					},
-					__("Actions")
-				);
-			} else if (["Queued", "Deferred"].includes(frm.doc.status)) {
-				frm.add_custom_button(
-					__("Fetch Delivery Status"),
-					() => {
-						frm.trigger("fetch_and_update_delivery_statuses");
 					},
 					__("Actions")
 				);
@@ -89,10 +81,10 @@ frappe.ui.form.on("Outgoing Mail", {
 		}
 	},
 
-	transfer_to_mail_server(frm) {
+	transfer_to_mail_agent(frm) {
 		frappe.call({
 			doc: frm.doc,
-			method: "transfer_to_mail_server",
+			method: "transfer_to_mail_agent",
 			freeze: true,
 			freeze_message: __("Transferring..."),
 			callback: (r) => {
@@ -113,22 +105,6 @@ frappe.ui.form.on("Outgoing Mail", {
 				if (!r.exc) {
 					frm.refresh();
 				}
-			},
-		});
-	},
-
-	fetch_and_update_delivery_statuses(frm) {
-		frappe.call({
-			method: "mail.tasks.enqueue_fetch_and_update_delivery_statuses",
-			freeze: true,
-			freeze_message: __("Creating Job..."),
-			callback: () => {
-				frappe.show_alert({
-					message: __("{0} job has been created.", [
-						__("Fetch Delivery Statuses").bold(),
-					]),
-					indicator: "green",
-				});
 			},
 		});
 	},

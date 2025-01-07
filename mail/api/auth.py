@@ -1,7 +1,7 @@
 import frappe
 from frappe import _
 
-from mail.utils.user import has_role, is_mailbox_owner
+from mail.utils.user import has_role, is_mail_account_owner
 from mail.utils.validation import (
 	validate_mailbox_for_incoming,
 	validate_mailbox_for_outgoing,
@@ -37,7 +37,7 @@ def validate_mailbox(mailbox: str) -> None:
 
 	user = frappe.session.user
 
-	if not is_mailbox_owner(mailbox, user):
+	if not is_mail_account_owner(mailbox, user):
 		frappe.throw(
 			_("Mailbox {0} is not associated with user {1}").format(frappe.bold(mailbox), frappe.bold(user))
 		)

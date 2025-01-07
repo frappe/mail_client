@@ -35,9 +35,9 @@ frappe.query_reports["Mail Tracker"] = {
 			get_data: (txt) => {
 				return [
 					"",
-					"Pending",
+					"In Progress",
 					"Failed",
-					"Queued",
+					"Transferred",
 					"Blocked",
 					"Deferred",
 					"Bounced",

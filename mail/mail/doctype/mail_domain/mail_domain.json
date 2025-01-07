@@ -13,7 +13,15 @@
   "dkim_rsa_key_size",
   "newsletter_retention",
   "dns_records_section",
-  "dns_records"
+  "dns_records",
+  "agent_groups_section",
+  "include_agent_groups",
+  "column_break_vpyy",
+  "exclude_agent_groups",
+  "agents_section",
+  "include_agents",
+  "column_break_x6bd",
+  "exclude_agents"
  ],
  "fields": [
   {
@@ -86,6 +94,48 @@
    "fieldtype": "Select",
    "label": "DKIM RSA Key Size",
    "options": "\n2048\n4096"
+  },
+  {
+   "collapsible": 1,
+   "collapsible_depends_on": "eval: doc.include_agents || doc.exclude_agents",
+   "fieldname": "agents_section",
+   "fieldtype": "Section Break",
+   "label": "Agents"
+  },
+  {
+   "fieldname": "include_agents",
+   "fieldtype": "Small Text",
+   "label": "Include Agents"
+  },
+  {
+   "fieldname": "column_break_x6bd",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "exclude_agents",
+   "fieldtype": "Small Text",
+   "label": "Exclude Agents"
+  },
+  {
+   "collapsible": 1,
+   "collapsible_depends_on": "eval: doc.include_agent_groups || doc.exclude_agent_groups",
+   "fieldname": "agent_groups_section",
+   "fieldtype": "Section Break",
+   "label": "Agent Groups"
+  },
+  {
+   "fieldname": "include_agent_groups",
+   "fieldtype": "Small Text",
+   "label": "Include Agent Groups"
+  },
+  {
+   "fieldname": "column_break_vpyy",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "exclude_agent_groups",
+   "fieldtype": "Small Text",
+   "label": "Exclude Agent Groups"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -126,7 +176,7 @@
    "link_fieldname": "domain_name"
   }
  ],
- "modified": "2025-01-06 15:35:35.811831",
+ "modified": "2025-01-07 17:15:28.361921",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Domain",

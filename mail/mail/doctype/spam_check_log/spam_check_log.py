@@ -30,7 +30,8 @@ class SpamCheckLog(Document):
 
 	@property
 	def message(self) -> str:
-		return get_mime_message(self._message)
+		if self._message:
+			return get_mime_message(self._message)
 
 	@message.setter
 	def message(self, value: str | bytes) -> None:

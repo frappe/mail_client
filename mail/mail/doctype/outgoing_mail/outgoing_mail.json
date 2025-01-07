@@ -17,8 +17,8 @@
   "section_break_atoq",
   "custom_headers",
   "section_break_ijwo",
+  "_raw_message",
   "body_html",
-  "raw_message",
   "body_plain",
   "section_break_ubzr",
   "error_log",
@@ -30,9 +30,9 @@
   "is_newsletter",
   "column_break_d6p9",
   "domain_name",
-  "token",
+  "queue_id",
   "section_break_quhp",
-  "message_id",
+  "_message",
   "in_reply_to",
   "column_break_4zfa",
   "message_size",
@@ -45,7 +45,9 @@
   "submitted_after",
   "transfer_started_after",
   "transfer_completed_after",
+  "section_break_ptje",
   "failed_count",
+  "column_break_sjvs",
   "retry_after",
   "section_break_aafd",
   "tracking_id",
@@ -54,8 +56,14 @@
   "open_count",
   "last_opened_at",
   "last_opened_from_ip",
-  "section_break_kops",
-  "message",
+  "agent_groups_section",
+  "include_agent_groups",
+  "column_break_qhyj",
+  "exclude_agent_groups",
+  "agents_section",
+  "include_agents",
+  "column_break_c90z",
+  "exclude_agents",
   "section_break_eh7n",
   "amended_from"
  ],
@@ -66,7 +74,7 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Sender",
-   "options": "Mailbox",
+   "options": "Mail Account",
    "reqd": 1,
    "search_index": 1
   },
@@ -106,7 +114,7 @@
    "in_standard_filter": 1,
    "label": "Status",
    "no_copy": 1,
-   "options": "Draft\nPending\nQueuing\nFailed\nQueued\nBlocked\nDeferred\nBounced\nPartially Sent\nSent\nCancelled",
+   "options": "Draft\nIn Progress\nBlocked\nAccepted\nTransferring\nFailed\nTransferred\nDeferred\nBounced\nPartially Sent\nSent\nCancelled",
    "read_only": 1,
    "reqd": 1,
    "search_index": 1
@@ -132,12 +140,6 @@
    "fieldtype": "Column Break"
   },
   {
-   "collapsible": 1,
-   "fieldname": "section_break_kops",
-   "fieldtype": "Section Break",
-   "label": "Message"
-  },
-  {
    "fieldname": "body_plain",
    "fieldtype": "Code",
    "label": "Body Plain",
@@ -145,7 +147,7 @@
    "read_only": 1
   },
   {
-   "depends_on": "eval: !doc.raw_message",
+   "depends_on": "eval: !doc._raw_message",
    "fieldname": "body_html",
    "fieldtype": "HTML Editor",
    "label": "Body HTML",
@@ -178,17 +180,6 @@
   {
    "fieldname": "column_break_fvyv",
    "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "message_id",
-   "fieldtype": "Data",
-   "ignore_xss_filter": 1,
-   "in_standard_filter": 1,
-   "label": "Message ID",
-   "length": 255,
-   "no_copy": 1,
-   "read_only": 1,
-   "search_index": 1
   },
   {
    "fieldname": "created_at",
@@ -295,13 +286,6 @@
    "label": "More Info"
   },
   {
-   "fieldname": "message",
-   "fieldtype": "Code",
-   "label": "Message",
-   "no_copy": 1,
-   "read_only": 1
-  },
-  {
    "depends_on": "eval: doc.sender",
    "fetch_from": "sender.reply_to",
    "fetch_if_empty": 1,
@@ -322,14 +306,6 @@
    "options": "Drafts\nSent\nTrash",
    "reqd": 1,
    "search_index": 1
-  },
-  {
-   "fieldname": "raw_message",
-   "fieldtype": "Code",
-   "hidden": 1,
-   "label": "Raw Message",
-   "no_copy": 1,
-   "read_only": 1
   },
   {
    "collapsible": 1,
@@ -439,14 +415,6 @@
    "read_only": 1
   },
   {
-   "fieldname": "token",
-   "fieldtype": "Data",
-   "label": "Token",
-   "no_copy": 1,
-   "read_only": 1,
-   "unique": 1
-  },
-  {
    "fieldname": "error_message",
    "fieldtype": "Code",
    "label": "Error Message",
@@ -479,12 +447,96 @@
    "no_copy": 1,
    "read_only": 1,
    "search_index": 1
+  },
+  {
+   "fieldname": "_raw_message",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Raw Message",
+   "no_copy": 1,
+   "options": "MIME Message",
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "queue_id",
+   "fieldtype": "Data",
+   "label": "Queue ID",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "_message",
+   "fieldtype": "Link",
+   "label": "Message",
+   "no_copy": 1,
+   "options": "MIME Message",
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "collapsible": 1,
+   "collapsible_depends_on": "eval: doc.include_agents || doc.exclude_agents",
+   "fieldname": "agents_section",
+   "fieldtype": "Section Break",
+   "label": "Agents"
+  },
+  {
+   "fetch_from": "domain_name.include_agents",
+   "fetch_if_empty": 1,
+   "fieldname": "include_agents",
+   "fieldtype": "Small Text",
+   "label": "Include Agents"
+  },
+  {
+   "fieldname": "column_break_c90z",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "domain_name.exclude_agents",
+   "fetch_if_empty": 1,
+   "fieldname": "exclude_agents",
+   "fieldtype": "Small Text",
+   "label": "Exclude Agents"
+  },
+  {
+   "collapsible": 1,
+   "collapsible_depends_on": "eval: doc.include_agent_groups || doc.exclude_agent_groups",
+   "fieldname": "agent_groups_section",
+   "fieldtype": "Section Break",
+   "label": "Agent Groups"
+  },
+  {
+   "fetch_from": "domain_name.include_agent_groups",
+   "fetch_if_empty": 1,
+   "fieldname": "include_agent_groups",
+   "fieldtype": "Small Text",
+   "label": "Include Agent Groups"
+  },
+  {
+   "fieldname": "column_break_qhyj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "domain_name.exclude_agent_groups",
+   "fetch_if_empty": 1,
+   "fieldname": "exclude_agent_groups",
+   "fieldtype": "Small Text",
+   "label": "Exclude Agent Groups"
+  },
+  {
+   "fieldname": "section_break_ptje",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_sjvs",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-12-02 14:23:32.322784",
+ "modified": "2025-01-07 17:48:20.923806",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Outgoing Mail",

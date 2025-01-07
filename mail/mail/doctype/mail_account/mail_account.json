@@ -147,9 +147,19 @@
    "group": "Reference",
    "link_doctype": "Mail Group Member",
    "link_fieldname": "member_name"
+  },
+  {
+   "group": "Mail",
+   "link_doctype": "Incoming Mail",
+   "link_fieldname": "receiver"
+  },
+  {
+   "group": "Mail",
+   "link_doctype": "Outgoing Mail",
+   "link_fieldname": "sender"
   }
  ],
- "modified": "2025-01-06 18:20:48.241975",
+ "modified": "2025-01-07 17:19:31.813542",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Account",

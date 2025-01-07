@@ -16,19 +16,18 @@ def get_sender(
 ) -> list:
 	"""Returns the sender."""
 
-	MAILBOX = frappe.qb.DocType("Mailbox")
-	DOMAIN = frappe.qb.DocType("Mail Domain")
+	MAIL_ACCOUNT = frappe.qb.DocType("Mail Account")
+	MAIL_DOMAIN = frappe.qb.DocType("Mail Domain")
 	query = (
-		frappe.qb.from_(DOMAIN)
-		.left_join(MAILBOX)
-		.on(DOMAIN.name == MAILBOX.domain_name)
-		.select(MAILBOX.name)
+		frappe.qb.from_(MAIL_DOMAIN)
+		.left_join(MAIL_ACCOUNT)
+		.on(MAIL_DOMAIN.name == MAIL_ACCOUNT.domain_name)
+		.select(MAIL_ACCOUNT.name)
 		.where(
-			(DOMAIN.enabled == 1)
-			& (DOMAIN.is_verified == 1)
-			& (MAILBOX.enabled == 1)
-			& (MAILBOX.outgoing == 1)
-			& (MAILBOX[searchfield].like(f"%{txt}%"))
+			(MAIL_DOMAIN.enabled == 1)
+			& (MAIL_DOMAIN.is_verified == 1)
+			& (MAIL_ACCOUNT.enabled == 1)
+			& (MAIL_ACCOUNT[searchfield].like(f"%{txt}%"))
 		)
 		.offset(start)
 		.limit(page_len)
@@ -36,7 +35,7 @@ def get_sender(
 
 	user = frappe.session.user
 	if not is_system_manager(user):
-		query = query.where(MAILBOX.user == user)
+		query = query.where(MAIL_ACCOUNT.user == user)
 
 	return query.run(as_dict=False)
 

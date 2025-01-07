@@ -15,8 +15,17 @@
   "default_newsletter_retention",
   "column_break_rwnw",
   "default_ttl",
-  "limits_section",
+  "limits_tab",
+  "max_recipients",
+  "max_headers",
+  "column_break_seja",
+  "max_message_size_mb",
   "max_newsletter_retention",
+  "section_break_m7bg",
+  "max_attachments",
+  "column_break_4lt9",
+  "max_attachment_size_mb",
+  "max_total_attachments_size_mb",
   "spamassassin_tab",
   "section_break_hgqa",
   "enable_spamd",
@@ -194,23 +203,83 @@
    "reqd": 1
   },
   {
-   "fieldname": "limits_section",
-   "fieldtype": "Section Break",
-   "label": "Limits"
-  },
-  {
    "default": "2048",
    "fieldname": "default_dkim_rsa_key_size",
    "fieldtype": "Select",
    "label": "DKIM RSA Key Size",
    "options": "\n2048\n4096",
    "reqd": 1
+  },
+  {
+   "default": "25",
+   "fieldname": "max_recipients",
+   "fieldtype": "Int",
+   "label": "Maximum Number of Recipients",
+   "non_negative": 1,
+   "reqd": 1
+  },
+  {
+   "default": "15",
+   "fieldname": "max_message_size_mb",
+   "fieldtype": "Int",
+   "label": "Maximum Message Size (MB)",
+   "non_negative": 1,
+   "reqd": 1
+  },
+  {
+   "default": "10",
+   "fieldname": "max_headers",
+   "fieldtype": "Int",
+   "label": "Maximum Custom Headers",
+   "non_negative": 1,
+   "reqd": 1
+  },
+  {
+   "default": "10",
+   "fieldname": "max_attachment_size_mb",
+   "fieldtype": "Int",
+   "label": "Maximum Attachment Size (MB)",
+   "non_negative": 1,
+   "reqd": 1
+  },
+  {
+   "default": "10",
+   "fieldname": "max_total_attachments_size_mb",
+   "fieldtype": "Int",
+   "label": "Maximum Total Attachments Size (MB)",
+   "non_negative": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "limits_tab",
+   "fieldtype": "Tab Break",
+   "label": "Limits"
+  },
+  {
+   "fieldname": "column_break_seja",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_m7bg",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_4lt9",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "10",
+   "fieldname": "max_attachments",
+   "fieldtype": "Int",
+   "label": "Maximum Number of Attachments",
+   "non_negative": 1,
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-01-05 12:06:02.282670",
+ "modified": "2025-01-07 15:14:39.981167",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Settings",
