@@ -11,18 +11,17 @@
   "column_break_9x8t",
   "source_host",
   "section_break_opob",
-  "spamd_response",
-  "column_break_c5vz",
+  "_message",
   "scanning_mode",
   "hybrid_scanning_threshold",
   "spam_score",
+  "column_break_c5vz",
+  "spamd_response",
   "section_break_5qon",
   "started_at",
   "completed_at",
   "column_break_svei",
-  "duration",
-  "section_break_o1qt",
-  "message"
+  "duration"
  ],
  "fields": [
   {
@@ -33,6 +32,7 @@
    "fieldname": "source_ip_address",
    "fieldtype": "Data",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Source IP Address",
    "no_copy": 1,
    "read_only": 1
@@ -45,6 +45,7 @@
    "fieldname": "source_host",
    "fieldtype": "Data",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Source Host",
    "no_copy": 1,
    "read_only": 1
@@ -68,6 +69,7 @@
    "fieldname": "scanning_mode",
    "fieldtype": "Data",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Scanning Mode",
    "no_copy": 1,
    "read_only": 1
@@ -85,6 +87,7 @@
    "fieldname": "spam_score",
    "fieldtype": "Float",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Spam Score",
    "no_copy": 1,
    "precision": "1",
@@ -122,23 +125,19 @@
    "read_only": 1
   },
   {
-   "collapsible": 1,
-   "fieldname": "section_break_o1qt",
-   "fieldtype": "Section Break",
-   "label": "Message"
-  },
-  {
-   "fieldname": "message",
-   "fieldtype": "Code",
+   "fieldname": "_message",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
    "label": "Message",
    "no_copy": 1,
+   "options": "MIME Message",
    "read_only": 1
   }
  ],
  "in_create": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-01-06 14:04:19.381154",
+ "modified": "2025-01-07 12:55:07.324604",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Spam Check Log",

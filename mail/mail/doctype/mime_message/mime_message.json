@@ -39,10 +39,10 @@
   {
    "group": "Reference",
    "link_doctype": "Spam Check Log",
-   "link_fieldname": "message"
+   "link_fieldname": "_message"
   }
  ],
- "modified": "2025-01-07 12:33:04.856689",
+ "modified": "2025-01-07 12:51:54.162433",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "MIME Message",
