@@ -24,6 +24,12 @@ class MailAgentGroup(Document):
 		if self.enabled and not self.inbound and not self.outbound:
 			self.enabled = 0
 
+		if self.enabled:
+			return
+
+		if agent := frappe.db.exists("Mail Agent", {"enabled": 1, "agent_group": self.name}):
+			frappe.throw(_("Mail Agent {0} is enabled. Please disable it first.").format(frappe.bold(agent)))
+
 	def validate_agent_group(self) -> None:
 		"""Validates the agent group and fetches the IP addresses."""
 
