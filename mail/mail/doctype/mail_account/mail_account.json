@@ -6,6 +6,7 @@
  "field_order": [
   "section_break_rgmz",
   "enabled",
+  "is_default",
   "track_outgoing_mail",
   "create_mail_contact",
   "column_break_47zs",
@@ -72,8 +73,8 @@
    "no_copy": 1,
    "options": "User",
    "reqd": 1,
-   "set_only_once": 1,
-   "unique": 1
+   "search_index": 1,
+   "set_only_once": 1
   },
   {
    "fieldname": "email",
@@ -134,6 +135,13 @@
    "label": "Secret",
    "no_copy": 1,
    "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "is_default",
+   "fieldtype": "Check",
+   "label": "Default Outgoing",
+   "search_index": 1
   }
  ],
  "index_web_pages_for_search": 1,
@@ -159,7 +167,7 @@
    "link_fieldname": "sender"
   }
  ],
- "modified": "2025-01-07 17:19:31.813542",
+ "modified": "2025-01-08 18:08:05.787494",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Account",

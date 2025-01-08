@@ -33,6 +33,7 @@ class MailAccount(Document):
 		self.validate_email()
 		self.validate_password()
 		self.validate_display_name()
+		self.validate_default_account()
 
 	def on_update(self) -> None:
 		frappe.cache.delete_value(f"user|{self.user}")
@@ -102,6 +103,22 @@ class MailAccount(Document):
 
 		if self.is_new() and not self.display_name:
 			self.display_name = frappe.db.get_value("User", self.user, "full_name")
+
+	def validate_default_account(self) -> None:
+		"""Validates the default account."""
+
+		if not self.enabled:
+			self.is_default = 0
+			return
+
+		filters = {"user": self.user, "enabled": 1, "is_default": 1, "name": ["!=", self.name]}
+		has_default_account = frappe.db.exists("Mail Account", filters)
+
+		if self.is_default:
+			if has_default_account:
+				frappe.db.set_value("Mail Account", filters, "is_default", 0)
+		elif not has_default_account:
+			self.is_default = 1
 
 	def generate_secret(self) -> None:
 		"""Generates secret from password"""
