@@ -96,64 +96,82 @@
 					/>
 				</template>
 				<template v-slot:bottom>
-					<!-- Attachments -->
-					<div v-if="mailID" class="flex flex-col gap-2 mb-2">
-						<div
-							v-for="(file, index) in attachments.data"
-							:key="index"
-							class="bg-gray-100 rounded p-2.5 text-gray-700 text-sm flex items-center cursor-pointer"
-						>
-							<span class="font-medium mr-1">{{ file.file_name || file.name }}</span>
-							<span class="font-extralight">
-								({{ formatBytes(file.file_size) }})
-							</span>
-							<FeatherIcon
-								class="h-3.5 w-3.5 ml-auto"
-								name="x"
-								@click="removeAttachment.submit({ name: file.name })"
-							/>
-						</div>
-					</div>
+					<FileUploader
+						:upload-args="{
+							doctype: 'Outgoing Mail',
+							docname: mailID,
+							private: true,
+						}"
+						@success="attachments.fetch()"
+					>
+						<template #default="{ file, progress, uploading, openFileSelector }">
+							<!-- Attachments -->
+							<div
+								v-if="mailID"
+								class="flex flex-col gap-2 mb-2 text-gray-700 text-sm"
+							>
+								<div v-if="uploading" class="bg-gray-100 rounded p-2.5">
+									<div class="flex items-center mb-2">
+										<span class="font-medium mr-1">
+											{{ file.name }}
+										</span>
+										<span class="font-extralight">
+											({{ formatBytes(file.size) }})
+										</span>
+									</div>
+									<Progress :value="progress" />
+								</div>
+								<div
+									v-for="(file, index) in attachments.data"
+									:key="index"
+									class="bg-gray-100 rounded p-2.5 flex items-center cursor-pointer"
+								>
+									<span class="font-medium mr-1">
+										{{ file.file_name || file.name }}
+									</span>
+									<span class="font-extralight">
+										({{ formatBytes(file.file_size) }})
+									</span>
+									<FeatherIcon
+										class="h-3.5 w-3.5 ml-auto"
+										name="x"
+										@click="removeAttachment.submit({ name: file.name })"
+									/>
+								</div>
+							</div>
 
-					<div class="flex justify-between gap-2 overflow-hidden border-t py-2.5">
-						<!-- Text Editor Buttons -->
-						<div class="flex gap-1 items-center overflow-x-auto">
-							<TextEditorFixedMenu :buttons="textEditorMenuButtons" />
-							<EmojiPicker
-								v-model="emoji"
-								v-slot="{ togglePopover }"
-								@update:modelValue="() => appendEmoji()"
+							<div
+								class="flex justify-between gap-2 overflow-hidden border-t py-2.5"
 							>
-								<Button variant="ghost" @click="togglePopover()">
-									<template #icon>
-										<Laugh class="h-4 w-4" />
-									</template>
-								</Button>
-							</EmojiPicker>
-							<FileUploader
-								:upload-args="{
-									doctype: 'Outgoing Mail',
-									docname: mailID,
-									private: true,
-								}"
-								@success="attachments.fetch()"
-							>
-								<template #default="{ openFileSelector }">
+								<!-- Text Editor Buttons -->
+								<div class="flex gap-1 items-center overflow-x-auto">
+									<TextEditorFixedMenu :buttons="textEditorMenuButtons" />
+									<EmojiPicker
+										v-model="emoji"
+										v-slot="{ togglePopover }"
+										@update:modelValue="() => appendEmoji()"
+									>
+										<Button variant="ghost" @click="togglePopover()">
+											<template #icon>
+												<Laugh class="h-4 w-4" />
+											</template>
+										</Button>
+									</EmojiPicker>
 									<Button variant="ghost" @click="openFileSelector()">
 										<template #icon>
 											<Paperclip class="h-4" />
 										</template>
 									</Button>
-								</template>
-							</FileUploader>
-						</div>
+								</div>
 
-						<!-- Send & Discard -->
-						<div class="flex items-center justify-end space-x-2 sm:mt-0">
-							<Button :label="__('Discard')" @click="discardMail" />
-							<Button @click="send" variant="solid" :label="__('Send')" />
-						</div>
-					</div>
+								<!-- Send & Discard -->
+								<div class="flex items-center justify-end space-x-2 sm:mt-0">
+									<Button :label="__('Discard')" @click="discardMail" />
+									<Button @click="send" variant="solid" :label="__('Send')" />
+								</div>
+							</div>
+						</template>
+					</FileUploader>
 				</template>
 			</TextEditor>
 		</template>
@@ -170,6 +188,7 @@ import {
 	TextEditorFixedMenu,
 	TextInput,
 	Button,
+	Progress,
 } from 'frappe-ui'
 import { reactive, watch, inject, ref, nextTick, computed } from 'vue'
 import { useDebounceFn } from '@vueuse/core'
@@ -421,6 +440,7 @@ const textEditorMenuButtons = [
 	'Bullet List',
 	'Numbered List',
 	'Separator',
+	// todo: fix inline image upload
 	'Image',
 	'Link',
 	'Horizontal Rule',
