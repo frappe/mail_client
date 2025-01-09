@@ -11,6 +11,20 @@ def get_root_domain_name() -> str | None:
 	return frappe.cache.get_value("root_domain_name", generator)
 
 
+def get_smtp_limits() -> dict:
+	def generator() -> dict:
+		mail_settings = frappe.get_cached_doc("Mail Settings")
+		return {
+			"max_connections": mail_settings.smtp_max_connections,
+			"max_messages": mail_settings.smtp_max_messages,
+			"session_duration": mail_settings.smtp_session_duration,
+			"inactivity_timeout": mail_settings.smtp_inactivity_timeout,
+			"cleanup_interval": mail_settings.smtp_cleanup_interval,
+		}
+
+	return frappe.cache.get_value("smtp_limits", generator)
+
+
 def get_postmaster_for_domain(domain_name: str) -> str:
 	"""Returns the postmaster for the domain."""
 

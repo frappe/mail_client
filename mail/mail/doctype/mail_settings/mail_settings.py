@@ -15,6 +15,7 @@ class MailSettings(Document):
 		self.validate_spf_host()
 
 	def on_update(self) -> None:
+		frappe.cache.delete_value("smtp_limits")
 		frappe.cache.delete_value("root_domain_name")
 
 		if self.has_value_changed("root_domain_name"):

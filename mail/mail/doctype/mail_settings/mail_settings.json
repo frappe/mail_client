@@ -33,6 +33,7 @@
   "column_break_9j6r",
   "smtp_session_duration",
   "smtp_inactivity_timeout",
+  "smtp_cleanup_interval",
   "spamassassin_tab",
   "section_break_hgqa",
   "enable_spamd",
@@ -354,12 +355,21 @@
    "fieldname": "limit_outbound_message_section",
    "fieldtype": "Section Break",
    "label": "Message"
+  },
+  {
+   "default": "60",
+   "description": "The interval for cleaning up stale connections.",
+   "fieldname": "smtp_cleanup_interval",
+   "fieldtype": "Int",
+   "label": "Cleanup Interval (Seconds)",
+   "non_negative": 1,
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-01-09 12:17:12.266240",
+ "modified": "2025-01-09 12:32:06.490297",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Settings",

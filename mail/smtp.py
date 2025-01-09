@@ -5,6 +5,8 @@ from queue import Queue
 from smtplib import SMTP, SMTP_SSL, SMTPServerDisconnected
 from threading import Lock, Thread
 
+from mail.utils.cache import get_smtp_limits
+
 
 class SMTPConnectionLimitError(Exception):
 	pass
@@ -21,12 +23,12 @@ class SMTPConnection:
 		use_tls: bool,
 		inactivity_timeout: int,
 		session_duration: int,
-		max_emails: int,
+		max_messages: int,
 	) -> None:
 		self.__created_at = time.time()
 		self.__inactivity_timeout = inactivity_timeout
 		self.__session_duration = session_duration
-		self.__max_emails = max_emails
+		self.__max_messages = max_messages
 		self.__email_count = 0
 
 		self.session = self.__create_connection(host, port, username, password, use_ssl, use_tls)
@@ -59,7 +61,7 @@ class SMTPConnection:
 		expired = (
 			current_time - self.last_used > self.__inactivity_timeout
 			or current_time - self.__created_at > self.__session_duration
-			or self.__email_count >= self.__max_emails
+			or self.__email_count >= self.__max_messages
 		)
 		return not expired and self.is_active()
 
@@ -87,14 +89,19 @@ class SMTPConnectionPool:
 				cls._instance._running = False
 		return cls._instance
 
-	def __init__(self, max_connections: int) -> None:
+	def __init__(self) -> None:
 		if hasattr(self, "_initialized"):
 			return
 
-		self.max_connections = max_connections
+		smtp_limits = get_smtp_limits()
+		self.max_connections = smtp_limits["max_connections"]
+		self.max_messages = smtp_limits["max_messages"]
+		self.session_duration = smtp_limits["session_duration"]
+		self.inactivity_timeout = smtp_limits["inactivity_timeout"]
+		self.cleanup_interval = smtp_limits["cleanup_interval"]
+
 		self._initialized = True
 		self._running = True
-		self._cleanup_interval = 60
 		self._cleanup_thread = None
 		self._initialize_cleanup_thread()
 
@@ -106,9 +113,6 @@ class SMTPConnectionPool:
 		password: str,
 		use_ssl: bool,
 		use_tls: bool,
-		inactivity_timeout: int,
-		session_duration: int,
-		max_emails: int,
 	) -> "SMTPConnection":
 		key = (host, port, username)
 		with self._pool_lock:
@@ -136,9 +140,9 @@ class SMTPConnectionPool:
 					password,
 					use_ssl,
 					use_tls,
-					inactivity_timeout,
-					session_duration,
-					max_emails,
+					self.inactivity_timeout,
+					self.session_duration,
+					self.max_messages,
 				)
 
 			raise SMTPConnectionLimitError(
@@ -173,7 +177,7 @@ class SMTPConnectionPool:
 
 	def _cleanup_stale_connections(self) -> None:
 		while self._running:
-			time.sleep(self._cleanup_interval)
+			time.sleep(self.cleanup_interval)
 			with self._pool_lock:
 				for key, pool in self._pools.items():
 					valid_connections = Queue(self.max_connections)
@@ -208,21 +212,14 @@ class SMTPContext:
 		password: str,
 		use_ssl: bool = False,
 		use_tls: bool = False,
-		inactivity_timeout: int = 300,
-		session_duration: int = 600,
-		max_emails: int = 10,
-		max_connections: int = 5,
 	) -> None:
-		self._pool = SMTPConnectionPool(max_connections)
+		self._pool = SMTPConnectionPool()
 		self._host = host
 		self._port = port
 		self._username = username
 		self._password = password
 		self._use_ssl = use_ssl
 		self._use_tls = use_tls
-		self._inactivity_timeout = inactivity_timeout
-		self._session_duration = session_duration
-		self._max_emails = max_emails
 		self._connection = None
 
 	def __enter__(self) -> SMTP | SMTP_SSL:
@@ -233,9 +230,6 @@ class SMTPContext:
 			self._password,
 			self._use_ssl,
 			self._use_tls,
-			self._inactivity_timeout,
-			self._session_duration,
-			self._max_emails,
 		)
 		return self._connection.session
 
@@ -255,15 +249,9 @@ def smtp_server(
 	password: str,
 	use_ssl: bool = False,
 	use_tls: bool = False,
-	inactivity_timeout: int = 300,
-	session_duration: int = 600,
-	max_emails: int = 10,
-	max_connections: int = 5,
 ) -> Generator[type[SMTP] | type[SMTP_SSL], None, None]:
-	_pool = SMTPConnectionPool(max_connections)
-	_connection: SMTPConnection = _pool.get_connection(
-		host, port, username, password, use_ssl, use_tls, inactivity_timeout, session_duration, max_emails
-	)
+	_pool = SMTPConnectionPool()
+	_connection: SMTPConnection = _pool.get_connection(host, port, username, password, use_ssl, use_tls)
 
 	try:
 		yield _connection.session
