@@ -1,0 +1,489 @@
+{
+ "actions": [],
+ "creation": "2024-03-13 11:35:29.489049",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "folder",
+  "sender",
+  "display_name",
+  "reply_to",
+  "column_break_hpzu",
+  "in_reply_to_mail_type",
+  "in_reply_to_mail_name",
+  "subject",
+  "receiver",
+  "section_break_s2hp",
+  "recipients",
+  "section_break_eomq",
+  "body_html",
+  "body_plain",
+  "more_info_tab",
+  "status",
+  "from_ip",
+  "from_host",
+  "column_break_pxhn",
+  "domain_name",
+  "incoming_mail_log",
+  "section_break_lpj2",
+  "is_rejected",
+  "column_break_uulh",
+  "rejection_message",
+  "section_break_0jgu",
+  "message_id",
+  "in_reply_to",
+  "column_break_epvd",
+  "message_size",
+  "section_break_z08o",
+  "created_at",
+  "received_at",
+  "fetched_at",
+  "processed_at",
+  "column_break_x0zs",
+  "received_after",
+  "fetched_after",
+  "processed_after",
+  "section_break_5me5",
+  "spf_pass",
+  "dkim_pass",
+  "dmarc_pass",
+  "column_break_ytzm",
+  "spf_description",
+  "dkim_description",
+  "dmarc_description",
+  "section_break_qijk",
+  "message",
+  "section_break_vtax",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "default": "Draft",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "no_copy": 1,
+   "options": "Draft\nRejected\nAccepted",
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Incoming Mail",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "subject",
+   "fieldtype": "Small Text",
+   "in_standard_filter": 1,
+   "label": "Subject",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "body_html",
+   "fieldtype": "HTML Editor",
+   "label": "Body HTML",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "body_plain",
+   "fieldtype": "Code",
+   "label": "Body Plain",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "message_id",
+   "fieldtype": "Data",
+   "ignore_xss_filter": 1,
+   "in_standard_filter": 1,
+   "label": "Message ID",
+   "no_copy": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "section_break_0jgu",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_hpzu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_eomq",
+   "fieldtype": "Section Break",
+   "label": "Body"
+  },
+  {
+   "fieldname": "display_name",
+   "fieldtype": "Data",
+   "label": "Display Name",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "sender",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Sender",
+   "no_copy": 1,
+   "options": "Email",
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "section_break_5me5",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_epvd",
+   "fieldtype": "Column Break"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_qijk",
+   "fieldtype": "Section Break",
+   "label": "Message"
+  },
+  {
+   "fieldname": "spf_description",
+   "fieldtype": "Small Text",
+   "ignore_xss_filter": 1,
+   "label": "SPF Description",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "dkim_description",
+   "fieldtype": "Small Text",
+   "ignore_xss_filter": 1,
+   "label": "DKIM Description",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "dmarc_description",
+   "fieldtype": "Small Text",
+   "ignore_xss_filter": 1,
+   "label": "DMARC Description",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_ytzm",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "receiver",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Receiver",
+   "no_copy": 1,
+   "options": "Mailbox",
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "recipients",
+   "fieldtype": "Table",
+   "label": "Recipients",
+   "no_copy": 1,
+   "options": "Mail Recipient",
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "created_at",
+   "fieldtype": "Datetime",
+   "label": "Created At",
+   "no_copy": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "received_at",
+   "fieldtype": "Datetime",
+   "label": "Received At",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_z08o",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_x0zs",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Received At - Created At",
+   "fieldname": "received_after",
+   "fieldtype": "Float",
+   "label": "Received After (Seconds)",
+   "no_copy": 1,
+   "precision": "2",
+   "read_only": 1
+  },
+  {
+   "depends_on": "eval: doc.message_size",
+   "fieldname": "message_size",
+   "fieldtype": "Int",
+   "label": "Message Size (Bytes)",
+   "no_copy": 1,
+   "non_negative": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "more_info_tab",
+   "fieldtype": "Tab Break",
+   "label": "More Info"
+  },
+  {
+   "fieldname": "section_break_s2hp",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "message",
+   "fieldtype": "Code",
+   "label": "Message",
+   "no_copy": 1,
+   "read_only": 1,
+   "set_only_once": 1
+  },
+  {
+   "fieldname": "reply_to",
+   "fieldtype": "Data",
+   "ignore_xss_filter": 1,
+   "label": "Reply To",
+   "no_copy": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "Inbox",
+   "depends_on": "eval: doc.docstatus != 0",
+   "fieldname": "folder",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Folder",
+   "no_copy": 1,
+   "options": "Inbox\nSpam\nTrash",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "processed_at",
+   "fieldtype": "Datetime",
+   "label": "Processed At",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "description": "Processed At - Fetched At",
+   "fieldname": "processed_after",
+   "fieldtype": "Float",
+   "label": "Processed After (Seconds)",
+   "no_copy": 1,
+   "precision": "2",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "depends_on": "eval: doc.is_rejected",
+   "fieldname": "is_rejected",
+   "fieldtype": "Check",
+   "label": "is Rejected",
+   "no_copy": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "depends_on": "eval: doc.is_rejected",
+   "fieldname": "rejection_message",
+   "fieldtype": "Small Text",
+   "label": "Rejection Message",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "depends_on": "eval: doc.docstatus != 0",
+   "fieldname": "spf_pass",
+   "fieldtype": "Check",
+   "label": "SPF",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "depends_on": "eval: doc.docstatus != 0",
+   "fieldname": "dkim_pass",
+   "fieldtype": "Check",
+   "label": "DKIM",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "depends_on": "eval: doc.docstatus != 0",
+   "fieldname": "dmarc_pass",
+   "fieldtype": "Check",
+   "label": "DMARC",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "domain_name",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Domain Name",
+   "no_copy": 1,
+   "options": "Mail Domain",
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "from_ip",
+   "fieldtype": "Data",
+   "label": "From IP",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "from_host",
+   "fieldtype": "Data",
+   "label": "From Host",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "depends_on": "eval: doc.docstatus == 0",
+   "fieldname": "in_reply_to_mail_type",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "In Reply To Mail Type",
+   "no_copy": 1,
+   "options": "\nIncoming Mail\nOutgoing Mail",
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "in_reply_to_mail_name",
+   "fieldtype": "Dynamic Link",
+   "label": "In Reply To",
+   "no_copy": 1,
+   "options": "in_reply_to_mail_type",
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "in_reply_to",
+   "fieldtype": "Data",
+   "ignore_xss_filter": 1,
+   "label": "In Reply To (Message ID)",
+   "length": 255,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "column_break_pxhn",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_lpj2",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_uulh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "fetched_at",
+   "fieldtype": "Datetime",
+   "label": "Fetched At",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "description": "Fetched At - Received At",
+   "fieldname": "fetched_after",
+   "fieldtype": "Float",
+   "label": "Fetched After (Seconds)",
+   "no_copy": 1,
+   "precision": "2",
+   "read_only": 1
+  },
+  {
+   "fieldname": "incoming_mail_log",
+   "fieldtype": "Data",
+   "label": "Incoming Mail Log",
+   "no_copy": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "section_break_vtax",
+   "fieldtype": "Section Break"
+  }
+ ],
+ "in_create": 1,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2024-11-20 09:56:58.726963",
+ "modified_by": "Administrator",
+ "module": "Mail",
+ "name": "Incoming Mail",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "cancel": 1,
+   "delete": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Mailbox User",
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "permlevel": 1,
+   "read": 1,
+   "role": "System Manager",
+   "write": 1
+  }
+ ],
+ "show_title_field_in_link": 1,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "subject",
+ "track_changes": 1
+}

@@ -76,7 +76,7 @@ const reloadDrafts = () => {
 }
 
 const draftMails = createListResource({
-	url: 'mail_client.api.mail.get_draft_mails',
+	url: 'mail.api.mail.get_draft_mails',
 	doctype: 'Outgoing Mail',
 	auto: true,
 	pageLength: 50,

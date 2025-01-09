@@ -45,7 +45,7 @@ export const sessionStore = defineStore('mail-session', () => {
 	})
 
 	const branding = createResource({
-		url: 'mail_client.api.mail.get_branding',
+		url: 'mail.api.mail.get_branding',
 		cache: 'brand',
 		auto: true,
 		onSuccess(data) {
