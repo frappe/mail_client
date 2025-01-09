@@ -6,8 +6,8 @@ from bs4 import BeautifulSoup
 from frappe.translate import get_all_translations
 from frappe.utils import is_html
 
-from mail.utils.cache import get_user_default_mailbox
-from mail.utils.user import get_user_mailboxes, has_role, is_system_manager
+from mail.utils.cache import get_user_default_mail_account
+from mail.utils.user import get_user_email_addresses, has_role, is_system_manager
 
 
 def check_app_permission() -> bool:
@@ -63,7 +63,7 @@ def get_translations() -> dict:
 def get_incoming_mails(start: int = 0) -> list:
 	"""Returns incoming mails for the current user."""
 
-	mailboxes = get_user_mailboxes(frappe.session.user, "Incoming")
+	mailboxes = get_user_email_addresses(frappe.session.user, "Incoming")
 
 	mails = frappe.get_all(
 		"Incoming Mail",
@@ -105,7 +105,7 @@ def get_draft_mails(start: int = 0) -> list:
 def get_outgoing_mails(status: str, start: int = 0) -> list:
 	"""Returns outgoing mails for the current user."""
 
-	mailboxes = get_user_mailboxes(frappe.session.user, "Outgoing")
+	mailboxes = get_user_email_addresses(frappe.session.user, "Outgoing")
 
 	if status == "Draft":
 		docstatus = 0
@@ -388,7 +388,7 @@ def get_mail_contacts(txt=None) -> list:
 def get_default_outgoing() -> str | None:
 	"""Returns default outgoing mailbox."""
 
-	return get_user_default_mailbox(frappe.session.user)
+	return get_user_default_mail_account(frappe.session.user)
 
 
 @frappe.whitelist()

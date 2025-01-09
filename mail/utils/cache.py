@@ -60,7 +60,40 @@ def get_user_owned_domains(user: str) -> list:
 			.where((MAIL_DOMAIN.enabled == 1) & (MAIL_DOMAIN.domain_owner == user))
 		).run(pluck="name")
 
-	return frappe.cache(f"user|{user}", "owned_domains", generator)
+	return frappe.cache.hget(f"user|{user}", "owned_domains", generator)
+
+
+def get_user_mail_accounts(user: str) -> list:
+	def generator() -> list:
+		MAIL_ACCOUNT = frappe.qb.DocType("Mail Account")
+		return (
+			frappe.qb.from_(MAIL_ACCOUNT)
+			.select("name")
+			.where((MAIL_ACCOUNT.enabled == 1) & (MAIL_ACCOUNT.user == user))
+		).run(pluck="name")
+
+	return frappe.cache.hget(f"user|{user}", "mail_accounts", generator)
+
+
+def get_user_mail_aliases(user: str) -> list:
+	def generator() -> list:
+		accounts = get_user_mail_accounts(user)
+
+		if not accounts:
+			return []
+
+		MAIL_ALIAS = frappe.qb.DocType("Mail Alias")
+		return (
+			frappe.qb.from_(MAIL_ALIAS)
+			.select("name")
+			.where(
+				(MAIL_ALIAS.enabled == 1)
+				& (MAIL_ALIAS.alias_for_type == "Mail Account")
+				& (MAIL_ALIAS.alias_for_name.isin(accounts))
+			)
+		).run(pluck="name")
+
+	return frappe.cache.hget(f"user|{user}", "mail_aliases", generator)
 
 
 def get_user_incoming_mailboxes(user: str) -> list:
@@ -74,7 +107,7 @@ def get_user_incoming_mailboxes(user: str) -> list:
 			.where((MAILBOX.user == user) & (MAILBOX.enabled == 1) & (MAILBOX.incoming == 1))
 		).run(pluck="name")
 
-	return frappe.cache(f"user|{user}", "incoming_mailboxes", generator)
+	return frappe.cache.hget(f"user|{user}", "incoming_mailboxes", generator)
 
 
 def get_user_outgoing_mailboxes(user: str) -> list:
@@ -88,16 +121,16 @@ def get_user_outgoing_mailboxes(user: str) -> list:
 			.where((MAILBOX.user == user) & (MAILBOX.enabled == 1) & (MAILBOX.outgoing == 1))
 		).run(pluck="name")
 
-	return frappe.cache(f"user|{user}", "outgoing_mailboxes", generator)
+	return frappe.cache.hget(f"user|{user}", "outgoing_mailboxes", generator)
 
 
-def get_user_default_mailbox(user: str) -> str | None:
-	"""Returns the default mailbox of the user."""
+def get_user_default_mail_account(user: str) -> str | None:
+	"""Returns the default mail account of the user."""
 
 	def generator() -> str | None:
-		return frappe.db.get_value("Mailbox", {"user": user, "is_default": 1}, "name")
+		return frappe.db.get_value("Mail Account", {"user": user, "enabled": 1, "is_default": 1}, "name")
 
-	return frappe.cache(f"user|{user}", "default_mailbox", generator)
+	return frappe.cache.hget(f"user|{user}", "default_mail_account", generator)
 
 
 def get_blacklist_for_ip_group(ip_group: str) -> list:

@@ -136,8 +136,14 @@
  ],
  "in_create": 1,
  "index_web_pages_for_search": 1,
- "links": [],
- "modified": "2025-01-07 12:55:07.324604",
+ "links": [
+  {
+   "group": "Mail",
+   "link_doctype": "Outgoing Mail",
+   "link_fieldname": "spam_check_log"
+  }
+ ],
+ "modified": "2025-01-09 15:16:10.523012",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Spam Check Log",

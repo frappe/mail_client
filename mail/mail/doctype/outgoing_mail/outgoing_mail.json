@@ -25,24 +25,32 @@
   "error_message",
   "more_info_tab",
   "status",
+  "priority",
   "ip_address",
+  "spam_score",
+  "spam_check_log",
   "via_api",
+  "is_spam",
   "is_newsletter",
   "column_break_d6p9",
   "domain_name",
+  "agent",
   "queue_id",
   "section_break_quhp",
-  "_message",
+  "message_id",
   "in_reply_to",
   "column_break_4zfa",
+  "_message",
   "message_size",
   "section_break_093p",
   "created_at",
   "submitted_at",
+  "processed_at",
   "transfer_started_at",
   "transfer_completed_at",
   "column_break_fvyv",
   "submitted_after",
+  "processed_after",
   "transfer_started_after",
   "transfer_completed_after",
   "section_break_ptje",
@@ -482,8 +490,6 @@
    "label": "Agents"
   },
   {
-   "fetch_from": "domain_name.include_agents",
-   "fetch_if_empty": 1,
    "fieldname": "include_agents",
    "fieldtype": "Small Text",
    "label": "Include Agents"
@@ -493,8 +499,6 @@
    "fieldtype": "Column Break"
   },
   {
-   "fetch_from": "domain_name.exclude_agents",
-   "fetch_if_empty": 1,
    "fieldname": "exclude_agents",
    "fieldtype": "Small Text",
    "label": "Exclude Agents"
@@ -507,8 +511,6 @@
    "label": "Agent Groups"
   },
   {
-   "fetch_from": "domain_name.include_agent_groups",
-   "fetch_if_empty": 1,
    "fieldname": "include_agent_groups",
    "fieldtype": "Small Text",
    "label": "Include Agent Groups"
@@ -518,8 +520,6 @@
    "fieldtype": "Column Break"
   },
   {
-   "fetch_from": "domain_name.exclude_agent_groups",
-   "fetch_if_empty": 1,
    "fieldname": "exclude_agent_groups",
    "fieldtype": "Small Text",
    "label": "Exclude Agent Groups"
@@ -531,12 +531,85 @@
   {
    "fieldname": "column_break_sjvs",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "priority",
+   "fieldtype": "Int",
+   "label": "Priority",
+   "no_copy": 1,
+   "non_negative": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "spam_score",
+   "fieldtype": "Float",
+   "label": "Spam Score",
+   "no_copy": 1,
+   "precision": "1",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "depends_on": "eval: doc.is_spam",
+   "fieldname": "is_spam",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "in_list_view": 1,
+   "label": "Is Spam",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "agent",
+   "fieldtype": "Link",
+   "label": "Agent",
+   "no_copy": 1,
+   "options": "Mail Agent",
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "message_id",
+   "fieldtype": "Data",
+   "ignore_xss_filter": 1,
+   "in_list_view": 1,
+   "label": "Message ID",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "spam_check_log",
+   "fieldtype": "Link",
+   "label": "Spam Check Log",
+   "no_copy": 1,
+   "options": "Spam Check Log",
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "processed_at",
+   "fieldtype": "Datetime",
+   "label": "Processed At",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "depends_on": "eval: doc.processed_at",
+   "description": "Processed At - Submitted At",
+   "fieldname": "processed_after",
+   "fieldtype": "Float",
+   "label": "Processed After (Seconds)",
+   "no_copy": 1,
+   "non_negative": 1,
+   "precision": "2",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-01-07 17:48:20.923806",
+ "modified": "2025-01-09 15:15:15.113111",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Outgoing Mail",

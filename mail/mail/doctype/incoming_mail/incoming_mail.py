@@ -20,7 +20,7 @@ from mail.utils import get_in_reply_to_mail
 from mail.utils.cache import get_postmaster_for_domain
 from mail.utils.dt import add_or_update_tzinfo, parse_iso_datetime
 from mail.utils.email_parser import EmailParser, extract_ip_and_host
-from mail.utils.user import get_user_mailboxes, is_mail_account_owner, is_system_manager
+from mail.utils.user import get_user_email_addresses, is_mail_account_owner, is_system_manager
 
 if TYPE_CHECKING:
 	from mail.mail.doctype.outgoing_mail.outgoing_mail import OutgoingMail
@@ -238,7 +238,7 @@ def get_permission_query_condition(user: str | None = None) -> str:
 	if is_system_manager(user):
 		return ""
 
-	if mailboxes := ", ".join(repr(m) for m in get_user_mailboxes(user)):
+	if mailboxes := ", ".join(repr(m) for m in get_user_email_addresses(user)):
 		return f"(`tabIncoming Mail`.`receiver` IN ({mailboxes})) AND (`tabIncoming Mail`.`docstatus` = 1)"
 	else:
 		return "1=0"

@@ -26,39 +26,74 @@ frappe.ui.form.on("Outgoing Mail", {
 	},
 
 	add_actions(frm) {
-		if (frm.doc.docstatus === 1) {
-			if (frm.doc.status === "In Progress") {
-				frm.add_custom_button(
-					__("Transfer Now"),
-					() => {
-						frm.trigger("transfer_to_mail_agent");
-					},
-					__("Actions")
-				);
-			} else if (frm.doc.status === "Failed" && frm.doc.failed_count < 5) {
-				frm.add_custom_button(
-					__("Retry"),
-					() => {
-						frm.trigger("retry_failed");
-					},
-					__("Actions")
-				);
-			} else if (frm.doc.status === "Sent") {
-				frm.add_custom_button(
-					__("Reply"),
-					() => {
-						frm.trigger("reply");
-					},
-					__("Actions")
-				);
-				frm.add_custom_button(
-					__("Reply All"),
-					() => {
-						frm.trigger("reply_all");
-					},
-					__("Actions")
-				);
-			}
+		if (frm.doc.docstatus !== 1) return;
+
+		if (["In Progress", "Blocked"].includes(frm.doc.status)) {
+			if (!frappe.user_roles.includes("System Manager")) return;
+
+			frm.add_custom_button(
+				__("Force Accept"),
+				() => {
+					frm.trigger("force_accept");
+				},
+				__("Actions")
+			);
+		} else if (frm.doc.status === "Accepted") {
+			frm.add_custom_button(
+				__("Transfer to Agent"),
+				() => {
+					frm.trigger("transfer_to_mail_agent");
+				},
+				__("Actions")
+			);
+		} else if (frm.doc.status === "Failed" && frm.doc.failed_count < 5) {
+			frm.add_custom_button(
+				__("Retry"),
+				() => {
+					frm.trigger("retry_failed");
+				},
+				__("Actions")
+			);
+		} else if (frm.doc.status === "Transferring") {
+			if (!frappe.user_roles.includes("System Manager")) return;
+
+			frm.add_custom_button(
+				__("Force Transfer to Agent"),
+				() => {
+					frappe.confirm(
+						__(
+							"Are you sure you want to force transfer this email to the agent? It may cause duplicate emails to be sent."
+						),
+						() => frm.trigger("force_transfer_to_mail_agent")
+					);
+				},
+				__("Actions")
+			);
+		} else if (frm.doc.status === "Sent") {
+			frm.add_custom_button(
+				__("Reply"),
+				() => {
+					frm.trigger("reply");
+				},
+				__("Actions")
+			);
+			frm.add_custom_button(
+				__("Reply All"),
+				() => {
+					frm.trigger("reply_all");
+				},
+				__("Actions")
+			);
+		} else if (frm.doc.status === "Bounced") {
+			if (!frappe.user_roles.includes("System Manager")) return;
+
+			frm.add_custom_button(
+				__("Retry"),
+				() => {
+					frm.trigger("retry_bounced");
+				},
+				__("Actions")
+			);
 		}
 	},
 
@@ -81,12 +116,12 @@ frappe.ui.form.on("Outgoing Mail", {
 		}
 	},
 
-	transfer_to_mail_agent(frm) {
+	force_accept(frm) {
 		frappe.call({
 			doc: frm.doc,
-			method: "transfer_to_mail_agent",
+			method: "force_accept",
 			freeze: true,
-			freeze_message: __("Transferring..."),
+			freeze_message: __("Force Accepting..."),
 			callback: (r) => {
 				if (!r.exc) {
 					frm.refresh();
@@ -101,6 +136,34 @@ frappe.ui.form.on("Outgoing Mail", {
 			method: "retry_failed",
 			freeze: true,
 			freeze_message: __("Retrying..."),
+			callback: (r) => {
+				if (!r.exc) {
+					frm.refresh();
+				}
+			},
+		});
+	},
+
+	transfer_to_mail_agent(frm) {
+		frappe.call({
+			doc: frm.doc,
+			method: "transfer_to_mail_agent",
+			freeze: true,
+			freeze_message: __("Transferring..."),
+			callback: (r) => {
+				if (!r.exc) {
+					frm.refresh();
+				}
+			},
+		});
+	},
+
+	force_transfer_to_mail_agent(frm) {
+		frappe.call({
+			doc: frm.doc,
+			method: "force_transfer_to_mail_agent",
+			freeze: true,
+			freeze_message: __("Force Transferring..."),
 			callback: (r) => {
 				if (!r.exc) {
 					frm.refresh();
@@ -125,6 +188,55 @@ frappe.ui.form.on("Outgoing Mail", {
 			frm: frm,
 			args: {
 				all: true,
+			},
+		});
+	},
+
+	retry_bounced(frm) {
+		frappe.call({
+			doc: frm.doc,
+			method: "retry_bounced",
+			freeze: true,
+			freeze_message: __("Retrying..."),
+			callback: (r) => {
+				if (!r.exc) {
+					frm.refresh();
+				}
+			},
+		});
+	},
+});
+
+frappe.ui.form.on("Mail Recipient", {
+	check_deliverability(frm, cdt, cdn) {
+		let recipient = locals[cdt][cdn];
+		let email = recipient.email;
+
+		if (!email) return;
+
+		frappe.call({
+			method: "mail.utils.check_deliverability",
+			args: {
+				email: email,
+			},
+			freeze: true,
+			freeze_message: __("Checking email deliverability..."),
+			callback: (r) => {
+				if (!r.exc) {
+					if (r.message) {
+						frappe.show_alert({
+							message: __("The email address {0} is deliverable.", [email.bold()]),
+							indicator: "green",
+						});
+					} else {
+						frappe.show_alert({
+							message: __("The email address {0} appears to be invalid.", [
+								email.bold(),
+							]),
+							indicator: "red",
+						});
+					}
+				}
 			},
 		});
 	},

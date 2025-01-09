@@ -8,6 +8,7 @@
  "field_order": [
   "type",
   "email",
+  "check_deliverability",
   "display_name",
   "column_break_iqoo",
   "status",
@@ -98,12 +99,18 @@
    "label": "Error Message",
    "no_copy": 1,
    "read_only": 1
+  },
+  {
+   "depends_on": "eval: doc.parenttype == \"Outgoing Mail\"",
+   "fieldname": "check_deliverability",
+   "fieldtype": "Button",
+   "label": "Check Deliverability"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-12-03 18:07:48.333983",
+ "modified": "2025-01-09 17:19:51.731199",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Recipient",

@@ -1,7 +1,7 @@
 import frappe
 from frappe.query_builder import Criterion, Order
 
-from mail.utils.user import get_user_mailboxes, has_role, is_system_manager
+from mail.utils.user import get_user_email_addresses, has_role, is_system_manager
 
 
 @frappe.whitelist()
@@ -66,10 +66,10 @@ def get_outgoing_mails(
 
 	if not is_system_manager(user):
 		conditions = []
-		mailboxes = get_user_mailboxes(user)
+		accounts = get_user_email_addresses(user, "Mail Account")
 
-		if has_role(user, "Mailbox User") and mailboxes:
-			conditions.append(OM.sender.isin(mailboxes))
+		if has_role(user, "Mailbox User") and accounts:
+			conditions.append(OM.sender.isin(accounts))
 
 		if not conditions:
 			return []
