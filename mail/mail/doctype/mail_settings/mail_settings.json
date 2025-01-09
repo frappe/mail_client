@@ -15,17 +15,24 @@
   "default_newsletter_retention",
   "column_break_rwnw",
   "default_ttl",
-  "limits_tab",
+  "limits_outbound_tab",
+  "limit_outbound_message_section",
   "max_recipients",
   "max_headers",
   "column_break_seja",
   "max_message_size_mb",
   "max_newsletter_retention",
-  "section_break_m7bg",
+  "attachment_section",
   "max_attachments",
   "column_break_4lt9",
   "max_attachment_size_mb",
   "max_total_attachments_size_mb",
+  "smtp_section",
+  "smtp_max_connections",
+  "smtp_max_messages",
+  "column_break_9j6r",
+  "smtp_session_duration",
+  "smtp_inactivity_timeout",
   "spamassassin_tab",
   "section_break_hgqa",
   "enable_spamd",
@@ -35,7 +42,7 @@
   "column_break_c43x",
   "spamd_scanning_mode",
   "spamd_hybrid_scanning_threshold",
-  "outbound_section",
+  "spamd_outbound_section",
   "enable_spamd_for_outbound",
   "spamd_outbound_block",
   "column_break_lhy4",
@@ -43,14 +50,17 @@
  ],
  "fields": [
   {
+   "description": "The domain name used to create DNS records (SPF, DKIM keys, external DMARC, etc.).",
    "fieldname": "root_domain_name",
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Root Domain Name",
+   "placeholder": "frappemail.com",
    "reqd": 1
   },
   {
    "default": "_spf",
+   "description": "Used to add allowed SMTP servers and included by other domains in their SPF records.",
    "fieldname": "spf_host",
    "fieldtype": "Data",
    "in_list_view": 1,
@@ -58,6 +68,7 @@
    "reqd": 1
   },
   {
+   "description": "The service provider managing your root domain's DNS records.",
    "fieldname": "dns_provider",
    "fieldtype": "Select",
    "label": "DNS Provider",
@@ -65,6 +76,7 @@
   },
   {
    "depends_on": "eval: doc.dns_provider",
+   "description": "The token used to authenticate with your DNS provider.",
    "fieldname": "dns_provider_token",
    "fieldtype": "Password",
    "label": "DNS Provider Token",
@@ -85,6 +97,7 @@
   },
   {
    "default": "3600",
+   "description": "The default Time-to-Live (TTL) for DNS records.",
    "fieldname": "default_ttl",
    "fieldtype": "Int",
    "label": "TTL",
@@ -103,14 +116,17 @@
    "fieldtype": "Section Break"
   },
   {
+   "description": "Hostname or IP of the SpamAssassin server.",
    "fieldname": "spamd_host",
    "fieldtype": "Data",
    "label": "Host",
    "mandatory_depends_on": "eval: doc.enable_spamd",
+   "placeholder": "spamd.frappemail.com",
    "read_only_depends_on": "eval: !doc.enable_spamd"
   },
   {
    "default": "783",
+   "description": "Port for connecting to the SpamAssassin server.",
    "fieldname": "spamd_port",
    "fieldtype": "Int",
    "label": "Port",
@@ -128,11 +144,12 @@
    "fieldtype": "Select",
    "label": "Scanning Mode",
    "mandatory_depends_on": "eval: doc.enable_spamd",
-   "options": "\nExclude Attachments\nInclude Attachments\nHybrid Approach",
+   "options": "Exclude Attachments\nInclude Attachments\nHybrid Approach",
    "read_only_depends_on": "eval: !doc.enable_spamd"
   },
   {
    "default": "2",
+   "description": "Threshold for when to switch from scanning only the email body to scanning attachments selectively.",
    "fieldname": "spamd_hybrid_scanning_threshold",
    "fieldtype": "Float",
    "label": "Hybrid Scanning Threshold",
@@ -146,14 +163,10 @@
   },
   {
    "default": "0",
+   "description": "Check to enable spam detection.",
    "fieldname": "enable_spamd",
    "fieldtype": "Check",
    "label": "Enable Spam Detection"
-  },
-  {
-   "fieldname": "outbound_section",
-   "fieldtype": "Section Break",
-   "label": "Outbound"
   },
   {
    "fieldname": "column_break_lhy4",
@@ -161,6 +174,7 @@
   },
   {
    "default": "1",
+   "description": "Enable or disable outbound spam detection.",
    "fieldname": "enable_spamd_for_outbound",
    "fieldtype": "Check",
    "label": "Enable",
@@ -168,6 +182,7 @@
   },
   {
    "default": "0",
+   "description": "Block emails identified as spam from being sent.",
    "fieldname": "spamd_outbound_block",
    "fieldtype": "Check",
    "label": "Block Spam",
@@ -175,6 +190,7 @@
   },
   {
    "default": "3",
+   "description": "Spam score threshold for blocking emails.",
    "fieldname": "spamd_outbound_threshold",
    "fieldtype": "Float",
    "label": "Threshold",
@@ -188,6 +204,7 @@
   },
   {
    "default": "7",
+   "description": "Maximum number of days a newsletter is retained.",
    "fieldname": "max_newsletter_retention",
    "fieldtype": "Int",
    "label": "Maximum Newsletter Retention (Days)",
@@ -196,6 +213,7 @@
   },
   {
    "default": "3",
+   "description": "The default number of days a newsletter is retained.",
    "fieldname": "default_newsletter_retention",
    "fieldtype": "Int",
    "label": "Newsletter Retention (Days)",
@@ -204,6 +222,7 @@
   },
   {
    "default": "2048",
+   "description": "The default size of the RSA key used for DKIM signing.",
    "fieldname": "default_dkim_rsa_key_size",
    "fieldtype": "Select",
    "label": "DKIM RSA Key Size",
@@ -212,6 +231,7 @@
   },
   {
    "default": "25",
+   "description": "Maximum recipients allowed per email.",
    "fieldname": "max_recipients",
    "fieldtype": "Int",
    "label": "Maximum Number of Recipients",
@@ -220,6 +240,7 @@
   },
   {
    "default": "15",
+   "description": "Maximum size for an email message, including attachments.",
    "fieldname": "max_message_size_mb",
    "fieldtype": "Int",
    "label": "Maximum Message Size (MB)",
@@ -228,6 +249,7 @@
   },
   {
    "default": "10",
+   "description": "Maximum number of custom headers allowed in an email.",
    "fieldname": "max_headers",
    "fieldtype": "Int",
    "label": "Maximum Custom Headers",
@@ -236,6 +258,7 @@
   },
   {
    "default": "10",
+   "description": "Maximum size allowed for each email attachment.",
    "fieldname": "max_attachment_size_mb",
    "fieldtype": "Int",
    "label": "Maximum Attachment Size (MB)",
@@ -244,6 +267,7 @@
   },
   {
    "default": "10",
+   "description": "Maximum combined size for all attachments in an email.",
    "fieldname": "max_total_attachments_size_mb",
    "fieldtype": "Int",
    "label": "Maximum Total Attachments Size (MB)",
@@ -251,17 +275,8 @@
    "reqd": 1
   },
   {
-   "fieldname": "limits_tab",
-   "fieldtype": "Tab Break",
-   "label": "Limits"
-  },
-  {
    "fieldname": "column_break_seja",
    "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "section_break_m7bg",
-   "fieldtype": "Section Break"
   },
   {
    "fieldname": "column_break_4lt9",
@@ -269,17 +284,82 @@
   },
   {
    "default": "10",
+   "description": "Maximum number of attachments allowed in an email.",
    "fieldname": "max_attachments",
    "fieldtype": "Int",
    "label": "Maximum Number of Attachments",
    "non_negative": 1,
    "reqd": 1
+  },
+  {
+   "description": "Changes may require a bench restart to take effect.",
+   "fieldname": "smtp_section",
+   "fieldtype": "Section Break",
+   "label": "SMTP"
+  },
+  {
+   "default": "300",
+   "description": "Maximum idle time before the session ends.",
+   "fieldname": "smtp_inactivity_timeout",
+   "fieldtype": "Int",
+   "label": "Inactivity Timeout (Seconds)",
+   "non_negative": 1,
+   "reqd": 1
+  },
+  {
+   "default": "600",
+   "description": "Maximum allowed time for an active session.",
+   "fieldname": "smtp_session_duration",
+   "fieldtype": "Int",
+   "label": "Session Duration (Seconds)",
+   "non_negative": 1,
+   "reqd": 1
+  },
+  {
+   "default": "10",
+   "description": "The maximum messages allowed per SMTP session.",
+   "fieldname": "smtp_max_messages",
+   "fieldtype": "Int",
+   "label": "Maximum Number of Messages",
+   "reqd": 1
+  },
+  {
+   "default": "5",
+   "description": "Max connections per host, port, and user.",
+   "fieldname": "smtp_max_connections",
+   "fieldtype": "Int",
+   "label": "Maximum Number of Connections",
+   "reqd": 1
+  },
+  {
+   "fieldname": "attachment_section",
+   "fieldtype": "Section Break",
+   "label": "Attachment"
+  },
+  {
+   "fieldname": "spamd_outbound_section",
+   "fieldtype": "Section Break",
+   "label": "Outbound"
+  },
+  {
+   "fieldname": "column_break_9j6r",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "limits_outbound_tab",
+   "fieldtype": "Tab Break",
+   "label": "Limits (Outbound)"
+  },
+  {
+   "fieldname": "limit_outbound_message_section",
+   "fieldtype": "Section Break",
+   "label": "Message"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-01-07 15:14:39.981167",
+ "modified": "2025-01-09 12:17:12.266240",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Settings",
