@@ -224,25 +224,31 @@ def patch_account_on_agents(
 	if not primary_agents:
 		return
 
-	request_data = json.dumps(
-		[
-			{
-				"action": "set",
-				"field": "description",
-				"value": display_name,
-			},
-			{
-				"action": "addItem",
-				"field": "secrets",
-				"value": new_secret,
-			},
-			{
-				"action": "removeItem",
-				"field": "secrets",
-				"value": old_secret,
-			},
-		]
-	)
+	request_data = [
+		{
+			"action": "set",
+			"field": "description",
+			"value": display_name,
+		}
+	]
+
+	if old_secret != new_secret:
+		request_data.extend(
+			[
+				{
+					"action": "addItem",
+					"field": "secrets",
+					"value": new_secret,
+				},
+				{
+					"action": "removeItem",
+					"field": "secrets",
+					"value": old_secret,
+				},
+			]
+		)
+
+	request_data = json.dumps(request_data)
 	for agent in primary_agents:
 		create_mail_agent_job(
 			agent=agent, method="PATCH", endpoint=f"/api/principal/{email}", request_data=request_data
