@@ -88,3 +88,14 @@ export function validateEmail(email) {
 		/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 	return regExp.test(email)
 }
+
+export function formatBytes(bytes) {
+	if (!+bytes) return '0 Bytes'
+
+	const k = 1024
+	const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+
+	const i = Math.floor(Math.log(bytes) / Math.log(k))
+
+	return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))}${sizes[i]}`
+}

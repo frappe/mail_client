@@ -96,52 +96,87 @@
 					/>
 				</template>
 				<template v-slot:bottom>
-					<div class="flex flex-col gap-2">
-						<div class="flex flex-wrap gap-2">
-							<!-- <AttachmentItem
-                                v-for="a in attachments"
-                                :key="a.file_url"
-                                :label="a.file_name"`
-                            >
-                                <template #suffix>
-                                <FeatherIcon
-                                    class="h-3.5"
-                                    name="x"
-                                    @click.stop="removeAttachment(a)"
-                                />
-                                </template>
-                            </AttachmentItem> -->
-						</div>
-						<div class="flex justify-between gap-2 overflow-hidden border-t py-2.5">
-							<div class="flex gap-1 items-center overflow-x-auto">
-								<!--  <TextEditorFixedMenu :buttons="textEditorMenuButtons" /> -->
-								<EmojiPicker
-									v-model="emoji"
-									v-slot="{ togglePopover }"
-									@update:modelValue="() => appendEmoji()"
+					<FileUploader
+						:upload-args="{
+							doctype: 'Outgoing Mail',
+							docname: mailID,
+							private: true,
+						}"
+						:validateFile="
+							async () => {
+								if (!mailID) await createDraftMail.submit()
+							}
+						"
+						@success="attachments.fetch()"
+					>
+						<template #default="{ file, progress, uploading, openFileSelector }">
+							<!-- Attachments -->
+							<div
+								v-if="mailID"
+								class="flex flex-col gap-2 mb-2 text-gray-700 text-sm"
+							>
+								<div v-if="uploading" class="bg-gray-100 rounded p-2.5">
+									<div class="flex items-center mb-1.5">
+										<span class="font-medium mr-1">
+											{{ file.name }}
+										</span>
+										<span class="font-extralight">
+											({{ formatBytes(file.size) }})
+										</span>
+									</div>
+									<Progress :value="progress" />
+								</div>
+								<div
+									v-for="(file, index) in attachments.data"
+									:key="index"
+									class="bg-gray-100 rounded p-2.5 flex items-center cursor-pointer"
 								>
-									<Button variant="ghost" @click="togglePopover()">
-										<template #icon>
-											<Laugh class="h-4 w-4" />
-										</template>
-									</Button>
-								</EmojiPicker>
-								<FileUploader @success="(f) => attachments.push(f)">
-									<template #default="{ openFileSelector }">
-										<Button variant="ghost" @click="openFileSelector()">
+									<span class="font-medium mr-1">
+										{{ file.file_name || file.name }}
+									</span>
+									<span class="font-extralight">
+										({{ formatBytes(file.file_size) }})
+									</span>
+									<FeatherIcon
+										class="h-3.5 w-3.5 ml-auto"
+										name="x"
+										@click="removeAttachment.submit({ name: file.name })"
+									/>
+								</div>
+							</div>
+
+							<div
+								class="flex justify-between gap-2 overflow-hidden border-t py-2.5"
+							>
+								<!-- Text Editor Buttons -->
+								<div class="flex gap-1 items-center overflow-x-auto">
+									<TextEditorFixedMenu :buttons="textEditorMenuButtons" />
+									<EmojiPicker
+										v-model="emoji"
+										v-slot="{ togglePopover }"
+										@update:modelValue="() => appendEmoji()"
+									>
+										<Button variant="ghost" @click="togglePopover()">
 											<template #icon>
-												<Paperclip class="h-4" />
+												<Laugh class="h-4 w-4" />
 											</template>
 										</Button>
-									</template>
-								</FileUploader>
+									</EmojiPicker>
+									<Button variant="ghost" @click="openFileSelector()">
+										<template #icon>
+											<Paperclip class="h-4" />
+										</template>
+									</Button>
+								</div>
+
+								<!-- Send & Discard -->
+								<div class="flex items-center justify-end space-x-2 sm:mt-0">
+									<Button :label="__('Discard')" @click="discardMail" />
+									<Button @click="send" variant="solid" :label="__('Send')" />
+								</div>
 							</div>
-							<div class="mt-2 flex items-center justify-end space-x-2 sm:mt-0">
-								<Button :label="__('Discard')" @click="discardMail" />
-								<Button @click="send" variant="solid" :label="__('Send')" />
-							</div>
-						</div>
-					</div>
+						</template>
+					</FileUploader>
 				</template>
 			</TextEditor>
 		</template>
@@ -150,6 +185,7 @@
 <script setup>
 import {
 	Dialog,
+	FeatherIcon,
 	TextEditor,
 	createResource,
 	createDocumentResource,
@@ -157,6 +193,7 @@ import {
 	TextEditorFixedMenu,
 	TextInput,
 	Button,
+	Progress,
 } from 'frappe-ui'
 import { reactive, watch, inject, ref, nextTick, computed } from 'vue'
 import { useDebounceFn } from '@vueuse/core'
@@ -165,11 +202,10 @@ import Link from '@/components/Controls/Link.vue'
 import EmojiPicker from '@/components/EmojiPicker.vue'
 import MultiselectInput from '@/components/Controls/MultiselectInput.vue'
 import { EditorContent } from '@tiptap/vue-3'
-import { validateEmail } from '@/utils'
+import { validateEmail, formatBytes } from '@/utils'
 import { userStore } from '@/stores/user'
 
 const user = inject('$user')
-const attachments = defineModel('attachments')
 const show = defineModel()
 const mailID = ref(null)
 const textEditor = ref(null)
@@ -291,7 +327,7 @@ const createDraftMail = createResource({
 
 const updateDraftMail = createResource({
 	url: 'mail.api.mail.update_draft_mail',
-	makeParams(values) {
+	makeParams() {
 		return {
 			mail_id: mailID.value,
 			from_: `${user.data?.full_name} <${mail.from}>`,
@@ -308,7 +344,7 @@ const updateDraftMail = createResource({
 // TODO: delete using documentresource directly
 const deleteDraftMail = createResource({
 	url: 'frappe.client.delete',
-	makeParams(values) {
+	makeParams() {
 		return {
 			doctype: 'Outgoing Mail',
 			name: mailID.value,
@@ -317,6 +353,27 @@ const deleteDraftMail = createResource({
 	onSuccess() {
 		setCurrentMail('draft', null)
 		emit('reloadMails')
+	},
+})
+
+const attachments = createResource({
+	url: 'mail.api.mail.get_attachments',
+	makeParams() {
+		return {
+			dt: 'Outgoing Mail',
+			dn: mailID.value,
+		}
+	},
+})
+
+const removeAttachment = createResource({
+	url: 'frappe.client.delete',
+	method: 'DELETE',
+	makeParams(values) {
+		return { doctype: 'File', name: values.name }
+	},
+	onSuccess() {
+		attachments.fetch()
 	},
 })
 
@@ -339,6 +396,7 @@ const getDraftMail = (name) =>
 				else mailDetails[recipientType] = [recipient.email]
 			}
 			mailID.value = name
+			attachments.fetch()
 			Object.assign(mail, mailDetails)
 			if (mailDetails.cc) cc.value = true
 			if (mailDetails.bcc) bcc.value = true
@@ -378,20 +436,18 @@ const textEditorMenuButtons = [
 	'Separator',
 	'Bold',
 	'Italic',
-	'Separator',
-	'Bullet List',
-	'Numbered List',
+	'FontColor',
 	'Separator',
 	'Align Left',
 	'Align Center',
 	'Align Right',
-	'FontColor',
 	'Separator',
-	'Image',
-	'Video',
+	'Bullet List',
+	'Numbered List',
+	'Separator',
+	// todo: fix inline image upload
+	// 'Image',
 	'Link',
-	'Blockquote',
-	'Code',
 	'Horizontal Rule',
 	[
 		'InsertTable',

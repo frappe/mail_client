@@ -76,7 +76,7 @@ import { userStore } from '@/stores/user'
 
 const { logout, branding } = sessionStore()
 const { userResource } = userStore()
-const { isLoggedIn } = sessionStore()
+let { isLoggedIn } = sessionStore()
 const showSettings = ref(false)
 
 const props = defineProps({
