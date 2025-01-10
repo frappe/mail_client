@@ -108,7 +108,7 @@ def create_dkim_key_on_agents(
 		[
 			{
 				"type": "Insert",
-				"prefix": f"signature.{get_dkim_host(domain_name, 'rsa')}",
+				"prefix": f"signature.rsa-{domain_name}",
 				"values": [
 					["report", "true"],
 					["selector", get_dkim_selector("rsa")],
@@ -121,7 +121,7 @@ def create_dkim_key_on_agents(
 			},
 			{
 				"type": "Insert",
-				"prefix": f"signature.{get_dkim_host(domain_name, 'ed25519')}",
+				"prefix": f"signature.ed25519-{domain_name}",
 				"values": [
 					["report", "true"],
 					["selector", get_dkim_selector("ed25519")],
@@ -155,11 +155,11 @@ def delete_dkim_key_from_agents(domain_name: str, agents: list[str] | None = Non
 		[
 			{
 				"type": "Clear",
-				"prefix": f"signature.{get_dkim_host(domain_name, 'rsa')}",
+				"prefix": f"signature.rsa-{domain_name}",
 			},
 			{
 				"type": "Clear",
-				"prefix": f"signature.{get_dkim_host(domain_name, 'ed25519')}",
+				"prefix": f"signature.ed25519-{domain_name}",
 			},
 		]
 	)
