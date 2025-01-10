@@ -102,6 +102,11 @@
 							docname: mailID,
 							private: true,
 						}"
+						:validateFile="
+							async () => {
+								if (!mailID) await createDraftMail.submit()
+							}
+						"
 						@success="attachments.fetch()"
 					>
 						<template #default="{ file, progress, uploading, openFileSelector }">
@@ -111,7 +116,7 @@
 								class="flex flex-col gap-2 mb-2 text-gray-700 text-sm"
 							>
 								<div v-if="uploading" class="bg-gray-100 rounded p-2.5">
-									<div class="flex items-center mb-2">
+									<div class="flex items-center mb-1.5">
 										<span class="font-medium mr-1">
 											{{ file.name }}
 										</span>
@@ -322,7 +327,7 @@ const createDraftMail = createResource({
 
 const updateDraftMail = createResource({
 	url: 'mail.api.mail.update_draft_mail',
-	makeParams(values) {
+	makeParams() {
 		return {
 			mail_id: mailID.value,
 			from_: `${user.data?.full_name} <${mail.from}>`,
@@ -352,7 +357,7 @@ const deleteDraftMail = createResource({
 })
 
 const attachments = createResource({
-	url: 'mail_client.api.mail.get_attachments',
+	url: 'mail.api.mail.get_attachments',
 	makeParams() {
 		return {
 			dt: 'Outgoing Mail',
