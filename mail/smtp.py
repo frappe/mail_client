@@ -194,14 +194,6 @@ class SMTPConnectionPool:
 			self._cleanup_thread.join()
 			self._cleanup_thread = None
 
-	@staticmethod
-	def _is_connection_active(connection: type[SMTP] | type[SMTP_SSL]) -> bool:
-		try:
-			connection.noop()
-			return True
-		except (SMTPServerDisconnected, OSError):
-			return False
-
 
 class SMTPContext:
 	def __init__(
@@ -249,7 +241,7 @@ def smtp_server(
 	password: str,
 	use_ssl: bool = False,
 	use_tls: bool = False,
-) -> Generator[type[SMTP] | type[SMTP_SSL], None, None]:
+) -> Generator[SMTP | SMTP_SSL, None, None]:
 	_pool = SMTPConnectionPool()
 	_connection: SMTPConnection = _pool.get_connection(host, port, username, password, use_ssl, use_tls)
 
