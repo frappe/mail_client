@@ -34,6 +34,14 @@
   "smtp_session_duration",
   "smtp_inactivity_timeout",
   "smtp_cleanup_interval",
+  "limits_inbound_tab",
+  "imap_section",
+  "imap_max_connections",
+  "column_break_adoa",
+  "imap_authenticated_timeout",
+  "imap_unauthenticated_timeout",
+  "idle_session_timeout_seconds",
+  "imap_cleanup_interval",
   "spamassassin_tab",
   "section_break_hgqa",
   "enable_spamd",
@@ -364,12 +372,72 @@
    "label": "Cleanup Interval (Seconds)",
    "non_negative": 1,
    "reqd": 1
+  },
+  {
+   "fieldname": "limits_inbound_tab",
+   "fieldtype": "Tab Break",
+   "label": "Limits (Inbound)"
+  },
+  {
+   "description": "Changes may require a bench restart to take effect.",
+   "fieldname": "imap_section",
+   "fieldtype": "Section Break",
+   "label": "IMAP"
+  },
+  {
+   "default": "5",
+   "description": "Max connections per host, port, and user.",
+   "fieldname": "imap_max_connections",
+   "fieldtype": "Int",
+   "label": "Maximum Number of Connections",
+   "non_negative": 1,
+   "reqd": 1
+  },
+  {
+   "default": "60",
+   "description": "The interval for cleaning up stale connections.",
+   "fieldname": "imap_cleanup_interval",
+   "fieldtype": "Int",
+   "label": "Cleanup Interval (Seconds)",
+   "non_negative": 1,
+   "reqd": 1
+  },
+  {
+   "default": "1800",
+   "description": "Time an authenticated session can remain idle before termination.",
+   "fieldname": "imap_authenticated_timeout",
+   "fieldtype": "Int",
+   "label": "Authenticated Session Timeout (Seconds)",
+   "non_negative": 1,
+   "reqd": 1
+  },
+  {
+   "default": "60",
+   "description": "Time an unauthenticated session can remain inactive before termination.",
+   "fieldname": "imap_unauthenticated_timeout",
+   "fieldtype": "Int",
+   "label": "Unauthenticated Session Timeout (Seconds)",
+   "non_negative": 1,
+   "reqd": 1
+  },
+  {
+   "default": "1800",
+   "description": "Time a connection can stay idle in the IMAP IDLE state before termination.",
+   "fieldname": "idle_session_timeout_seconds",
+   "fieldtype": "Int",
+   "label": "Idle Session Timeout (Seconds)",
+   "non_negative": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_adoa",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-01-09 12:32:06.490297",
+ "modified": "2025-01-13 16:58:21.657479",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Settings",
