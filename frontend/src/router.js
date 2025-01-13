@@ -10,6 +10,16 @@ const routes = [
 		},
 	},
 	{
+		path: '/signup',
+		name: 'SignUp',
+		component: () => import('@/pages/SignUp.vue'),
+	},
+	{
+		path: '/login',
+		name: 'Login',
+		component: () => import('@/pages/Login.vue'),
+	},
+	{
 		path: '/inbox',
 		name: 'Inbox',
 		component: () => import('@/pages/Inbox.vue'),
@@ -26,21 +36,18 @@ const routes = [
 	},
 ]
 
-let router = createRouter({
+const router = createRouter({
 	history: createWebHistory('/mail'),
 	routes,
 })
 
 router.beforeEach(async (to, from, next) => {
-	const { userResource } = userStore()
 	const { isLoggedIn } = sessionStore()
+	if (!isLoggedIn) return next({ name: 'Login' })
 
-	isLoggedIn && (await userResource.promise)
-
-	if (!isLoggedIn) {
-		window.location.href = '/login'
-	} else {
-		next()
-	}
+	const { userResource } = userStore()
+	await userResource.promise
+	next()
 })
+
 export default router
