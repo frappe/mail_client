@@ -227,14 +227,27 @@ def extract_ip_and_host(header: str | None = None) -> tuple[str | None, str | No
 	return ip, host
 
 
-def extract_spam_score(header: str | None = None) -> float:
-	"""Extracts the spam score from the given `X-Spam-Status` header."""
+def extract_spam_status(header: str | None = None) -> tuple[bool, float]:
+	"""
+	Extracts the spam status and score from the given `X-Spam-Status` header.
+
+	Args:
+	    header (str | None): The `X-Spam-Status` header.
+
+	Returns:
+	    Tuple[bool, float]: A tuple containing the spam status (True for "Yes", False otherwise) and the spam score.
+	"""
 
 	if not header:
-		return 0.0
+		return False, 0.0
 
-	spam_score_pattern = re.compile(r"score=(-?\d+\.?\d*)")
-	if match := spam_score_pattern.search(header):
-		return float(match.group(1))
+	status_pattern = re.compile(r"^\s*(Yes|No)", re.IGNORECASE)
+	score_pattern = re.compile(r"score=(-?\d+\.?\d*)")
 
-	return 0.0
+	status_match = status_pattern.search(header)
+	score_match = score_pattern.search(header)
+
+	status = status_match.group(1).lower() == "yes" if status_match else False
+	score = float(score_match.group(1)) if score_match else 0.0
+
+	return status, score

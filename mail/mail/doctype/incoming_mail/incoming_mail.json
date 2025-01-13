@@ -9,10 +9,10 @@
   "display_name",
   "reply_to",
   "column_break_hpzu",
+  "receiver",
   "in_reply_to_mail_type",
   "in_reply_to_mail_name",
   "subject",
-  "receiver",
   "section_break_s2hp",
   "recipients",
   "section_break_eomq",
@@ -22,25 +22,22 @@
   "status",
   "from_ip",
   "from_host",
+  "spam_score",
+  "is_spam",
   "column_break_pxhn",
   "domain_name",
-  "incoming_mail_log",
-  "section_break_lpj2",
-  "is_rejected",
-  "column_break_uulh",
-  "rejection_message",
+  "agent_group",
   "section_break_0jgu",
   "message_id",
   "in_reply_to",
   "column_break_epvd",
+  "_message",
   "message_size",
   "section_break_z08o",
   "created_at",
-  "received_at",
   "fetched_at",
   "processed_at",
   "column_break_x0zs",
-  "received_after",
   "fetched_after",
   "processed_after",
   "section_break_5me5",
@@ -51,24 +48,10 @@
   "spf_description",
   "dkim_description",
   "dmarc_description",
-  "section_break_qijk",
-  "message",
   "section_break_vtax",
   "amended_from"
  ],
  "fields": [
-  {
-   "default": "Draft",
-   "fieldname": "status",
-   "fieldtype": "Select",
-   "in_list_view": 1,
-   "in_standard_filter": 1,
-   "label": "Status",
-   "no_copy": 1,
-   "options": "Draft\nRejected\nAccepted",
-   "read_only": 1,
-   "search_index": 1
-  },
   {
    "fieldname": "amended_from",
    "fieldtype": "Link",
@@ -152,12 +135,6 @@
    "fieldtype": "Column Break"
   },
   {
-   "collapsible": 1,
-   "fieldname": "section_break_qijk",
-   "fieldtype": "Section Break",
-   "label": "Message"
-  },
-  {
    "fieldname": "spf_description",
    "fieldtype": "Small Text",
    "ignore_xss_filter": 1,
@@ -192,7 +169,7 @@
    "in_standard_filter": 1,
    "label": "Receiver",
    "no_copy": 1,
-   "options": "Mailbox",
+   "options": "Mail Account",
    "read_only": 1,
    "search_index": 1
   },
@@ -214,28 +191,12 @@
    "search_index": 1
   },
   {
-   "fieldname": "received_at",
-   "fieldtype": "Datetime",
-   "label": "Received At",
-   "no_copy": 1,
-   "read_only": 1
-  },
-  {
    "fieldname": "section_break_z08o",
    "fieldtype": "Section Break"
   },
   {
    "fieldname": "column_break_x0zs",
    "fieldtype": "Column Break"
-  },
-  {
-   "description": "Received At - Created At",
-   "fieldname": "received_after",
-   "fieldtype": "Float",
-   "label": "Received After (Seconds)",
-   "no_copy": 1,
-   "precision": "2",
-   "read_only": 1
   },
   {
    "depends_on": "eval: doc.message_size",
@@ -254,14 +215,6 @@
   {
    "fieldname": "section_break_s2hp",
    "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "message",
-   "fieldtype": "Code",
-   "label": "Message",
-   "no_copy": 1,
-   "read_only": 1,
-   "set_only_once": 1
   },
   {
    "fieldname": "reply_to",
@@ -299,24 +252,6 @@
    "label": "Processed After (Seconds)",
    "no_copy": 1,
    "precision": "2",
-   "read_only": 1
-  },
-  {
-   "default": "0",
-   "depends_on": "eval: doc.is_rejected",
-   "fieldname": "is_rejected",
-   "fieldtype": "Check",
-   "label": "is Rejected",
-   "no_copy": 1,
-   "read_only": 1,
-   "search_index": 1
-  },
-  {
-   "depends_on": "eval: doc.is_rejected",
-   "fieldname": "rejection_message",
-   "fieldtype": "Small Text",
-   "label": "Rejection Message",
-   "no_copy": 1,
    "read_only": 1
   },
   {
@@ -404,14 +339,6 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "section_break_lpj2",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "column_break_uulh",
-   "fieldtype": "Column Break"
-  },
-  {
    "fieldname": "fetched_at",
    "fieldtype": "Datetime",
    "label": "Fetched At",
@@ -419,7 +346,7 @@
    "read_only": 1
   },
   {
-   "description": "Fetched At - Received At",
+   "description": "Fetched At - Created At",
    "fieldname": "fetched_after",
    "fieldtype": "Float",
    "label": "Fetched After (Seconds)",
@@ -428,23 +355,64 @@
    "read_only": 1
   },
   {
-   "fieldname": "incoming_mail_log",
-   "fieldtype": "Data",
-   "label": "Incoming Mail Log",
+   "fieldname": "section_break_vtax",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "spam_score",
+   "fieldtype": "Float",
+   "label": "Spam Score",
    "no_copy": 1,
+   "precision": "3",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "depends_on": "eval: doc.is_spam",
+   "fieldname": "is_spam",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Is Spam",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "_message",
+   "fieldtype": "Link",
+   "label": "Message",
+   "no_copy": 1,
+   "options": "MIME Message",
    "read_only": 1,
+   "search_index": 1,
+   "set_only_once": 1
+  },
+  {
+   "default": "Draft",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "no_copy": 1,
+   "options": "Draft\nSubmitted\nCancelled",
+   "read_only": 1,
+   "reqd": 1,
    "search_index": 1
   },
   {
-   "fieldname": "section_break_vtax",
-   "fieldtype": "Section Break"
+   "fieldname": "agent_group",
+   "fieldtype": "Data",
+   "label": "Agent Group",
+   "no_copy": 1,
+   "read_only": 1,
+   "search_index": 1,
+   "set_only_once": 1
   }
  ],
  "in_create": 1,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-11-20 09:56:58.726963",
+ "modified": "2025-01-13 19:15:56.011704",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Incoming Mail",

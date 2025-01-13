@@ -1140,8 +1140,8 @@ def create_outgoing_mail(
 	return doc
 
 
-def transfer_stuck_emails_to_agent() -> None:
-	"""Transfers the stuck emails to the agent."""
+def transfer_failed_emails_to_agent() -> None:
+	"""Transfers the failed emails to the agent."""
 
 	mails = frappe.db.get_all(
 		"Outgoing Mail",
@@ -1192,14 +1192,14 @@ def has_permission(doc: "Document", ptype: str, user: str) -> bool:
 		return False
 
 	user_is_system_manager = is_system_manager(user)
-	user_is_mailbox_owner = is_mail_account_owner(doc.sender, user)
+	user_is_account_owner = is_mail_account_owner(doc.sender, user)
 
 	if ptype == "create":
 		return True
 	elif ptype in ["write", "cancel"]:
-		return user_is_system_manager or user_is_mailbox_owner
+		return user_is_system_manager or user_is_account_owner
 	else:
-		return user_is_system_manager or (user_is_mailbox_owner and doc.docstatus != 2)
+		return user_is_system_manager or (user_is_account_owner and doc.docstatus != 2)
 
 
 def get_permission_query_condition(user: str | None = None) -> str:

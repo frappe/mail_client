@@ -40,7 +40,7 @@
   "column_break_adoa",
   "imap_authenticated_timeout",
   "imap_unauthenticated_timeout",
-  "idle_session_timeout_seconds",
+  "imap_idle_timeout",
   "imap_cleanup_interval",
   "spamassassin_tab",
   "section_break_hgqa",
@@ -421,23 +421,23 @@
    "reqd": 1
   },
   {
+   "fieldname": "column_break_adoa",
+   "fieldtype": "Column Break"
+  },
+  {
    "default": "1800",
    "description": "Time a connection can stay idle in the IMAP IDLE state before termination.",
-   "fieldname": "idle_session_timeout_seconds",
+   "fieldname": "imap_idle_timeout",
    "fieldtype": "Int",
    "label": "Idle Session Timeout (Seconds)",
    "non_negative": 1,
    "reqd": 1
-  },
-  {
-   "fieldname": "column_break_adoa",
-   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-01-13 16:58:21.657479",
+ "modified": "2025-01-13 19:51:19.758336",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Settings",

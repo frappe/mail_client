@@ -29,7 +29,7 @@
   {
    "group": "Reference",
    "link_doctype": "Incoming Mail",
-   "link_fieldname": "message"
+   "link_fieldname": "_message"
   },
   {
    "group": "Reference",
@@ -42,7 +42,7 @@
    "link_fieldname": "_message"
   }
  ],
- "modified": "2025-01-07 17:44:37.287109",
+ "modified": "2025-01-10 15:55:04.117842",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "MIME Message",

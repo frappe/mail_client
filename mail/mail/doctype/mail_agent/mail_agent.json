@@ -152,17 +152,12 @@
    "link_fieldname": "agent"
   },
   {
-   "group": "Reference",
+   "group": "Mail",
    "link_doctype": "Outgoing Mail",
-   "link_fieldname": "agent"
-  },
-  {
-   "group": "Reference",
-   "link_doctype": "Incoming Mail",
    "link_fieldname": "agent"
   }
  ],
- "modified": "2024-12-30 13:04:47.589520",
+ "modified": "2025-01-13 18:01:13.581263",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Agent",

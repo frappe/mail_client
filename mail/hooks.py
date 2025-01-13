@@ -194,9 +194,7 @@ scheduler_events = {
 	#     "mail.tasks.all"
 	# ],
 	"daily": [
-		"mail.tasks.enqueue_fetch_emails_from_mail_server",
-		"mail.mail.doctype.outgoing_mail.outgoing_mail.delete_newsletters",
-		"mail.mail.doctype.incoming_mail.incoming_mail.delete_rejected_mails",
+		"mail.tasks.enqueue_delete_newsletters",
 	],
 	# "hourly": [
 	#     "mail.tasks.hourly"
@@ -207,11 +205,12 @@ scheduler_events = {
 	# "monthly": [
 	#     "mail.tasks.monthly"
 	# ],
-	# "cron": {
-	# 	"* * * * *": [
-	# 	  "mail.tasks.monthly"
-	# 	],
-	# },
+	"cron": {
+		"*/2 * * * *": [
+			"mail.tasks.enqueue_transfer_failed_emails_to_agent",
+			"mail.tasks.enqueue_fetch_emails_from_mail_agents",
+		]
+	},
 }
 
 # Testing

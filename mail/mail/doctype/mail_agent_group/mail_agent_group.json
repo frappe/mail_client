@@ -100,9 +100,14 @@
    "group": "Reference",
    "link_doctype": "Mail Agent",
    "link_fieldname": "agent_group"
+  },
+  {
+   "group": "Mail",
+   "link_doctype": "Incoming Mail",
+   "link_fieldname": "agent_group"
   }
  ],
- "modified": "2025-01-06 14:04:18.910570",
+ "modified": "2025-01-13 18:01:22.548396",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Agent Group",
