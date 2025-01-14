@@ -3,7 +3,7 @@
 
 import json
 import random
-from email import message_from_string, policy
+from email import policy
 from email.encoders import encode_base64
 from email.message import Message
 from email.mime.audio import MIMEAudio
@@ -116,7 +116,12 @@ class OutgoingMail(Document):
 
 	def on_submit(self) -> None:
 		self.create_mail_contacts()
-		self._db_set(status="In Progress", notify_update=True)
+
+		kwargs = {"status": "In Progress"}
+		if self.via_api and not self.is_newsletter and self.submitted_after <= 5:
+			kwargs.update({"priority": 1})
+
+		self._db_set(notify_update=True, **kwargs)
 		self.enqueue_process_for_delivery()
 
 	def on_update_after_submit(self) -> None:
@@ -149,7 +154,7 @@ class OutgoingMail(Document):
 	def set_priority(self) -> None:
 		"""Sets the priority."""
 
-		self.priority = 3 if self.is_newsletter else 2
+		self.priority = -1 if self.is_newsletter else 0
 
 	def load_runtime(self) -> None:
 		"""Loads the runtime properties."""
@@ -927,19 +932,13 @@ class OutgoingMail(Document):
 				self.include_agent_groups, self.exclude_agent_groups, self.include_agents, self.exclude_agents
 			)
 
-			# Update X-Priority to 1 [highest]
-			message = message_from_string(self.message)
-			del message["X-Priority"]
-			message["X-Priority"] = "1"
-			message = message.as_string()
-
 			mail_account = frappe.get_cached_doc("Mail Account", self.sender)
 			username = mail_account.email
 			password = mail_account.get_password("password")
 
 			with SMTPContext(agent_or_group, 465, username, password, use_ssl=True) as server:
-				mail_options = [f"ENVID={self.name}"]
-				server.sendmail(self.sender, recipients, message, mail_options=mail_options)
+				mail_options = [f"ENVID={self.name}", f"MT-PRIORITY={self.priority}"]
+				server.sendmail(self.sender, recipients, self.message, mail_options=mail_options)
 
 			transfer_completed_at = now()
 			transfer_completed_after = time_diff_in_seconds(transfer_completed_at, transfer_started_at)

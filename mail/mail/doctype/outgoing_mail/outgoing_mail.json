@@ -533,11 +533,11 @@
    "fieldtype": "Column Break"
   },
   {
+   "default": "0",
    "fieldname": "priority",
    "fieldtype": "Int",
    "label": "Priority",
    "no_copy": 1,
-   "non_negative": 1,
    "read_only": 1,
    "search_index": 1
   },
@@ -609,7 +609,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-01-09 15:15:15.113111",
+ "modified": "2025-01-14 19:09:05.044752",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Outgoing Mail",
