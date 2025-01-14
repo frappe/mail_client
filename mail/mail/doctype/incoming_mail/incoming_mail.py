@@ -12,13 +12,14 @@ from frappe.utils import now, time_diff_in_seconds
 from uuid_utils import uuid7
 
 from mail.imap import IMAPContext
+from mail.mail.doctype.dmarc_report.dmarc_report import create_dmarc_report
 from mail.mail.doctype.mail_contact.mail_contact import create_mail_contact
 from mail.mail.doctype.mime_message.mime_message import (
 	create_mime_message,
 	get_mime_message,
 	update_mime_message,
 )
-from mail.utils import get_in_reply_to_mail
+from mail.utils import get_dmarc_address, get_in_reply_to_mail, load_compressed_file
 from mail.utils.email_parser import EmailParser, extract_ip_and_host, extract_spam_status
 from mail.utils.user import get_user_email_addresses, is_mail_account_owner, is_system_manager
 
@@ -101,11 +102,33 @@ class IncomingMail(Document):
 		for key, value in parser.get_authentication_results().items():
 			setattr(self, key, value)
 
+		if self.receiver == get_dmarc_address():
+			self.create_dmarc_report()
+
 		if self.created_at:
 			self.fetched_after = time_diff_in_seconds(self.fetched_at, self.created_at)
 
 		self.processed_at = now()
 		self.processed_after = time_diff_in_seconds(self.processed_at, self.fetched_at)
+
+	def create_dmarc_report(self) -> None:
+		"""Creates a DMARC Report from the Incoming Mail."""
+
+		try:
+			attachments = frappe.db.get_all(
+				"File",
+				filters={"attached_to_doctype": self.doctype, "attached_to_name": self.name},
+				pluck="name",
+			)
+			for attachment in attachments:
+				file = frappe.get_doc("File", attachment)
+				xml_content = load_compressed_file(file_data=file.get_content())
+				create_dmarc_report(xml_content, incoming_mail=self.name)
+		except Exception:
+			frappe.log_error(
+				title=_("DMARC Report Creation Failed"),
+				message=frappe.get_traceback(with_context=True),
+			)
 
 	def create_mail_contact(self) -> None:
 		"""Creates the mail contact."""
