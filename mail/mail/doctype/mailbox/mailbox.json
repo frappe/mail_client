@@ -193,7 +193,7 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Mailbox User",
+   "role": "Mail User",
    "select": 1,
    "write": 1
   },
@@ -206,7 +206,7 @@
   {
    "permlevel": 1,
    "read": 1,
-   "role": "Mailbox User"
+   "role": "Mail User"
   }
  ],
  "sort_field": "creation",

@@ -14,7 +14,7 @@ def check_app_permission() -> bool:
 	"""Returns True if the user has permission to access the app."""
 
 	user = frappe.session.user
-	return has_role(user, "Mailbox User") or is_system_manager(user)
+	return has_role(user, "Mail User") or is_system_manager(user)
 
 
 @frappe.whitelist(allow_guest=True)
@@ -42,7 +42,7 @@ def get_user_info() -> dict:
 		as_dict=1,
 	)
 	user["roles"] = frappe.get_roles(user.name)
-	user.mail_user = "Mailbox User" in user.roles
+	user.mail_user = "Mail User" in user.roles
 
 	return user
 

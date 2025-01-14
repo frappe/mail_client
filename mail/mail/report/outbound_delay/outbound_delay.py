@@ -209,7 +209,7 @@ def get_data(filters: dict | None = None) -> list[dict]:
 		conditions = []
 		accounts = get_user_email_addresses(user, "Mail Account")
 
-		if has_role(user, "Mailbox User") and accounts:
+		if has_role(user, "Mail User") and accounts:
 			conditions.append(OM.sender.isin(accounts))
 
 		if not conditions:

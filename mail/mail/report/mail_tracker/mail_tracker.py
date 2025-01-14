@@ -141,7 +141,7 @@ def get_data(filters: dict | None = None) -> list[dict]:
 		conditions = []
 		mailboxes = get_user_mailboxes(user)
 
-		if has_role(user, "Mailbox User") and mailboxes:
+		if has_role(user, "Mail User") and mailboxes:
 			conditions.append(OM.sender.isin(mailboxes))
 
 		if not conditions:

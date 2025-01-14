@@ -22,7 +22,7 @@ frappe.ui.form.on("Mailbox", {
 			query: "mail.utils.query.get_users_with_mailbox_user_role",
 			filters: {
 				enabled: 1,
-				role: "Mailbox User",
+				role: "Mail User",
 			},
 		}));
 	},

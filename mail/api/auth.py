@@ -28,7 +28,7 @@ def validate_user() -> None:
 
 	user = frappe.session.user
 
-	if not has_role(user, "Mailbox User"):
+	if not has_role(user, "Mail User"):
 		frappe.throw(_("User {0} is not allowed to access mailboxes.").format(frappe.bold(user)))
 
 

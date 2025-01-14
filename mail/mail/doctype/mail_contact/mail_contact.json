@@ -73,7 +73,7 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Mailbox User",
+   "role": "Mail User",
    "write": 1
   },
   {
@@ -85,7 +85,7 @@
   {
    "permlevel": 1,
    "read": 1,
-   "role": "Mailbox User"
+   "role": "Mail User"
   }
  ],
  "show_title_field_in_link": 1,

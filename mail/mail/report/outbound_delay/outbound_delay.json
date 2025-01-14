@@ -23,7 +23,7 @@
    "role": "System Manager"
   },
   {
-   "role": "Mailbox User"
+   "role": "Mail User"
   }
  ],
  "timeout": 0

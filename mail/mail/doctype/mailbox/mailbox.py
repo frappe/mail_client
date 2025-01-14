@@ -45,8 +45,8 @@ class Mailbox(Document):
 			else:
 				frappe.throw(_("User is mandatory."))
 
-		if not has_role(self.user, "Mailbox User") and not is_system_manager(self.user):
-			frappe.throw(_("User {0} does not have Mailbox User role.").format(frappe.bold(self.user)))
+		if not has_role(self.user, "Mail User") and not is_system_manager(self.user):
+			frappe.throw(_("User {0} does not have Mail User role.").format(frappe.bold(self.user)))
 
 	def validate_email(self) -> None:
 		"""Validates the email address."""
@@ -140,7 +140,7 @@ def create_mailbox(
 			mailbox_user.first_name = display_name
 			mailbox_user.user_type = "System User"
 			mailbox_user.send_welcome_email = 0
-			mailbox_user.append_roles("Mailbox User")
+			mailbox_user.append_roles("Mail User")
 			mailbox_user.insert(ignore_permissions=True)
 
 		mailbox = frappe.new_doc("Mailbox")

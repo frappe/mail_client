@@ -68,7 +68,7 @@ def get_outgoing_mails(
 		conditions = []
 		accounts = get_user_email_addresses(user, "Mail Account")
 
-		if has_role(user, "Mailbox User") and accounts:
+		if has_role(user, "Mail User") and accounts:
 			conditions.append(OM.sender.isin(accounts))
 
 		if not conditions:
@@ -117,7 +117,7 @@ def get_users_with_mailbox_user_role(
 	page_len: int = 20,
 	filters: dict | None = None,
 ) -> list:
-	"""Returns a list of users with Mailbox User role."""
+	"""Returns a list of users with Mail User role."""
 
 	USER = frappe.qb.DocType("User")
 	HAS_ROLE = frappe.qb.DocType("Has Role")
@@ -129,7 +129,7 @@ def get_users_with_mailbox_user_role(
 		.where(
 			(USER.enabled == 1)
 			& (USER.name.like(f"%{txt}%"))
-			& (HAS_ROLE.role == "Mailbox User")
+			& (HAS_ROLE.role == "Mail User")
 			& (HAS_ROLE.parenttype == "User")
 		)
 	).run(as_dict=False)

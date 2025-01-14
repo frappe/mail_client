@@ -76,8 +76,8 @@ class MailAccount(Document):
 	def validate_user(self) -> None:
 		"""Validates the user."""
 
-		if not has_role(self.user, "Mailbox User"):
-			frappe.throw(_("User {0} does not have Mailbox User role.").format(frappe.bold(self.user)))
+		if not has_role(self.user, "Mail User"):
+			frappe.throw(_("User {0} does not have Mail User role.").format(frappe.bold(self.user)))
 
 	def validate_email(self) -> None:
 		"""Validates the email address."""
