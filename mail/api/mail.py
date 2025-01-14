@@ -384,7 +384,7 @@ def get_mail_contacts(txt=None) -> list:
 	return contacts
 
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def get_default_outgoing() -> str | None:
 	"""Returns default outgoing mailbox."""
 

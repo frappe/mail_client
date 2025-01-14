@@ -1,4 +1,7 @@
 <template>
-	<div>Hello World</div>
+	<div>
+		It's me
+		<slot />
+	</div>
 </template>
 <script setup></script>

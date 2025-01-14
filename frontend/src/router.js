@@ -43,11 +43,13 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
 	const { isLoggedIn } = sessionStore()
-	if (!isLoggedIn) return next({ name: 'Login' })
+	const toLogin = ['Login', 'SignUp'].includes(to.name)
+
+	if (!isLoggedIn) return next(toLogin ? undefined : { name: 'Login' })
 
 	const { userResource } = userStore()
 	await userResource.promise
-	next()
+	next(toLogin ? { name: 'Inbox' } : undefined)
 })
 
 export default router
