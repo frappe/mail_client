@@ -403,6 +403,7 @@
    "fieldtype": "Data",
    "label": "Agent Group",
    "no_copy": 1,
+   "permlevel": 1,
    "read_only": 1,
    "search_index": 1,
    "set_only_once": 1
@@ -411,8 +412,14 @@
  "in_create": 1,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
- "links": [],
- "modified": "2025-01-13 19:15:56.011704",
+ "links": [
+  {
+   "group": "Report",
+   "link_doctype": "DMARC Report",
+   "link_fieldname": "incoming_mail"
+  }
+ ],
+ "modified": "2025-01-14 15:43:34.532657",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Incoming Mail",

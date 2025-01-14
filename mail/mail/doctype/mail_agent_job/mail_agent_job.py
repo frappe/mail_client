@@ -10,7 +10,7 @@ from frappe.model.document import Document
 from frappe.utils import now, time_diff_in_seconds
 
 from mail.agent import AgentAPI, Principal
-from mail.utils import get_dkim_host, get_dkim_selector
+from mail.utils import get_dkim_selector
 from mail.utils.cache import get_primary_agents
 
 
@@ -24,15 +24,18 @@ class MailAgentJob(Document):
 
 	def validate_agent(self) -> None:
 		"""Validate if the agent is enabled."""
+
 		if not frappe.get_cached_value("Mail Agent", self.agent, "enabled"):
 			frappe.throw(_("Mail Agent {0} is disabled.").format(self.agent))
 
 	def validate_endpoint(self) -> None:
 		"""Validates the endpoint."""
+
 		self.endpoint = quote(self.endpoint)
 
 	def execute(self) -> None:
 		"""Executes the job."""
+
 		self.started_at = now()
 
 		try:

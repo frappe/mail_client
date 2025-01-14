@@ -48,10 +48,12 @@ class SpamCheckLog(Document):
 
 	def set_source_ip_address(self) -> None:
 		"""Sets the source IP address"""
+
 		self.source_ip_address = frappe.local.request_ip
 
 	def set_source_host(self) -> None:
 		"""Sets the source host"""
+
 		self.source_host = get_host_by_ip(self.source_ip_address)
 
 	def scan_message(self) -> None:

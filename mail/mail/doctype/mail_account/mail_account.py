@@ -134,6 +134,8 @@ def create_mail_account(
 	display_name: str | None = None,
 	user: str | None = None,
 ) -> "MailAccount":
+	"""Creates a Mail Account"""
+
 	user = user or email
 
 	if not frappe.db.exists("Mail Account", email):

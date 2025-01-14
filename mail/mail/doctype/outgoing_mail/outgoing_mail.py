@@ -873,12 +873,12 @@ class OutgoingMail(Document):
 
 	@frappe.whitelist()
 	def force_transfer_to_mail_agent(self) -> None:
-		"""Forces push the email to the agent for sending."""
+		"""Forces transfer the email to the agent for sending."""
 
 		frappe.only_for("System Manager")
 		if self.status in ["Transferring"]:
 			frappe.flags.force_transfer = True
-			self.push_to_queue()
+			self.transfer_to_mail_agent()
 
 	@frappe.whitelist()
 	def retry_bounced(self) -> None:
