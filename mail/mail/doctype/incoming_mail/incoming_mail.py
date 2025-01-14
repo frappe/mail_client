@@ -211,7 +211,10 @@ def create_incoming_mail(
 		doc.insert(ignore_permissions=True)
 
 		if not do_not_submit:
-			doc.submit()
+			try:
+				doc.submit()
+			except Exception:
+				frappe.log_error(title=_("Submit Incoming Mail"), message=frappe.get_traceback())
 
 	return doc
 

@@ -34,6 +34,7 @@
    "fieldtype": "Check",
    "in_list_view": 1,
    "label": "Enabled",
+   "permlevel": 1,
    "search_index": 1
   },
   {
@@ -72,6 +73,7 @@
    "label": "User",
    "no_copy": 1,
    "options": "User",
+   "permlevel": 1,
    "reqd": 1,
    "search_index": 1,
    "set_only_once": 1
@@ -157,6 +159,11 @@
    "link_fieldname": "member_name"
   },
   {
+   "group": "Reference",
+   "link_doctype": "Mail Sync History",
+   "link_fieldname": "account"
+  },
+  {
    "group": "Mail",
    "link_doctype": "Incoming Mail",
    "link_fieldname": "receiver"
@@ -167,7 +174,7 @@
    "link_fieldname": "sender"
   }
  ],
- "modified": "2025-01-08 18:08:05.787494",
+ "modified": "2025-01-14 13:14:24.554987",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Account",
@@ -185,6 +192,28 @@
    "role": "System Manager",
    "share": 1,
    "write": 1
+  },
+  {
+   "read": 1,
+   "role": "Mail User",
+   "write": 1
+  },
+  {
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "permlevel": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "permlevel": 1,
+   "read": 1,
+   "role": "Mail User"
   }
  ],
  "sort_field": "creation",

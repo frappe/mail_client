@@ -6,7 +6,7 @@ from frappe import _
 from frappe.query_builder import Criterion, Order
 from frappe.query_builder.functions import Date
 
-from mail.utils.user import get_user_mailboxes, has_role, is_system_manager
+from mail.utils.user import get_user_email_addresses, has_role, is_system_manager
 
 
 def execute(filters: dict | None = None) -> tuple:
@@ -55,7 +55,7 @@ def get_columns() -> list[dict]:
 			"label": _("Sender"),
 			"fieldname": "sender",
 			"fieldtype": "Link",
-			"options": "Mailbox",
+			"options": "Mail Account",
 			"width": 200,
 		},
 		{
@@ -139,10 +139,10 @@ def get_data(filters: dict | None = None) -> list[dict]:
 	user = frappe.session.user
 	if not is_system_manager(user):
 		conditions = []
-		mailboxes = get_user_mailboxes(user)
+		accounts = get_user_email_addresses(user, "Mail Account")
 
-		if has_role(user, "Mail User") and mailboxes:
-			conditions.append(OM.sender.isin(mailboxes))
+		if has_role(user, "Mail User") and accounts:
+			conditions.append(OM.sender.isin(accounts))
 
 		if not conditions:
 			return []

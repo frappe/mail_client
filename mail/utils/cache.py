@@ -39,30 +39,6 @@ def get_imap_limits() -> dict:
 	return frappe.cache.get_value("imap_limits", generator)
 
 
-def get_postmaster_for_domain(domain_name: str) -> str:
-	"""Returns the postmaster for the domain."""
-
-	def generator() -> str:
-		postmaster = frappe.db.get_value(
-			"Mailbox",
-			{
-				"enabled": 1,
-				"outgoing": 1,
-				"postmaster": 1,
-				"domain_name": domain_name,
-				"user": "Administrator",
-			},
-			"name",
-		)
-
-		if not postmaster:
-			frappe.throw(_("Postmaster not found for {0}").format(domain_name))
-
-		return postmaster
-
-	return frappe.cache.get_value(f"postmaster|{domain_name}", generator)
-
-
 def get_user_owned_domains(user: str) -> list:
 	"""Returns the domains owned by the user."""
 
@@ -108,34 +84,6 @@ def get_user_mail_aliases(user: str) -> list:
 		).run(pluck="name")
 
 	return frappe.cache.hget(f"user|{user}", "mail_aliases", generator)
-
-
-def get_user_incoming_mailboxes(user: str) -> list:
-	"""Returns the incoming mailboxes of the user."""
-
-	def generator() -> list:
-		MAILBOX = frappe.qb.DocType("Mailbox")
-		return (
-			frappe.qb.from_(MAILBOX)
-			.select("name")
-			.where((MAILBOX.user == user) & (MAILBOX.enabled == 1) & (MAILBOX.incoming == 1))
-		).run(pluck="name")
-
-	return frappe.cache.hget(f"user|{user}", "incoming_mailboxes", generator)
-
-
-def get_user_outgoing_mailboxes(user: str) -> list:
-	"""Returns the outgoing mailboxes of the user."""
-
-	def generator() -> list:
-		MAILBOX = frappe.qb.DocType("Mailbox")
-		return (
-			frappe.qb.from_(MAILBOX)
-			.select("name")
-			.where((MAILBOX.user == user) & (MAILBOX.enabled == 1) & (MAILBOX.outgoing == 1))
-		).run(pluck="name")
-
-	return frappe.cache.hget(f"user|{user}", "outgoing_mailboxes", generator)
 
 
 def get_user_default_mail_account(user: str) -> str | None:

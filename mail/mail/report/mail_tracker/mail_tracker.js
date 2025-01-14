@@ -59,7 +59,7 @@ frappe.query_reports["Mail Tracker"] = {
 			label: __("Sender"),
 			fieldtype: "MultiSelectList",
 			get_data: (txt) => {
-				return frappe.db.get_link_options("Mailbox", txt);
+				return frappe.db.get_link_options("Mail Account", txt);
 			},
 		},
 		{

@@ -63,11 +63,11 @@ def get_translations() -> dict:
 def get_incoming_mails(start: int = 0) -> list:
 	"""Returns incoming mails for the current user."""
 
-	mailboxes = get_user_email_addresses(frappe.session.user, "Incoming")
+	accounts = get_user_email_addresses(frappe.session.user, "Mail Account")
 
 	mails = frappe.get_all(
 		"Incoming Mail",
-		{"receiver": ["in", mailboxes], "docstatus": 1},
+		{"receiver": ["in", accounts], "docstatus": 1},
 		[
 			"name",
 			"sender",
@@ -105,7 +105,7 @@ def get_draft_mails(start: int = 0) -> list:
 def get_outgoing_mails(status: str, start: int = 0) -> list:
 	"""Returns outgoing mails for the current user."""
 
-	mailboxes = get_user_email_addresses(frappe.session.user, "Outgoing")
+	accounts = get_user_email_addresses(frappe.session.user, "Mail Account")
 
 	if status == "Draft":
 		docstatus = 0
@@ -117,7 +117,7 @@ def get_outgoing_mails(status: str, start: int = 0) -> list:
 
 	mails = frappe.get_all(
 		"Outgoing Mail",
-		{"sender": ["in", mailboxes], "docstatus": docstatus, "status": status},
+		{"sender": ["in", accounts], "docstatus": docstatus, "status": status},
 		[
 			"name",
 			"subject",
@@ -386,7 +386,7 @@ def get_mail_contacts(txt=None) -> list:
 
 @frappe.whitelist()
 def get_default_outgoing() -> str | None:
-	"""Returns default outgoing mailbox."""
+	"""Returns default outgoing mail account."""
 
 	return get_user_default_mail_account(frappe.session.user)
 

@@ -104,30 +104,6 @@ def validate_domain_is_enabled_and_verified(domain_name: str) -> None:
 		frappe.throw(_("Domain {0} is not verified.").format(frappe.bold(domain_name)))
 
 
-@request_cache
-def validate_mailbox_for_outgoing(mailbox: str) -> None:
-	"""Validates if the mailbox is enabled and allowed for outgoing mail."""
-
-	enabled, outgoing = frappe.db.get_value("Mailbox", mailbox, ["enabled", "outgoing"])
-
-	if not enabled:
-		frappe.throw(_("Mailbox {0} is disabled.").format(frappe.bold(mailbox)))
-	elif not outgoing:
-		frappe.throw(_("Mailbox {0} is not allowed for Outgoing Mail.").format(frappe.bold(mailbox)))
-
-
-@request_cache
-def validate_mailbox_for_incoming(mailbox: str) -> None:
-	"""Validates if the mailbox is enabled and allowed for incoming mail."""
-
-	enabled, incoming = frappe.db.get_value("Mailbox", mailbox, ["enabled", "incoming"])
-
-	if not enabled:
-		frappe.throw(_("Mailbox {0} is disabled.").format(frappe.bold(mailbox)))
-	elif not incoming:
-		frappe.throw(_("Mailbox {0} is not allowed for Incoming Mail.").format(frappe.bold(mailbox)))
-
-
 def validate_user_has_domain_owner_role(user: str) -> None:
 	"""Validate if the user has Mail Admin role or System Manager role."""
 

@@ -118,7 +118,7 @@ def get_columns() -> list[dict]:
 			"label": _("Sender"),
 			"fieldname": "sender",
 			"fieldtype": "Link",
-			"options": "Mailbox",
+			"options": "Mail Account",
 			"width": 200,
 		},
 		{

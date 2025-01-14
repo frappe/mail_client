@@ -13,7 +13,7 @@ from mail.mail.doctype.mail_agent_job.mail_agent_job import (
 	delete_account_from_agents,
 	patch_account_on_agents,
 )
-from mail.utils.user import has_role
+from mail.utils.user import has_role, is_system_manager
 from mail.utils.validation import (
 	is_email_assigned,
 	is_valid_email_for_domain,
@@ -126,3 +126,51 @@ class MailAccount(Document):
 		password = self.get_password("password")
 		salt = crypt.mksalt(crypt.METHOD_SHA512)
 		self.secret = crypt.crypt(password, salt)
+
+
+def create_mail_account(
+	domain_name: str,
+	email: str,
+	display_name: str | None = None,
+	user: str | None = None,
+) -> "MailAccount":
+	user = user or email
+
+	if not frappe.db.exists("Mail Account", email):
+		if not frappe.db.exists("User", user):
+			account_user = frappe.new_doc("User")
+			account_user.email = user
+			account_user.username = user
+			account_user.first_name = display_name
+			account_user.user_type = "System User"
+			account_user.send_welcome_email = 0
+			account_user.append_roles("Mail User")
+			account_user.insert(ignore_permissions=True)
+
+		account = frappe.new_doc("Mail Account")
+		account.domain_name = domain_name
+		account.email = email
+		account.display_name = display_name
+		account.user = user
+		account.insert(ignore_permissions=True)
+
+		return account
+
+	return frappe.get_doc("Mail Account", email)
+
+
+def get_permission_query_condition(user: str | None = None) -> str:
+	if not user:
+		user = frappe.session.user
+
+	if is_system_manager(user):
+		return ""
+
+	return f"(`tabMail Account`.`user` = {frappe.db.escape(user)})"
+
+
+def has_permission(doc: "Document", ptype: str, user: str) -> bool:
+	if doc.doctype != "Mail Account":
+		return False
+
+	return (user == doc.user) or is_system_manager(user)

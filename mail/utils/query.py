@@ -109,7 +109,7 @@ def get_users_with_domain_owner_role(
 
 @frappe.whitelist()
 @frappe.validate_and_sanitize_search_inputs
-def get_users_with_mailbox_user_role(
+def get_users_with_mail_user_role(
 	doctype: str | None = None,
 	txt: str | None = None,
 	searchfield: str | None = None,
