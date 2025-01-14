@@ -7,9 +7,9 @@
     "home_page": null,
     "is_custom": 0,
     "modified": "2024-10-19 16:18:50.529784",
-    "name": "Domain Owner",
+    "name": "Mail Admin",
     "restrict_to_domain": null,
-    "role_name": "Domain Owner",
+    "role_name": "Mail Admin",
     "two_factor_auth": 0
   },
   {

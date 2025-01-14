@@ -129,9 +129,9 @@ def validate_mailbox_for_incoming(mailbox: str) -> None:
 
 
 def validate_user_has_domain_owner_role(user: str) -> None:
-	"""Validate if the user has Domain Owner role or System Manager role."""
+	"""Validate if the user has Mail Admin role or System Manager role."""
 
-	if not has_role(user, "Domain Owner"):
+	if not has_role(user, "Mail Admin"):
 		frappe.throw(_("You are not authorized to perform this action."), frappe.PermissionError)
 
 

@@ -89,7 +89,7 @@ def get_users_with_domain_owner_role(
 	page_len: int = 20,
 	filters: dict | None = None,
 ) -> list:
-	"""Returns a list of User(s) who have Domain Owner role."""
+	"""Returns a list of User(s) who have Mail Admin role."""
 
 	USER = frappe.qb.DocType("User")
 	HAS_ROLE = frappe.qb.DocType("Has Role")
@@ -101,7 +101,7 @@ def get_users_with_domain_owner_role(
 		.where(
 			(USER.enabled == 1)
 			& (USER.name.like(f"%{txt}%"))
-			& (HAS_ROLE.role == "Domain Owner")
+			& (HAS_ROLE.role == "Mail Admin")
 			& (HAS_ROLE.parenttype == "User")
 		)
 	).run(as_dict=False)
