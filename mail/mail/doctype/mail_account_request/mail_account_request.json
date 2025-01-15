@@ -1,0 +1,95 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "hash",
+ "creation": "2025-01-14 15:10:13.672435",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "request_key",
+  "tenant",
+  "email",
+  "column_break_hswp",
+  "role",
+  "invited_by",
+  "saas_sign_up_section",
+  "send_email",
+  "otp"
+ ],
+ "fields": [
+  {
+   "fieldname": "column_break_hswp",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "request_key",
+   "fieldtype": "Data",
+   "label": "Request Key",
+   "read_only": 1
+  },
+  {
+   "fieldname": "email",
+   "fieldtype": "Data",
+   "label": "Email",
+   "unique": 1
+  },
+  {
+   "fieldname": "tenant",
+   "fieldtype": "Data",
+   "label": "Tenant"
+  },
+  {
+   "fieldname": "role",
+   "fieldtype": "Select",
+   "label": "Role",
+   "options": "Mail Admin\nMail User"
+  },
+  {
+   "fieldname": "saas_sign_up_section",
+   "fieldtype": "Section Break",
+   "label": "Saas Sign Up"
+  },
+  {
+   "default": "0",
+   "fieldname": "send_email",
+   "fieldtype": "Check",
+   "label": "Send Email"
+  },
+  {
+   "fieldname": "otp",
+   "fieldtype": "Int",
+   "label": "OTP",
+   "read_only": 1
+  },
+  {
+   "fieldname": "invited_by",
+   "fieldtype": "Data",
+   "label": "Invited by"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-01-15 15:42:27.567088",
+ "modified_by": "Administrator",
+ "module": "Mail",
+ "name": "Mail Account Request",
+ "naming_rule": "Random",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}
