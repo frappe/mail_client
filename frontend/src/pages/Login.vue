@@ -5,33 +5,40 @@
 				Sign in to your account
 			</span>
 		</div>
-		<form class="flex flex-col space-y-4">
+		<form class="flex flex-col space-y-4" @submit.prevent="login.submit({ usr, pwd })">
 			<FormControl
 				label="Email"
 				type="email"
 				placeholder="johndoe@mail.com"
 				autocomplete="email"
-				v-model="email"
+				v-model="usr"
 				required
 			/>
 			<FormControl
 				label="Password"
 				type="password"
 				placeholder="••••••••"
-				v-model="password"
 				name="password"
 				autocomplete="current-password"
+				v-model="pwd"
 				required
 			/>
-			<Button variant="solid"> Log In </Button>
+			<Button variant="solid" :loading="login.loading"> Log In </Button>
 		</form>
-		<div class="mt-6 text-center hover:underline">
-			<router-link class="text-center text-base font-medium" to="signup">
+		<div class="mt-6 text-center">
+			<router-link class="text-center text-base font-medium hover:underline" to="signup">
 				New member? Create an account.
 			</router-link>
 		</div>
 	</div>
 </template>
 <script setup>
+import { ref } from 'vue'
 import { FormControl, Button } from 'frappe-ui'
+import { sessionStore } from '@/stores/session'
+
+const { login } = sessionStore()
+
+const usr = ref('')
+const pwd = ref('')
 </script>

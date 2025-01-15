@@ -16,8 +16,8 @@
 			/>
 			<Button variant="solid"> Sign Up </Button>
 		</form>
-		<div class="mt-6 text-center hover:underline">
-			<router-link class="text-center text-base font-medium" to="login">
+		<div class="mt-6 text-center">
+			<router-link class="text-center text-base font-medium hover:underline" to="login">
 				Already have an account? Log in.
 			</router-link>
 		</div>

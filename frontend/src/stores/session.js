@@ -5,7 +5,7 @@ import router from '@/router'
 import { ref, computed } from 'vue'
 
 export const sessionStore = defineStore('mail-session', () => {
-	let { userResource } = userStore()
+	const { userResource } = userStore()
 
 	function sessionUser() {
 		let cookies = new URLSearchParams(document.cookie.split('; ').join('&'))
@@ -16,7 +16,7 @@ export const sessionStore = defineStore('mail-session', () => {
 		return _sessionUser
 	}
 
-	let user = ref(sessionUser())
+	const user = ref(sessionUser())
 	const isLoggedIn = computed(() => !!user.value)
 
 	const login = createResource({

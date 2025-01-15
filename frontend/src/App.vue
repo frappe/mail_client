@@ -19,7 +19,7 @@ const { isLoggedIn } = sessionStore()
 const screenSize = useScreenSize()
 
 const Layout = computed(() => {
-	if (!isLoggedIn.value) return LoginLayout
+	if (!isLoggedIn) return LoginLayout
 	if (screenSize.width < 640) return MobileLayout
 	return DesktopLayout
 })
