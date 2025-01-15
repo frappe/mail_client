@@ -114,9 +114,7 @@ const userDropdownOptions = [
 		icon: LogOut,
 		label: 'Log out',
 		onClick: () => {
-			logout.submit().then(() => {
-				isLoggedIn = false
-			})
+			logout.submit()
 		},
 		condition: () => {
 			return isLoggedIn

@@ -29,6 +29,7 @@ export const sessionStore = defineStore('mail-session', () => {
 			user.value = sessionUser()
 			login.reset()
 			router.replace({ path: '/' })
+			window.location.reload()
 		},
 	})
 
