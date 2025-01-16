@@ -104,7 +104,7 @@ def validate_domain_is_enabled_and_verified(domain_name: str) -> None:
 		frappe.throw(_("Domain {0} is not verified.").format(frappe.bold(domain_name)))
 
 
-def validate_user_has_domain_owner_role(user: str) -> None:
+def validate_user_has_mail_admin_role(user: str) -> None:
 	"""Validate if the user has Mail Admin role or System Manager role."""
 
 	if not has_role(user, "Mail Admin"):

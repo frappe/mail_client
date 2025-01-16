@@ -9,6 +9,39 @@ frappe.ui.form.on("Mail Domain", {
 	add_actions(frm) {
 		if (!frm.doc.__islocal) {
 			frm.add_custom_button(
+				__("Mail Tracker"),
+				() => {
+					frappe.route_options = {
+						domain_name: frm.doc.name,
+					};
+					frappe.set_route("query-report", "Mail Tracker");
+				},
+				__("Reports")
+			);
+
+			frm.add_custom_button(
+				__("Outbound Delay"),
+				() => {
+					frappe.route_options = {
+						domain_name: frm.doc.name,
+					};
+					frappe.set_route("query-report", "Outbound Delay");
+				},
+				__("Reports")
+			);
+
+			frm.add_custom_button(
+				__("Outgoing Mail Summary"),
+				() => {
+					frappe.route_options = {
+						domain_name: frm.doc.name,
+					};
+					frappe.set_route("query-report", "Outgoing Mail Summary");
+				},
+				__("Reports")
+			);
+
+			frm.add_custom_button(
 				__("Verify DNS Records"),
 				() => {
 					frm.trigger("verify_dns_records");
