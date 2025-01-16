@@ -52,6 +52,7 @@
 					required
 				/>
 			</template>
+			<ErrorMessage :message="errorMessage" />
 			<Button variant="solid">{{ buttonLabel }}</Button>
 			<Button v-if="isVerificationStep">Resend OTP</Button>
 		</form>
@@ -65,9 +66,11 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { FormControl, Button, createResource } from 'frappe-ui'
+import { FormControl, Button, createResource, ErrorMessage } from 'frappe-ui'
+import { sessionStore } from '@/stores/session'
 
 const router = useRouter()
+const { login } = sessionStore()
 
 const props = defineProps({
 	requestKey: {
@@ -79,7 +82,11 @@ const props = defineProps({
 const isVerificationStep = ref(false)
 const email = ref('')
 const otp = ref('')
+const firstName = ref('')
+const lastName = ref('')
+const password = ref('')
 const accountRequest = ref('')
+const errorMessage = ref('')
 
 const buttonLabel = computed(() => {
 	if (props.requestKey) return 'Create Account'
@@ -88,24 +95,41 @@ const buttonLabel = computed(() => {
 
 const signUp = createResource({
 	url: 'mail.api.account.signup',
+	makeParams() {
+		return { email: email.value }
+	},
 	onSuccess(data) {
+		errorMessage.value = ''
 		accountRequest.value = data.name
 		isVerificationStep.value = true
+	},
+	onError(error) {
+		errorMessage.value = error.messages[0]
 	},
 })
 
 const verifyOtp = createResource({
 	url: 'mail.api.account.verify_otp',
+	makeParams() {
+		return {
+			account_request: accountRequest.value,
+			otp: otp.value,
+		}
+	},
 	onSuccess(requestKey) {
-		router.push({
-			name: 'AccountSetup',
-			params: { requestKey },
-		})
+		errorMessage.value = ''
+		router.push({ name: 'AccountSetup', params: { requestKey } })
+	},
+	onError(error) {
+		errorMessage.value = error.messages[0]
 	},
 })
 
 const verifiedEmail = createResource({
 	url: 'mail.api.account.get_verified_email',
+	makeParams() {
+		return { request_key: props.requestKey }
+	},
 	onSuccess(data) {
 		if (data) email.value = data
 		else router.replace({ name: 'SignUp' })
@@ -114,8 +138,20 @@ const verifiedEmail = createResource({
 
 const createAccount = createResource({
 	url: 'mail.api.account.create_account',
+	makeParams() {
+		return {
+			request_key: props.requestKey,
+			first_name: firstName.value,
+			last_name: lastName.value,
+			password: password.value,
+		}
+	},
 	onSuccess(data) {
-		console.log(data)
+		errorMessage.value = ''
+		login.submit({ usr: email.value, pwd: password.value })
+	},
+	onError(error) {
+		errorMessage.value = error.messages[0]
 	},
 })
 
@@ -123,15 +159,14 @@ watch(
 	() => props.requestKey,
 	(val) => {
 		isVerificationStep.value = false
-		if (val) verifiedEmail.submit({ request_key: val })
+		if (val) verifiedEmail.submit()
 	},
 	{ immediate: true }
 )
 
 const submit = () => {
 	if (props.requestKey) createAccount.submit()
-	else if (isVerificationStep.value)
-		verifyOtp.submit({ account_request: accountRequest.value, otp: otp.value })
-	else signUp.submit({ email: email.value })
+	else if (isVerificationStep.value) verifyOtp.submit()
+	else signUp.submit()
 }
 </script>

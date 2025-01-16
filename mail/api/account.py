@@ -5,16 +5,9 @@ from frappe import _
 @frappe.whitelist(allow_guest=True)
 def signup(email, referrer=None):
 	frappe.utils.validate_email_address(email, True)
-
 	email = email.strip().lower()
-
-	# exists, enabled = frappe.db.get_value("Mail Tenant", {"user": email}, ["name", "enabled"]) or [0, 0]
-
-	# account_request = None
-	# if exists and not enabled:
-	# 	frappe.throw(_("Account {0} has been deactivated").format(email))
-	# elif exists and enabled:
-	# 	frappe.throw(_("Account {0} is already registered").format(email))
+	if frappe.db.exists("User", email):
+		frappe.throw(_("User {0} is already registered").format(email))
 
 	return frappe.get_doc(
 		{
@@ -39,3 +32,17 @@ def verify_otp(account_request: str, otp: str):
 @frappe.whitelist(allow_guest=True)
 def get_verified_email(request_key: str):
 	return frappe.get_value("Mail Account Request", {"request_key": request_key}, "email")
+
+
+@frappe.whitelist(allow_guest=True)
+def create_account(request_key: str, first_name, last_name, password):
+	email, role = frappe.get_value("Mail Account Request", {"request_key": request_key}, ["email", "role"])
+	user = frappe.new_doc("User")
+	user.first_name = first_name
+	user.last_name = last_name
+	user.email = email
+	user.owner = email
+	user.new_password = password
+	# user.append_roles(role)
+	user.flags.no_welcome_mail = True
+	user.save(ignore_permissions=True)
