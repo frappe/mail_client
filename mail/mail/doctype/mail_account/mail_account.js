@@ -6,6 +6,10 @@ frappe.ui.form.on("Mail Account", {
 		frm.trigger("set_queries");
 	},
 
+	refresh(frm) {
+		frm.trigger("add_actions");
+	},
+
 	set_queries(frm) {
 		frm.set_query("domain_name", () => ({
 			filters: {
@@ -21,5 +25,42 @@ frappe.ui.form.on("Mail Account", {
 				role: "Mail User",
 			},
 		}));
+	},
+
+	add_actions(frm) {
+		if (!frm.doc.__islocal) {
+			frm.add_custom_button(
+				__("Mail Tracker"),
+				() => {
+					frappe.route_options = {
+						sender: frm.doc.name,
+					};
+					frappe.set_route("query-report", "Mail Tracker");
+				},
+				__("Reports")
+			);
+
+			frm.add_custom_button(
+				__("Outbound Delay"),
+				() => {
+					frappe.route_options = {
+						sender: frm.doc.name,
+					};
+					frappe.set_route("query-report", "Outbound Delay");
+				},
+				__("Reports")
+			);
+
+			frm.add_custom_button(
+				__("Outgoing Mail Summary"),
+				() => {
+					frappe.route_options = {
+						sender: frm.doc.name,
+					};
+					frappe.set_route("query-report", "Outgoing Mail Summary");
+				},
+				__("Reports")
+			);
+		}
 	},
 });
