@@ -185,10 +185,15 @@ def get_data(filters: dict | None = None) -> list[dict]:
 
 	for field in [
 		"domain_name",
-		"agent",
+		"sender",
 	]:
 		if filters.get(field):
 			query = query.where(OM[field].isin(filters.get(field)))
+
+	if agent := filters.get("agent"):
+		if isinstance(agent, str):
+			agent = [agent]
+		query = query.where(OM.agent.isin(agent))
 
 	if not filters.get("include_newsletter"):
 		query = query.where(OM.is_newsletter == 0)

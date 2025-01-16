@@ -47,7 +47,7 @@ frappe.query_reports["Outgoing Mail Summary"] = {
 		{
 			fieldname: "agent",
 			label: __("Agent"),
-			fieldtype: "MultiSelectList",
+			fieldtype: frappe.user.has_role("System Manager") ? "MultiSelectList" : "Data",
 			get_data: (txt) => {
 				return frappe.db.get_link_options("Mail Agent", txt, {
 					enabled: 1,
