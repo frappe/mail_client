@@ -1,5 +1,5 @@
 <template>
-	<div class="h-screen sm:bg-gray-50">
+	<div class="min-h-screen sm:bg-gray-50">
 		<div class="relative z-10 mx-auto py-8 sm:w-max sm:py-32">
 			<div class="flex">
 				<slot name="logo">

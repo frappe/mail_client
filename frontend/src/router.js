@@ -15,6 +15,12 @@ const routes = [
 		component: () => import('@/pages/SignUp.vue'),
 	},
 	{
+		path: '/signup/:requestKey',
+		name: 'AccountSetup',
+		component: () => import('@/pages/SignUp.vue'),
+		props: true,
+	},
+	{
 		path: '/login',
 		name: 'Login',
 		component: () => import('@/pages/Login.vue'),
@@ -43,7 +49,7 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
 	const { isLoggedIn } = sessionStore()
-	const toLogin = ['Login', 'SignUp'].includes(to.name)
+	const toLogin = ['Login', 'SignUp', 'AccountSetup'].includes(to.name)
 
 	if (!isLoggedIn) return next(toLogin ? undefined : { name: 'Login' })
 
