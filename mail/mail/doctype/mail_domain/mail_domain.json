@@ -67,7 +67,7 @@
    "in_list_view": 1,
    "label": "Verified",
    "no_copy": 1,
-   "read_only": 1,
+   "permlevel": 1,
    "search_index": 1
   },
   {
@@ -176,7 +176,7 @@
    "link_fieldname": "domain_name"
   }
  ],
- "modified": "2025-01-07 17:15:28.361921",
+ "modified": "2025-01-16 12:12:49.273709",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Domain",
@@ -191,6 +191,18 @@
    "read": 1,
    "report": 1,
    "role": "System Manager",
+   "write": 1
+  },
+  {
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "permlevel": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
    "write": 1
   }
  ],
