@@ -1,3 +1,5 @@
+import random
+
 import frappe
 from frappe import _
 
@@ -20,12 +22,22 @@ def signup(email, referrer=None):
 
 
 @frappe.whitelist(allow_guest=True)
+def resend_otp(account_request: str):
+	new_otp = random.randint(10000, 99999)
+	frappe.db.set_value("Mail Account Request", account_request, "otp", new_otp)
+	print(new_otp)
+
+
+@frappe.whitelist(allow_guest=True)
 def verify_otp(account_request: str, otp: str):
 	actual_otp, request_key = frappe.get_value(
 		"Mail Account Request", account_request, ["otp", "request_key"]
 	)
 	if otp != actual_otp:
 		frappe.throw("Invalid OTP. Please try again.")
+
+	frappe.db.set_value("Mail Account Request", account_request, "otp", None)
+
 	return request_key
 
 
@@ -49,4 +61,4 @@ def create_account(request_key: str, first_name, last_name, password):
 	user.flags.no_welcome_mail = True
 	user.save(ignore_permissions=True)
 
-	frappe.db.set_value("Mail Account Request", account_request, {"otp": None, "request_key": None})
+	frappe.db.set_value("Mail Account Request", account_request, "request_key", None)

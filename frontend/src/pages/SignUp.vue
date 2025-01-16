@@ -59,7 +59,9 @@
 			>
 				{{ buttonLabel }}
 			</Button>
-			<Button v-if="isVerificationStep">Resend OTP</Button>
+			<Button v-if="isVerificationStep" type="button" @click="resendOtp.submit()">
+				Resend OTP
+			</Button>
 		</form>
 		<div class="mt-6 text-center">
 			<router-link class="text-center text-base font-medium hover:underline" to="/login">
@@ -110,6 +112,19 @@ const signUp = createResource({
 	},
 	onError(error) {
 		errorMessage.value = error.messages[0]
+	},
+})
+
+const resendOtp = createResource({
+	url: 'mail.api.account.resend_otp',
+	makeParams() {
+		return { account_request: accountRequest.value }
+	},
+	onSuccess() {
+		console.log('OTP resent')
+	},
+	onError(error) {
+		console.log(error.messages[0])
 	},
 })
 
