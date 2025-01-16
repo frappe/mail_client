@@ -644,44 +644,6 @@ class OutgoingMail(Document):
 			if src == attachment.file_name:
 				return attachment.file_url
 
-	def _update_delivery_status(self, data: dict, notify_update: bool = False) -> None:
-		"""Update Delivery Status."""
-
-		if self.queue_id != data["queue_id"]:
-			msg = _("Invalid queue_id ({0}) for outgoing mail ({1}).").format(data["queue_id"], self.name)
-			self.add_comment("Comment", msg)
-			frappe.throw(msg)
-		elif self.docstatus != 1:
-			self.add_comment("Comment", json.dumps(data, indent=4))
-			return
-		elif self.status == data["status"] and self.status != "Deferred":
-			self.add_comment("Comment", _("Status unchanged"))
-			return
-
-		if recipients_map := {rcpt["email"]: rcpt for rcpt in data["recipients"]}:
-			for rcpt in self.recipients:
-				if _rcpt := recipients_map.get(rcpt.email):
-					rcpt.status = _rcpt["status"]
-					rcpt.retries = _rcpt["retries"]
-					rcpt.response = _rcpt["response"]
-					rcpt.error_message = _rcpt["error_message"]
-
-					if rcpt.status in ["Sent", "Bounced", "Deferred"]:
-						rcpt.action_at = convert_utc_to_system_timezone(
-							get_datetime(_rcpt["action_at"])
-						).replace(tzinfo=None)
-						rcpt.action_after = time_diff_in_seconds(rcpt.action_at, self.transfer_completed_at)
-
-					rcpt.db_update()
-
-		self._db_set(
-			status=data["status"],
-			error_message=data["error_message"],
-			notify_update=notify_update,
-		)
-
-		self._sync_with_frontend(self.status)
-
 	def _sync_with_frontend(self, status: str) -> None:
 		"""Triggered to sync the document with the frontend."""
 

@@ -73,32 +73,6 @@ def send_raw(
 	return doc.name
 
 
-# TODO: Remove
-@frappe.whitelist(methods=["POST"])
-def send_newsletter(
-	from_: str,
-	to: str | list[str],
-	raw_message: str | None = None,
-) -> str:
-	"""Send Newsletter."""
-
-	display_name, sender = parseaddr(from_)
-	raw_message = raw_message or get_message_from_files()
-	if not raw_message:
-		frappe.throw(_("The raw message is required."), frappe.MandatoryError)
-
-	doc = create_outgoing_mail(
-		sender=sender,
-		to=to,
-		display_name=display_name,
-		raw_message=raw_message,
-		via_api=1,
-		is_newsletter=1,
-	)
-
-	return doc.name
-
-
 def get_message_from_files() -> str | None:
 	"""Returns the message from the files"""
 

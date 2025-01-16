@@ -7,7 +7,7 @@ from frappe import _
 from mail.mail.doctype.spam_check_log.spam_check_log import create_spam_check_log
 
 
-@frappe.whitelist(methods=["POST"], allow_guest=True)
+@frappe.whitelist(methods=["POST"])
 def scan(message: str | None = None) -> dict:
 	"""Returns the spam score, spamd response and scanning mode of the message"""
 
@@ -24,7 +24,7 @@ def scan(message: str | None = None) -> dict:
 	}
 
 
-@frappe.whitelist(methods=["POST"], allow_guest=True)
+@frappe.whitelist(methods=["POST"])
 def is_spam(message: str | None = None, message_type: Literal["Outbound"] = "Outbound") -> bool:
 	"""Returns True if the message is spam else False"""
 
@@ -37,7 +37,7 @@ def is_spam(message: str | None = None, message_type: Literal["Outbound"] = "Out
 	return spam_log.is_spam(message_type)
 
 
-@frappe.whitelist(methods=["POST"], allow_guest=True)
+@frappe.whitelist(methods=["POST"])
 def get_spam_score(message: str | None = None) -> float:
 	"""Returns the spam score of the message"""
 
