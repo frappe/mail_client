@@ -39,20 +39,6 @@ def get_imap_limits() -> dict:
 	return frappe.cache.get_value("imap_limits", generator)
 
 
-def get_user_owned_domains(user: str) -> list:
-	"""Returns the domains owned by the user."""
-
-	def generator() -> list:
-		MAIL_DOMAIN = frappe.qb.DocType("Mail Domain")
-		return (
-			frappe.qb.from_(MAIL_DOMAIN)
-			.select("name")
-			.where((MAIL_DOMAIN.enabled == 1) & (MAIL_DOMAIN.domain_owner == user))
-		).run(pluck="name")
-
-	return frappe.cache.hget(f"user|{user}", "owned_domains", generator)
-
-
 def get_user_mail_accounts(user: str) -> list:
 	def generator() -> list:
 		MAIL_ACCOUNT = frappe.qb.DocType("Mail Account")

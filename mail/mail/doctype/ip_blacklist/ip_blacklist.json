@@ -85,7 +85,8 @@
    "in_standard_filter": 1,
    "label": "Host",
    "no_copy": 1,
-   "read_only": 1
+   "read_only": 1,
+   "search_index": 1
   },
   {
    "fieldname": "blacklist_reason",
@@ -102,6 +103,7 @@
    "label": "Source IP Address",
    "no_copy": 1,
    "read_only": 1,
+   "search_index": 1,
    "set_only_once": 1
   },
   {
@@ -114,12 +116,13 @@
    "label": "Source Host",
    "no_copy": 1,
    "read_only": 1,
+   "search_index": 1,
    "set_only_once": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-10-18 18:48:41.941265",
+ "modified": "2025-01-16 16:37:24.422041",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "IP Blacklist",

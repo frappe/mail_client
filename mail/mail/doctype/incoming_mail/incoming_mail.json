@@ -64,11 +64,13 @@
   },
   {
    "fieldname": "subject",
-   "fieldtype": "Small Text",
+   "fieldtype": "Data",
    "in_standard_filter": 1,
    "label": "Subject",
+   "length": 1000,
    "no_copy": 1,
-   "read_only": 1
+   "read_only": 1,
+   "search_index": 1
   },
   {
    "fieldname": "body_html",
@@ -243,7 +245,8 @@
    "fieldtype": "Datetime",
    "label": "Processed At",
    "no_copy": 1,
-   "read_only": 1
+   "read_only": 1,
+   "search_index": 1
   },
   {
    "description": "Processed At - Fetched At",
@@ -343,7 +346,8 @@
    "fieldtype": "Datetime",
    "label": "Fetched At",
    "no_copy": 1,
-   "read_only": 1
+   "read_only": 1,
+   "search_index": 1
   },
   {
    "description": "Fetched At - Created At",
@@ -419,7 +423,7 @@
    "link_fieldname": "incoming_mail"
   }
  ],
- "modified": "2025-01-14 15:43:34.532657",
+ "modified": "2025-01-16 16:45:00.399114",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Incoming Mail",

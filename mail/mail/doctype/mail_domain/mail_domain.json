@@ -74,7 +74,8 @@
    "fieldname": "newsletter_retention",
    "fieldtype": "Int",
    "label": "Newsletter Retention (Days)",
-   "non_negative": 1
+   "non_negative": 1,
+   "search_index": 1
   },
   {
    "fieldname": "section_break_ceuu",
@@ -87,7 +88,8 @@
    "fieldtype": "Check",
    "label": "Subdomain",
    "no_copy": 1,
-   "read_only": 1
+   "read_only": 1,
+   "search_index": 1
   },
   {
    "fieldname": "dkim_rsa_key_size",
@@ -180,7 +182,7 @@
    "link_fieldname": "domain_name"
   }
  ],
- "modified": "2025-01-16 12:32:31.236881",
+ "modified": "2025-01-16 16:36:23.561780",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Domain",

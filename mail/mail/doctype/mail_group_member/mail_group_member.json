@@ -26,6 +26,7 @@
    "no_copy": 1,
    "options": "Mail Group",
    "reqd": 1,
+   "search_index": 1,
    "set_only_once": 1
   },
   {
@@ -37,6 +38,7 @@
    "no_copy": 1,
    "options": "\nMail Account\nMail Group",
    "reqd": 1,
+   "search_index": 1,
    "set_only_once": 1
   },
   {
@@ -52,12 +54,13 @@
    "no_copy": 1,
    "options": "member_type",
    "reqd": 1,
+   "search_index": 1,
    "set_only_once": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-01-06 17:50:56.129594",
+ "modified": "2025-01-16 16:33:20.127831",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Group Member",

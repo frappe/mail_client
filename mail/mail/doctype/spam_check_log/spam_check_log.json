@@ -35,7 +35,8 @@
    "in_standard_filter": 1,
    "label": "Source IP Address",
    "no_copy": 1,
-   "read_only": 1
+   "read_only": 1,
+   "search_index": 1
   },
   {
    "fieldname": "column_break_9x8t",
@@ -48,7 +49,8 @@
    "in_standard_filter": 1,
    "label": "Source Host",
    "no_copy": 1,
-   "read_only": 1
+   "read_only": 1,
+   "search_index": 1
   },
   {
    "fieldname": "section_break_opob",
@@ -91,7 +93,8 @@
    "label": "Spam Score",
    "no_copy": 1,
    "precision": "1",
-   "read_only": 1
+   "read_only": 1,
+   "search_index": 1
   },
   {
    "fieldname": "section_break_5qon",
@@ -131,7 +134,8 @@
    "label": "Message",
    "no_copy": 1,
    "options": "MIME Message",
-   "read_only": 1
+   "read_only": 1,
+   "search_index": 1
   }
  ],
  "in_create": 1,
@@ -143,7 +147,7 @@
    "link_fieldname": "spam_check_log"
   }
  ],
- "modified": "2025-01-09 15:16:10.523012",
+ "modified": "2025-01-16 16:29:06.227105",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Spam Check Log",

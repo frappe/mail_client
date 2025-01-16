@@ -7,7 +7,6 @@ from frappe import _
 from frappe.utils.caching import request_cache
 from validate_email_address import validate_email
 
-from mail.utils.cache import get_user_owned_domains
 from mail.utils.user import has_role
 
 
@@ -109,18 +108,6 @@ def validate_user_has_mail_admin_role(user: str) -> None:
 
 	if not has_role(user, "Mail Admin"):
 		frappe.throw(_("You are not authorized to perform this action."), frappe.PermissionError)
-
-
-def validate_user_is_domain_owner(user: str, domain_name: str) -> None:
-	"""Validate if the user is the owner of the given domain."""
-
-	if domain_name not in get_user_owned_domains(user):
-		frappe.throw(
-			_("The domain {0} does not belong to user {1}.").format(
-				frappe.bold(domain_name), frappe.bold(user)
-			),
-			frappe.PermissionError,
-		)
 
 
 def is_domain_exists(domain_name: str, exclude_disabled: bool = True, raise_exception: bool = False) -> bool:

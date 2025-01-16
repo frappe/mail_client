@@ -95,9 +95,11 @@
   },
   {
    "fieldname": "subject",
-   "fieldtype": "Small Text",
+   "fieldtype": "Data",
    "in_standard_filter": 1,
-   "label": "Subject"
+   "label": "Subject",
+   "length": 1000,
+   "search_index": 1
   },
   {
    "fieldname": "column_break_9ywf",
@@ -384,14 +386,16 @@
    "ignore_xss_filter": 1,
    "label": "In Reply To (Message ID)",
    "length": 255,
-   "read_only": 1
+   "read_only": 1,
+   "search_index": 1
   },
   {
    "fieldname": "transfer_completed_at",
    "fieldtype": "Datetime",
    "label": "Transfer Completed At",
    "no_copy": 1,
-   "read_only": 1
+   "read_only": 1,
+   "search_index": 1
   },
   {
    "depends_on": "eval: doc.transfer_completed_at",
@@ -409,7 +413,8 @@
    "fieldtype": "Datetime",
    "label": "Transfer Started At",
    "no_copy": 1,
-   "read_only": 1
+   "read_only": 1,
+   "search_index": 1
   },
   {
    "depends_on": "eval: doc.transfer_started_at",
@@ -584,7 +589,8 @@
    "in_list_view": 1,
    "label": "Message ID",
    "no_copy": 1,
-   "read_only": 1
+   "read_only": 1,
+   "search_index": 1
   },
   {
    "fieldname": "spam_check_log",
@@ -600,7 +606,8 @@
    "fieldtype": "Datetime",
    "label": "Processed At",
    "no_copy": 1,
-   "read_only": 1
+   "read_only": 1,
+   "search_index": 1
   },
   {
    "depends_on": "eval: doc.processed_at",
@@ -617,7 +624,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-01-16 13:06:27.420842",
+ "modified": "2025-01-16 16:47:50.139118",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Outgoing Mail",

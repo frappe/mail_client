@@ -62,7 +62,8 @@
    "in_standard_filter": 1,
    "label": "Alias For (Type)",
    "options": "\nMail Account\nMail Group",
-   "reqd": 1
+   "reqd": 1,
+   "search_index": 1
   },
   {
    "fieldname": "alias_for_name",
@@ -71,7 +72,8 @@
    "in_standard_filter": 1,
    "label": "Alias For (Name)",
    "options": "alias_for_type",
-   "reqd": 1
+   "reqd": 1,
+   "search_index": 1
   },
   {
    "fieldname": "column_break_wo8t",
@@ -80,7 +82,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-01-06 17:51:26.806575",
+ "modified": "2025-01-16 16:33:52.639367",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Alias",

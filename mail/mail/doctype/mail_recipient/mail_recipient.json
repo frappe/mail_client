@@ -47,7 +47,8 @@
    "label": "Retries",
    "no_copy": 1,
    "non_negative": 1,
-   "read_only": 1
+   "read_only": 1,
+   "search_index": 1
   },
   {
    "depends_on": "eval: doc.status",
@@ -55,7 +56,8 @@
    "fieldtype": "Datetime",
    "label": "Action At",
    "no_copy": 1,
-   "read_only": 1
+   "read_only": 1,
+   "search_index": 1
   },
   {
    "depends_on": "eval: doc.action_at",
@@ -65,7 +67,8 @@
    "label": "Action After (Seconds)",
    "no_copy": 1,
    "precision": "2",
-   "read_only": 1
+   "read_only": 1,
+   "search_index": 1
   },
   {
    "default": "To",
@@ -110,7 +113,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-01-09 17:19:51.731199",
+ "modified": "2025-01-16 16:23:23.288514",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Recipient",
