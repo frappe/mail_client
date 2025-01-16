@@ -151,10 +151,10 @@ def generate_dkim_keys(
 
 		return key_pem
 
-	from cryptography.hazmat.backends import default_backend
 	from cryptography.hazmat.primitives import serialization
 
 	if algorithm == "rsa-sha256":
+		from cryptography.hazmat.backends import default_backend
 		from cryptography.hazmat.primitives.asymmetric import rsa
 
 		private_key = rsa.generate_private_key(
@@ -172,7 +172,11 @@ def generate_dkim_keys(
 			format=serialization.PublicFormat.SubjectPublicKeyInfo,
 		).decode()
 
+		return private_key_pem, get_filtered_dkim_key(public_key_pem)
+
 	elif algorithm == "ed25519-sha256":
+		import base64
+
 		from cryptography.hazmat.primitives.asymmetric import ed25519
 
 		private_key = ed25519.Ed25519PrivateKey.generate()
@@ -183,15 +187,13 @@ def generate_dkim_keys(
 			format=serialization.PrivateFormat.PKCS8,
 			encryption_algorithm=serialization.NoEncryption(),
 		).decode()
-		public_key_pem = public_key.public_bytes(
-			encoding=serialization.Encoding.PEM,
-			format=serialization.PublicFormat.SubjectPublicKeyInfo,
-		).decode()
+		public_key_raw = public_key.public_bytes(
+			encoding=serialization.Encoding.Raw,
+			format=serialization.PublicFormat.Raw,
+		)
+		public_key_encoded = base64.b64encode(public_key_raw).decode()
+
+		return private_key_pem, public_key_encoded
 
 	else:
 		frappe.throw(_("Unsupported algorithm. Use 'rsa-sha256' or 'ed25519-sha256'."))
-
-	private_key = private_key_pem
-	public_key = get_filtered_dkim_key(public_key_pem)
-
-	return private_key, public_key
