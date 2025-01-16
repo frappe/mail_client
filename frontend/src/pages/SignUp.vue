@@ -53,7 +53,12 @@
 				/>
 			</template>
 			<ErrorMessage :message="errorMessage" />
-			<Button variant="solid">{{ buttonLabel }}</Button>
+			<Button
+				variant="solid"
+				:loading="signUp.loading || verifyOtp.loading || createAccount.loading"
+			>
+				{{ buttonLabel }}
+			</Button>
 			<Button v-if="isVerificationStep">Resend OTP</Button>
 		</form>
 		<div class="mt-6 text-center">
@@ -159,7 +164,9 @@ watch(
 	() => props.requestKey,
 	(val) => {
 		isVerificationStep.value = false
-		if (val) verifiedEmail.submit()
+		if (!val) return
+		if (val.length === 32) verifiedEmail.submit()
+		else router.replace({ name: 'SignUp' })
 	},
 	{ immediate: true }
 )

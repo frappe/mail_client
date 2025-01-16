@@ -23,6 +23,7 @@
 				v-model="pwd"
 				required
 			/>
+			<ErrorMessage :message="login.error" />
 			<Button variant="solid" :loading="login.loading"> Log In </Button>
 		</form>
 		<div class="mt-6 text-center">
@@ -34,7 +35,7 @@
 </template>
 <script setup>
 import { ref } from 'vue'
-import { FormControl, Button } from 'frappe-ui'
+import { Button, FormControl, ErrorMessage } from 'frappe-ui'
 import { sessionStore } from '@/stores/session'
 
 const { login } = sessionStore()
