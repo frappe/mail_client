@@ -105,7 +105,8 @@
   {
    "fieldname": "include_agents",
    "fieldtype": "Small Text",
-   "label": "Include Agents"
+   "label": "Include Agents",
+   "permlevel": 1
   },
   {
    "fieldname": "column_break_x6bd",
@@ -114,7 +115,8 @@
   {
    "fieldname": "exclude_agents",
    "fieldtype": "Small Text",
-   "label": "Exclude Agents"
+   "label": "Exclude Agents",
+   "permlevel": 1
   },
   {
    "collapsible": 1,
@@ -126,7 +128,8 @@
   {
    "fieldname": "include_agent_groups",
    "fieldtype": "Small Text",
-   "label": "Include Agent Groups"
+   "label": "Include Agent Groups",
+   "permlevel": 1
   },
   {
    "fieldname": "column_break_vpyy",
@@ -135,7 +138,8 @@
   {
    "fieldname": "exclude_agent_groups",
    "fieldtype": "Small Text",
-   "label": "Exclude Agent Groups"
+   "label": "Exclude Agent Groups",
+   "permlevel": 1
   }
  ],
  "index_web_pages_for_search": 1,
@@ -176,7 +180,7 @@
    "link_fieldname": "domain_name"
   }
  ],
- "modified": "2025-01-16 12:12:49.273709",
+ "modified": "2025-01-16 12:32:31.236881",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Domain",
