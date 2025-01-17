@@ -26,6 +26,7 @@ from frappe.utils import (
 	flt,
 	get_datetime_str,
 	now,
+	random_string,
 	time_diff_in_seconds,
 	validate_email_address,
 )
@@ -87,6 +88,7 @@ class OutgoingMail(Document):
 		self.validate_amended_doc()
 		self.set_folder()
 		self.set_priority()
+		self.set_token()
 		self.load_runtime()
 		self.validate_domain_name()
 		self.validate_sender()
@@ -152,6 +154,12 @@ class OutgoingMail(Document):
 		"""Sets the priority."""
 
 		self.priority = -1 if self.is_newsletter else 0
+
+	def set_token(self):
+		"""Sets the token."""
+
+		if not self.token:
+			self.token = random_string(10)
 
 	def load_runtime(self) -> None:
 		"""Loads the runtime properties."""
@@ -661,7 +669,9 @@ class OutgoingMail(Document):
 		if notify_update:
 			self.notify_update()
 
-	def update_status(self, status: str | None = None, db_set: bool = False) -> None:
+	def update_status(
+		self, status: str | None = None, db_set: bool = False, notify_update: bool = False
+	) -> None:
 		"""Updates the status of the email based on the status of the recipients."""
 
 		if not status:
@@ -691,7 +701,7 @@ class OutgoingMail(Document):
 			self.status = status
 
 			if db_set:
-				self._db_set(status=status)
+				self._db_set(status=status, notify_update=notify_update)
 
 	def enqueue_process_for_delivery(self) -> None:
 		"""Enqueue the job to process the email for delivery."""
@@ -896,13 +906,19 @@ class OutgoingMail(Document):
 			password = mail_account.get_password("password")
 
 			with SMTPContext(agent_or_group, 465, username, password, use_ssl=True) as server:
-				mail_options = [f"ENVID={self.name}", f"MT-PRIORITY={self.priority}"]
+				mail_options = [f"ENVID={self.name}:{self.token}", f"MT-PRIORITY={self.priority}"]
 				server.sendmail(self.sender, recipients, self.message, mail_options=mail_options)
 
 			transfer_completed_at = now()
 			transfer_completed_after = time_diff_in_seconds(transfer_completed_at, transfer_started_at)
+
+			for rcpt in self.recipients:
+				if rcpt.email in recipients:
+					rcpt.status = "Sent"
+					rcpt.db_update()
+
 			self._db_set(
-				status="Transferred",
+				status="Sent",
 				transfer_completed_at=transfer_completed_at,
 				transfer_completed_after=transfer_completed_after,
 				notify_update=True,

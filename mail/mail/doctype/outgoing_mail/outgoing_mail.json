@@ -35,7 +35,7 @@
   "column_break_d6p9",
   "domain_name",
   "agent",
-  "queue_id",
+  "token",
   "section_break_quhp",
   "message_id",
   "in_reply_to",
@@ -472,13 +472,6 @@
    "search_index": 1
   },
   {
-   "fieldname": "queue_id",
-   "fieldtype": "Data",
-   "label": "Queue ID",
-   "no_copy": 1,
-   "read_only": 1
-  },
-  {
    "fieldname": "_message",
    "fieldtype": "Link",
    "label": "Message",
@@ -619,12 +612,21 @@
    "non_negative": 1,
    "precision": "2",
    "read_only": 1
+  },
+  {
+   "depends_on": "eval: frappe.boot.developer_mode",
+   "fieldname": "token",
+   "fieldtype": "Data",
+   "label": "Token",
+   "no_copy": 1,
+   "read_only": 1,
+   "set_only_once": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-01-16 16:47:50.139118",
+ "modified": "2025-01-17 15:45:55.949734",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Outgoing Mail",

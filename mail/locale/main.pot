@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Mail VERSION\n"
 "Report-Msgid-Bugs-To: developers@frappe.io\n"
-"POT-Creation-Date: 2025-01-17 12:42+0553\n"
-"PO-Revision-Date: 2025-01-17 12:42+0553\n"
+"POT-Creation-Date: 2025-01-17 16:24+0553\n"
+"PO-Revision-Date: 2025-01-17 16:24+0553\n"
 "Last-Translator: developers@frappe.io\n"
 "Language-Team: developers@frappe.io\n"
 "MIME-Version: 1.0\n"
@@ -72,26 +72,6 @@ msgstr ""
 msgid "Account"
 msgstr ""
 
-#. Label of the action_after (Float) field in DocType 'Mail Recipient'
-#: mail/mail/doctype/mail_recipient/mail_recipient.json
-msgid "Action After (Seconds)"
-msgstr ""
-
-#. Label of the action_at (Datetime) field in DocType 'Mail Recipient'
-#: mail/mail/doctype/mail_recipient/mail_recipient.json
-msgid "Action At"
-msgstr ""
-
-#. Description of the 'Action After (Seconds)' (Float) field in DocType 'Mail
-#. Recipient'
-#: mail/mail/doctype/mail_recipient/mail_recipient.json
-msgid "Action At - Transfer Completed At"
-msgstr ""
-
-#: mail/mail/report/outbound_delay/outbound_delay.py:86
-msgid "Action Delay"
-msgstr ""
-
 #: mail/mail/doctype/dns_record/dns_record.js:16
 #: mail/mail/doctype/incoming_mail/incoming_mail.js:16
 #: mail/mail/doctype/incoming_mail/incoming_mail.js:23
@@ -115,7 +95,7 @@ msgstr ""
 #: mail/mail/doctype/mail_agent_job/mail_agent_job.json
 #: mail/mail/doctype/outgoing_mail/outgoing_mail.json
 #: mail/mail/report/outbound_delay/outbound_delay.js:49
-#: mail/mail/report/outbound_delay/outbound_delay.py:105
+#: mail/mail/report/outbound_delay/outbound_delay.py:99
 #: mail/mail/report/outgoing_mail_summary/outgoing_mail_summary.js:49
 #: mail/mail/report/outgoing_mail_summary/outgoing_mail_summary.py:96
 msgid "Agent"
@@ -156,7 +136,7 @@ msgstr ""
 msgid "Alias For (Type)"
 msgstr ""
 
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:888
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:898
 msgid "All recipients are blocked or sent."
 msgstr ""
 
@@ -167,7 +147,7 @@ msgstr ""
 msgid "Amended From"
 msgstr ""
 
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:135
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:137
 msgid "Amending {0} is not allowed."
 msgstr ""
 
@@ -200,15 +180,15 @@ msgstr ""
 msgid "Attachment"
 msgstr ""
 
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:300
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:308
 msgid "Attachment limit exceeded ({0}). Maximum {1} attachment(s) allowed."
 msgstr ""
 
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:311 mail/overrides.py:31
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:319 mail/overrides.py:31
 msgid "Attachment size limit exceeded ({0} MB). Maximum {1} MB allowed."
 msgstr ""
 
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:320
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:328
 msgid "Attachments size limit exceeded ({0} MB). Maximum {1} MB allowed."
 msgstr ""
 
@@ -227,19 +207,15 @@ msgstr ""
 msgid "Authenticated Session Timeout (Seconds)"
 msgstr ""
 
-#: mail/mail/report/outbound_delay/outbound_delay.py:264
-msgid "Average Action Delay"
-msgstr ""
-
-#: mail/mail/report/outbound_delay/outbound_delay.py:246
+#: mail/mail/report/outbound_delay/outbound_delay.py:237
 msgid "Average Message Size"
 msgstr ""
 
-#: mail/mail/report/outbound_delay/outbound_delay.py:252
+#: mail/mail/report/outbound_delay/outbound_delay.py:243
 msgid "Average Submission Delay"
 msgstr ""
 
-#: mail/mail/report/outbound_delay/outbound_delay.py:258
+#: mail/mail/report/outbound_delay/outbound_delay.py:249
 msgid "Average Transfer Delay"
 msgstr ""
 
@@ -457,11 +433,11 @@ msgstr ""
 msgid "Custom Headers"
 msgstr ""
 
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:255
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:263
 msgid "Custom Headers limit exceeded ({0}). Maximum {1} custom header(s) allowed."
 msgstr ""
 
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:266
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:274
 msgid "Custom header {0} is not allowed."
 msgstr ""
 
@@ -526,7 +502,7 @@ msgstr ""
 msgid "DMARC Report"
 msgstr ""
 
-#: mail/mail/doctype/incoming_mail/incoming_mail.py:129
+#: mail/mail/doctype/incoming_mail/incoming_mail.py:136
 msgid "DMARC Report Creation Failed"
 msgstr ""
 
@@ -596,11 +572,11 @@ msgstr ""
 msgid "Deferred"
 msgstr ""
 
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:749
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:759
 msgid "Delivery of this email was blocked because all recipients are on our blocklist. Repeated delivery failures to these addresses have led to their blocking. To protect your sender reputation and avoid further issues, this email was not sent. Please review the recipient list or contact support for assistance."
 msgstr ""
 
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:739
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:749
 msgid "Delivery to this recipient was blocked because their email address is on our blocklist. This action was taken after repeated delivery failures to this address. To protect your sender reputation and prevent further issues, this email was not sent to the blocked recipient."
 msgstr ""
 
@@ -660,7 +636,7 @@ msgstr ""
 #: mail/mail/report/mail_tracker/mail_tracker.js:51
 #: mail/mail/report/mail_tracker/mail_tracker.py:48
 #: mail/mail/report/outbound_delay/outbound_delay.js:41
-#: mail/mail/report/outbound_delay/outbound_delay.py:98
+#: mail/mail/report/outbound_delay/outbound_delay.py:92
 #: mail/mail/report/outgoing_mail_summary/outgoing_mail_summary.js:41
 #: mail/mail/report/outgoing_mail_summary/outgoing_mail_summary.py:89
 msgid "Domain Name"
@@ -943,7 +919,7 @@ msgstr ""
 msgid "From IP"
 msgstr ""
 
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:379
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:387
 msgid "Future date is not allowed."
 msgstr ""
 
@@ -1003,7 +979,7 @@ msgstr ""
 #: mail/mail/doctype/ip_blacklist/ip_blacklist.json
 #: mail/mail/doctype/outgoing_mail/outgoing_mail.json
 #: mail/mail/report/outbound_delay/outbound_delay.js:65
-#: mail/mail/report/outbound_delay/outbound_delay.py:112
+#: mail/mail/report/outbound_delay/outbound_delay.py:106
 #: mail/mail/report/outgoing_mail_summary/outgoing_mail_summary.js:65
 #: mail/mail/report/outgoing_mail_summary/outgoing_mail_summary.py:103
 msgid "IP Address"
@@ -1083,7 +1059,7 @@ msgstr ""
 msgid "In Reply To (Message ID)"
 msgstr ""
 
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:191
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:199
 msgid "In Reply To Mail Name is required."
 msgstr ""
 
@@ -1094,11 +1070,11 @@ msgstr ""
 msgid "In Reply To Mail Type"
 msgstr ""
 
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:189
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:197
 msgid "In Reply To Mail Type is required."
 msgstr ""
 
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:202
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:210
 msgid "In Reply To Mail {0} - {1} does not exist."
 msgstr ""
 
@@ -1165,7 +1141,7 @@ msgstr ""
 msgid "Invalid date format: {0}"
 msgstr ""
 
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:527
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:535
 msgid "Invalid format for recipient {0}."
 msgstr ""
 
@@ -1266,7 +1242,7 @@ msgstr ""
 msgid "Mail Account"
 msgstr ""
 
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:180
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:188
 msgid "Mail Account {0} is disabled."
 msgstr ""
 
@@ -1343,11 +1319,11 @@ msgstr ""
 msgid "Mail Domain DNS Record"
 msgstr ""
 
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:168
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:176
 msgid "Mail Domain {0} is disabled."
 msgstr ""
 
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:170
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:178
 msgid "Mail Domain {0} is not verified."
 msgstr ""
 
@@ -1410,7 +1386,7 @@ msgstr ""
 msgid "Mail User"
 msgstr ""
 
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:823
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:833
 msgid "Mail accepted by System Manager {0}."
 msgstr ""
 
@@ -1556,7 +1532,7 @@ msgstr ""
 #: mail/mail/report/mail_tracker/mail_tracker.js:67
 #: mail/mail/report/mail_tracker/mail_tracker.py:62
 #: mail/mail/report/outbound_delay/outbound_delay.js:84
-#: mail/mail/report/outbound_delay/outbound_delay.py:131
+#: mail/mail/report/outbound_delay/outbound_delay.py:125
 #: mail/mail/report/outgoing_mail_summary/outgoing_mail_summary.js:89
 #: mail/mail/report/outgoing_mail_summary/outgoing_mail_summary.py:128
 msgid "Message ID"
@@ -1574,7 +1550,7 @@ msgstr ""
 msgid "Message Size (Bytes)"
 msgstr ""
 
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:504
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:512
 msgid "Message size limit exceeded ({0} MB). Maximum {1} MB allowed."
 msgstr ""
 
@@ -1620,7 +1596,7 @@ msgstr ""
 msgid "Newsletter Retention must be less than or equal to {0}."
 msgstr ""
 
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:1045
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:1061
 msgid "No agent or agent group found based on the given criteria."
 msgstr ""
 
@@ -1636,7 +1612,7 @@ msgstr ""
 msgid "Only Administrator can delete DKIM Key."
 msgstr ""
 
-#: mail/mail/doctype/incoming_mail/incoming_mail.py:61
+#: mail/mail/doctype/incoming_mail/incoming_mail.py:62
 msgid "Only Administrator can delete Incoming Mail."
 msgstr ""
 
@@ -1648,7 +1624,7 @@ msgstr ""
 msgid "Only Administrator can delete Mail Domain."
 msgstr ""
 
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:129
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:131
 msgid "Only Administrator can delete Outgoing Mail."
 msgstr ""
 
@@ -1741,7 +1717,7 @@ msgstr ""
 msgid "Password"
 msgstr ""
 
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:213
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:221
 msgid "Please add at least one recipient before sending the mail."
 msgstr ""
 
@@ -1798,6 +1774,10 @@ msgstr ""
 msgid "Private Keys"
 msgstr ""
 
+#: mail/mail/doctype/incoming_mail/incoming_mail.py:197
+msgid "Process DSN Report Failed"
+msgstr ""
+
 #. Label of the processed_after (Float) field in DocType 'Incoming Mail'
 #. Label of the processed_after (Float) field in DocType 'Outgoing Mail'
 #: mail/mail/doctype/incoming_mail/incoming_mail.json
@@ -1827,11 +1807,6 @@ msgstr ""
 #. Label of the public_keys_section (Section Break) field in DocType 'DKIM Key'
 #: mail/mail/doctype/dkim_key/dkim_key.json
 msgid "Public Keys"
-msgstr ""
-
-#. Label of the queue_id (Data) field in DocType 'Outgoing Mail'
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.json
-msgid "Queue ID"
 msgstr ""
 
 #. Label of the rsa_key_size (Select) field in DocType 'DKIM Key'
@@ -1867,13 +1842,13 @@ msgid "Receiving Record"
 msgstr ""
 
 #: mail/mail/report/outbound_delay/outbound_delay.js:78
-#: mail/mail/report/outbound_delay/outbound_delay.py:125
+#: mail/mail/report/outbound_delay/outbound_delay.py:119
 #: mail/mail/report/outgoing_mail_summary/outgoing_mail_summary.js:78
 #: mail/mail/report/outgoing_mail_summary/outgoing_mail_summary.py:116
 msgid "Recipient"
 msgstr ""
 
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:221
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:229
 msgid "Recipient limit exceeded ({0}). Maximum {1} recipient(s) allowed."
 msgstr ""
 
@@ -2033,11 +2008,11 @@ msgstr ""
 msgid "Rotating DKIM Keys..."
 msgstr ""
 
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:270
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:278
 msgid "Row #{0}: Duplicate custom header {1}."
 msgstr ""
 
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:239
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:247
 msgid "Row #{0}: Duplicate recipient {1} of type {2}."
 msgstr ""
 
@@ -2045,7 +2020,7 @@ msgstr ""
 msgid "Row #{0}: Failed to verify {1} : {2}."
 msgstr ""
 
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:232
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:240
 msgid "Row #{0}: Invalid recipient {1}."
 msgstr ""
 
@@ -2111,7 +2086,7 @@ msgstr ""
 #: mail/mail/report/mail_tracker/mail_tracker.js:59
 #: mail/mail/report/mail_tracker/mail_tracker.py:55
 #: mail/mail/report/outbound_delay/outbound_delay.js:70
-#: mail/mail/report/outbound_delay/outbound_delay.py:118
+#: mail/mail/report/outbound_delay/outbound_delay.py:112
 #: mail/mail/report/outgoing_mail_summary/outgoing_mail_summary.js:70
 #: mail/mail/report/outgoing_mail_summary/outgoing_mail_summary.py:109
 msgid "Sender"
@@ -2212,7 +2187,7 @@ msgstr ""
 msgid "Spam Score"
 msgstr ""
 
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:777
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:787
 msgid "Spam score exceeded the permitted threshold."
 msgstr ""
 
@@ -2277,7 +2252,7 @@ msgstr ""
 msgid "Submission Delay"
 msgstr ""
 
-#: mail/mail/doctype/incoming_mail/incoming_mail.py:240
+#: mail/mail/doctype/incoming_mail/incoming_mail.py:308
 msgid "Submit Incoming Mail"
 msgstr ""
 
@@ -2385,11 +2360,11 @@ msgstr ""
 msgid "The email address {0} is deliverable."
 msgstr ""
 
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:1033
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:1049
 msgid "The following agent groups do not exist or are not enabled for outbound: {0}"
 msgstr ""
 
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:1019
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:1035
 msgid "The following agents do not exist or are not enabled for outbound: {0}"
 msgstr ""
 
@@ -2432,7 +2407,7 @@ msgstr ""
 msgid "This account is linked to a mail group. Please remove it first."
 msgstr ""
 
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:781
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:791
 msgid "This email has been blocked because our system flagged it as spam. The spam score exceeded the permitted threshold. To resolve this, review your email content, remove any potentially suspicious links or attachments, and try sending it again. If the issue persists, please contact our support team for assistance."
 msgstr ""
 
@@ -2487,7 +2462,12 @@ msgstr ""
 msgid "To Date"
 msgstr ""
 
-#: mail/mail/report/outbound_delay/outbound_delay.py:92
+#. Label of the token (Data) field in DocType 'Outgoing Mail'
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.json
+msgid "Token"
+msgstr ""
+
+#: mail/mail/report/outbound_delay/outbound_delay.py:86
 msgid "Total Delay"
 msgstr ""
 
@@ -2667,7 +2647,7 @@ msgstr ""
 msgid "Verifying DNS Records..."
 msgstr ""
 
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:177
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:185
 msgid "You are not allowed to send from address {0}."
 msgstr ""
 
@@ -2685,7 +2665,7 @@ msgstr ""
 msgid "{0} is an invalid email address"
 msgstr ""
 
-#: mail/mail/doctype/incoming_mail/incoming_mail.py:76
+#: mail/mail/doctype/incoming_mail/incoming_mail.py:77
 msgid "{0} is mandatory."
 msgstr ""
 
@@ -2694,7 +2674,7 @@ msgstr ""
 msgid "{0} job has been created."
 msgstr ""
 
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:194
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:202
 msgid "{0} must be either Incoming Mail or Outgoing Mail."
 msgstr ""
 

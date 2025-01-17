@@ -1,6 +1,7 @@
 # Copyright (c) 2024, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
+import json
 import time
 from email.utils import parseaddr
 from typing import TYPE_CHECKING, Literal
@@ -105,6 +106,12 @@ class IncomingMail(Document):
 		if self.receiver == get_dmarc_address():
 			self.create_dmarc_report()
 
+		if (
+			parser.message.get_content_type() == "multipart/report"
+			and parser.message.get_param("report-type") == "delivery-status"
+		):
+			self.process_dsn_report(parser.message)
+
 		if self.created_at:
 			self.fetched_after = time_diff_in_seconds(self.fetched_at, self.created_at)
 
@@ -124,9 +131,80 @@ class IncomingMail(Document):
 				file = frappe.get_doc("File", attachment)
 				xml_content = load_compressed_file(file_data=file.get_content())
 				create_dmarc_report(xml_content, incoming_mail=self.name)
+
+			self.type = "DMARC Report"
 		except Exception:
 			frappe.log_error(
 				title=_("DMARC Report Creation Failed"),
+				message=frappe.get_traceback(with_context=True),
+			)
+
+	def process_dsn_report(self, message) -> None:
+		"""Processes the DSN Report."""
+
+		try:
+			original_envelope_id = None
+			token = None
+
+			for part in message.walk():
+				if part.get("Original-Envelope-Id"):
+					original_envelope_id, token = part.get("Original-Envelope-Id").split(":")
+					break
+
+			if not original_envelope_id or not token:
+				frappe.throw(_("Original Envelope Id or Token not found in DSN Report."))
+
+			outgoing_mail = frappe.get_doc("Outgoing Mail", original_envelope_id)
+			if outgoing_mail.token != token:
+				frappe.throw(_("Token mismatch in DSN Report."))
+
+			dsn_data = []
+			required_headers = [
+				"Final-Recipient",
+				"Action",
+				"Status",
+				"Diagnostic-Code",
+				"Remote-MTA",
+			]
+			_rcpt_data = {}
+			for part in message.walk():
+				for header in required_headers:
+					if part.get(header):
+						_rcpt_data[header] = part.get(header)
+
+				if len(_rcpt_data) == len(required_headers):
+					dsn_data.append(_rcpt_data)
+					_rcpt_data = {}
+
+			rcpt_status_changed = False
+			for rcpt_data in dsn_data:
+				final_recipient = rcpt_data["Final-Recipient"].split("rfc822;")[1].strip()
+				diagnostic_code = rcpt_data["Diagnostic-Code"].split("smtp;")[1].strip()
+				remote_mta = rcpt_data["Remote-MTA"].split("dns;")[1].strip()
+				response = json.dumps(
+					{
+						"status": rcpt_data["Status"],
+						"diagnostic_code": diagnostic_code,
+						"remote_mta": remote_mta,
+					},
+					indent=4,
+				)
+
+				for rcpt in outgoing_mail.recipients:
+					if rcpt.email == final_recipient:
+						rcpt_status_changed = True
+						rcpt.status = "Bounced"
+						rcpt.response = response
+						rcpt.db_update()
+
+			if rcpt_status_changed:
+				outgoing_mail.update_status(db_set=True, notify_update=True)
+
+			self.type = "DSN Report"
+
+		except Exception:
+			frappe.log_error(
+				title=_("Process DSN Report Failed"),
 				message=frappe.get_traceback(with_context=True),
 			)
 

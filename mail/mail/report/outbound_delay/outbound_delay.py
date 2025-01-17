@@ -83,12 +83,6 @@ def get_columns() -> list[dict]:
 			"width": 120,
 		},
 		{
-			"label": _("Action Delay"),
-			"fieldname": "action_delay",
-			"fieldtype": "Float",
-			"width": 120,
-		},
-		{
 			"label": _("Total Delay"),
 			"fieldname": "total_delay",
 			"fieldtype": "Float",
@@ -157,10 +151,7 @@ def get_data(filters: dict | None = None) -> list[dict]:
 			OM.is_newsletter,
 			OM.submitted_after.as_("submission_delay"),
 			(OM.transfer_started_after + OM.transfer_completed_after).as_("transfer_delay"),
-			MR.action_after.as_("action_delay"),
-			(
-				OM.submitted_after + OM.transfer_started_after + OM.transfer_completed_after + MR.action_after
-			).as_("total_delay"),
+			(OM.submitted_after + OM.transfer_started_after + OM.transfer_completed_after).as_("total_delay"),
 			OM.domain_name,
 			OM.agent,
 			OM.ip_address,
@@ -232,7 +223,7 @@ def get_summary(data: list) -> list[dict]:
 	average_data = {}
 
 	for row in data:
-		for field in ["message_size", "submission_delay", "transfer_delay", "action_delay"]:
+		for field in ["message_size", "submission_delay", "transfer_delay"]:
 			key = f"total_{field}"
 			summary_data.setdefault(key, 0)
 			summary_data[key] += row[field]
@@ -259,11 +250,5 @@ def get_summary(data: list) -> list[dict]:
 			"datatype": "Data",
 			"value": f"{average_data['transfer_delay']}s",
 			"indicator": "blue",
-		},
-		{
-			"label": _("Average Action Delay"),
-			"datatype": "Data",
-			"value": f"{average_data['action_delay']}s",
-			"indicator": "orange",
 		},
 	]

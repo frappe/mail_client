@@ -80,8 +80,8 @@ def get_columns() -> list[dict]:
 			"width": 100,
 		},
 		{
-			"label": _("Response/Error Message"),
-			"fieldname": "response_or_error_message",
+			"label": _("Error Message"),
+			"fieldname": "error_message",
 			"fieldtype": "Code",
 			"width": 500,
 		},
@@ -223,14 +223,9 @@ def get_data(filters: dict | None = None) -> list[dict]:
 	for row in data:
 		if row["response"]:
 			response = json.loads(row.pop("response"))
-			row["response_or_error_message"] = (
-				response.get("dsn_msg")
-				or response.get("reason")
-				or response.get("dsn_smtp_response")
-				or response.get("response")
-			)
+			row["error_message"] = f"{response['status']} - {response['diagnostic_code']}"
 		elif row["error_message"]:
-			row["response_or_error_message"] = row.pop("error_message")
+			row["error_message"] = row.pop("error_message")
 
 	return data
 
