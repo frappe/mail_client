@@ -36,8 +36,6 @@ def verify_otp(account_request: str, otp: str):
 	if otp != actual_otp:
 		frappe.throw("Invalid OTP. Please try again.")
 
-	frappe.db.set_value("Mail Account Request", account_request, "otp", None)
-
 	return request_key
 
 
@@ -61,4 +59,4 @@ def create_account(request_key: str, first_name, last_name, password):
 	user.flags.no_welcome_mail = True
 	user.save(ignore_permissions=True)
 
-	frappe.db.set_value("Mail Account Request", account_request, "request_key", None)
+	frappe.db.set_value("Mail Account Request", account_request, {"otp": None, "request_key": None})
