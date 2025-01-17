@@ -25,17 +25,12 @@ class MailAccountRequest(Document):
 
 	@frappe.whitelist()
 	def send_verification_email(self):
-		return
 		# url = self.get_verification_url()
-
+		#
 		subject = f"{self.otp} - OTP for Frappe Mail Account Verification"
 		args = {}
-		sender = ""
 
-		if not self.invited_by:
-			subject = "Verify your email for Frappe"
-
-		else:
+		if self.invited_by:
 			subject = f"You are invited by {self.invited_by} to join Frappe Cloud"
 
 		args.update(

@@ -57,7 +57,7 @@ def create_account(request_key: str, first_name, last_name, password):
 	user.email = email
 	user.owner = email
 	user.new_password = password
-	# user.append_roles(role)
+	user.append_roles(role)
 	user.flags.no_welcome_mail = True
 	user.save(ignore_permissions=True)
 
