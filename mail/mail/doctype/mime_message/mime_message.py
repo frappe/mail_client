@@ -4,7 +4,6 @@
 import frappe
 from frappe import _
 from frappe.model.document import Document
-from frappe.utils.caching import request_cache
 from uuid_utils import uuid7
 
 
@@ -13,8 +12,11 @@ class MIMEMessage(Document):
 		self.name = str(uuid7())
 
 
-def create_mime_message(message: str | bytes) -> str:
+def create_mime_message(message: str | bytes | None = None) -> str | None:
 	"""Creates a MIME Message document from the given message"""
+
+	if not message:
+		return
 
 	if isinstance(message, bytes):
 		message = message.decode("utf-8")
@@ -26,8 +28,11 @@ def create_mime_message(message: str | bytes) -> str:
 	return doc.name
 
 
-def update_mime_message(name: str, message: str | bytes) -> None:
+def update_mime_message(name: str | None = None, message: str | bytes | None = None) -> None:
 	"""Updates the message of the MIME Message document"""
+
+	if not name or not message:
+		return
 
 	if isinstance(message, bytes):
 		message = message.decode("utf-8")
@@ -37,7 +42,6 @@ def update_mime_message(name: str, message: str | bytes) -> None:
 	doc.save(ignore_permissions=True)
 
 
-@request_cache
 def get_mime_message(name: str, raise_exception: bool = True) -> str | None:
 	"""Returns the message of the MIME Message document"""
 

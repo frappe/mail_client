@@ -1,7 +1,6 @@
 # Copyright (c) 2024, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
-import json
 import random
 from email import policy
 from email.encoders import encode_base64
@@ -24,9 +23,7 @@ from frappe.query_builder.functions import Now
 from frappe.utils import (
 	add_to_date,
 	cint,
-	convert_utc_to_system_timezone,
 	flt,
-	get_datetime,
 	get_datetime_str,
 	now,
 	time_diff_in_seconds,
