@@ -8,6 +8,7 @@ import frappe
 from frappe import _
 from frappe.model.document import Document
 
+from mail.mail.doctype.mail_agent_job.mail_agent_job import block_ip_on_agents, unblock_ip_on_agents
 from mail.utils.cache import get_blacklist_for_ip_group
 from mail.utils.dns import get_host_by_ip
 
@@ -25,6 +26,18 @@ class IPBlacklist(Document):
 
 	def on_update(self) -> None:
 		frappe.cache.delete_value(f"blacklist|{self.ip_group}")
+
+		if self.is_blacklisted:
+			if self.has_value_changed("is_blacklisted"):
+				block_ip_on_agents(self.ip_address)
+		elif self.has_value_changed("is_blacklisted"):
+			unblock_ip_on_agents(self.ip_address)
+
+	def on_trash(self) -> None:
+		frappe.cache.delete_value(f"blacklist|{self.ip_group}")
+
+		if self.is_blacklisted:
+			unblock_ip_on_agents(self.ip_address)
 
 	def set_ip_version(self) -> None:
 		"""Sets the IP version of the IP address"""

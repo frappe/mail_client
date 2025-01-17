@@ -97,6 +97,46 @@ def create_mail_agent_job(
 	return agent_job
 
 
+def block_ip_on_agents(ip_address: str, agents: list[str] | None = None) -> None:
+	"""Blocks an IP address on all primary agents."""
+
+	primary_agents = agents or get_primary_agents()
+
+	if not primary_agents:
+		return
+
+	request_data = json.dumps(
+		[
+			{
+				"type": "Insert",
+				"prefix": None,
+				"values": [[f"server.blocked-ip.{ip_address}", ""]],
+				"assert_empty": True,
+			}
+		]
+	)
+	for agent in primary_agents:
+		create_mail_agent_job(
+			agent=agent,
+			method="POST",
+			endpoint="/api/settings",
+			request_data=request_data,
+		)
+
+
+def unblock_ip_on_agents(ip_address: str, agents: list[str] | None = None) -> None:
+	"""Unblocks an IP address on all primary agents."""
+
+	primary_agents = agents or get_primary_agents()
+
+	if not primary_agents:
+		return
+
+	request_data = json.dumps([{"type": "Delete", "keys": [f"server.blocked-ip.{ip_address}"]}])
+	for agent in primary_agents:
+		create_mail_agent_job(agent=agent, method="POST", endpoint="/api/settings", request_data=request_data)
+
+
 def create_dkim_key_on_agents(
 	domain_name: str, rsa_private_key: str, ed25519_private_key: str, agents: list[str] | None = None
 ) -> None:
