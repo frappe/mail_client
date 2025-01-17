@@ -13,7 +13,7 @@
 import { Button } from 'frappe-ui'
 import { SquarePen } from 'lucide-vue-next'
 import SendMail from '@/components/Modals/SendMail.vue'
-import { ref, defineEmits } from 'vue'
+import { ref } from 'vue'
 
 const emit = defineEmits(['reloadMails'])
 

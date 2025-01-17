@@ -420,3 +420,12 @@ def update_draft_mail(
 
 	if do_submit:
 		doc.submit()
+
+
+@frappe.whitelist()
+def get_attachments(dt: str, dn: str):
+	return frappe.get_all(
+		"File",
+		fields=["name", "file_name", "file_url", "file_size"],
+		filters={"attached_to_name": dn, "attached_to_doctype": dt},
+	)
