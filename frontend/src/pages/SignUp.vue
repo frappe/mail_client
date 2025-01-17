@@ -75,6 +75,7 @@ import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { FormControl, Button, createResource, ErrorMessage } from 'frappe-ui'
 import { sessionStore } from '@/stores/session'
+import { raiseToast } from '@/utils'
 
 const router = useRouter()
 const { login } = sessionStore()
@@ -109,6 +110,7 @@ const signUp = createResource({
 		errorMessage.value = ''
 		accountRequest.value = data.name
 		isVerificationStep.value = true
+		raiseToast('A verification code has been sent to your registered email address.')
 	},
 	onError(error) {
 		errorMessage.value = error.messages[0]
@@ -121,10 +123,10 @@ const resendOtp = createResource({
 		return { account_request: accountRequest.value }
 	},
 	onSuccess() {
-		console.log('OTP resent')
+		raiseToast('A new verification code has been sent to your registered email address.')
 	},
 	onError(error) {
-		console.log(error.messages[0])
+		raiseToast(error.messages[0], 'error')
 	},
 })
 
