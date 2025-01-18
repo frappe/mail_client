@@ -419,7 +419,7 @@ class OutgoingMail(Document):
 
 			message["From"] = formataddr((self.display_name, self.sender))
 
-			for type in ["To", "Cc", "Bcc"]:
+			for type in ["To", "Cc"]:
 				if recipients := self._get_recipients(type):
 					message[type] = recipients
 
