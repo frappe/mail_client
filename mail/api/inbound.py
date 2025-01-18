@@ -141,7 +141,7 @@ def get_raw_incoming_mails(
 	IM = frappe.qb.DocType("Incoming Mail")
 	query = (
 		frappe.qb.from_(IM)
-		.select(IM.processed_at, IM.name.as_("id"), IM.message)
+		.select(IM.processed_at, IM.name.as_("id"), IM._message)
 		.where((IM.docstatus == 1) & (IM.receiver == account))
 		.orderby(IM.processed_at)
 		.limit(limit)
@@ -151,14 +151,22 @@ def get_raw_incoming_mails(
 		query = query.where(IM.processed_at > last_synced_at)
 
 	data = query.run(as_dict=True)
-	mails = [d.message for d in data]
-	last_synced_at = data[-1].processed_at if data else now()
-	last_synced_mail = data[-1].id if data else None
 
+	if not data:
+		return {
+			"mails": [],
+			"last_synced_at": now(),
+			"last_synced_mail": None,
+		}
+
+	MIME = frappe.qb.DocType("MIME Message")
+	mails = (
+		frappe.qb.from_(MIME).select(MIME.message).where(MIME.name.isin([d._message for d in data]))
+	).run(pluck="message")
 	return {
 		"mails": mails,
-		"last_synced_at": last_synced_at,
-		"last_synced_mail": last_synced_mail,
+		"last_synced_at": data[-1].processed_at,
+		"last_synced_mail": data[-1].id,
 	}
 
 
