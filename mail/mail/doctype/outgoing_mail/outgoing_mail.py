@@ -917,8 +917,9 @@ class OutgoingMail(Document):
 					rcpt.status = "Sent"
 					rcpt.db_update()
 
+			self.update_status()
 			self._db_set(
-				status="Sent",
+				status=self.status,
 				transfer_completed_at=transfer_completed_at,
 				transfer_completed_after=transfer_completed_after,
 				notify_update=True,
