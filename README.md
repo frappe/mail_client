@@ -1,329 +1,447 @@
-<div align="center">
-  <img src=".github/frappe-mail-logo.svg" height="80" alt="Frappe Mail Logo">
-  <h2>Frappe Mail</h2>
+<div align="center" markdown="1">
+
+<img src=".github/frappe-mail-logo.svg" alt="Frappe Mail logo" width="80" />
+<h1>Frappe Mail</h1>
+
+**End-to-End Email Management Platform**
+
 </div>
 
-Frappe Mail is an open-source email platform built on the [Frappe Framework](https://github.com/frappe/frappe), designed to streamline end-to-end email management. It’s organized into three core components [Client](https://github.com/frappe/mail_client), [Server](https://github.com/frappe/mail_server), and [Agent](https://github.com/frappe/mail_agent). The Client generates email messages and passes them to the Server for processing. The Server handles essential validations, such as checking user quotas, enforcing limits, and running spam checks. If all checks are cleared, the email is pushed to [RabbitMQ](https://github.com/rabbitmq/rabbitmq-server). The Agent then takes over, with multiple agents available to consume emails from the queue and deliver them through a locally connected [Haraka MTA](https://github.com/haraka/haraka) instance. With simple APIs, Frappe Mail makes it easy to integrate reliable email functionality into your applications.
+## Frappe Mail
 
-> Note: Frappe Mail Client is designed to work exclusively with the Frappe Mail Server and is not compatible with traditional email servers.
+Frappe Mail is a powerful and flexible email management system designed to streamline email communication for businesses. It provides an easy-to-use interface for sending, receiving, and managing email messages, all while ensuring robust security and reliability.
 
 ## Table of Contents
 
-- [Installation](#installation)
-- [Connecting to the Mail Server](#connecting-to-the-mail-server)
-- [Adding a Mail Domain](#adding-a-mail-domain)
-- [Adding a Mailbox](#adding-a-mailbox)
-- [Sending Your First Email](#sending-your-first-email)
-- [Outbound Reports](#outbound-reports)
-- [Receiving Emails](#receiving-emails)
-- [Mail Aliases](#mail-aliases)
+- [Introduction](#introduction)
+  - [Overview](#overview)
+  - [The Role of the Mail Agent](#the-role-of-the-mail-agent)
+  - [Key Features](#key-features)
+- [Getting Started](#getting-started)
+  - [Installation and Setup](#installation-and-setup)
+  - [Initial Configuration](#initial-configuration)
+  - [Sending Your First Email](#sending-your-first-email)
+- [Functionality](#functionality)
+  - [Managing Domains, Accounts, Groups, and Aliases](#managing-domains-accounts-groups-and-aliases)
+  - [Sending and Receiving Emails](#sending-and-receiving-emails)
+  - [Queue Management](#queue-management)
 - [APIs](#apis)
-  - [Auth](#1-auth-api)
+  - [Auth](#1-authentication-api)
   - [Outbound](#2-outbound-api)
   - [Inbound](#3-inbound-api)
 - [Frontend UI](#frontend-ui)
 - [Contributing](#contributing)
 - [License](#license)
 
-## Installation
+## Introduction
 
-You can install this app using the [bench](https://github.com/frappe/bench) CLI:
+The introduction provides an overview of the Frappe Mail, its purpose, and the key components that make it a robust email solution for managing communication. This section also offers an insight into the Mail Agent ([Stalwart Mail Server](https://github.com/stalwartlabs/mail-server)), which powers the mail functionalities within the app.
 
-1. Install Frappe Mail Client:
+### Overview
+
+Frappe Mail is a comprehensive email management solution integrated with the [Frappe Framework](https://github.com/frappe/frappe), designed to handle a wide range of email-related tasks. It provides users with the tools to send, receive, and manage emails while also offering essential features like email queue management, DKIM signing, and robust reporting. The app can be configured to work with the Mail Agent (Stalwart Mail Server), which handles the actual sending and receiving of emails.
+
+The app is built to scale, offering both simple and advanced features to cater to businesses of all sizes. With its seamless integration within the Frappe ecosystem, administrators and users can manage email settings, troubleshoot email delivery issues, and ensure secure communication between servers.
+
+Key functionalities include:
+
+- SMTP and IMAP connection pooling for efficient email delivery and retrieval.
+- Customizable email templates for automated messaging.
+- Integration with email security standards like DKIM, SPF, and DMARC.
+- Scalable infrastructure for handling high email volumes.
+
+### The Role of the Mail Agent
+
+The Mail Agent (Stalwart Mail Server) is a critical component of the Frappe Mail. It is a dedicated email server designed to handle all email-related communication in an efficient and reliable manner. The Mail Agent ensures the smooth sending and receiving of emails by managing various aspects like SMTP and IMAP connections, message queuing, and DKIM signing.
+
+As a mail server, the Mail Agent manages email transactions by authenticating email accounts, routing messages, and ensuring proper formatting. When a message is sent from the Mail App, the Mail Agent takes care of signing the email (if required), applying security protocols, and delivering the email to its destination.
+
+In summary, the Mail Agent serves the following key roles:
+
+- Handling the sending and receiving of emails via SMTP and IMAP.
+- Securing email communication through encryption and DKIM signatures.
+- Managing the connection pool for both SMTP and IMAP.
+- Supporting high-volume email workflows with efficient queuing mechanisms.
+
+### Key Features
+
+Frappe Mail comes equipped with several key features that make it an indispensable tool for businesses and organizations looking to manage their email operations effectively. These features include:
+
+- **SMTP and IMAP Connection Pooling:** Optimized for handling multiple email connections concurrently, improving overall performance and reducing the load on mail servers.
+- **DKIM Signing and Email Security:** Frappe Mail integrates with industry-standard security protocols such as DKIM, SPF, and DMARC, ensuring that emails sent through the system are secure and properly authenticated.
+- **Email Queuing and Retry Mechanism:** The Mail App includes an email queuing system to manage outbound messages, with automated retry features to handle transient failures and ensure email delivery.
+- **Advanced Reporting and Tracking:** Frappe Mail provides detailed reports on email delivery, bounce rates, and other performance metrics, enabling administrators to troubleshoot and optimize email workflows.
+- **Integration with the Frappe Ecosystem:** Seamlessly integrates with other Frappe applications, allowing for centralized management of email, notifications, and other communication tasks.
+  With these features, Frappe Mail is not only a powerful solution for managing email communication but also a flexible tool that can be customized to meet the specific needs of businesses, from sending marketing emails to transactional messages and customer support communication.
+
+Comming Soon:
+
+- **Customizable Email Templates:** Users can create and manage dynamic email templates to streamline communication, saving time and ensuring consistency in messaging.
+
+## Getting Started
+
+This section will help you set up and configure Frappe Mail, ensuring that your email system is ready to use. It includes instructions for installing both the Stalwart Mail Server and the Frappe Mail app, details about system requirements, and steps for the initial configuration.
+
+### Installation and Setup
+
+Follow these steps to install and set up Frappe Mail and its supporting components:
+
+#### Step 1: Install and Configure Stalwart Mail Server
+
+The Stalwart Mail Server is the backbone of Frappe Mail's functionality. Below are the instructions for setting up Stalwart for both development and production environments.
+
+**Development**
+
+Install the Stalwart Mail Server using the official [installation guide](https://stalw.art/docs/category/installation) or by running the following commands:
+
+```bash
+  curl --proto '=https' --tlsv1.2 -sSf https://get.stalw.art/install.sh -o install.sh
+  sudo sh install.sh
+```
+
+![stalwart-install](docs/screenshots/stalwart-install.png)
+
+**Production**
+
+Setting up Stalwart Mail Server for production requires additional configurations, such as DNS and TLS settings.
+
+1. **Set Up a Pointer or Reverse DNS Record (rDNS):**
+   Configure your mail server's pointer or rDNS record to match the Fully Qualified Domain Name (FQDN). Refer to the documentation of your provider.
+
+2. **Install Stalwart Mail Server:**
+   SSH into your VPS as the root user and install Stalwart using the following commands:
 
    ```bash
-   bench get-app mail_client
+     curl --proto '=https' --tlsv1.2 -sSf https://get.stalw.art/install.sh -o install.sh
+     sudo sh install.sh
    ```
 
-2. Create a site with the `mail_client` app:
+3. **Login to the Stalwart Admin Panel:**
+   Access your Stalwart Mail Server using the administrator credentials provided after installation.
+
+4. **Set Hostname:**
+   Navigate to **Network Settings** in the Stalwart admin panel and configure the hostname to your FQDN.
+   ![stalwart-network-settings](docs/screenshots/stalwart-network-settings.png)
+
+5. **Configure TLS Certificates:**
+
+   - Go to **Server > TLS > ACME Providers** and create a new provider.
+     ![stalwart-tls-ACME-provider](docs/screenshots/stalwart-tls-ACME-provider.png)
+   - Alternatively, add your existing TLS certificates.
+
+6. **Restart the Stalwart Mail Server:**
+   Apply the changes by restarting the server:
 
    ```bash
-   bench --site sitename.localhost install-app mail_client
+     sudo systemctl restart stalwart-mail
    ```
 
-3. Open the site in the browser:
+#### Step 2: Install Frappe Mail
+
+Once the Stalwart Mail Server is set up, proceed to install the Frappe Mail app.
+
+1. **Prerequisite:** Ensure that the [Frappe Bench](https://github.com/frappe/bench) is installed and running on your system.
+   Refer to the [Frappe installation guide](https://docs.frappe.io/framework/user/en/installation) if you haven't already set it up.
+
+2. **Install the Mail App and Create a Site:**
+   Run the following commands to install the Mail app and set up a new Frappe site:
 
    ```bash
-   bench browse sitename.localhost --user Administrator
+     bench get-app mail
+     bench new-site mail.localhost --install-app mail
+     bench browse mail.localhost --user Administrator
    ```
 
-## Connecting to the Mail Server
+### Initial Configuration
 
-1. **Open Mail Client Settings:** In the Frappe Mail Client, navigate to **Mail Client Settings** to configure the connection to your Mail Server.
+After successfully installing Frappe Mail, follow these steps to configure your email system. This involves setting up DNS records, connecting the Mail Agent (Stalwart Mail Server), and creating domains and accounts.
 
-2. **Add Mail Server Details:** Enter the following details:
+#### Step 1: Configure Mail Settings
 
-   - **Mail Server:** Specify the URL or IP address of the Frappe Mail Server.
-   - **API Key and API Secret:** Provide the API credentials generated on the Mail Server. These are used to authenticate and secure the connection between the Client and Server.
+1. **Set Root Domain Name:**
 
-3. **Save and Validate:** After entering the details, click Save. The credentials will be automatically validated. If there are any issues, an error message will appear to help you troubleshoot the configuration.
+   - Navigate to **Mail Settings** and define the Root Domain Name.
+   - This Root Domain is critical for configuring DNS records, such as Root SPF, DKIM keys, and the external DMARC record.
 
-![mail-settings-details](docs/screenshots/mail-settings-details.png)
+   ![mail-settings-details](docs/screenshots/mail-settings-details.png)
 
-## Adding a Mail Domain
+2. **Configure DNS Provider (Optional):**
 
-To send and receive emails with your Frappe Mail Client, you'll need to add a Mail Domain. Here are the steps to do that:
+   - If you are using **DigitalOcean** as your DNS provider, enable its integration in Mail Settings. This will automate the creation of server DNS records.
+   - If you use another DNS provider, you'll need to manually create the required DNS records.
 
-1. **Navigate to Mail Domains:** Go to the Mail Domain in your Frappe Mail Client to add a Mail Domain.
+   **_Note:_** Currently, only DigitalOcean integration is supported, but additional DNS providers will be added in future updates.
 
-2. **Enter Domain Name:** In the field provided, input your desired domain name (e.g., frappemail.com).
-   ![mail-domain-new](docs/screenshots/mail-domain-new.png)
+3. **Set Outbound and Inbound Limits (Optional):**
 
-3. **Save the Domain:** Click Save to register the domain. After saving, you will see the necessary DNS records that need to be added to your domain registrar (like Namecheap, GoDaddy, or Cloudflare).
-   ![mail-domain-dns-records](docs/screenshots/mail-domain-dns-records.png)
+   - Define email outbound and inbound limits based on your requirements or the configurations of your Stalwart Mail Server.
 
-4. **Add DNS Records:** Go to your domain registrar’s DNS management panel and add the provided DNS records. These typically include SPF, DMARC and MX records for proper email delivery.
+   ![mail-settings-outbound-limits](docs/screenshots/mail-settings-outbound-limits.png)
+   ![mail-settings-inbound-limits](docs/screenshots/mail-settings-inbound-limits.png)
 
-5. **Verify the Mail Domain:** Once you’ve added the DNS records, return to the Mail Domain. Click on Actions and then select Verify DNS Records.
+#### Step 2: Add Mail Agent
 
-   ![mail-domain-verify-dns-records](docs/screenshots/mail-domain-verify-dns-records.png)
+To connect Frappe Mail with the Stalwart Mail Server(s), configure Mail Agents and Mail Agent Groups.
 
-   A notification will appear showing the verification results. If all the DNS records match, the verified checkbox will automatically be checked, indicating that your domain is set up correctly.
+1. **Create a Mail Agent Group:**
 
-   > **Note:** Please note that DNS verification may take some time to complete because of the TTL (Time to Live) settings on your DNS records. Changes to DNS records may not propagate immediately due to caching by DNS servers.
+   - Go to **Mail Agent Group** and create a new Mail Agent Group.
+   - Each Mail Agent must belong to a group, which helps manage multiple agents.
+     - **MX Records:** Generated based on enabled inbound Mail Agent Groups for Mail Domains.
+     - **Root SPF Record:** Automatically created/updated to include enabled outbound Mail Agents.
+   - For a single Stalwart instance:
+     - Use its **hostname** as the Mail Agent Group host.
+     - For locally installed Stalwart, use **localhost**.
 
-6. **Repeat:** To add additional domains, simply repeat the process for each new domain you want to add.
+   ![mail-agent-group](docs/screenshots/mail-agent-group.png)
 
-By following these steps, your mail domain will be successfully added and verified, enabling you to send and receive emails through your Frappe Mail setup.
+2. **Add a Mail Agent:**
 
-## Adding a Mailbox
+   - Navigate to **Mail Agent** and create a new Mail Agent.
+   - Select the Mail Agent Group created in the previous step.
+   - Provide either:
+     - **API Key:** Add it directly.
+     - **Username and Password:** The system will generate an API Key automatically.
 
-To set up a new mailbox for your users, follow these steps:
+   ![mail-agent](docs/screenshots/mail-agent.png)
 
-1. **Navigate to Mailboxes:** Go to the Mailbox in your Frappe Mail Client to add a new Mailbox.
+3. **Verify and Update DNS Records:**
 
-2. **Select Domain Name:** From the dropdown, choose the domain name under which you want to create the mailbox.
+   - When a Agent or Agent Group is added, necessary DNS records are created or updated.
+   - If a DNS provider is not configured, manually add or update the DNS records with your domain registrar.
 
-3. **Select User:** Choose the user who will be assigned this mailbox. Ensure that the user has the **Mailbox User** role assigned.
+     ![spf-dns-record](docs/screenshots/spf-dns-record.png)
 
-4. **Enter Email Address:** In the provided field, enter the email address that belongs to your selected domain (e.g., sagar.s@frappemail.com).
+#### Step 3: Add Mail Domains
 
-5. **Save the Mailbox:** Click Save to create the mailbox.
+1. Navigate to the **Mail Domain** and create a new domain or subdomain from which you want to send emails.
+2. Upon adding a domain, a list of required DNS records (SPF, DKIM, DMARC, etc.) will be displayed. Add these records to your domain registrar.
+3. After updating the DNS records, verify them:
+   - Click **Actions > Verify DNS Records** to ensure proper configuration.
+4. Repeat this process to add additional domains as needed.
 
-   ![mailbox](docs/screenshots/mailbox.png)
+![mail-domain](docs/screenshots/mail-domain.png)
 
-6. **Repeat:** To add additional mailboxes, simply repeat the process for each new mailbox you want to create.
+#### Step 4: Add Mail Accounts
 
-By following these steps, you will successfully add a mailbox for the specified user, enabling them to send and receive emails through your Frappe Mail setup.
+1. Go to the **Mail Account** and create a new Mail Account.
+2. Assign the following:
+   - **Domain:** Select one of the domains configured in the previous step.
+   - **User:** Choose the user (with the Mail User role) to whom this account will belong.
+3. Save the document, and repeat the process for any additional accounts.
 
-## Sending Your First Email
+![mail-account](docs/screenshots/mail-account.png)
 
-To send your first email, follow these steps:
+### Sending Your First Email
 
-1. **Access Outgoing Mail:** Navigate to the Outgoing Mail in the Frappe Mail Client and create a new outgoing email.
+Frappe Mail offers three simple ways to send emails:
 
-2. **Select Sender Mailbox:** If you’re associated with multiple mailboxes, choose the mailbox you want to send the email from.
+1. **Using the Mail UI**
+2. **Through the Desk Interface**
+3. **Via APIs**
 
-3. **Compose Your Email:** Enter the subject, recipients, and body of your email.
+#### 1. Sending Emails from the Mail UI
 
-4. **Save and Submit:** Click Save to store your email, then submit it. The status will change to Pending, indicating that the outgoing email is awaiting processing.
+- Go to the Mail UI at `/mail`.
+- Click the **Compose** button to open the email editor.
+- Fill in the recipient's address, email subject, and message body.
+- Click **Send** to deliver your email.
 
-5. **Transfer the Email:** The email will be picked up by a scheduled job to transfer it to the Mail Server. Alternatively, you can use the **Actions > Transfer Now** option to prioritize sending the email immediately.
+![outgoing-mail-ui](docs/screenshots/outgoing-mail-ui.png)
 
-   ![outgoing-mail-transfer-now](docs/screenshots/outgoing-mail-transfer-now.png)
+#### 2. Sending Emails from the Desk Interface
 
-6. **Email Processing:** Once transferred to the Mail Server, the status changes to Queued. The Mail Server will then process your email, performing a spam check. If flagged as spam, the email will be blocked. Otherwise, it will be sent to the recipients, and the status will be updated accordingly.
+- Navigate to the **Outgoing Mail**.
+- Create a new document, then add the email subject, body, and recipients.
+- Save and submit the document to send the email.
 
-   ![outgoing-mail-sent](docs/screenshots/outgoing-mail-sent.png)
+![outgoing-mail-desk](docs/screenshots/outgoing-mail-desk.png)
 
-7. **View SMTP Response:** After the email has been sent, you can find the response received from the SMTP server for each recipient in the recipient row. This information will provide insights into the delivery status and any issues encountered during the sending process.
+**_Note:_** This method requires manually adding HTML content, as it does not include a rich text editor.
 
-   ![outgoing-mail-smtp-response](docs/screenshots/outgoing-mail-smtp-response.png)
+#### 3. Sending Emails via APIs
 
-8. **Track Open Status:** If tracking is enabled for the mailbox, you can also view the open status and count of the email. This feature allows you to monitor whether the recipients have opened the email, providing valuable insights into engagement.
+- For programmatic email sending, refer to the [Outbound API](#2-outbound-api) section in the documentation.
 
-   ![outgoing-mail-tracking](docs/screenshots/outgoing-mail-tracking.png)
+With these options, you can choose the method that best suits your workflow or automation needs.
 
-## Outbound Reports
+## Functionality
 
-Frappe Mail provides three insightful reports to help you analyze email performance:
+This section explains the core functionalities of Frappe Mail, including how to manage domains, accounts, groups, and aliases, as well as how to send and receive emails. It also covers the management of email queues for efficient processing.
 
-1. **Outgoing Mail Summary:** This report displays the total number of sent, bounced, and deferred emails. You can apply various filters to tailor the view to your needs. Additionally, it includes the SMTP responses for all emails, making it a valuable tool for assessing email volume and identifying reasons for any undelivered messages.
+### Managing Domains, Accounts, Groups, and Aliases
 
-   ![report-outgoing-mail-summary](docs/screenshots/report-outgoing-mail-summary.png)
+Frappe Mail provides an easy-to-use interface for managing the various components of your email system. Here's how you can set up and manage each of these elements:
 
-2. **Mail Tracker:** Use this report to monitor emails that have tracking pixels attached. It provides information on how many times these emails have been opened, along with details such as open counts, timestamps, and IP addresses of the recipients.
+#### Domains:
 
-   ![report-mail-tracker](docs/screenshots/report-mail-tracker.png)
+- A domain represents your email domain (e.g., example.com) and is used to define the sending and receiving email addresses.
+- You can add, remove, and configure multiple domains in Frappe Mail. Each domain must be verified and associated with the appropriate MX, SPF, and DKIM records to ensure email deliverability and security.
 
-3. **Outbound Delay:** This report tracks the time taken for outgoing emails at different stages, including submission and transfer. It helps you understand where delays may occur in the email sending process.
+#### Accounts:
 
-   ![report-outbound-delay](docs/screenshots/report-outbound-delay.png)
+- An mail account in Frappe Mail is associated with a user (with Mail User role) (e.g., user@example.com).
+- You can create accounts manually through the desk, and assign roles and permissions to manage who can send and receive emails.
 
-## Receiving Emails
+#### Groups:
 
-When an email is sent to your registered domains, the Mail Server processes it and transfers it to your Frappe Mail Client after conducting a spam check. The email will be parsed and accepted if the recipient is valid; otherwise, it will be rejected. If the **Send Notification on Reject** option is enabled in the Mail Client Settings, a notification email will be sent to the sender when their email is rejected. Additionally, rejected emails are automatically deleted to conserve storage space, in accordance with the **Rejected Mail Retention** setting.
+- Mail groups allow you to organize multiple email accounts under one entity. These are useful for managing shared email addresses or sending emails to a group of recipients.
+- You can create and manage groups within the app and assign members to each group.
+- A group can also have a group as a member, allowing for nested group structures.
 
-![mail-settings-incoming](docs/screenshots/mail-settings-incoming.png)
+#### Aliases:
 
-You can view received emails in the **Incoming Mail**, where you will find details about the sender's SMTP server and the time taken at different stages of the email lifecycle. The results of authentication checks such as SPF, DKIM, and DMARC will also be displayed, along with their respective descriptions.
+- Aliases are alternative email addresses for existing accounts or group (e.g., sale@example.com could be an alias for sales@example.com).
+- Aliases can be managed and configured to forward incoming emails to the main account or to a group.
 
-![incoming-mail-accepted](docs/screenshots/incoming-mail-accepted.png)
+### Sending and Receiving Emails
 
-![incoming-mail-more-info](docs/screenshots/incoming-mail-more-info.png)
+Frappe Mail simplifies the process of sending and receiving emails through its seamless integration with the Mail Agent (Stalwart Mail Server). Here's how it works:
 
-![incoming-mail-auth-checks](docs/screenshots/incoming-mail-auth-checks.png)
+#### Sending Emails:
 
-## Mail Aliases
+- To send an email, Frappe Mail connects to the SMTP server through the configured Mail Agent.
+- When a user sends an email, Frappe Mail retrieves an available connection from the SMTP pool. If no connection is available, a new one is created.
+- The email is then processed, and if necessary, additional operations such as DKIM signing are performed before sending the email through the Mail Agent to the recipient's mail server.
 
-You can create an alias or group to deliver emails to multiple mailboxes. To set up a mail alias, follow these steps:
+#### Receiving Emails:
 
-1. **Go to Mail Alias:** Navigate to the Mail Alias and click on **Add Mail Alias**.
+- Frappe Mail also manages the IMAP connection for receiving emails. It connects to the configured IMAP server and periodically checks for new emails.
+- Once an email is received, it is stored in the user's inbox/spam folder based on the email's classification.
+- Users can access their received emails through the app’s inbox interface, and emails can be organized into folders or marked with labels as needed.
 
-2. **Select Domain Name:** Choose the appropriate domain from the dropdown list.
+### Queue Management
 
-3. **Set the Alias:** Enter the alias, such as team@frappemail.com.
+Frappe Mail uses a queueing system to manage the sending and receiving of emails efficiently. This ensures that email traffic is processed in a timely manner without overloading the system.
 
-4. **Select Mailboxes:** Choose the mailbox(es) that you want to receive emails sent to this alias. Ensure that the selected mailboxes have incoming enabled.
+#### Email Queue for Outbound Emails:
 
-5. **Save the Alias:** Click **Save**.
+- Emails are placed in a queue before being sent out. This allows the system to manage high volumes of outgoing emails by ensuring that they are sent in a order.
+- The queue can be monitored and managed, and administrators can control the maximum number of concurrent connections to the mail server for optimized performance.
 
-![mail-alias](docs/screenshots/mail-alias.png)
+#### Inbound Email Queue:
 
-Now, all emails sent to team@frappemail.com will be delivered to the selected mailboxes.
+Similarly, inbound emails are placed in a queue for processing. This allows Frappe Mail to handle large volumes of incoming emails and ensures that each email is processed properly, including filtering, categorization, and delivery to the appropriate inbox.
+
+#### Error Handling:
+
+- If there’s an error while sending or receiving an email, it is placed in a separate error queue. Administrators can review these emails and resolve any issues that might have caused the failure (e.g., connection issues, invalid credentials, etc.).
+
+Queue management ensures that emails are processed efficiently, even under high load, and provides the necessary tools for administrators to keep track of all email activity.
 
 ## APIs
 
-### 1. Auth API
+### 1. Authentication API
 
 #### 1.1 Validate
 
-**Endpoint:** `POST /auth/validate` or `/api/method/mail.api.auth.validate`
-
-**Description:** Validates whether a specific mailbox has permissions for inbound (receiving) or outbound (sending) email functions. Useful for checking mailbox configuration and ensuring that email workflows are properly authorized.
-
-**Parameters:**
-
-- `mailbox` (str | None = None): The mailbox to validate.
-- `for_inbound` (bool = False): Set to `True` to validate if the mailbox is configured for inbound emails.
-- `for_outbound` (bool = False): Set to `True` to validate if the mailbox is configured for outbound emails.
-
-**Response:** Returns nothing if validation is successful. Throws an exception with the reason if the mailbox cannot be validated.
+- **Endpoint:** `POST /auth/validate` or `/api/method/mail.api.auth.validate`
+- **Description:** Validates if a user has the required permissions for an account.
+- **Parameters:**
+  - `account` (str | None = None): The account to validate.
+- **Response:** Returns nothing if validation is successful. Throws an exception with the reason if the account cannot be validated.
 
 ### 2. Outbound API
 
-These endpoints facilitate sending emails from the Frappe Mail Client.
+APIs for sending emails through Frappe Mail.
 
 #### 2.1 Send
 
-**Endpoint:** `POST /outbound/send` or `/api/method/mail.api.outbound.send`
-
-**Description:** Sends an email message with options for attachments, carbon copies (cc), and blind carbon copies (bcc).
-
-**Parameters:**
-
-- `from_` (str): The sender's email address.
-- `to` (str | list[str]): Recipient email(s).
-- `subject` (str): Subject of the email.
-- `cc` (str | list[str] | None): Optional carbon copy recipients.
-- `bcc` (str | list[str] | None): Optional blind carbon copy recipients.
-- `html` (str | None): Optional HTML body of the email.
-- `reply_to` (str | list[str] | None): Optional reply-to email(s).
-- `in_reply_to_mail_type` (str | None): Optional reference type for the email being replied to.
-- `in_reply_to_mail_name` (str | None): Optional reference ID for the email being replied to.
-- `custom_headers` (dict | None): Optional custom headers.
-- `attachments` (list[dict] | None): List of attachments.
-- `is_newsletter` (bool): Optional flag to mark the email as a newsletter. Defaults to False.
-
-**Response:** Returns a UUID (name) of the created Outgoing Mail.
-
-**Example Response:**
-
-```json
-{ "message": "019300a4-91fc-741f-9fe5-9ade8976637f" }
-```
+- **Endpoint:** `POST /outbound/send` or `/api/method/mail.api.outbound.send`
+- **Description:** Sends an email message with options for attachments, carbon copies (cc), and blind carbon copies (bcc).
+- **Parameters:**
+  - `from_` (str): The sender's email address.
+  - `to` (str | list[str]): Recipient email(s).
+  - `subject` (str): Subject of the email.
+  - `cc` (str | list[str] | None): Optional carbon copy recipients.
+  - `bcc` (str | list[str] | None): Optional blind carbon copy recipients.
+  - `html` (str | None): Optional HTML body of the email.
+  - `reply_to` (str | list[str] | None): Optional reply-to email(s).
+  - `in_reply_to_mail_type` (str | None): Optional reference type for the email being replied to.
+  - `in_reply_to_mail_name` (str | None): Optional reference ID for the email being replied to.
+  - `custom_headers` (dict | None): Optional custom headers.
+  - `attachments` (list[dict] | None): List of attachments.
+  - `is_newsletter` (bool): Optional flag to mark the email as a newsletter. Defaults to False.
+- **Response:** Returns a UUID (name) of the created Outgoing Mail.
+- **Example Response:**
+  ```json
+  { "message": "019300a4-91fc-741f-9fe5-9ade8976637f" }
+  ```
 
 #### 2.2 Send Raw
 
-**Endpoint:** `POST /outbound/send-raw` or `/api/method/mail.api.outbound.send_raw`
-
-**Description:** Sends a raw MIME message. This can be useful for users who want to send a preformatted email.
-
-**Parameters:**
-
-- `from_` (str): Sender's email address.
-- `to` (str | list[str]): Recipient email(s).
-- `raw_message` (str): The complete raw MIME message.
-- `is_newsletter` (bool): Optional flag to mark the email as a newsletter. Defaults to False.
-
-**Response:** Returns the UUID (name) of the created Outgoing Mail.
-
-**Example Response:**
-
-```json
-{ "message": "019300a4-91fc-741f-9fe5-9ade8976637f" }
-```
+- **Endpoint:** `POST /outbound/send-raw` or `/api/method/mail.api.outbound.send_raw`
+- **Description:** Sends a raw MIME message. This can be useful for users who want to send a preformatted email.
+- **Parameters:**
+  - `from_` (str): Sender's email address.
+  - `to` (str | list[str]): Recipient email(s).
+  - `raw_message` (str): The complete raw MIME message.
+  - `is_newsletter` (bool): Optional flag to mark the email as a newsletter. Defaults to False.
+- **Response:** Returns the UUID (name) of the created Outgoing Mail.
+- **Example Response:**
+  ```json
+  { "message": "019300a4-91fc-741f-9fe5-9ade8976637f" }
+  ```
 
 ### 3. Inbound API
 
-These endpoints are for retrieving received emails.
+APIs for retrieving received emails.
 
 #### 3.1 Pull
 
-**Endpoint:** `GET /inbound/pull` or `/api/method/mail.api.inbound.pull`
-
-**Description:** Fetches a list of received emails for a specified mailbox.
-
-**Parameters:**
-
-- `mailbox` (str): The mailbox from which to pull emails.
-- `limit` (int = 50): Maximum number of emails to retrieve.
-- `last_synced_at` (str | None): Optional timestamp to fetch emails received after this time.
-
-**Response:** Returns a dictionary with a list of received email details.
-
-**Example Response:**
-
-```json
-{
-  "message": {
-    "mails": [
-      {
-        "id": "019300b2-c261-71d1-bc8d-bc321cc9ebaf",
-        "folder": "Inbox",
-        "created_at": "2024-11-06 08:57:26+00:00",
-        "subject": "Test Email",
-        "html": "<html><body><p>Test Email</p></body></html>",
-        "text": "Test Email",
-        "reply_to": null,
-        "from": "Sagar Sharma <sagar.s@frappemail.com>",
-        "to": ["Sagar S <me@s-aga-r.dev>"],
-        "cc": []
-      }
-    ],
-    "last_synced_at": "2024-11-06 08:58:55.528916+00:00",
-    "last_synced_mail": "019300b2-c261-71d1-bc8d-bc321cc9ebaf"
+- **Endpoint:** `GET /inbound/pull` or `/api/method/mail.api.inbound.pull`
+- **Description:** Fetches a list of received emails for a specified account.
+- **Parameters:**
+  - `account` (str): The account from which to pull emails.
+  - `limit` (int = 50): Maximum number of emails to retrieve.
+  - `last_synced_at` (str | None): Optional timestamp to fetch emails received after this time.
+- **Response:** Returns a dictionary with a list of received email details.
+- **Example Response:**
+  ```json
+  {
+    "message": {
+      "mails": [
+        {
+          "id": "019300b2-c261-71d1-bc8d-bc321cc9ebaf",
+          "folder": "Inbox",
+          "created_at": "2024-11-06 08:57:26+00:00",
+          "subject": "Test Email",
+          "html": "<html><body><p>Test Email</p></body></html>",
+          "text": "Test Email",
+          "reply_to": null,
+          "from": "Sagar Sharma <sagar.s@frappemail.com>",
+          "to": ["Sagar S <me@s-aga-r.dev>"],
+          "cc": []
+        }
+      ],
+      "last_synced_at": "2024-11-06 08:58:55.528916+00:00",
+      "last_synced_mail": "019300b2-c261-71d1-bc8d-bc321cc9ebaf"
+    }
   }
-}
-```
+  ```
 
 #### 3.2 Pull Raw
 
-**Endpoint:** `GET /inbound/pull-raw` or `/api/method/mail.api.inbound.pull_raw`
-
-**Description:** Fetches raw MIME messages for received emails.
-
-**Parameters:** Same as `/inbound/pull`.
-
-**Response:** Returns raw MIME messages.
-
-**Example Response:**
-
-```json
-{
-  "message": {
-    "mails": [
-      "Delivered-To: me@s-aga-r.dev\r\nReceived-At: 2024-11-06T08:58:30.063Z\r\nAuthentication-Results: mail.s-aga-r.dev;\r\n\tspf=pass (mail.s-aga-r.dev: domain of sagar.s@frappemail.com designates 64.227.189.58 as permitted sender) smtp.mailfrom=sagar.s@frappemail.com smtp.helo=o1-blr.frappemail.com;\r\n\tdkim=pass header.i=@frappemail.com header.s=frappemail-com-d8852addda header.a=rsa-sha256 header.b=qJlPddwY;\r\n\tdmarc=pass (p=REJECT arc=none) header.from=frappemail.com header.d=frappemail.com;\r\n\tbimi=none\r\nReceived-SPF: pass (mail.s-aga-r.dev: domain of sagar.s@frappemail.com designates 64.227.189.58 as permitted sender) client-ip=64.227.189.58;\r\nReceived: from o1-blr.frappemail.com (o1-blr.frappemail.com [64.227.189.58])\r\n\tby mail.s-aga-r.dev (Haraka/3.0.3) with ESMTPS id EA28E71F-ED28-44DE-86E3-A783E1B759E0.1\r\n\tenvelope-from <sagar.s@frappemail.com>\r\n\ttls TLS_AES_256_GCM_SHA384;\r\n\tWed, 06 Nov 2024 08:58:29 +0000\r\nReceived: (Frappe Mail Agent); Wed, 06 Nov 2024 08:58:29 +0000\r\nReceived: from o1-blr.frappemail.com (ip6-localhost [::1])\r\n\tby o1-blr.frappemail.com (Haraka/3.0.3) with ESMTPSA id BF84C129-A129-4818-88F2-2A216D4D040D.1\r\n\tenvelope-from <sagar.s@frappemail.com>\r\n\ttls TLS_AES_256_GCM_SHA384 (authenticated bits=0);\r\n\tWed, 06 Nov 2024 08:58:29 +0000\r\nContent-Type: multipart/alternative;\r\n boundary=\"===============0863045983596233963==\"\r\nMIME-Version: 1.0\r\nFrom: Sagar Sharma <sagar.s@frappemail.com>\r\nTo: Sagar S <me@s-aga-r.dev>\r\nSubject: Test Email\r\nDate: Wed, 06 Nov 2024 08:57:26 +0000\r\nMessage-ID: <173088344652.222.8316241415157629603@frappemail.com>\r\nX-Priority: 1\r\nDKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=frappemail.com;\r\n i=@frappemail.com; q=dns/txt; s=frappemail-com-d8852addda; t=1730883446; h=to\r\n : cc : from : date : subject : reply-to : message-id : in-reply-to;\r\n bh=k/MZq04SX5ovIG3cljRzVc8RLJpPS8/IC/KDyuOdV3I=;\r\n b=qJlPddwYBSyHtM/n34p3t3GLjmiHkbANF1m+9m/H4PgHC4LVwtgpS8Yo62uC4T84PoRqZ\r\n h5r+9Vcs/mgXcH2BeMyoqMO4H1Vk6iC6NvEYiHs+iQFjdwgKodpvLuSEls111e6U9+NCybq\r\n OwuDiQ28SiwvmdbVWOrxOACvl4LuJorWdIJ6i5iXelz/f52QMm1tlP2Wh2dXT7Mu6nTGO7g\r\n KpuieIHnDMTurQplxp2dOSnpwsw7I1sr3aHFDyP6oFONzMvTiK+/X2iCMg/W+nMjE4nz+2B\r\n DO7MTGFmB4RsUDyf+HtYVGFe/HggFK6XROWtUJR0CcmWVt9SeK3S5X+OT+tA==\r\nX-FM-OML: 019300b1-f29c-7868-af63-3513911e6801\r\nOriginal-Authentication-Results: o1-blr.frappemail.com;\r\n\tauth=pass (plain)\r\n\r\n--===============0863045983596233963==\r\nContent-Type: text/plain; charset=\"utf-8\"\r\nMIME-Version: 1.0\r\nContent-Transfer-Encoding: base64\r\n\r\nVGVzdCBFbWFpbA==\r\n\r\n--===============0863045983596233963==\r\nContent-Type: text/html; charset=\"utf-8\"\r\nMIME-Version: 1.0\r\nContent-Transfer-Encoding: base64\r\n\r\nPGh0bWw+PGJvZHk+PGltZyBzcmM9Imh0dHBzOi8vY2xpZW50LmZyYXBwZW1haWwuY29tL2FwaS9t\r\nZXRob2QvbWFpbC5hcGkudHJhY2sub3Blbj9pZD0wMTkzMDBiMTY3MjI3MGVjYWE0YWI5OTlmOTBm\r\nMmQ5MCI+PHA+VGVzdCBFbWFpbDwvcD48L2JvZHk+PC9odG1sPg==\r\n\r\n--===============0863045983596233963==--\r\n"
-    ],
-    "last_synced_at": "2024-11-06 08:58:55.528916+00:00",
-    "last_synced_mail": "019300b2-c261-71d1-bc8d-bc321cc9ebaf"
+- **Endpoint:** `GET /inbound/pull-raw` or `/api/method/mail.api.inbound.pull_raw`
+- **Description:** Fetches raw MIME messages for received emails.
+- **Parameters:** Same as `/inbound/pull`.
+- **Response:** Returns raw MIME messages.
+- **Example Response:**
+  ```json
+  {
+    "message": {
+      "mails": [
+        "Delivered-To: me@s-aga-r.dev\r\nReceived-At: 2024-11-06T08:58:30.063Z\r\nAuthentication-Results: mail.s-aga-r.dev;\r\n\tspf=pass (mail.s-aga-r.dev: domain of sagar.s@frappemail.com designates 64.227.189.58 as permitted sender) smtp.mailfrom=sagar.s@frappemail.com smtp.helo=o1-blr.frappemail.com;\r\n\tdkim=pass header.i=@frappemail.com header.s=frappemail-com-d8852addda header.a=rsa-sha256 header.b=qJlPddwY;\r\n\tdmarc=pass (p=REJECT arc=none) header.from=frappemail.com header.d=frappemail.com;\r\n\tbimi=none\r\nReceived-SPF: pass (mail.s-aga-r.dev: domain of sagar.s@frappemail.com designates 64.227.189.58 as permitted sender) client-ip=64.227.189.58;\r\nReceived: from o1-blr.frappemail.com (o1-blr.frappemail.com [64.227.189.58])\r\n\tby mail.s-aga-r.dev (Haraka/3.0.3) with ESMTPS id EA28E71F-ED28-44DE-86E3-A783E1B759E0.1\r\n\tenvelope-from <sagar.s@frappemail.com>\r\n\ttls TLS_AES_256_GCM_SHA384;\r\n\tWed, 06 Nov 2024 08:58:29 +0000\r\nReceived: (Frappe Mail Agent); Wed, 06 Nov 2024 08:58:29 +0000\r\nReceived: from o1-blr.frappemail.com (ip6-localhost [::1])\r\n\tby o1-blr.frappemail.com (Haraka/3.0.3) with ESMTPSA id BF84C129-A129-4818-88F2-2A216D4D040D.1\r\n\tenvelope-from <sagar.s@frappemail.com>\r\n\ttls TLS_AES_256_GCM_SHA384 (authenticated bits=0);\r\n\tWed, 06 Nov 2024 08:58:29 +0000\r\nContent-Type: multipart/alternative;\r\n boundary=\"===============0863045983596233963==\"\r\nMIME-Version: 1.0\r\nFrom: Sagar Sharma <sagar.s@frappemail.com>\r\nTo: Sagar S <me@s-aga-r.dev>\r\nSubject: Test Email\r\nDate: Wed, 06 Nov 2024 08:57:26 +0000\r\nMessage-ID: <173088344652.222.8316241415157629603@frappemail.com>\r\nX-Priority: 1\r\nDKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=frappemail.com;\r\n i=@frappemail.com; q=dns/txt; s=frappemail-com-d8852addda; t=1730883446; h=to\r\n : cc : from : date : subject : reply-to : message-id : in-reply-to;\r\n bh=k/MZq04SX5ovIG3cljRzVc8RLJpPS8/IC/KDyuOdV3I=;\r\n b=qJlPddwYBSyHtM/n34p3t3GLjmiHkbANF1m+9m/H4PgHC4LVwtgpS8Yo62uC4T84PoRqZ\r\n h5r+9Vcs/mgXcH2BeMyoqMO4H1Vk6iC6NvEYiHs+iQFjdwgKodpvLuSEls111e6U9+NCybq\r\n OwuDiQ28SiwvmdbVWOrxOACvl4LuJorWdIJ6i5iXelz/f52QMm1tlP2Wh2dXT7Mu6nTGO7g\r\n KpuieIHnDMTurQplxp2dOSnpwsw7I1sr3aHFDyP6oFONzMvTiK+/X2iCMg/W+nMjE4nz+2B\r\n DO7MTGFmB4RsUDyf+HtYVGFe/HggFK6XROWtUJR0CcmWVt9SeK3S5X+OT+tA==\r\nX-FM-OML: 019300b1-f29c-7868-af63-3513911e6801\r\nOriginal-Authentication-Results: o1-blr.frappemail.com;\r\n\tauth=pass (plain)\r\n\r\n--===============0863045983596233963==\r\nContent-Type: text/plain; charset=\"utf-8\"\r\nMIME-Version: 1.0\r\nContent-Transfer-Encoding: base64\r\n\r\nVGVzdCBFbWFpbA==\r\n\r\n--===============0863045983596233963==\r\nContent-Type: text/html; charset=\"utf-8\"\r\nMIME-Version: 1.0\r\nContent-Transfer-Encoding: base64\r\n\r\nPGh0bWw+PGJvZHk+PGltZyBzcmM9Imh0dHBzOi8vY2xpZW50LmZyYXBwZW1haWwuY29tL2FwaS9t\r\nZXRob2QvbWFpbC5hcGkudHJhY2sub3Blbj9pZD0wMTkzMDBiMTY3MjI3MGVjYWE0YWI5OTlmOTBm\r\nMmQ5MCI+PHA+VGVzdCBFbWFpbDwvcD48L2JvZHk+PC9odG1sPg==\r\n\r\n--===============0863045983596233963==--\r\n"
+      ],
+      "last_synced_at": "2024-11-06 08:58:55.528916+00:00",
+      "last_synced_mail": "019300b2-c261-71d1-bc8d-bc321cc9ebaf"
+    }
   }
-}
-```
+  ```
 
 ## Frontend UI
 
-Frappe Mail Client ships with its own frontend UI that can be used for managing emails.
+Frappe Mail ships with its own frontend UI that can be used for managing emails.
 
 ![Send Mail](docs/screenshots/send-mail.png)
 
@@ -343,7 +461,7 @@ Frappe Mail Client ships with its own frontend UI that can be used for managing 
 This app uses `pre-commit` for code formatting and linting. Please [install pre-commit](https://pre-commit.com/#installation) and enable it for this repository:
 
 ```bash
-cd apps/mail_client
+cd apps/mail
 pre-commit install
 ```
 
@@ -356,4 +474,15 @@ Pre-commit is configured to use the following tools for checking and formatting 
 
 ## License
 
-[GNU Affero General Public License v3.0](https://github.com/frappe/mail_client/blob/develop/license.txt)
+[GNU Affero General Public License v3.0](https://github.com/frappe/mail/blob/develop/license.txt)
+
+<br/>
+<br/>
+<div align="center" style="padding-top: 0.75rem;">
+	<a href="https://frappe.io" target="_blank">
+		<picture>
+			<source media="(prefers-color-scheme: dark)" srcset="https://frappe.io/files/Frappe-white.png">
+			<img src="https://frappe.io/files/Frappe-black.png" alt="Frappe Technologies" height="28"/>
+		</picture>
+	</a>
+</div>
