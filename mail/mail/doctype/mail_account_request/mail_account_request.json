@@ -49,7 +49,7 @@
    "label": "Saas Sign Up"
   },
   {
-   "default": "0",
+   "default": "1",
    "fieldname": "send_email",
    "fieldtype": "Check",
    "label": "Send Email"
@@ -62,13 +62,14 @@
   },
   {
    "fieldname": "invited_by",
-   "fieldtype": "Data",
-   "label": "Invited by"
+   "fieldtype": "Link",
+   "label": "Invited by",
+   "options": "User"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-01-16 12:49:00.140405",
+ "modified": "2025-01-20 15:48:38.913168",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Account Request",

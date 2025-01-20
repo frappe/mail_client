@@ -16,7 +16,7 @@ class MailAccountRequest(Document):
 		if not self.request_key:
 			self.request_key = random_string(32)
 
-		if not self.otp:
+		if not (self.otp or self.invited_by):
 			self.otp = random.randint(10000, 99999)
 
 	def after_insert(self):
@@ -26,30 +26,25 @@ class MailAccountRequest(Document):
 	@frappe.whitelist()
 	def send_verification_email(self):
 		link = get_url() + "/signup/" + self.request_key
-		subject = f"{self.otp} - OTP for Frappe Mail Account Verification"
-		args = {}
+		args = {
+			"link": link,
+			"otp": self.otp,
+			"image_path": "https://github.com/frappe/gameplan/assets/9355208/447035d0-0686-41d2-910a-a3d21928ab94",
+		}
 
 		if self.invited_by:
-			subject = f"You are invited by {self.invited_by} to join Frappe Cloud"
+			subject = f"You have been invited by {self.invited_by} to join Frappe Mail"
+			template = "invite_signup"
+			args.update({"invited_by": self.invited_by, "tenant": self.tenant})
 
-		args.update(
-			{
-				"invited_by": self.invited_by,
-				"link": link,
-				"otp": self.otp,
-			}
-		)
-		if not args.get("image_path"):
-			args.update(
-				{
-					"image_path": "https://github.com/frappe/gameplan/assets/9355208/447035d0-0686-41d2-910a-a3d21928ab94"
-				}
-			)
+		else:
+			subject = f"{self.otp} - OTP for Frappe Mail Account Verification"
+			template = "self_signup"
 
 		frappe.sendmail(
 			recipients=self.email,
 			subject=subject,
-			template="verify_account",
+			template=template,
 			args=args,
 			now=True,
 		)
