@@ -37,7 +37,7 @@
 <script setup>
 import { markRaw, ref } from 'vue'
 import UserSettings from '@/components/Settings/UserSettings.vue'
-import MailboxSettings from '@/components/Settings/MailboxSettings.vue'
+import MailAccountSettings from '@/components/Settings/MailAccountSettings.vue'
 import { Dialog, Button } from 'frappe-ui'
 import { User, Mailbox } from 'lucide-vue-next'
 
@@ -51,7 +51,7 @@ const tabs = [
 	{
 		label: 'Mailbox',
 		icon: Mailbox,
-		component: markRaw(MailboxSettings),
+		component: markRaw(MailAccountSettings),
 	},
 ]
 const activeTab = ref(tabs[0])

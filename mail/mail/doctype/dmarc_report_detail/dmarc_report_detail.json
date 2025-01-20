@@ -1,0 +1,105 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-11-19 12:51:48.671062",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_nmh9",
+  "source_ip",
+  "column_break_lsuy",
+  "count",
+  "section_break_bqnt",
+  "disposition",
+  "header_from",
+  "envelope_from",
+  "column_break_q04b",
+  "spf_result",
+  "dkim_result",
+  "section_break_0qf4",
+  "auth_results"
+ ],
+ "fields": [
+  {
+   "fieldname": "source_ip",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Source IP"
+  },
+  {
+   "fieldname": "count",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Count"
+  },
+  {
+   "fieldname": "disposition",
+   "fieldtype": "Data",
+   "label": "Disposition"
+  },
+  {
+   "fieldname": "dkim_result",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "DKIM Result",
+   "options": "\nPASS\nFAIL"
+  },
+  {
+   "fieldname": "spf_result",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "SPF Result",
+   "options": "\nPASS\nFAIL"
+  },
+  {
+   "fieldname": "header_from",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Header From"
+  },
+  {
+   "fieldname": "auth_results",
+   "fieldtype": "JSON",
+   "label": "Auth Results"
+  },
+  {
+   "fieldname": "section_break_nmh9",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_lsuy",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_bqnt",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_q04b",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_0qf4",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "envelope_from",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Envelope From"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2024-12-06 13:36:29.285052",
+ "modified_by": "Administrator",
+ "module": "Mail",
+ "name": "DMARC Report Detail",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

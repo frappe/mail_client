@@ -1,101 +1,115 @@
-from typing import Any
-
 import frappe
 from frappe import _
 
 
-def _get_or_set(name: str, getter: callable, expires_in_sec: int | None = 60 * 60) -> Any | None:
-	"""Get or set a value in the cache."""
+def get_root_domain_name() -> str | None:
+	"""Returns the root domain name."""
 
-	value = frappe.cache.get_value(name)
+	def generator() -> str | None:
+		return frappe.db.get_single_value("Mail Settings", "root_domain_name")
 
-	if not value:
-		value = getter()
-		frappe.cache.set_value(name, value, expires_in_sec=expires_in_sec)
-
-	if isinstance(value, bytes):
-		value = value.decode()
-
-	return value
+	return frappe.cache.get_value("root_domain_name", generator)
 
 
-def _hget_or_hset(name: str, key: str, getter: callable) -> Any | None:
-	"""Get or set a value in the cache hash."""
+def get_smtp_limits() -> dict:
+	def generator() -> dict:
+		mail_settings = frappe.get_cached_doc("Mail Settings")
+		return {
+			"max_connections": mail_settings.smtp_max_connections,
+			"max_messages": mail_settings.smtp_max_messages,
+			"session_duration": mail_settings.smtp_session_duration,
+			"inactivity_timeout": mail_settings.smtp_inactivity_timeout,
+			"cleanup_interval": mail_settings.smtp_cleanup_interval,
+		}
 
-	value = frappe.cache.hget(name, key)
-
-	if not value:
-		value = getter()
-		frappe.cache.hset(name, key, value)
-
-	return value
-
-
-def delete_cache(name: str, key: str | None = None) -> None:
-	"""Delete a value from the cache."""
-
-	if not key:
-		frappe.cache.delete_value(name)
-	else:
-		frappe.cache.hdel(name, key)
+	return frappe.cache.get_value("smtp_limits", generator)
 
 
-def get_postmaster_for_domain(domain_name: str) -> str:
-	"""Returns the postmaster for the domain."""
+def get_imap_limits() -> dict:
+	def generator() -> dict:
+		mail_settings = frappe.get_cached_doc("Mail Settings")
+		return {
+			"max_connections": mail_settings.imap_max_connections,
+			"authenticated_timeout": mail_settings.imap_authenticated_timeout,
+			"unauthenticated_timeout": mail_settings.imap_unauthenticated_timeout,
+			"idle_timeout": mail_settings.imap_idle_timeout,
+			"cleanup_interval": mail_settings.imap_cleanup_interval,
+		}
 
-	def getter() -> str:
-		postmaster = frappe.db.get_value(
-			"Mailbox",
-			{
-				"enabled": 1,
-				"outgoing": 1,
-				"postmaster": 1,
-				"domain_name": domain_name,
-				"user": "Administrator",
-			},
-			"name",
-		)
-
-		if not postmaster:
-			frappe.throw(_("Postmaster not found for {0}").format(domain_name))
-
-		return postmaster
-
-	return _get_or_set(f"postmaster|{domain_name}", getter)
+	return frappe.cache.get_value("imap_limits", generator)
 
 
-def get_user_incoming_mailboxes(user: str) -> list:
-	"""Returns the incoming mailboxes of the user."""
-
-	def getter() -> list:
-		MAILBOX = frappe.qb.DocType("Mailbox")
+def get_user_mail_accounts(user: str) -> list:
+	def generator() -> list:
+		MAIL_ACCOUNT = frappe.qb.DocType("Mail Account")
 		return (
-			frappe.qb.from_(MAILBOX)
+			frappe.qb.from_(MAIL_ACCOUNT)
 			.select("name")
-			.where((MAILBOX.user == user) & (MAILBOX.enabled == 1) & (MAILBOX.incoming == 1))
+			.where((MAIL_ACCOUNT.enabled == 1) & (MAIL_ACCOUNT.user == user))
 		).run(pluck="name")
 
-	return _hget_or_hset(f"user|{user}", "incoming_mailboxes", getter)
+	return frappe.cache.hget(f"user|{user}", "mail_accounts", generator)
 
 
-def get_user_outgoing_mailboxes(user: str) -> list:
-	"""Returns the outgoing mailboxes of the user."""
+def get_user_mail_aliases(user: str) -> list:
+	def generator() -> list:
+		accounts = get_user_mail_accounts(user)
 
-	def getter() -> list:
-		MAILBOX = frappe.qb.DocType("Mailbox")
+		if not accounts:
+			return []
+
+		MAIL_ALIAS = frappe.qb.DocType("Mail Alias")
 		return (
-			frappe.qb.from_(MAILBOX)
+			frappe.qb.from_(MAIL_ALIAS)
 			.select("name")
-			.where((MAILBOX.user == user) & (MAILBOX.enabled == 1) & (MAILBOX.outgoing == 1))
+			.where(
+				(MAIL_ALIAS.enabled == 1)
+				& (MAIL_ALIAS.alias_for_type == "Mail Account")
+				& (MAIL_ALIAS.alias_for_name.isin(accounts))
+			)
 		).run(pluck="name")
 
-	return _hget_or_hset(f"user|{user}", "outgoing_mailboxes", getter)
+	return frappe.cache.hget(f"user|{user}", "mail_aliases", generator)
 
 
-def get_user_default_mailbox(user: str) -> str | None:
-	"""Returns the default mailbox of the user."""
+def get_user_default_mail_account(user: str) -> str | None:
+	"""Returns the default mail account of the user."""
 
-	def getter() -> str | None:
-		return frappe.db.get_value("Mailbox", {"user": user, "is_default": 1}, "name")
+	def generator() -> str | None:
+		return frappe.db.get_value("Mail Account", {"user": user, "enabled": 1, "is_default": 1}, "name")
 
-	return _hget_or_hset(f"user|{user}", "default_mailbox", getter)
+	return frappe.cache.hget(f"user|{user}", "default_mail_account", generator)
+
+
+def get_blacklist_for_ip_group(ip_group: str) -> list:
+	"""Returns the blacklist for the IP group."""
+
+	def generator() -> list:
+		IP_BLACKLIST = frappe.qb.DocType("IP Blacklist")
+		return (
+			frappe.qb.from_(IP_BLACKLIST)
+			.select(
+				IP_BLACKLIST.name,
+				IP_BLACKLIST.is_blacklisted,
+				IP_BLACKLIST.ip_address,
+				IP_BLACKLIST.ip_address_expanded,
+				IP_BLACKLIST.blacklist_reason,
+			)
+			.where(IP_BLACKLIST.ip_group == ip_group)
+		).run(as_dict=True)
+
+	return frappe.cache.get_value(f"blacklist|{ip_group}", generator)
+
+
+def get_primary_agents() -> list:
+	"""Returns the primary agents."""
+
+	def generator() -> list:
+		MAIL_AGENT = frappe.qb.DocType("Mail Agent")
+		return (
+			frappe.qb.from_(MAIL_AGENT)
+			.select("name")
+			.where((MAIL_AGENT.enabled == 1) & (MAIL_AGENT.is_primary == 1))
+		).run(pluck="name")
+
+	return frappe.cache.get_value("primary_agents", generator)

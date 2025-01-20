@@ -1,0 +1,223 @@
+{
+ "actions": [],
+ "creation": "2025-01-06 10:40:24.718700",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_rgmz",
+  "enabled",
+  "is_default",
+  "track_outgoing_mail",
+  "create_mail_contact",
+  "column_break_47zs",
+  "domain_name",
+  "user",
+  "email",
+  "password",
+  "secret",
+  "section_break_gexs",
+  "display_name",
+  "override_display_name_api",
+  "column_break_yyco",
+  "reply_to",
+  "override_reply_to_api"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_rgmz",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "1",
+   "depends_on": "eval: !doc.__islocal",
+   "fieldname": "enabled",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Enabled",
+   "permlevel": 1,
+   "search_index": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "track_outgoing_mail",
+   "fieldtype": "Check",
+   "label": "Track Outgoing Mail"
+  },
+  {
+   "default": "0",
+   "fieldname": "create_mail_contact",
+   "fieldtype": "Check",
+   "label": "Create Mail Contact"
+  },
+  {
+   "fieldname": "column_break_47zs",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "domain_name",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Domain Name",
+   "no_copy": 1,
+   "options": "Mail Domain",
+   "reqd": 1,
+   "search_index": 1,
+   "set_only_once": 1
+  },
+  {
+   "fieldname": "user",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "User",
+   "no_copy": 1,
+   "options": "User",
+   "permlevel": 1,
+   "reqd": 1,
+   "search_index": 1,
+   "set_only_once": 1
+  },
+  {
+   "fieldname": "email",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Email",
+   "no_copy": 1,
+   "options": "Email",
+   "reqd": 1,
+   "set_only_once": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "section_break_gexs",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "display_name",
+   "fieldtype": "Data",
+   "label": "Display Name"
+  },
+  {
+   "fieldname": "reply_to",
+   "fieldtype": "Data",
+   "ignore_xss_filter": 1,
+   "label": "Reply To",
+   "length": 255
+  },
+  {
+   "default": "0",
+   "fieldname": "override_display_name_api",
+   "fieldtype": "Check",
+   "label": "Override Display Name (API)"
+  },
+  {
+   "fieldname": "column_break_yyco",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "override_reply_to_api",
+   "fieldtype": "Check",
+   "label": "Override Reply To (API)"
+  },
+  {
+   "fieldname": "password",
+   "fieldtype": "Password",
+   "hidden": 1,
+   "label": "Password",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "secret",
+   "fieldtype": "Small Text",
+   "hidden": 1,
+   "label": "Secret",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "is_default",
+   "fieldtype": "Check",
+   "label": "Default Outgoing",
+   "search_index": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [
+  {
+   "group": "Reference",
+   "link_doctype": "Mail Alias",
+   "link_fieldname": "alias_for_name"
+  },
+  {
+   "group": "Reference",
+   "link_doctype": "Mail Group Member",
+   "link_fieldname": "member_name"
+  },
+  {
+   "group": "Reference",
+   "link_doctype": "Mail Sync History",
+   "link_fieldname": "account"
+  },
+  {
+   "group": "Mail",
+   "link_doctype": "Incoming Mail",
+   "link_fieldname": "receiver"
+  },
+  {
+   "group": "Mail",
+   "link_doctype": "Outgoing Mail",
+   "link_fieldname": "sender"
+  }
+ ],
+ "modified": "2025-01-16 16:34:18.404967",
+ "modified_by": "Administrator",
+ "module": "Mail",
+ "name": "Mail Account",
+ "naming_rule": "Set by user",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "Mail User",
+   "write": 1
+  },
+  {
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "permlevel": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "permlevel": 1,
+   "read": 1,
+   "role": "Mail User"
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

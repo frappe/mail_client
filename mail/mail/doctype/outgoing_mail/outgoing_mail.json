@@ -17,35 +17,45 @@
   "section_break_atoq",
   "custom_headers",
   "section_break_ijwo",
+  "_raw_message",
   "body_html",
-  "raw_message",
   "body_plain",
   "section_break_ubzr",
   "error_log",
   "error_message",
   "more_info_tab",
   "status",
+  "priority",
   "ip_address",
+  "spam_score",
+  "spam_check_log",
   "via_api",
+  "is_spam",
   "is_newsletter",
   "column_break_d6p9",
   "domain_name",
+  "agent",
   "token",
   "section_break_quhp",
   "message_id",
   "in_reply_to",
   "column_break_4zfa",
+  "_message",
   "message_size",
   "section_break_093p",
   "created_at",
   "submitted_at",
+  "processed_at",
   "transfer_started_at",
   "transfer_completed_at",
   "column_break_fvyv",
   "submitted_after",
+  "processed_after",
   "transfer_started_after",
   "transfer_completed_after",
+  "section_break_ptje",
   "failed_count",
+  "column_break_sjvs",
   "retry_after",
   "section_break_aafd",
   "tracking_id",
@@ -54,8 +64,14 @@
   "open_count",
   "last_opened_at",
   "last_opened_from_ip",
-  "section_break_kops",
-  "message",
+  "agent_groups_section",
+  "include_agent_groups",
+  "column_break_qhyj",
+  "exclude_agent_groups",
+  "agents_section",
+  "include_agents",
+  "column_break_c90z",
+  "exclude_agents",
   "section_break_eh7n",
   "amended_from"
  ],
@@ -66,7 +82,7 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Sender",
-   "options": "Mailbox",
+   "options": "Mail Account",
    "reqd": 1,
    "search_index": 1
   },
@@ -79,9 +95,11 @@
   },
   {
    "fieldname": "subject",
-   "fieldtype": "Small Text",
+   "fieldtype": "Data",
    "in_standard_filter": 1,
-   "label": "Subject"
+   "label": "Subject",
+   "length": 1000,
+   "search_index": 1
   },
   {
    "fieldname": "column_break_9ywf",
@@ -106,7 +124,7 @@
    "in_standard_filter": 1,
    "label": "Status",
    "no_copy": 1,
-   "options": "Draft\nPending\nQueuing\nFailed\nQueued\nBlocked\nDeferred\nBounced\nPartially Sent\nSent\nCancelled",
+   "options": "Draft\nIn Progress\nBlocked\nAccepted\nTransferring\nFailed\nTransferred\nDeferred\nBounced\nPartially Sent\nSent\nCancelled",
    "read_only": 1,
    "reqd": 1,
    "search_index": 1
@@ -132,12 +150,6 @@
    "fieldtype": "Column Break"
   },
   {
-   "collapsible": 1,
-   "fieldname": "section_break_kops",
-   "fieldtype": "Section Break",
-   "label": "Message"
-  },
-  {
    "fieldname": "body_plain",
    "fieldtype": "Code",
    "label": "Body Plain",
@@ -145,7 +157,7 @@
    "read_only": 1
   },
   {
-   "depends_on": "eval: !doc.raw_message",
+   "depends_on": "eval: !doc._raw_message",
    "fieldname": "body_html",
    "fieldtype": "HTML Editor",
    "label": "Body HTML",
@@ -178,17 +190,6 @@
   {
    "fieldname": "column_break_fvyv",
    "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "message_id",
-   "fieldtype": "Data",
-   "ignore_xss_filter": 1,
-   "in_standard_filter": 1,
-   "label": "Message ID",
-   "length": 255,
-   "no_copy": 1,
-   "read_only": 1,
-   "search_index": 1
   },
   {
    "fieldname": "created_at",
@@ -295,13 +296,6 @@
    "label": "More Info"
   },
   {
-   "fieldname": "message",
-   "fieldtype": "Code",
-   "label": "Message",
-   "no_copy": 1,
-   "read_only": 1
-  },
-  {
    "depends_on": "eval: doc.sender",
    "fetch_from": "sender.reply_to",
    "fetch_if_empty": 1,
@@ -322,14 +316,6 @@
    "options": "Drafts\nSent\nTrash",
    "reqd": 1,
    "search_index": 1
-  },
-  {
-   "fieldname": "raw_message",
-   "fieldtype": "Code",
-   "hidden": 1,
-   "label": "Raw Message",
-   "no_copy": 1,
-   "read_only": 1
   },
   {
    "collapsible": 1,
@@ -400,14 +386,16 @@
    "ignore_xss_filter": 1,
    "label": "In Reply To (Message ID)",
    "length": 255,
-   "read_only": 1
+   "read_only": 1,
+   "search_index": 1
   },
   {
    "fieldname": "transfer_completed_at",
    "fieldtype": "Datetime",
    "label": "Transfer Completed At",
    "no_copy": 1,
-   "read_only": 1
+   "read_only": 1,
+   "search_index": 1
   },
   {
    "depends_on": "eval: doc.transfer_completed_at",
@@ -425,7 +413,8 @@
    "fieldtype": "Datetime",
    "label": "Transfer Started At",
    "no_copy": 1,
-   "read_only": 1
+   "read_only": 1,
+   "search_index": 1
   },
   {
    "depends_on": "eval: doc.transfer_started_at",
@@ -437,14 +426,6 @@
    "non_negative": 1,
    "precision": "2",
    "read_only": 1
-  },
-  {
-   "fieldname": "token",
-   "fieldtype": "Data",
-   "label": "Token",
-   "no_copy": 1,
-   "read_only": 1,
-   "unique": 1
   },
   {
    "fieldname": "error_message",
@@ -479,12 +460,173 @@
    "no_copy": 1,
    "read_only": 1,
    "search_index": 1
+  },
+  {
+   "fieldname": "_raw_message",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Raw Message",
+   "no_copy": 1,
+   "options": "MIME Message",
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "_message",
+   "fieldtype": "Link",
+   "label": "Message",
+   "no_copy": 1,
+   "options": "MIME Message",
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "collapsible": 1,
+   "collapsible_depends_on": "eval: doc.include_agents || doc.exclude_agents",
+   "depends_on": "eval: !doc.__islocal",
+   "fieldname": "agents_section",
+   "fieldtype": "Section Break",
+   "label": "Agents"
+  },
+  {
+   "fieldname": "include_agents",
+   "fieldtype": "Small Text",
+   "label": "Include Agents",
+   "permlevel": 1
+  },
+  {
+   "fieldname": "column_break_c90z",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "exclude_agents",
+   "fieldtype": "Small Text",
+   "label": "Exclude Agents",
+   "permlevel": 1
+  },
+  {
+   "collapsible": 1,
+   "collapsible_depends_on": "eval: doc.include_agent_groups || doc.exclude_agent_groups",
+   "depends_on": "eval: !doc.__islocal",
+   "fieldname": "agent_groups_section",
+   "fieldtype": "Section Break",
+   "label": "Agent Groups"
+  },
+  {
+   "fieldname": "include_agent_groups",
+   "fieldtype": "Small Text",
+   "label": "Include Agent Groups",
+   "permlevel": 1
+  },
+  {
+   "fieldname": "column_break_qhyj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "exclude_agent_groups",
+   "fieldtype": "Small Text",
+   "label": "Exclude Agent Groups",
+   "permlevel": 1
+  },
+  {
+   "fieldname": "section_break_ptje",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_sjvs",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval: doc.docstatus != 0",
+   "fieldname": "priority",
+   "fieldtype": "Int",
+   "label": "Priority",
+   "no_copy": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "depends_on": "eval: doc.docstatus != 0",
+   "fieldname": "spam_score",
+   "fieldtype": "Float",
+   "label": "Spam Score",
+   "no_copy": 1,
+   "precision": "1",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "depends_on": "eval: doc.is_spam",
+   "fieldname": "is_spam",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "in_list_view": 1,
+   "label": "Is Spam",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "agent",
+   "fieldtype": "Link",
+   "label": "Agent",
+   "no_copy": 1,
+   "options": "Mail Agent",
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "message_id",
+   "fieldtype": "Data",
+   "ignore_xss_filter": 1,
+   "in_list_view": 1,
+   "label": "Message ID",
+   "no_copy": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "spam_check_log",
+   "fieldtype": "Link",
+   "label": "Spam Check Log",
+   "no_copy": 1,
+   "options": "Spam Check Log",
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "processed_at",
+   "fieldtype": "Datetime",
+   "label": "Processed At",
+   "no_copy": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "depends_on": "eval: doc.processed_at",
+   "description": "Processed At - Submitted At",
+   "fieldname": "processed_after",
+   "fieldtype": "Float",
+   "label": "Processed After (Seconds)",
+   "no_copy": 1,
+   "non_negative": 1,
+   "precision": "2",
+   "read_only": 1
+  },
+  {
+   "depends_on": "eval: frappe.boot.developer_mode",
+   "fieldname": "token",
+   "fieldtype": "Data",
+   "label": "Token",
+   "no_copy": 1,
+   "read_only": 1,
+   "set_only_once": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-12-02 14:23:32.322784",
+ "modified": "2025-01-17 15:45:55.949734",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Outgoing Mail",
@@ -510,14 +652,21 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Mailbox User",
+   "role": "Mail User",
    "submit": 1,
    "write": 1
   },
   {
+   "delete": 1,
+   "email": 1,
+   "export": 1,
    "permlevel": 1,
+   "print": 1,
    "read": 1,
-   "role": "System Manager"
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
   }
  ],
  "show_title_field_in_link": 1,

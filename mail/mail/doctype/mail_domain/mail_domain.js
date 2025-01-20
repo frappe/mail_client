@@ -9,6 +9,39 @@ frappe.ui.form.on("Mail Domain", {
 	add_actions(frm) {
 		if (!frm.doc.__islocal) {
 			frm.add_custom_button(
+				__("Mail Tracker"),
+				() => {
+					frappe.route_options = {
+						domain_name: frm.doc.name,
+					};
+					frappe.set_route("query-report", "Mail Tracker");
+				},
+				__("Reports")
+			);
+
+			frm.add_custom_button(
+				__("Outbound Delay"),
+				() => {
+					frappe.route_options = {
+						domain_name: frm.doc.name,
+					};
+					frappe.set_route("query-report", "Outbound Delay");
+				},
+				__("Reports")
+			);
+
+			frm.add_custom_button(
+				__("Outgoing Mail Summary"),
+				() => {
+					frappe.route_options = {
+						domain_name: frm.doc.name,
+					};
+					frappe.set_route("query-report", "Outgoing Mail Summary");
+				},
+				__("Reports")
+			);
+
+			frm.add_custom_button(
 				__("Verify DNS Records"),
 				() => {
 					frm.trigger("verify_dns_records");
@@ -34,22 +67,9 @@ frappe.ui.form.on("Mail Domain", {
 				() => {
 					frappe.confirm(
 						__(
-							"Are you sure you want to rotate the DKIM keys? This will generate new keys for email signing and may take up to 10 minutes to propagate across DNS servers. Emails sent during this period may be blocked due to a DKIM signature mismatch."
+							"Are you sure you want to rotate the DKIM keys? This will generate new keys for email signing and may take up to 10 minutes to propagate across DNS servers. Emails sent during this period may fail DKIM verification."
 						),
 						() => frm.trigger("rotate_dkim_keys")
-					);
-				},
-				__("Actions")
-			);
-
-			frm.add_custom_button(
-				__("Rotate Access Token"),
-				() => {
-					frappe.confirm(
-						__(
-							"Are you sure you want to rotate the access token? This will replace the current token with a new one, potentially interrupting any active sessions using the old token."
-						),
-						() => frm.trigger("rotate_access_token")
 					);
 				},
 				__("Actions")
@@ -94,21 +114,6 @@ frappe.ui.form.on("Mail Domain", {
 			args: {},
 			freeze: true,
 			freeze_message: __("Rotating DKIM Keys..."),
-			callback: (r) => {
-				if (!r.exc) {
-					frm.refresh();
-				}
-			},
-		});
-	},
-
-	rotate_access_token(frm) {
-		frappe.call({
-			doc: frm.doc,
-			method: "rotate_access_token",
-			args: {},
-			freeze: true,
-			freeze_message: __("Rotating Access Token..."),
 			callback: (r) => {
 				if (!r.exc) {
 					frm.refresh();

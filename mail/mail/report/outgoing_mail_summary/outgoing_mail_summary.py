@@ -9,7 +9,7 @@ from frappe import _
 from frappe.query_builder import Criterion, Order
 from frappe.query_builder.functions import Date, IfNull
 
-from mail.utils.user import get_user_mailboxes, has_role, is_system_manager
+from mail.utils.user import get_user_email_addresses, has_role, is_system_manager
 
 
 def execute(filters: dict | None = None) -> tuple:
@@ -55,10 +55,23 @@ def get_columns() -> list[dict]:
 			"width": 120,
 		},
 		{
+			"label": _("Spam Score"),
+			"fieldname": "spam_score",
+			"fieldtype": "Float",
+			"precision": 1,
+			"width": 110,
+		},
+		{
 			"label": _("API"),
 			"fieldname": "via_api",
 			"fieldtype": "Check",
 			"width": 60,
+		},
+		{
+			"label": _("Priority"),
+			"fieldname": "priority",
+			"fieldtype": "Int",
+			"width": 80,
 		},
 		{
 			"label": _("Newsletter"),
@@ -67,8 +80,8 @@ def get_columns() -> list[dict]:
 			"width": 100,
 		},
 		{
-			"label": _("Response/Error Message"),
-			"fieldname": "response_or_error_message",
+			"label": _("Error Message"),
+			"fieldname": "error_message",
 			"fieldtype": "Code",
 			"width": 500,
 		},
@@ -77,6 +90,13 @@ def get_columns() -> list[dict]:
 			"fieldname": "domain_name",
 			"fieldtype": "Link",
 			"options": "Mail Domain",
+			"width": 150,
+		},
+		{
+			"label": _("Agent"),
+			"fieldname": "agent",
+			"fieldtype": "Link",
+			"options": "Mail Agent",
 			"width": 150,
 		},
 		{
@@ -89,7 +109,7 @@ def get_columns() -> list[dict]:
 			"label": _("Sender"),
 			"fieldname": "sender",
 			"fieldtype": "Link",
-			"options": "Mailbox",
+			"options": "Mail Account",
 			"width": 200,
 		},
 		{
@@ -129,11 +149,14 @@ def get_data(filters: dict | None = None) -> list[dict]:
 			MR.status,
 			MR.retries,
 			OM.message_size,
+			OM.spam_score,
 			OM.via_api,
+			OM.priority,
 			OM.is_newsletter,
 			MR.response,
 			MR.error_message,
 			OM.domain_name,
+			OM.agent,
 			OM.ip_address,
 			OM.sender,
 			MR.email.as_("recipient"),
@@ -153,6 +176,7 @@ def get_data(filters: dict | None = None) -> list[dict]:
 
 	for field in [
 		"name",
+		"priority",
 		"ip_address",
 		"message_id",
 	]:
@@ -165,6 +189,11 @@ def get_data(filters: dict | None = None) -> list[dict]:
 	]:
 		if filters.get(field):
 			query = query.where(OM[field].isin(filters.get(field)))
+
+	if agent := filters.get("agent"):
+		if isinstance(agent, str):
+			agent = [agent]
+		query = query.where(OM.agent.isin(agent))
 
 	if not filters.get("include_newsletter"):
 		query = query.where(OM.is_newsletter == 0)
@@ -179,10 +208,10 @@ def get_data(filters: dict | None = None) -> list[dict]:
 	user = frappe.session.user
 	if not is_system_manager(user):
 		conditions = []
-		mailboxes = get_user_mailboxes(user)
+		accounts = get_user_email_addresses(user, "Mail Account")
 
-		if has_role(user, "Mailbox User") and mailboxes:
-			conditions.append(OM.sender.isin(mailboxes))
+		if has_role(user, "Mail User") and accounts:
+			conditions.append(OM.sender.isin(accounts))
 
 		if not conditions:
 			return []
@@ -194,14 +223,9 @@ def get_data(filters: dict | None = None) -> list[dict]:
 	for row in data:
 		if row["response"]:
 			response = json.loads(row.pop("response"))
-			row["response_or_error_message"] = (
-				response.get("dsn_msg")
-				or response.get("reason")
-				or response.get("dsn_smtp_response")
-				or response.get("response")
-			)
+			row["error_message"] = f"{response['status']} - {response['diagnostic_code']}"
 		elif row["error_message"]:
-			row["response_or_error_message"] = row.pop("error_message")
+			row["error_message"] = row.pop("error_message")
 
 	return data
 

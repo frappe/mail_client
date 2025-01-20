@@ -8,7 +8,7 @@ from frappe.query_builder import Criterion, Order
 from frappe.query_builder.functions import Date, IfNull
 from frappe.utils import flt
 
-from mail.utils.user import get_user_mailboxes, has_role, is_system_manager
+from mail.utils.user import get_user_email_addresses, has_role, is_system_manager
 
 
 def execute(filters: dict | None = None) -> tuple:
@@ -59,6 +59,12 @@ def get_columns() -> list[dict]:
 			"width": 60,
 		},
 		{
+			"label": _("Priority"),
+			"fieldname": "priority",
+			"fieldtype": "Int",
+			"width": 80,
+		},
+		{
 			"label": _("Newsletter"),
 			"fieldname": "is_newsletter",
 			"fieldtype": "Check",
@@ -77,12 +83,6 @@ def get_columns() -> list[dict]:
 			"width": 120,
 		},
 		{
-			"label": _("Action Delay"),
-			"fieldname": "action_delay",
-			"fieldtype": "Float",
-			"width": 120,
-		},
-		{
 			"label": _("Total Delay"),
 			"fieldname": "total_delay",
 			"fieldtype": "Float",
@@ -96,6 +96,13 @@ def get_columns() -> list[dict]:
 			"width": 150,
 		},
 		{
+			"label": _("Agent"),
+			"fieldname": "agent",
+			"fieldtype": "Link",
+			"options": "Mail Agent",
+			"width": 150,
+		},
+		{
 			"label": _("IP Address"),
 			"fieldname": "ip_address",
 			"fieldtype": "Data",
@@ -105,7 +112,7 @@ def get_columns() -> list[dict]:
 			"label": _("Sender"),
 			"fieldname": "sender",
 			"fieldtype": "Link",
-			"options": "Mailbox",
+			"options": "Mail Account",
 			"width": 200,
 		},
 		{
@@ -140,14 +147,13 @@ def get_data(filters: dict | None = None) -> list[dict]:
 			MR.retries,
 			OM.message_size,
 			OM.via_api,
+			OM.priority,
 			OM.is_newsletter,
 			OM.submitted_after.as_("submission_delay"),
 			(OM.transfer_started_after + OM.transfer_completed_after).as_("transfer_delay"),
-			MR.action_after.as_("action_delay"),
-			(
-				OM.submitted_after + OM.transfer_started_after + OM.transfer_completed_after + MR.action_after
-			).as_("total_delay"),
+			(OM.submitted_after + OM.transfer_started_after + OM.transfer_completed_after).as_("total_delay"),
 			OM.domain_name,
+			OM.agent,
 			OM.ip_address,
 			OM.sender,
 			MR.email.as_("recipient"),
@@ -169,6 +175,7 @@ def get_data(filters: dict | None = None) -> list[dict]:
 
 	for field in [
 		"name",
+		"priority",
 		"ip_address",
 		"message_id",
 	]:
@@ -182,6 +189,11 @@ def get_data(filters: dict | None = None) -> list[dict]:
 		if filters.get(field):
 			query = query.where(OM[field].isin(filters.get(field)))
 
+	if agent := filters.get("agent"):
+		if isinstance(agent, str):
+			agent = [agent]
+		query = query.where(OM.agent.isin(agent))
+
 	if filters.get("email"):
 		query = query.where(MR["email"] == filters.get("email"))
 	if filters.get("status"):
@@ -190,10 +202,10 @@ def get_data(filters: dict | None = None) -> list[dict]:
 	user = frappe.session.user
 	if not is_system_manager(user):
 		conditions = []
-		mailboxes = get_user_mailboxes(user)
+		accounts = get_user_email_addresses(user, "Mail Account")
 
-		if has_role(user, "Mailbox User") and mailboxes:
-			conditions.append(OM.sender.isin(mailboxes))
+		if has_role(user, "Mail User") and accounts:
+			conditions.append(OM.sender.isin(accounts))
 
 		if not conditions:
 			return []
@@ -211,7 +223,7 @@ def get_summary(data: list) -> list[dict]:
 	average_data = {}
 
 	for row in data:
-		for field in ["message_size", "submission_delay", "transfer_delay", "action_delay"]:
+		for field in ["message_size", "submission_delay", "transfer_delay"]:
 			key = f"total_{field}"
 			summary_data.setdefault(key, 0)
 			summary_data[key] += row[field]
@@ -238,11 +250,5 @@ def get_summary(data: list) -> list[dict]:
 			"datatype": "Data",
 			"value": f"{average_data['transfer_delay']}s",
 			"indicator": "blue",
-		},
-		{
-			"label": _("Average Action Delay"),
-			"datatype": "Data",
-			"value": f"{average_data['action_delay']}s",
-			"indicator": "orange",
 		},
 	]

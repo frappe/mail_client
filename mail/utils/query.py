@@ -1,7 +1,7 @@
 import frappe
 from frappe.query_builder import Criterion, Order
 
-from mail.utils.user import get_user_mailboxes, has_role, is_system_manager
+from mail.utils.user import get_user_email_addresses, has_role, is_system_manager
 
 
 @frappe.whitelist()
@@ -16,19 +16,18 @@ def get_sender(
 ) -> list:
 	"""Returns the sender."""
 
-	MAILBOX = frappe.qb.DocType("Mailbox")
-	DOMAIN = frappe.qb.DocType("Mail Domain")
+	MAIL_ACCOUNT = frappe.qb.DocType("Mail Account")
+	MAIL_DOMAIN = frappe.qb.DocType("Mail Domain")
 	query = (
-		frappe.qb.from_(DOMAIN)
-		.left_join(MAILBOX)
-		.on(DOMAIN.name == MAILBOX.domain_name)
-		.select(MAILBOX.name)
+		frappe.qb.from_(MAIL_DOMAIN)
+		.left_join(MAIL_ACCOUNT)
+		.on(MAIL_DOMAIN.name == MAIL_ACCOUNT.domain_name)
+		.select(MAIL_ACCOUNT.name)
 		.where(
-			(DOMAIN.enabled == 1)
-			& (DOMAIN.is_verified == 1)
-			& (MAILBOX.enabled == 1)
-			& (MAILBOX.outgoing == 1)
-			& (MAILBOX[searchfield].like(f"%{txt}%"))
+			(MAIL_DOMAIN.enabled == 1)
+			& (MAIL_DOMAIN.is_verified == 1)
+			& (MAIL_ACCOUNT.enabled == 1)
+			& (MAIL_ACCOUNT[searchfield].like(f"%{txt}%"))
 		)
 		.offset(start)
 		.limit(page_len)
@@ -36,7 +35,7 @@ def get_sender(
 
 	user = frappe.session.user
 	if not is_system_manager(user):
-		query = query.where(MAILBOX.user == user)
+		query = query.where(MAIL_ACCOUNT.user == user)
 
 	return query.run(as_dict=False)
 
@@ -67,10 +66,10 @@ def get_outgoing_mails(
 
 	if not is_system_manager(user):
 		conditions = []
-		mailboxes = get_user_mailboxes(user)
+		accounts = get_user_email_addresses(user, "Mail Account")
 
-		if has_role(user, "Mailbox User") and mailboxes:
-			conditions.append(OM.sender.isin(mailboxes))
+		if has_role(user, "Mail User") and accounts:
+			conditions.append(OM.sender.isin(accounts))
 
 		if not conditions:
 			return []
@@ -82,7 +81,7 @@ def get_outgoing_mails(
 
 @frappe.whitelist()
 @frappe.validate_and_sanitize_search_inputs
-def get_users_with_mailbox_user_role(
+def get_users_with_mail_admin_role(
 	doctype: str | None = None,
 	txt: str | None = None,
 	searchfield: str | None = None,
@@ -90,7 +89,7 @@ def get_users_with_mailbox_user_role(
 	page_len: int = 20,
 	filters: dict | None = None,
 ) -> list:
-	"""Returns a list of users with Mailbox User role."""
+	"""Returns a list of User(s) who have Mail Admin role."""
 
 	USER = frappe.qb.DocType("User")
 	HAS_ROLE = frappe.qb.DocType("Has Role")
@@ -102,7 +101,35 @@ def get_users_with_mailbox_user_role(
 		.where(
 			(USER.enabled == 1)
 			& (USER.name.like(f"%{txt}%"))
-			& (HAS_ROLE.role == "Mailbox User")
+			& (HAS_ROLE.role == "Mail Admin")
+			& (HAS_ROLE.parenttype == "User")
+		)
+	).run(as_dict=False)
+
+
+@frappe.whitelist()
+@frappe.validate_and_sanitize_search_inputs
+def get_users_with_mail_user_role(
+	doctype: str | None = None,
+	txt: str | None = None,
+	searchfield: str | None = None,
+	start: int = 0,
+	page_len: int = 20,
+	filters: dict | None = None,
+) -> list:
+	"""Returns a list of users with Mail User role."""
+
+	USER = frappe.qb.DocType("User")
+	HAS_ROLE = frappe.qb.DocType("Has Role")
+	return (
+		frappe.qb.from_(USER)
+		.left_join(HAS_ROLE)
+		.on(USER.name == HAS_ROLE.parent)
+		.select(USER.name)
+		.where(
+			(USER.enabled == 1)
+			& (USER.name.like(f"%{txt}%"))
+			& (HAS_ROLE.role == "Mail User")
 			& (HAS_ROLE.parenttype == "User")
 		)
 	).run(as_dict=False)

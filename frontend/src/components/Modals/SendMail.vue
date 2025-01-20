@@ -23,7 +23,7 @@
 							<span class="text-xs text-gray-500">{{ __('From') }}:</span>
 							<Link
 								v-model="mail.from"
-								doctype="Mailbox"
+								doctype="Mail Account"
 								:filters="{ user: user.data.name }"
 							/>
 						</div>
@@ -309,7 +309,7 @@ const createDraftMail = createResource({
 	method: 'POST',
 	makeParams() {
 		return {
-			// TODO: use mailbox display_name
+			// TODO: use mail account display_name
 			from_: `${user.data?.full_name} <${mail.from}>`,
 			do_not_submit: !isSend.value,
 			...mail,
