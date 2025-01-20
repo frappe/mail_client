@@ -1,18 +1,17 @@
 {
  "actions": [],
- "allow_rename": 1,
  "creation": "2025-01-14 15:10:13.672435",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "request_key",
-  "tenant",
   "email",
+  "tenant",
   "column_break_hswp",
   "role",
   "invited_by",
-  "saas_sign_up_section",
+  "email_verification_section",
   "send_email",
+  "request_key",
   "otp"
  ],
  "fields": [
@@ -30,7 +29,9 @@
   {
    "fieldname": "email",
    "fieldtype": "Data",
-   "label": "Email"
+   "in_list_view": 1,
+   "label": "Email",
+   "reqd": 1
   },
   {
    "fieldname": "tenant",
@@ -41,12 +42,7 @@
    "fieldname": "role",
    "fieldtype": "Select",
    "label": "Role",
-   "options": "Mail Admin\nMail User"
-  },
-  {
-   "fieldname": "saas_sign_up_section",
-   "fieldtype": "Section Break",
-   "label": "Saas Sign Up"
+   "options": "Mail User\nMail Admin"
   },
   {
    "default": "1",
@@ -64,12 +60,18 @@
    "fieldname": "invited_by",
    "fieldtype": "Link",
    "label": "Invited by",
+   "link_filters": "[[\"User\",\"role\",\"=\",\"Mail Admin\"]]",
    "options": "User"
+  },
+  {
+   "fieldname": "email_verification_section",
+   "fieldtype": "Section Break",
+   "label": "Email Verification"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-01-20 15:48:38.913168",
+ "modified": "2025-01-20 17:27:30.578055",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Account Request",
@@ -89,7 +91,9 @@
    "write": 1
   }
  ],
+ "show_title_field_in_link": 1,
  "sort_field": "creation",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "title_field": "email"
 }

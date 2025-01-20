@@ -4,6 +4,7 @@
 import random
 
 import frappe
+from frappe import _
 from frappe.model.document import Document
 from frappe.utils import get_url, random_string
 
@@ -48,3 +49,4 @@ class MailAccountRequest(Document):
 			args=args,
 			now=True,
 		)
+		frappe.msgprint(_("Verification mail sent successfully."), indicator="green", alert=True)
