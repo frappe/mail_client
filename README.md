@@ -138,12 +138,43 @@ Setting up Stalwart Mail Server for production requires additional configuration
 
 #### Step 2: Install Frappe Mail
 
-Once the Stalwart Mail Server is set up, proceed to install the Frappe Mail app.
+After setting up the Stalwart Mail Server, the next step is to install the Frappe Mail app. You can choose between using Docker for an easy setup or performing a manual installation.
 
-1. **Prerequisite:** Ensure that the [Frappe Bench](https://github.com/frappe/bench) is installed and running on your system.
-   Refer to the [Frappe installation guide](https://docs.frappe.io/framework/user/en/installation) if you haven't already set it up.
+**Using Docker**
 
-2. **Install the Mail App and Create a Site:**
+1. **Download the** `docker-compose.yml` **file:**
+
+   ```bash
+   wget -O docker-compose.yml https://raw.githubusercontent.com/frappe/mail/develop/docker/docker-compose.yml
+   ```
+
+2. **Download the setup script:**
+
+   ```bash
+   wget -O init.sh https://raw.githubusercontent.com/frappe/mail/develop/docker/init.sh
+   ```
+
+3. **Run the container in detached mode:**
+
+   ```bash
+   docker compose up -d
+   ```
+
+4. **Access the Frappe Mail site:**
+   Visit http://mail.localhost in your browser.
+
+   **Default Credentials:**
+
+   - **Username:** `administrator`
+   - **Password:** `admin`
+
+**Manual Installation**
+
+1. **Prerequisite:**
+   Ensure that the [Frappe Bench](https://github.com/frappe/bench) is installed and running on your system.
+   If not, refer to the [Frappe installation guide](https://docs.frappe.io/framework/user/en/installation) for detailed steps.
+
+1. **Install the Mail App and Create a Site:**
    Run the following commands to install the Mail app and set up a new Frappe site:
 
    ```bash
