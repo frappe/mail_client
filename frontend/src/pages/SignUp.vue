@@ -59,7 +59,12 @@
 			>
 				{{ buttonLabel }}
 			</Button>
-			<Button v-if="isVerificationStep" type="button" @click="resendOtp.submit()">
+			<Button
+				v-if="isVerificationStep"
+				type="button"
+				:loading="resendOtp.loading"
+				@click="resendOtp.submit()"
+			>
 				Resend OTP
 			</Button>
 		</form>
@@ -123,7 +128,7 @@ const resendOtp = createResource({
 		return { account_request: accountRequest.value }
 	},
 	onSuccess() {
-		raiseToast('A new verification code has been sent to your registered email address.')
+		raiseToast('A verification code has been sent to your registered email address.')
 	},
 	onError(error) {
 		raiseToast(error.messages[0], 'error')

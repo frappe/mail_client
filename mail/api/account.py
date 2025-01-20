@@ -24,8 +24,10 @@ def signup(email, referrer=None):
 @frappe.whitelist(allow_guest=True)
 def resend_otp(account_request: str):
 	new_otp = random.randint(10000, 99999)
-	frappe.db.set_value("Mail Account Request", account_request, "otp", new_otp)
-	print(new_otp)
+	account_request = frappe.get_doc("Mail Account Request", account_request)
+	account_request.otp = new_otp
+	account_request.save(ignore_permissions=True)
+	account_request.send_verification_email()
 
 
 @frappe.whitelist(allow_guest=True)
