@@ -1,4 +1,5 @@
 import { useTimeAgo } from '@vueuse/core'
+import { toast } from 'frappe-ui'
 
 export function convertToTitleCase(str) {
 	if (!str) {
@@ -98,4 +99,29 @@ export function formatBytes(bytes) {
 	const i = Math.floor(Math.log(bytes) / Math.log(k))
 
 	return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))}${sizes[i]}`
+}
+
+export const raiseToast = (message, type = 'success') => {
+	if (type === 'success')
+		return toast({
+			title: 'Success',
+			text: message,
+			icon: 'check-circle',
+			position: 'bottom-right',
+			iconClasses: 'text-green-500',
+		})
+
+	const div = document.createElement('div')
+	div.innerHTML = message
+	// strip html tags
+	const text =
+		div.textContent || div.innerText || 'Failed to perform action. Please try again later.'
+	toast({
+		title: 'Error',
+		text: text,
+		icon: 'alert-circle',
+		position: 'bottom-right',
+		iconClasses: 'text-red-500',
+		timeout: 7,
+	})
 }

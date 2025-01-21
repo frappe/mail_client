@@ -1,0 +1,23 @@
+{% import "templates/emails/macros.html" as utils %}
+{% extends "templates/emails/base.html" %}
+{% set invited_by = invited_by %}
+{% set tenant = tenant %}
+
+{% block content %}
+
+<td class="text-gray-900 text-base leading-6">
+    <div class="p-8 bg-white">
+        <p>Hello,</p>
+        <p class="font-bold mb-4">
+            You have been invited by {{ invited_by }} to join tenant "{{ tenant }}" on Frappe Mail.
+        </p>
+        <p class="mb-6">
+            Please confirm your email address by clicking the button below:
+        </p>
+        {{ utils.button('Verify Account', link) }}
+        {{ utils.separator() }}
+        <p class="my-0">Team Frappe</p>
+    </div>
+</td>
+
+{% endblock %}

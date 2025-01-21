@@ -17,7 +17,7 @@
 						v-html="branding.data?.brand_html"
 						class="w-8 h-8 rounded flex-shrink-0"
 					></span>
-					<Logo v-else class="w-8 h-8 rounded flex-shrink-0" />
+					<MailLogo v-else class="w-8 h-8 rounded flex-shrink-0" />
 					<div
 						class="flex flex-1 flex-col text-left duration-300 ease-in-out"
 						:class="
@@ -60,7 +60,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import Logo from '@/components/Icons/Logo.vue'
+import MailLogo from '@/components/Icons/MailLogo.vue'
 import Settings from '@/components/Modals/Settings.vue'
 import { sessionStore } from '@/stores/session'
 import { Dropdown } from 'frappe-ui'
@@ -114,9 +114,7 @@ const userDropdownOptions = [
 		icon: LogOut,
 		label: 'Log out',
 		onClick: () => {
-			logout.submit().then(() => {
-				isLoggedIn = false
-			})
+			logout.submit()
 		},
 		condition: () => {
 			return isLoggedIn

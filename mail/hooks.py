@@ -50,6 +50,7 @@ website_redirects = [
 	},
 ]
 
+email_css = ["/assets/mail/css/email.css"]
 
 # Includes in <head>
 # ------------------
