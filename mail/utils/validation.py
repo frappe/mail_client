@@ -92,7 +92,7 @@ def validate_email_address(
 def validate_domain_is_enabled_and_verified(domain_name: str) -> None:
 	"""Validates if the domain is enabled and verified."""
 
-	if frappe.flags.ingore_domain_validation:
+	if frappe.flags.ignore_domain_validation:
 		return
 
 	enabled, is_verified = frappe.db.get_value("Mail Domain", domain_name, ["enabled", "is_verified"])

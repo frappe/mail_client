@@ -9,6 +9,7 @@
   "enabled",
   "is_verified",
   "is_subdomain",
+  "is_root_domain",
   "column_break_lr3y",
   "dkim_rsa_key_size",
   "newsletter_retention",
@@ -142,6 +143,16 @@
    "fieldtype": "Small Text",
    "label": "Exclude Agent Groups",
    "permlevel": 1
+  },
+  {
+   "default": "0",
+   "depends_on": "eval: doc.is_root_domain",
+   "fieldname": "is_root_domain",
+   "fieldtype": "Check",
+   "label": "Root Domain",
+   "no_copy": 1,
+   "read_only": 1,
+   "search_index": 1
   }
  ],
  "index_web_pages_for_search": 1,
@@ -182,7 +193,7 @@
    "link_fieldname": "domain_name"
   }
  ],
- "modified": "2025-01-16 16:36:23.561780",
+ "modified": "2025-01-21 10:22:51.098094",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Domain",
