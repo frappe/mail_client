@@ -26,6 +26,11 @@ const routes = [
 		component: () => import('@/pages/Login.vue'),
 	},
 	{
+		path: '/setup',
+		name: 'TenantSetup',
+		component: () => import('@/pages/TenantSetup.vue'),
+	},
+	{
 		path: '/inbox',
 		name: 'Inbox',
 		component: () => import('@/pages/Inbox.vue'),
