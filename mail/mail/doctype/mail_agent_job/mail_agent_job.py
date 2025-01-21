@@ -108,7 +108,7 @@ def block_ip_on_agents(ip_address: str, agents: list[str] | None = None) -> None
 	request_data = json.dumps(
 		[
 			{
-				"type": "Insert",
+				"type": "insert",
 				"prefix": None,
 				"values": [[f"server.blocked-ip.{ip_address}", ""]],
 				"assert_empty": True,
@@ -132,7 +132,7 @@ def unblock_ip_on_agents(ip_address: str, agents: list[str] | None = None) -> No
 	if not primary_agents:
 		return
 
-	request_data = json.dumps([{"type": "Delete", "keys": [f"server.blocked-ip.{ip_address}"]}])
+	request_data = json.dumps([{"type": "delete", "keys": [f"server.blocked-ip.{ip_address}"]}])
 	for agent in primary_agents:
 		create_mail_agent_job(agent=agent, method="POST", endpoint="/api/settings", request_data=request_data)
 
@@ -150,7 +150,7 @@ def create_dkim_key_on_agents(
 	request_data = json.dumps(
 		[
 			{
-				"type": "Insert",
+				"type": "insert",
 				"prefix": f"signature.rsa-{domain_name}",
 				"values": [
 					["report", "true"],
@@ -163,7 +163,7 @@ def create_dkim_key_on_agents(
 				"assert_empty": True,
 			},
 			{
-				"type": "Insert",
+				"type": "insert",
 				"prefix": f"signature.ed25519-{domain_name}",
 				"values": [
 					["report", "true"],
@@ -197,11 +197,11 @@ def delete_dkim_key_from_agents(domain_name: str, agents: list[str] | None = Non
 	request_data = json.dumps(
 		[
 			{
-				"type": "Clear",
+				"type": "clear",
 				"prefix": f"signature.rsa-{domain_name}",
 			},
 			{
-				"type": "Clear",
+				"type": "clear",
 				"prefix": f"signature.ed25519-{domain_name}",
 			},
 		]
