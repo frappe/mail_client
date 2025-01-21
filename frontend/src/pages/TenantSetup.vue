@@ -1,40 +1,23 @@
 <template>
-	<div>
-		<div class="mb-6 text-center">
-			<span class="text-center text-lg font-medium leading-5 tracking-tight text-gray-900">
-				Set up mail tenant
-			</span>
-		</div>
-		<form class="flex flex-col space-y-4" @submit.prevent="createTenant.submit()">
-			<FormControl
-				type="text"
-				label="Tenant Name"
-				placeholder="yourcompany.frappemail.com"
-				v-model="tenantName"
-				required
-			/>
-			<FormControl
-				type="number"
-				label="Maximum No. of Domains"
-				v-model="maxDomains"
-				required
-			/>
-			<FormControl
-				type="number"
-				label="Maximum No. of Accounts"
-				v-model="maxAccounts"
-				required
-			/>
-			<FormControl
-				type="number"
-				label="Maximum No. of Groups"
-				v-model="maxGroups"
-				required
-			/>
-			<ErrorMessage :message="errorMessage" />
-			<Button variant="solid" :loading="createTenant.loading"> Create Tenant </Button>
-		</form>
-	</div>
+	<form class="flex flex-col space-y-4" @submit.prevent="createTenant.submit()">
+		<FormControl
+			type="text"
+			label="Tenant Name"
+			placeholder="yourcompany.frappemail.com"
+			v-model="tenantName"
+			required
+		/>
+		<FormControl type="number" label="Maximum No. of Domains" v-model="maxDomains" required />
+		<FormControl
+			type="number"
+			label="Maximum No. of Accounts"
+			v-model="maxAccounts"
+			required
+		/>
+		<FormControl type="number" label="Maximum No. of Groups" v-model="maxGroups" required />
+		<ErrorMessage :message="errorMessage" />
+		<Button variant="solid" :loading="createTenant.loading"> Create Tenant </Button>
+	</form>
 </template>
 <script setup>
 import { ref } from 'vue'

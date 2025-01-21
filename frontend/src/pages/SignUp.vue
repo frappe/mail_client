@@ -1,78 +1,71 @@
 <template>
-	<div>
-		<div class="mb-6 text-center">
-			<span class="text-center text-lg font-medium leading-5 tracking-tight text-gray-900">
-				Create a new account
-			</span>
-		</div>
-		<form class="flex flex-col space-y-4" @submit.prevent="submit">
+	<form class="flex flex-col space-y-4" @submit.prevent="submit">
+		<FormControl
+			label="Email"
+			type="email"
+			placeholder="johndoe@mail.com"
+			autocomplete="email"
+			v-model="email"
+			:disabled="!!props.requestKey || isVerificationStep"
+			required
+		/>
+		<FormControl
+			v-if="isVerificationStep"
+			label="Verification Code"
+			type="text"
+			placeholder="5 digit verification code"
+			maxlength="5"
+			autocomplete="email"
+			v-model="otp"
+			required
+		/>
+		<template v-if="props.requestKey">
 			<FormControl
-				label="Email"
-				type="email"
-				placeholder="johndoe@mail.com"
-				autocomplete="email"
-				v-model="email"
-				:disabled="!!props.requestKey || isVerificationStep"
-				required
-			/>
-			<FormControl
-				v-if="isVerificationStep"
-				label="Verification Code"
+				label="First Name"
 				type="text"
-				placeholder="5 digit verification code"
-				maxlength="5"
-				autocomplete="email"
-				v-model="otp"
+				placeholder="John"
+				autocomplete="given-name"
+				v-model="firstName"
 				required
 			/>
-			<template v-if="props.requestKey">
-				<FormControl
-					label="First Name"
-					type="text"
-					placeholder="John"
-					autocomplete="given-name"
-					v-model="firstName"
-					required
-				/>
-				<FormControl
-					label="Last Name"
-					type="text"
-					placeholder="Doe"
-					autocomplete="family-name"
-					v-model="lastName"
-					required
-				/>
-				<FormControl
-					label="Password"
-					type="password"
-					placeholder="••••••••"
-					name="password"
-					autocomplete="current-password"
-					v-model="password"
-					required
-				/>
-			</template>
-			<ErrorMessage :message="errorMessage" />
-			<Button
-				variant="solid"
-				:loading="signUp.loading || verifyOtp.loading || createAccount.loading"
-			>
-				{{ buttonLabel }}
-			</Button>
-			<Button
-				v-if="isVerificationStep"
-				type="button"
-				:loading="resendOtp.loading"
-				@click="resendOtp.submit()"
-			>
-				Resend OTP
-			</Button>
-		</form>
-		<div class="mt-6 text-center">
-			<router-link class="text-center text-base font-medium hover:underline" to="/login">
-				Already have an account? Log in.
-			</router-link>
-		</div>
+			<FormControl
+				label="Last Name"
+				type="text"
+				placeholder="Doe"
+				autocomplete="family-name"
+				v-model="lastName"
+				required
+			/>
+			<FormControl
+				label="Password"
+				type="password"
+				placeholder="••••••••"
+				name="password"
+				autocomplete="current-password"
+				v-model="password"
+				required
+			/>
+		</template>
+		<ErrorMessage :message="errorMessage" />
+		<Button
+			variant="solid"
+			:loading="signUp.loading || verifyOtp.loading || createAccount.loading"
+		>
+			{{ buttonLabel }}
+		</Button>
+		<Button
+			v-if="isVerificationStep"
+			type="button"
+			:loading="resendOtp.loading"
+			@click="resendOtp.submit()"
+		>
+			Resend OTP
+		</Button>
+	</form>
+	<div class="mt-6 text-center">
+		<router-link class="text-center text-base font-medium hover:underline" to="/login">
+			Already have an account? Log in.
+		</router-link>
 	</div>
 </template>
 <script setup>

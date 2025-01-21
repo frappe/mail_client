@@ -1,36 +1,29 @@
 <template>
-	<div>
-		<div class="mb-6 text-center">
-			<span class="text-center text-lg font-medium leading-5 tracking-tight text-gray-900">
-				Sign in to your account
-			</span>
-		</div>
-		<form class="flex flex-col space-y-4" @submit.prevent="login.submit({ usr, pwd })">
-			<FormControl
-				label="Email"
-				type="email"
-				placeholder="johndoe@mail.com"
-				autocomplete="email"
-				v-model="usr"
-				required
-			/>
-			<FormControl
-				label="Password"
-				type="password"
-				placeholder="••••••••"
-				name="password"
-				autocomplete="current-password"
-				v-model="pwd"
-				required
-			/>
-			<ErrorMessage :message="login.error" />
-			<Button variant="solid" :loading="login.loading"> Log In </Button>
-		</form>
-		<div class="mt-6 text-center">
-			<router-link class="text-center text-base font-medium hover:underline" to="signup">
-				New member? Create an account.
-			</router-link>
-		</div>
+	<form class="flex flex-col space-y-4" @submit.prevent="login.submit({ usr, pwd })">
+		<FormControl
+			label="Email"
+			type="email"
+			placeholder="johndoe@mail.com"
+			autocomplete="email"
+			v-model="usr"
+			required
+		/>
+		<FormControl
+			label="Password"
+			type="password"
+			placeholder="••••••••"
+			name="password"
+			autocomplete="current-password"
+			v-model="pwd"
+			required
+		/>
+		<ErrorMessage :message="login.error" />
+		<Button variant="solid" :loading="login.loading"> Log In </Button>
+	</form>
+	<div class="mt-6 text-center">
+		<router-link class="text-center text-base font-medium hover:underline" to="signup">
+			New member? Create an account.
+		</router-link>
 	</div>
 </template>
 <script setup>

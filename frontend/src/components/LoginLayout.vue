@@ -16,6 +16,13 @@
 			<div
 				class="mx-auto w-full bg-white px-4 py-8 sm:mt-6 sm:w-96 sm:rounded-lg sm:px-8 sm:shadow-xl"
 			>
+				<div class="mb-6 text-center">
+					<span
+						class="text-center text-lg font-medium leading-5 tracking-tight text-gray-900"
+					>
+						{{ title }}
+					</span>
+				</div>
 				<slot />
 			</div>
 		</div>
@@ -26,6 +33,22 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
+
 import MailLogo from '@/components/Icons/MailLogo.vue'
 import FrappeLogo from '@/components/Icons/FrappeLogo.vue'
+
+const route = useRoute()
+
+const title = computed(() => {
+	switch (route.name) {
+		case 'Login':
+			return 'Sign in to your account'
+		case 'TenantSetup':
+			return 'Setup mail tenant'
+		default:
+			return 'Create a new account'
+	}
+})
 </script>
