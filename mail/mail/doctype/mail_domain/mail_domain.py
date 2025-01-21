@@ -8,8 +8,10 @@ from frappe.model.document import Document
 from frappe.utils import cint
 
 from mail.mail.doctype.dkim_key.dkim_key import create_dkim_key
+from mail.mail.doctype.mail_account.mail_account import create_dmarc_account
 from mail.mail.doctype.mail_agent_job.mail_agent_job import create_domain_on_agents, delete_domain_from_agents
 from mail.utils import get_dkim_host, get_dkim_selector, get_dmarc_address
+from mail.utils.cache import get_root_domain_name
 from mail.utils.dns import verify_dns_record
 
 
@@ -23,6 +25,7 @@ class MailDomain(Document):
 		self.validate_newsletter_retention()
 		self.validate_is_verified()
 		self.validate_is_subdomain()
+		self.validate_is_root_domain()
 
 		if self.is_new() or self.has_value_changed("dkim_rsa_key_size"):
 			create_dkim_key(self.domain_name, cint(self.dkim_rsa_key_size))
@@ -30,6 +33,9 @@ class MailDomain(Document):
 
 	def after_insert(self) -> None:
 		create_domain_on_agents(domain_name=self.domain_name)
+
+		if self.is_root_domain:
+			create_dmarc_account()
 
 	def on_trash(self) -> None:
 		if frappe.session.user != "Administrator":
@@ -77,6 +83,11 @@ class MailDomain(Document):
 
 		if len(self.domain_name.split(".")) > 2:
 			self.is_subdomain = 1
+
+	def validate_is_root_domain(self) -> None:
+		"""Validates the Is Root Domain field."""
+
+		self.is_root_domain = 1 if self.domain_name == get_root_domain_name() else 0
 
 	@frappe.whitelist()
 	def refresh_dns_records(self, do_not_save: bool = False) -> None:

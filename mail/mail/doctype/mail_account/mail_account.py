@@ -13,6 +13,8 @@ from mail.mail.doctype.mail_agent_job.mail_agent_job import (
 	delete_account_from_agents,
 	patch_account_on_agents,
 )
+from mail.utils import get_dmarc_address
+from mail.utils.cache import get_root_domain_name
 from mail.utils.user import has_role, is_system_manager
 from mail.utils.validation import (
 	is_email_assigned,
@@ -159,6 +161,13 @@ def create_mail_account(
 		return account
 
 	return frappe.get_doc("Mail Account", email)
+
+
+def create_dmarc_account() -> None:
+	"""Creates a DMARC account"""
+
+	frappe.flags.ignore_domain_validation = True
+	create_mail_account(get_root_domain_name(), get_dmarc_address(), "DMARC")
 
 
 def get_permission_query_condition(user: str | None = None) -> str:
