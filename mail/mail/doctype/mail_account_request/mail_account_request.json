@@ -59,7 +59,7 @@
   {
    "fieldname": "invited_by",
    "fieldtype": "Link",
-   "label": "Invited by",
+   "label": "Invited By",
    "link_filters": "[[\"User\",\"role\",\"=\",\"Mail Admin\"]]",
    "options": "User"
   },
@@ -71,7 +71,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-01-20 17:27:30.578055",
+ "modified": "2025-01-20 17:32:20.778135",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Account Request",
