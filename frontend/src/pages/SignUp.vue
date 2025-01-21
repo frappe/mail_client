@@ -173,7 +173,7 @@ const createAccount = createResource({
 			password: password.value,
 		}
 	},
-	onSuccess(data) {
+	onSuccess() {
 		errorMessage.value = ''
 		login.submit({ usr: email.value, pwd: password.value })
 	},

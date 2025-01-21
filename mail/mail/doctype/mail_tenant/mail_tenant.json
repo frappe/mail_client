@@ -6,6 +6,12 @@
  "engine": "InnoDB",
  "field_order": [
   "tenant_name",
+  "logo",
+  "column_break_kaqu",
+  "max_domains",
+  "max_accounts",
+  "max_groups",
+  "section_break_nexu",
   "tenant_members"
  ],
  "fields": [
@@ -21,14 +27,49 @@
    "fieldtype": "Table",
    "label": "Tenant Members",
    "options": "Tenant Member"
+  },
+  {
+   "fieldname": "logo",
+   "fieldtype": "Attach Image",
+   "label": "Logo"
+  },
+  {
+   "fieldname": "column_break_kaqu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "10",
+   "fieldname": "max_domains",
+   "fieldtype": "Int",
+   "label": "Maximum No. of Domains",
+   "reqd": 1
+  },
+  {
+   "default": "1000",
+   "fieldname": "max_accounts",
+   "fieldtype": "Int",
+   "label": "Maximum No. of Accounts",
+   "reqd": 1
+  },
+  {
+   "default": "100",
+   "fieldname": "max_groups",
+   "fieldtype": "Int",
+   "label": "Maximum No. of Groups",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_nexu",
+   "fieldtype": "Section Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-01-21 12:14:42.956874",
+ "modified": "2025-01-21 13:07:53.192740",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Tenant",
+ "naming_rule": "UUID",
  "owner": "Administrator",
  "permissions": [
   {
@@ -46,5 +87,6 @@
  ],
  "sort_field": "creation",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "title_field": "tenant_name"
 }

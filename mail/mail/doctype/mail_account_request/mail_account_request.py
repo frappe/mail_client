@@ -11,11 +11,7 @@ from frappe.utils import get_url, random_string
 
 class MailAccountRequest(Document):
 	def before_insert(self):
-		if not self.tenant:
-			self.tenant = self.email
-
-		if not self.request_key:
-			self.request_key = random_string(32)
+		self.request_key = random_string(32)
 
 		if not (self.otp or self.invited_by):
 			self.otp = random.randint(10000, 99999)
