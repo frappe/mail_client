@@ -13,22 +13,26 @@ const routes = [
 		path: '/signup',
 		name: 'SignUp',
 		component: () => import('@/pages/SignUp.vue'),
+		meta: { isLoginOrSetup: true },
 	},
 	{
 		path: '/signup/:requestKey',
 		name: 'AccountSetup',
 		component: () => import('@/pages/SignUp.vue'),
 		props: true,
+		meta: { isLoginOrSetup: true },
 	},
 	{
 		path: '/login',
 		name: 'Login',
 		component: () => import('@/pages/Login.vue'),
+		meta: { isLoginOrSetup: true },
 	},
 	{
 		path: '/setup',
 		name: 'TenantSetup',
 		component: () => import('@/pages/TenantSetup.vue'),
+		meta: { isLoginOrSetup: true },
 	},
 	{
 		path: '/inbox',
