@@ -21,10 +21,7 @@
 </template>
 <script setup>
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
 import { FormControl, Button, createResource, ErrorMessage } from 'frappe-ui'
-
-const router = useRouter()
 
 const tenantName = ref('')
 const maxDomains = ref(10)
@@ -43,7 +40,7 @@ const createTenant = createResource({
 		}
 	},
 	onSuccess() {
-		router.replace({ name: 'Inbox' })
+		window.location.reload()
 	},
 	onError(error) {
 		errorMessage.value = error.messages[0]

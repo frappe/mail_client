@@ -36,7 +36,7 @@ def verify_otp(account_request: str, otp: str):
 		"Mail Account Request", account_request, ["otp", "request_key"]
 	)
 	if otp != actual_otp:
-		frappe.throw("Invalid OTP. Please try again.")
+		frappe.throw(_("Invalid OTP. Please try again."))
 
 	return request_key
 

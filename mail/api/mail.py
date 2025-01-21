@@ -43,6 +43,7 @@ def get_user_info() -> dict:
 	)
 	user["roles"] = frappe.get_roles(user.name)
 	user.mail_user = "Mailbox User" in user.roles
+	user.mail_tenant = frappe.db.get_value("Tenant Member", {"user": frappe.session.user}, "parent")
 
 	return user
 

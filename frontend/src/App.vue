@@ -19,7 +19,7 @@ const route = useRoute()
 const screenSize = useScreenSize()
 
 const Layout = computed(() => {
-	if (route.meta.isLoginOrSetup) return LoginLayout
+	if (route.meta.isLogin || route.meta.isSetup) return LoginLayout
 	if (screenSize.width < 640) return MobileLayout
 	return DesktopLayout
 })

@@ -13,26 +13,26 @@ const routes = [
 		path: '/signup',
 		name: 'SignUp',
 		component: () => import('@/pages/SignUp.vue'),
-		meta: { isLoginOrSetup: true },
+		meta: { isLogin: true },
 	},
 	{
 		path: '/signup/:requestKey',
 		name: 'AccountSetup',
 		component: () => import('@/pages/SignUp.vue'),
 		props: true,
-		meta: { isLoginOrSetup: true },
+		meta: { isLogin: true },
 	},
 	{
 		path: '/login',
 		name: 'Login',
 		component: () => import('@/pages/Login.vue'),
-		meta: { isLoginOrSetup: true },
+		meta: { isLogin: true },
 	},
 	{
 		path: '/setup',
 		name: 'TenantSetup',
 		component: () => import('@/pages/TenantSetup.vue'),
-		meta: { isLoginOrSetup: true },
+		meta: { isSetup: true },
 	},
 	{
 		path: '/inbox',
@@ -58,13 +58,14 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
 	const { isLoggedIn } = sessionStore()
-	const toLogin = ['Login', 'SignUp', 'AccountSetup'].includes(to.name)
-
-	if (!isLoggedIn) return next(toLogin ? undefined : { name: 'Login' })
+	if (!isLoggedIn) return next(to.meta.isLogin ? undefined : { name: 'Login' })
 
 	const { userResource } = userStore()
 	await userResource.promise
-	next(toLogin ? { name: 'Inbox' } : undefined)
+	if (!userResource.data?.mail_tenant)
+		return next(to.meta.isSetup ? undefined : { name: 'TenantSetup' })
+
+	next(to.meta.isLogin || to.meta.isSetup ? { name: 'Inbox' } : undefined)
 })
 
 export default router

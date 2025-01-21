@@ -3,7 +3,7 @@
 
 frappe.ui.form.on("Mail Account Request", {
 	refresh: function (frm) {
-		frm.add_custom_button("Send Verification Email", () => {
+		frm.add_custom_button(__("Send Verification Email"), () => {
 			frm.call("send_verification_email");
 		});
 	},
