@@ -66,7 +66,6 @@ import SidebarDetail from '@/components/SidebarDetail.vue'
 import { userStore } from '@/stores/user'
 
 const mailDetails = ref(null)
-const socket = inject('$socket')
 const user = inject('$user')
 const { currentMail, setCurrentMail } = userStore()
 
