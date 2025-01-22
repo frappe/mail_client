@@ -49,9 +49,10 @@ def get_verified_email(request_key: str):
 
 @frappe.whitelist(allow_guest=True)
 def create_account(request_key: str, first_name, last_name, password):
-	account_request, email, role = frappe.db.get_value(
-		"Mail Account Request", {"request_key": request_key}, ["name", "email", "role"]
+	account_request, email, tenant, role = frappe.db.get_value(
+		"Mail Account Request", {"request_key": request_key}, ["name", "email", "tenant", "role"]
 	)
+
 	user = frappe.new_doc("User")
 	user.first_name = first_name
 	user.last_name = last_name
@@ -60,9 +61,14 @@ def create_account(request_key: str, first_name, last_name, password):
 	user.new_password = password
 	user.append_roles(role)
 	user.flags.no_welcome_mail = True
-	user.save(ignore_permissions=True)
+	user.insert(ignore_permissions=True)
 
 	frappe.db.set_value("Mail Account Request", account_request, "is_verified", 1)
+
+	if tenant:
+		mail_tenant = frappe.get_cached_doc("Mail Tenant", tenant)
+		mail_tenant.append("tenant_members", {"user": email})
+		mail_tenant.save(ignore_permissions=True)
 
 
 @frappe.whitelist()

@@ -36,8 +36,10 @@
   },
   {
    "fieldname": "tenant",
-   "fieldtype": "Data",
-   "label": "Tenant"
+   "fieldtype": "Link",
+   "label": "Tenant",
+   "mandatory_depends_on": "eval:doc.role == 'Mail User'",
+   "options": "Mail Tenant"
   },
   {
    "fieldname": "role",
@@ -62,6 +64,7 @@
    "fieldtype": "Link",
    "label": "Invited By",
    "link_filters": "[[\"User\",\"role\",\"=\",\"Mail Admin\"]]",
+   "mandatory_depends_on": "eval:doc.tenant",
    "options": "User"
   },
   {
@@ -79,7 +82,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-01-22 11:52:56.314624",
+ "modified": "2025-01-22 12:42:29.143240",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Account Request",

@@ -32,7 +32,8 @@ class MailAccountRequest(Document):
 		if self.invited_by:
 			subject = f"You have been invited by {self.invited_by} to join Frappe Mail"
 			template = "invite_signup"
-			args.update({"invited_by": self.invited_by, "tenant": self.tenant})
+			tenant_name = frappe.db.get_value("Mail Tenant", self.tenant, "tenant_name")
+			args.update({"invited_by": self.invited_by, "tenant": tenant_name})
 
 		else:
 			subject = f"{self.otp} - OTP for Frappe Mail Account Verification"
