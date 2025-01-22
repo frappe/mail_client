@@ -5,7 +5,7 @@ import frappe
 from frappe import _
 from frappe.model.document import Document
 
-from mail.mail.doctype.mail_agent_job.mail_agent_job import (
+from mail.mail.doctype.mail_agent_request_log.mail_agent_request_log import (
 	create_group_on_agents,
 	delete_group_from_agents,
 	patch_group_on_agents,

@@ -10,7 +10,7 @@ from frappe.utils import cint, random_string
 from frappe.utils.caching import request_cache
 
 from mail.mail.doctype.dns_record.dns_record import create_or_update_dns_record
-from mail.mail.doctype.mail_agent_job.mail_agent_job import (
+from mail.mail.doctype.mail_agent_request_log.mail_agent_request_log import (
 	create_dkim_key_on_agents,
 	delete_dkim_key_from_agents,
 )

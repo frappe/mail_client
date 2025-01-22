@@ -14,7 +14,7 @@ from mail.utils import get_dkim_selector
 from mail.utils.cache import get_primary_agents
 
 
-class MailAgentJob(Document):
+class MailAgentRequestLog(Document):
 	def validate(self) -> None:
 		self.validate_agent()
 		self.validate_endpoint()
@@ -73,7 +73,7 @@ class MailAgentJob(Document):
 			self.db_update()
 
 
-def create_mail_agent_job(
+def create_mail_agent_request_log(
 	agent: str,
 	method: str,
 	endpoint: str,
@@ -81,20 +81,20 @@ def create_mail_agent_job(
 	request_params: dict | None = None,
 	request_data: str | None = None,
 	request_json: dict | None = None,
-) -> "MailAgentJob":
-	"""Creates a new Mail Agent Job."""
+) -> "MailAgentRequestLog":
+	"""Creates a new Mail Agent Request Log."""
 
-	agent_job = frappe.new_doc("Mail Agent Job")
-	agent_job.agent = agent
-	agent_job.method = method
-	agent_job.endpoint = endpoint
-	agent_job.request_headers = request_headers
-	agent_job.request_params = request_params
-	agent_job.request_data = request_data
-	agent_job.request_json = request_json
-	agent_job.insert()
+	agent_request_log = frappe.new_doc("Mail Agent Request Log")
+	agent_request_log.agent = agent
+	agent_request_log.method = method
+	agent_request_log.endpoint = endpoint
+	agent_request_log.request_headers = request_headers
+	agent_request_log.request_params = request_params
+	agent_request_log.request_data = request_data
+	agent_request_log.request_json = request_json
+	agent_request_log.insert()
 
-	return agent_job
+	return agent_request_log
 
 
 def block_ip_on_agents(ip_address: str, agents: list[str] | None = None) -> None:
@@ -116,7 +116,7 @@ def block_ip_on_agents(ip_address: str, agents: list[str] | None = None) -> None
 		]
 	)
 	for agent in primary_agents:
-		create_mail_agent_job(
+		create_mail_agent_request_log(
 			agent=agent,
 			method="POST",
 			endpoint="/api/settings",
@@ -134,7 +134,9 @@ def unblock_ip_on_agents(ip_address: str, agents: list[str] | None = None) -> No
 
 	request_data = json.dumps([{"type": "delete", "keys": [f"server.blocked-ip.{ip_address}"]}])
 	for agent in primary_agents:
-		create_mail_agent_job(agent=agent, method="POST", endpoint="/api/settings", request_data=request_data)
+		create_mail_agent_request_log(
+			agent=agent, method="POST", endpoint="/api/settings", request_data=request_data
+		)
 
 
 def create_dkim_key_on_agents(
@@ -178,7 +180,7 @@ def create_dkim_key_on_agents(
 		]
 	)
 	for agent in primary_agents:
-		create_mail_agent_job(
+		create_mail_agent_request_log(
 			agent=agent,
 			method="POST",
 			endpoint="/api/settings",
@@ -207,7 +209,9 @@ def delete_dkim_key_from_agents(domain_name: str, agents: list[str] | None = Non
 		]
 	)
 	for agent in primary_agents:
-		create_mail_agent_job(agent=agent, method="POST", endpoint="/api/settings", request_data=request_data)
+		create_mail_agent_request_log(
+			agent=agent, method="POST", endpoint="/api/settings", request_data=request_data
+		)
 
 
 def create_domain_on_agents(domain_name: str, agents: list[str] | None = None) -> None:
@@ -220,7 +224,9 @@ def create_domain_on_agents(domain_name: str, agents: list[str] | None = None) -
 
 	principal = Principal(name=domain_name, type="domain").__dict__
 	for agent in primary_agents:
-		create_mail_agent_job(agent=agent, method="POST", endpoint="/api/principal", request_json=principal)
+		create_mail_agent_request_log(
+			agent=agent, method="POST", endpoint="/api/principal", request_json=principal
+		)
 
 
 def delete_domain_from_agents(domain_name: str, agents: list[str] | None = None) -> None:
@@ -232,7 +238,7 @@ def delete_domain_from_agents(domain_name: str, agents: list[str] | None = None)
 		return
 
 	for agent in primary_agents:
-		create_mail_agent_job(agent=agent, method="DELETE", endpoint=f"/api/principal/{domain_name}")
+		create_mail_agent_request_log(agent=agent, method="DELETE", endpoint=f"/api/principal/{domain_name}")
 
 
 def create_account_on_agents(
@@ -254,7 +260,9 @@ def create_account_on_agents(
 		roles=["user"],
 	).__dict__
 	for agent in primary_agents:
-		create_mail_agent_job(agent=agent, method="POST", endpoint="/api/principal", request_json=principal)
+		create_mail_agent_request_log(
+			agent=agent, method="POST", endpoint="/api/principal", request_json=principal
+		)
 
 
 def patch_account_on_agents(
@@ -293,7 +301,7 @@ def patch_account_on_agents(
 
 	request_data = json.dumps(request_data)
 	for agent in primary_agents:
-		create_mail_agent_job(
+		create_mail_agent_request_log(
 			agent=agent, method="PATCH", endpoint=f"/api/principal/{email}", request_data=request_data
 		)
 
@@ -307,7 +315,7 @@ def delete_account_from_agents(email: str, agents: list[str] | None = None) -> N
 		return
 
 	for agent in primary_agents:
-		create_mail_agent_job(agent=agent, method="DELETE", endpoint=f"/api/principal/{email}")
+		create_mail_agent_request_log(agent=agent, method="DELETE", endpoint=f"/api/principal/{email}")
 
 
 def create_group_on_agents(email: str, display_name: str, agents: list[str] | None = None) -> None:
@@ -326,7 +334,9 @@ def create_group_on_agents(email: str, display_name: str, agents: list[str] | No
 		enabledPermissions=["email-send", "email-receive"],
 	).__dict__
 	for agent in primary_agents:
-		create_mail_agent_job(agent=agent, method="POST", endpoint="/api/principal", request_json=principal)
+		create_mail_agent_request_log(
+			agent=agent, method="POST", endpoint="/api/principal", request_json=principal
+		)
 
 
 def patch_group_on_agents(email: str, display_name: str, agents: list[str] | None = None) -> None:
@@ -347,7 +357,7 @@ def patch_group_on_agents(email: str, display_name: str, agents: list[str] | Non
 		]
 	)
 	for agent in primary_agents:
-		create_mail_agent_job(
+		create_mail_agent_request_log(
 			agent=agent, method="PATCH", endpoint=f"/api/principal/{email}", request_data=request_data
 		)
 
@@ -368,7 +378,7 @@ def create_alias_on_agents(email: str, alias: str, agents: list[str] | None = No
 
 	request_data = json.dumps([{"action": "addItem", "field": "emails", "value": alias}])
 	for agent in primary_agents:
-		create_mail_agent_job(
+		create_mail_agent_request_log(
 			agent=agent, method="PATCH", endpoint=f"/api/principal/{email}", request_data=request_data
 		)
 
@@ -392,7 +402,7 @@ def delete_alias_from_agents(email: str, alias: str, agents: list[str] | None = 
 
 	request_data = json.dumps([{"action": "removeItem", "field": "emails", "value": alias}])
 	for agent in primary_agents:
-		create_mail_agent_job(
+		create_mail_agent_request_log(
 			agent=agent, method="PATCH", endpoint=f"/api/principal/{email}", request_data=request_data
 		)
 
@@ -415,7 +425,9 @@ def create_member_on_agents(email: str, member: str, is_group: bool, agents: lis
 		request_data = json.dumps([{"action": "addItem", "field": "members", "value": member}])
 
 	for agent in primary_agents:
-		create_mail_agent_job(agent=agent, method="PATCH", endpoint=endpoint, request_data=request_data)
+		create_mail_agent_request_log(
+			agent=agent, method="PATCH", endpoint=endpoint, request_data=request_data
+		)
 
 
 def patch_member_on_agents(
@@ -447,4 +459,6 @@ def delete_member_from_agents(
 		request_data = json.dumps([{"action": "removeItem", "field": "members", "value": member}])
 
 	for agent in primary_agents:
-		create_mail_agent_job(agent=agent, method="PATCH", endpoint=endpoint, request_data=request_data)
+		create_mail_agent_request_log(
+			agent=agent, method="PATCH", endpoint=endpoint, request_data=request_data
+		)

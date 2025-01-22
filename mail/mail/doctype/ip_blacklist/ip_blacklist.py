@@ -8,7 +8,10 @@ import frappe
 from frappe import _
 from frappe.model.document import Document
 
-from mail.mail.doctype.mail_agent_job.mail_agent_job import block_ip_on_agents, unblock_ip_on_agents
+from mail.mail.doctype.mail_agent_request_log.mail_agent_request_log import (
+	block_ip_on_agents,
+	unblock_ip_on_agents,
+)
 from mail.utils.cache import get_blacklist_for_ip_group
 from mail.utils.dns import get_host_by_ip
 
