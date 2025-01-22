@@ -1,0 +1,164 @@
+{
+ "actions": [],
+ "autoname": "hash",
+ "creation": "2024-11-19 11:38:22.846485",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_nb25",
+  "incoming_mail",
+  "domain_name",
+  "policy_published",
+  "column_break_kyq2",
+  "report_id",
+  "organization",
+  "email",
+  "extra_contact_info",
+  "section_break_bgcw",
+  "from_date",
+  "column_break_lztn",
+  "to_date",
+  "section_break_prwz",
+  "records"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_nb25",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "organization",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Organization",
+   "no_copy": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "email",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Email",
+   "no_copy": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "from_date",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "From Date",
+   "no_copy": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "to_date",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "To Date",
+   "no_copy": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "domain_name",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Domain Name",
+   "no_copy": 1,
+   "options": "Mail Domain",
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "column_break_kyq2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_bgcw",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_lztn",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "extra_contact_info",
+   "fieldtype": "Small Text",
+   "label": "Extra Contact Info",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "policy_published",
+   "fieldtype": "Small Text",
+   "label": "Policy Published",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_prwz",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "records",
+   "fieldtype": "Table",
+   "label": "Records",
+   "no_copy": 1,
+   "options": "DMARC Report Detail",
+   "read_only": 1
+  },
+  {
+   "fieldname": "report_id",
+   "fieldtype": "Data",
+   "label": "Report ID",
+   "length": 255,
+   "no_copy": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "incoming_mail",
+   "fieldtype": "Link",
+   "label": "Incoming Mail",
+   "no_copy": 1,
+   "options": "Incoming Mail",
+   "read_only": 1,
+   "search_index": 1
+  }
+ ],
+ "in_create": 1,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-01-16 16:19:54.763220",
+ "modified_by": "Administrator",
+ "module": "Mail",
+ "name": "DMARC Report",
+ "naming_rule": "Random",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

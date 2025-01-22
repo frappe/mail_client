@@ -1,0 +1,150 @@
+{
+ "actions": [],
+ "creation": "2025-01-04 23:04:12.864462",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_pfdy",
+  "enabled",
+  "section_break_cu1l",
+  "domain_name",
+  "column_break_mylf",
+  "rsa_key_size",
+  "public_keys_section",
+  "rsa_public_key",
+  "column_break_o2lm",
+  "ed25519_public_key",
+  "private_keys_section",
+  "rsa_private_key",
+  "column_break_jkdk",
+  "ed25519_private_key"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_pfdy",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "1",
+   "depends_on": "eval: !doc.__islocal",
+   "fieldname": "enabled",
+   "fieldtype": "Check",
+   "label": "Enabled",
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "section_break_cu1l",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "domain_name",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Domain Name",
+   "no_copy": 1,
+   "options": "Mail Domain",
+   "reqd": 1,
+   "search_index": 1,
+   "set_only_once": 1
+  },
+  {
+   "fieldname": "column_break_mylf",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "rsa_key_size",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "RSA Key Size",
+   "no_copy": 1,
+   "options": "\n2048\n4096",
+   "set_only_once": 1
+  },
+  {
+   "fieldname": "public_keys_section",
+   "fieldtype": "Section Break",
+   "label": "Public Keys"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "private_keys_section",
+   "fieldtype": "Section Break",
+   "label": "Private Keys"
+  },
+  {
+   "fieldname": "rsa_private_key",
+   "fieldtype": "Text",
+   "label": "RSA Private Key",
+   "no_copy": 1,
+   "read_only": 1,
+   "set_only_once": 1
+  },
+  {
+   "fieldname": "rsa_public_key",
+   "fieldtype": "Text",
+   "label": "RSA Public Key",
+   "no_copy": 1,
+   "read_only": 1,
+   "set_only_once": 1
+  },
+  {
+   "fieldname": "ed25519_public_key",
+   "fieldtype": "Text",
+   "label": "Ed25519 Public Key",
+   "no_copy": 1,
+   "read_only": 1,
+   "set_only_once": 1
+  },
+  {
+   "fieldname": "ed25519_private_key",
+   "fieldtype": "Text",
+   "label": "Ed25519 Private Key",
+   "no_copy": 1,
+   "read_only": 1,
+   "set_only_once": 1
+  },
+  {
+   "fieldname": "column_break_o2lm",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_jkdk",
+   "fieldtype": "Column Break"
+  }
+ ],
+ "in_create": 1,
+ "index_web_pages_for_search": 1,
+ "links": [
+  {
+   "group": "Reference",
+   "link_doctype": "DNS Record",
+   "link_fieldname": "attached_to_docname"
+  }
+ ],
+ "modified": "2025-01-06 14:04:17.764275",
+ "modified_by": "Administrator",
+ "module": "Mail",
+ "name": "DKIM Key",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

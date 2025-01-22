@@ -1,0 +1,27 @@
+{
+ "add_total_row": 0,
+ "columns": [],
+ "creation": "2024-11-21 17:31:42.807210",
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "filters": [],
+ "idx": 0,
+ "is_standard": "Yes",
+ "letterhead": null,
+ "modified": "2024-11-22 21:21:20.263252",
+ "modified_by": "Administrator",
+ "module": "Mail",
+ "name": "DMARC Report Viewer",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "ref_doctype": "DMARC Report",
+ "report_name": "DMARC Report Viewer",
+ "report_type": "Script Report",
+ "roles": [
+  {
+   "role": "System Manager"
+  }
+ ],
+ "timeout": 0
+}

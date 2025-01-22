@@ -1,202 +1,443 @@
 {
  "actions": [],
- "allow_rename": 1,
- "creation": "2023-12-23 17:19:24.940511",
+ "creation": "2025-01-03 13:39:39.958913",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "section_break_1kdf",
-  "mail_server_host",
-  "column_break_awdi",
-  "mail_server_api_key",
-  "mail_server_api_secret",
-  "last_synced_at",
-  "outgoing_tab",
+  "section_break_hrww",
+  "root_domain_name",
+  "spf_host",
+  "column_break_4ccc",
+  "dns_provider",
+  "dns_provider_token",
+  "section_break_l9un",
+  "default_dkim_rsa_key_size",
+  "default_newsletter_retention",
+  "column_break_rwnw",
+  "default_ttl",
+  "limits_outbound_tab",
+  "limit_outbound_message_section",
   "max_recipients",
   "max_headers",
-  "column_break_sf4n",
-  "max_message_size",
-  "section_break_xudp",
-  "outgoing_max_attachments",
-  "column_break_l9fc",
-  "outgoing_max_attachment_size",
-  "outgoing_total_attachments_size",
-  "newsletter_section",
-  "default_newsletter_retention",
-  "column_break_pcku",
+  "column_break_seja",
+  "max_message_size_mb",
   "max_newsletter_retention",
-  "incoming_tab",
-  "send_notification_on_reject",
-  "column_break_0buk",
-  "max_sync_via_api",
-  "rejected_mail_retention"
+  "attachment_section",
+  "max_attachments",
+  "column_break_4lt9",
+  "max_attachment_size_mb",
+  "max_total_attachments_size_mb",
+  "smtp_section",
+  "smtp_max_connections",
+  "smtp_max_messages",
+  "column_break_9j6r",
+  "smtp_session_duration",
+  "smtp_inactivity_timeout",
+  "smtp_cleanup_interval",
+  "limits_inbound_tab",
+  "imap_section",
+  "imap_max_connections",
+  "column_break_adoa",
+  "imap_authenticated_timeout",
+  "imap_unauthenticated_timeout",
+  "imap_idle_timeout",
+  "imap_cleanup_interval",
+  "spamassassin_tab",
+  "section_break_hgqa",
+  "enable_spamd",
+  "section_break_r530",
+  "spamd_host",
+  "spamd_port",
+  "column_break_c43x",
+  "spamd_scanning_mode",
+  "spamd_hybrid_scanning_threshold",
+  "spamd_outbound_section",
+  "enable_spamd_for_outbound",
+  "spamd_outbound_block",
+  "column_break_lhy4",
+  "spamd_outbound_threshold"
  ],
  "fields": [
   {
-   "fieldname": "outgoing_tab",
-   "fieldtype": "Tab Break",
-   "label": "Outgoing"
-  },
-  {
-   "fieldname": "column_break_sf4n",
-   "fieldtype": "Column Break"
-  },
-  {
-   "default": "100",
-   "fieldname": "max_recipients",
-   "fieldtype": "Int",
+   "description": "The domain name used to create DNS records (SPF, DKIM keys, external DMARC, etc.).",
+   "fieldname": "root_domain_name",
+   "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Max Recipients",
-   "non_negative": 1,
+   "label": "Root Domain Name",
+   "placeholder": "frappemail.com",
    "reqd": 1
   },
   {
-   "default": "20",
-   "fieldname": "outgoing_max_attachments",
-   "fieldtype": "Int",
-   "label": "Max Attachments (Count)",
-   "non_negative": 1,
-   "reqd": 1
-  },
-  {
-   "default": "20",
-   "fieldname": "outgoing_max_attachment_size",
-   "fieldtype": "Int",
-   "label": "Max Attachment Size (MB)",
-   "non_negative": 1,
-   "reqd": 1
-  },
-  {
-   "default": "20",
-   "fieldname": "outgoing_total_attachments_size",
-   "fieldtype": "Int",
-   "label": "Total Attachments Size (MB)",
-   "non_negative": 1,
-   "reqd": 1
-  },
-  {
-   "default": "25",
-   "fieldname": "max_message_size",
-   "fieldtype": "Int",
-   "label": "Max Message Size (MB)",
-   "non_negative": 1,
-   "reqd": 1
-  },
-  {
-   "fieldname": "column_break_l9fc",
-   "fieldtype": "Column Break"
-  },
-  {
-   "default": "10",
-   "fieldname": "max_headers",
-   "fieldtype": "Int",
+   "default": "_spf",
+   "description": "Used to add allowed SMTP servers and included by other domains in their SPF records.",
+   "fieldname": "spf_host",
+   "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Max Headers",
-   "non_negative": 1,
+   "label": "SPF Host",
    "reqd": 1
   },
   {
-   "fieldname": "section_break_xudp",
+   "description": "The service provider managing your root domain's DNS records.",
+   "fieldname": "dns_provider",
+   "fieldtype": "Select",
+   "label": "DNS Provider",
+   "options": "\nDigitalOcean"
+  },
+  {
+   "depends_on": "eval: doc.dns_provider",
+   "description": "The token used to authenticate with your DNS provider.",
+   "fieldname": "dns_provider_token",
+   "fieldtype": "Password",
+   "label": "DNS Provider Token",
+   "mandatory_depends_on": "eval: doc.dns_provider"
+  },
+  {
+   "fieldname": "section_break_hrww",
    "fieldtype": "Section Break"
   },
   {
-   "fieldname": "incoming_tab",
-   "fieldtype": "Tab Break",
-   "label": "Incoming"
+   "fieldname": "column_break_4ccc",
+   "fieldtype": "Column Break"
   },
   {
-   "default": "100",
-   "fieldname": "max_sync_via_api",
+   "fieldname": "section_break_l9un",
+   "fieldtype": "Section Break",
+   "label": "Defaults"
+  },
+  {
+   "default": "3600",
+   "description": "The default Time-to-Live (TTL) for DNS records.",
+   "fieldname": "default_ttl",
    "fieldtype": "Int",
-   "label": "Max Sync via API (Count)",
+   "label": "TTL",
    "non_negative": 1,
    "reqd": 1
   },
   {
-   "fieldname": "column_break_0buk",
+   "fieldname": "spamassassin_tab",
+   "fieldtype": "Tab Break",
+   "label": "SpamAssassin",
+   "mandatory_depends_on": "eval: doc.enable_spam_detection",
+   "read_only_depends_on": "eval: !doc.enable_spam_detection"
+  },
+  {
+   "fieldname": "section_break_hgqa",
+   "fieldtype": "Section Break"
+  },
+  {
+   "description": "Hostname or IP of the SpamAssassin server.",
+   "fieldname": "spamd_host",
+   "fieldtype": "Data",
+   "label": "Host",
+   "mandatory_depends_on": "eval: doc.enable_spamd",
+   "placeholder": "spamd.frappemail.com",
+   "read_only_depends_on": "eval: !doc.enable_spamd"
+  },
+  {
+   "default": "783",
+   "description": "Port for connecting to the SpamAssassin server.",
+   "fieldname": "spamd_port",
+   "fieldtype": "Int",
+   "label": "Port",
+   "mandatory_depends_on": "eval: doc.enable_spamd",
+   "non_negative": 1,
+   "read_only_depends_on": "eval: !doc.enable_spamd"
+  },
+  {
+   "fieldname": "section_break_r530",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "Hybrid Approach",
+   "fieldname": "spamd_scanning_mode",
+   "fieldtype": "Select",
+   "label": "Scanning Mode",
+   "mandatory_depends_on": "eval: doc.enable_spamd",
+   "options": "Exclude Attachments\nInclude Attachments\nHybrid Approach",
+   "read_only_depends_on": "eval: !doc.enable_spamd"
+  },
+  {
+   "default": "2",
+   "description": "Threshold for when to switch from scanning only the email body to scanning attachments selectively.",
+   "fieldname": "spamd_hybrid_scanning_threshold",
+   "fieldtype": "Float",
+   "label": "Hybrid Scanning Threshold",
+   "mandatory_depends_on": "eval: doc.spamd_scanning_mode == \"Hybrid Approach\"",
+   "precision": "1",
+   "read_only_depends_on": "eval: !doc.enable_spamd || doc.spamd_scanning_mode != \"Hybrid Approach\""
+  },
+  {
+   "fieldname": "column_break_c43x",
    "fieldtype": "Column Break"
   },
   {
    "default": "0",
-   "fieldname": "send_notification_on_reject",
+   "description": "Check to enable spam detection.",
+   "fieldname": "enable_spamd",
    "fieldtype": "Check",
-   "label": "Send Notification on Reject"
+   "label": "Enable Spam Detection"
   },
   {
-   "fieldname": "newsletter_section",
-   "fieldtype": "Section Break",
-   "label": "Newsletter"
+   "fieldname": "column_break_lhy4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "description": "Enable or disable outbound spam detection.",
+   "fieldname": "enable_spamd_for_outbound",
+   "fieldtype": "Check",
+   "label": "Enable",
+   "read_only_depends_on": "eval: !doc.enable_spamd"
+  },
+  {
+   "default": "0",
+   "description": "Block emails identified as spam from being sent.",
+   "fieldname": "spamd_outbound_block",
+   "fieldtype": "Check",
+   "label": "Block Spam",
+   "read_only_depends_on": "eval: !doc.enable_spamd || !doc.enable_spamd_for_outbound"
   },
   {
    "default": "3",
-   "fieldname": "default_newsletter_retention",
-   "fieldtype": "Int",
-   "in_list_view": 1,
-   "label": "Default Retention (Days)",
-   "non_negative": 1,
-   "reqd": 1
+   "description": "Spam score threshold for blocking emails.",
+   "fieldname": "spamd_outbound_threshold",
+   "fieldtype": "Float",
+   "label": "Threshold",
+   "mandatory_depends_on": "eval: doc.enable_spamd_for_outbound",
+   "precision": "1",
+   "read_only_depends_on": "eval: !doc.enable_spamd || !doc.enable_spamd_for_outbound"
+  },
+  {
+   "fieldname": "column_break_rwnw",
+   "fieldtype": "Column Break"
   },
   {
    "default": "7",
+   "description": "Maximum number of days a newsletter is retained.",
    "fieldname": "max_newsletter_retention",
    "fieldtype": "Int",
-   "label": "Max Retention (Days)",
+   "label": "Maximum Newsletter Retention (Days)",
    "non_negative": 1,
    "reqd": 1
   },
   {
    "default": "3",
-   "fieldname": "rejected_mail_retention",
+   "description": "The default number of days a newsletter is retained.",
+   "fieldname": "default_newsletter_retention",
    "fieldtype": "Int",
-   "label": "Rejected Mail Retention (Days)",
+   "label": "Newsletter Retention (Days)",
    "non_negative": 1,
    "reqd": 1
   },
   {
-   "fieldname": "section_break_1kdf",
-   "fieldtype": "Section Break"
-  },
-  {
-   "default": "https://server.frappemail.com/",
-   "fieldname": "mail_server_host",
-   "fieldtype": "Data",
-   "label": "Mail Server",
+   "default": "2048",
+   "description": "The default size of the RSA key used for DKIM signing.",
+   "fieldname": "default_dkim_rsa_key_size",
+   "fieldtype": "Select",
+   "label": "DKIM RSA Key Size",
+   "options": "\n2048\n4096",
    "reqd": 1
   },
   {
-   "fieldname": "mail_server_api_key",
-   "fieldtype": "Data",
-   "label": "API Key",
+   "default": "25",
+   "description": "Maximum recipients allowed per email.",
+   "fieldname": "max_recipients",
+   "fieldtype": "Int",
+   "label": "Maximum Number of Recipients",
+   "non_negative": 1,
    "reqd": 1
   },
   {
-   "fieldname": "mail_server_api_secret",
-   "fieldtype": "Password",
-   "label": "API Secret",
+   "default": "15",
+   "description": "Maximum size for an email message, including attachments.",
+   "fieldname": "max_message_size_mb",
+   "fieldtype": "Int",
+   "label": "Maximum Message Size (MB)",
+   "non_negative": 1,
    "reqd": 1
   },
   {
-   "fieldname": "column_break_awdi",
+   "default": "10",
+   "description": "Maximum number of custom headers allowed in an email.",
+   "fieldname": "max_headers",
+   "fieldtype": "Int",
+   "label": "Maximum Custom Headers",
+   "non_negative": 1,
+   "reqd": 1
+  },
+  {
+   "default": "10",
+   "description": "Maximum size allowed for each email attachment.",
+   "fieldname": "max_attachment_size_mb",
+   "fieldtype": "Int",
+   "label": "Maximum Attachment Size (MB)",
+   "non_negative": 1,
+   "reqd": 1
+  },
+  {
+   "default": "10",
+   "description": "Maximum combined size for all attachments in an email.",
+   "fieldname": "max_total_attachments_size_mb",
+   "fieldtype": "Int",
+   "label": "Maximum Total Attachments Size (MB)",
+   "non_negative": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_seja",
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "column_break_pcku",
+   "fieldname": "column_break_4lt9",
    "fieldtype": "Column Break"
   },
   {
-   "default": "now",
-   "fieldname": "last_synced_at",
-   "fieldtype": "Datetime",
-   "hidden": 1,
-   "label": "Last Synced At",
-   "no_copy": 1,
-   "read_only": 1
+   "default": "10",
+   "description": "Maximum number of attachments allowed in an email.",
+   "fieldname": "max_attachments",
+   "fieldtype": "Int",
+   "label": "Maximum Number of Attachments",
+   "non_negative": 1,
+   "reqd": 1
+  },
+  {
+   "description": "Changes may require a bench restart to take effect.",
+   "fieldname": "smtp_section",
+   "fieldtype": "Section Break",
+   "label": "SMTP"
+  },
+  {
+   "default": "300",
+   "description": "Maximum idle time before the session ends.",
+   "fieldname": "smtp_inactivity_timeout",
+   "fieldtype": "Int",
+   "label": "Inactivity Timeout (Seconds)",
+   "non_negative": 1,
+   "reqd": 1
+  },
+  {
+   "default": "600",
+   "description": "Maximum allowed time for an active session.",
+   "fieldname": "smtp_session_duration",
+   "fieldtype": "Int",
+   "label": "Session Duration (Seconds)",
+   "non_negative": 1,
+   "reqd": 1
+  },
+  {
+   "default": "10",
+   "description": "The maximum messages allowed per SMTP session.",
+   "fieldname": "smtp_max_messages",
+   "fieldtype": "Int",
+   "label": "Maximum Number of Messages",
+   "reqd": 1
+  },
+  {
+   "default": "5",
+   "description": "Max connections per host, port, and user.",
+   "fieldname": "smtp_max_connections",
+   "fieldtype": "Int",
+   "label": "Maximum Number of Connections",
+   "reqd": 1
+  },
+  {
+   "fieldname": "attachment_section",
+   "fieldtype": "Section Break",
+   "label": "Attachment"
+  },
+  {
+   "fieldname": "spamd_outbound_section",
+   "fieldtype": "Section Break",
+   "label": "Outbound"
+  },
+  {
+   "fieldname": "column_break_9j6r",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "limits_outbound_tab",
+   "fieldtype": "Tab Break",
+   "label": "Limits (Outbound)"
+  },
+  {
+   "fieldname": "limit_outbound_message_section",
+   "fieldtype": "Section Break",
+   "label": "Message"
+  },
+  {
+   "default": "60",
+   "description": "The interval for cleaning up stale connections.",
+   "fieldname": "smtp_cleanup_interval",
+   "fieldtype": "Int",
+   "label": "Cleanup Interval (Seconds)",
+   "non_negative": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "limits_inbound_tab",
+   "fieldtype": "Tab Break",
+   "label": "Limits (Inbound)"
+  },
+  {
+   "description": "Changes may require a bench restart to take effect.",
+   "fieldname": "imap_section",
+   "fieldtype": "Section Break",
+   "label": "IMAP"
+  },
+  {
+   "default": "5",
+   "description": "Max connections per host, port, and user.",
+   "fieldname": "imap_max_connections",
+   "fieldtype": "Int",
+   "label": "Maximum Number of Connections",
+   "non_negative": 1,
+   "reqd": 1
+  },
+  {
+   "default": "60",
+   "description": "The interval for cleaning up stale connections.",
+   "fieldname": "imap_cleanup_interval",
+   "fieldtype": "Int",
+   "label": "Cleanup Interval (Seconds)",
+   "non_negative": 1,
+   "reqd": 1
+  },
+  {
+   "default": "1800",
+   "description": "Time an authenticated session can remain idle before termination.",
+   "fieldname": "imap_authenticated_timeout",
+   "fieldtype": "Int",
+   "label": "Authenticated Session Timeout (Seconds)",
+   "non_negative": 1,
+   "reqd": 1
+  },
+  {
+   "default": "60",
+   "description": "Time an unauthenticated session can remain inactive before termination.",
+   "fieldname": "imap_unauthenticated_timeout",
+   "fieldtype": "Int",
+   "label": "Unauthenticated Session Timeout (Seconds)",
+   "non_negative": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_adoa",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1800",
+   "description": "Time a connection can stay idle in the IMAP IDLE state before termination.",
+   "fieldname": "imap_idle_timeout",
+   "fieldtype": "Int",
+   "label": "Idle Session Timeout (Seconds)",
+   "non_negative": 1,
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-11-16 15:34:43.923232",
+ "modified": "2025-01-13 19:51:19.758336",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Settings",
@@ -205,9 +446,11 @@
   {
    "create": 1,
    "delete": 1,
+   "email": 1,
    "print": 1,
    "read": 1,
    "role": "System Manager",
+   "share": 1,
    "write": 1
   }
  ],

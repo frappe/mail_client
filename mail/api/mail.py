@@ -6,15 +6,15 @@ from bs4 import BeautifulSoup
 from frappe.translate import get_all_translations
 from frappe.utils import is_html
 
-from mail.utils.cache import get_user_default_mailbox
-from mail.utils.user import get_user_mailboxes, has_role, is_system_manager
+from mail.utils.cache import get_user_default_mail_account
+from mail.utils.user import get_user_email_addresses, has_role, is_system_manager
 
 
 def check_app_permission() -> bool:
 	"""Returns True if the user has permission to access the app."""
 
 	user = frappe.session.user
-	return has_role(user, "Mailbox User") or is_system_manager(user)
+	return has_role(user, "Mail User") or is_system_manager(user)
 
 
 @frappe.whitelist(allow_guest=True)
@@ -42,9 +42,9 @@ def get_user_info() -> dict:
 		as_dict=1,
 	)
 	user["roles"] = frappe.get_roles(user.name)
-	user.mail_user = "Mailbox User" in user.roles
+	user.mail_user = "Mail User" in user.roles
 	user.mail_tenant = frappe.db.get_value("Tenant Member", {"user": frappe.session.user}, "parent")
-	user.default_outgoing = get_user_default_mailbox(frappe.session.user)
+	user.default_outgoing = get_user_default_mail_account(frappe.session.user)
 
 	return user
 
@@ -65,11 +65,11 @@ def get_translations() -> dict:
 def get_incoming_mails(start: int = 0) -> list:
 	"""Returns incoming mails for the current user."""
 
-	mailboxes = get_user_mailboxes(frappe.session.user, "Incoming")
+	accounts = get_user_email_addresses(frappe.session.user, "Mail Account")
 
 	mails = frappe.get_all(
 		"Incoming Mail",
-		{"receiver": ["in", mailboxes], "docstatus": 1},
+		{"receiver": ["in", accounts], "docstatus": 1},
 		[
 			"name",
 			"sender",
@@ -107,7 +107,7 @@ def get_draft_mails(start: int = 0) -> list:
 def get_outgoing_mails(status: str, start: int = 0) -> list:
 	"""Returns outgoing mails for the current user."""
 
-	mailboxes = get_user_mailboxes(frappe.session.user, "Outgoing")
+	accounts = get_user_email_addresses(frappe.session.user, "Mail Account")
 
 	if status == "Draft":
 		docstatus = 0
@@ -119,7 +119,7 @@ def get_outgoing_mails(status: str, start: int = 0) -> list:
 
 	mails = frappe.get_all(
 		"Outgoing Mail",
-		{"sender": ["in", mailboxes], "docstatus": docstatus, "status": status},
+		{"sender": ["in", accounts], "docstatus": docstatus, "status": status},
 		[
 			"name",
 			"subject",

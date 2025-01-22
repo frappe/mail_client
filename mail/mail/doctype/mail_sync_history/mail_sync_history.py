@@ -15,15 +15,15 @@ class MailSyncHistory(Document):
 
 		if frappe.db.exists(
 			"Mail Sync History",
-			{"source": self.source, "user": self.user, "mailbox": self.mailbox},
+			{"source": self.source, "user": self.user, "account": self.account},
 		):
-			frappe.throw(_("Mail Sync History already exists for this source, user and mailbox"))
+			frappe.throw(_("Mail Sync History already exists for this source, user and account"))
 
 
 def create_mail_sync_history(
 	source: str,
 	user: str,
-	mailbox: str,
+	account: str,
 	last_synced_at: str | None = None,
 	commit: bool = False,
 ) -> "MailSyncHistory":
@@ -32,7 +32,7 @@ def create_mail_sync_history(
 	doc = frappe.new_doc("Mail Sync History")
 	doc.source = source
 	doc.user = user
-	doc.mailbox = mailbox
+	doc.account = account
 	doc.last_synced_at = last_synced_at
 	doc.insert(ignore_permissions=True)
 
@@ -42,18 +42,18 @@ def create_mail_sync_history(
 	return doc
 
 
-def get_mail_sync_history(source: str, user: str, mailbox: str) -> "MailSyncHistory":
-	"""Returns the Mail Sync History for the given source, user and mailbox."""
+def get_mail_sync_history(source: str, user: str, account: str) -> "MailSyncHistory":
+	"""Returns the Mail Sync History for the given source, user and account."""
 
-	if name := frappe.db.exists("Mail Sync History", {"source": source, "user": user, "mailbox": mailbox}):
+	if name := frappe.db.exists("Mail Sync History", {"source": source, "user": user, "account": account}):
 		return frappe.get_doc("Mail Sync History", name)
 
-	return create_mail_sync_history(source, user, mailbox, commit=True)
+	return create_mail_sync_history(source, user, account, commit=True)
 
 
 def on_doctype_update() -> None:
 	frappe.db.add_unique(
 		"Mail Sync History",
-		["source", "user", "mailbox"],
-		constraint_name="unique_source_user_mailbox",
+		["source", "user", "account"],
+		constraint_name="unique_source_user_account",
 	)

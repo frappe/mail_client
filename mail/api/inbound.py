@@ -4,12 +4,11 @@ from typing import TYPE_CHECKING
 
 import frappe
 from frappe import _
-from frappe.utils import cint, convert_utc_to_system_timezone, now
+from frappe.utils import convert_utc_to_system_timezone, now
 
-from mail.api.auth import validate_mailbox, validate_user
+from mail.api.auth import validate_account, validate_user
 from mail.mail.doctype.mail_sync_history.mail_sync_history import get_mail_sync_history
-from mail.utils import convert_to_utc
-from mail.utils.validation import validate_mailbox_for_incoming
+from mail.utils.dt import convert_to_utc
 
 if TYPE_CHECKING:
 	from mail.mail.doctype.mail_sync_history.mail_sync_history import MailSyncHistory
@@ -17,22 +16,21 @@ if TYPE_CHECKING:
 
 @frappe.whitelist(methods=["GET"])
 def pull(
-	mailbox: str,
+	account: str,
 	limit: int = 50,
 	last_synced_at: str | None = None,
 ) -> dict[str, list[dict] | str]:
-	"""Returns the emails for the given mailbox."""
+	"""Returns the emails for the given mail account."""
 
 	validate_user()
-	validate_mailbox(mailbox)
-	validate_mailbox_for_incoming(mailbox)
+	validate_account(account)
 	validate_max_sync_limit(limit)
 
 	result = []
 	source = get_source()
 	last_synced_at = convert_to_system_timezone(last_synced_at)
-	sync_history = get_mail_sync_history(source, frappe.session.user, mailbox)
-	result = get_incoming_mails(mailbox, limit, last_synced_at or sync_history.last_synced_at)
+	sync_history = get_mail_sync_history(source, frappe.session.user, account)
+	result = get_incoming_mails(account, limit, last_synced_at or sync_history.last_synced_at)
 	update_mail_sync_history(sync_history, result["last_synced_at"], result["last_synced_mail"])
 	result["last_synced_at"] = convert_to_utc(result["last_synced_at"])
 
@@ -41,22 +39,21 @@ def pull(
 
 @frappe.whitelist(methods=["GET"])
 def pull_raw(
-	mailbox: str,
+	account: str,
 	limit: int = 50,
 	last_synced_at: str | None = None,
 ) -> dict[str, list[str] | str]:
-	"""Returns the raw-emails for the given mailbox."""
+	"""Returns the raw-emails for the given mail account."""
 
 	validate_user()
-	validate_mailbox(mailbox)
-	validate_mailbox_for_incoming(mailbox)
+	validate_account(account)
 	validate_max_sync_limit(limit)
 
 	result = []
 	source = get_source()
 	last_synced_at = convert_to_system_timezone(last_synced_at)
-	sync_history = get_mail_sync_history(source, frappe.session.user, mailbox)
-	result = get_raw_incoming_mails(mailbox, limit, last_synced_at or sync_history.last_synced_at)
+	sync_history = get_mail_sync_history(source, frappe.session.user, account)
+	result = get_raw_incoming_mails(account, limit, last_synced_at or sync_history.last_synced_at)
 	update_mail_sync_history(sync_history, result["last_synced_at"], result["last_synced_mail"])
 	result["last_synced_at"] = convert_to_utc(result["last_synced_at"])
 
@@ -64,9 +61,9 @@ def pull_raw(
 
 
 def validate_max_sync_limit(limit: int) -> None:
-	"""Validates if the limit is within the maximum limit set in the Mail Settings."""
+	"""Validates if the limit is within the maximum limit."""
 
-	max_sync_limit = cint(frappe.db.get_single_value("Mail Settings", "max_sync_via_api", cache=True))
+	max_sync_limit = 100
 
 	if limit > max_sync_limit:
 		frappe.throw(_("Cannot fetch more than {0} emails at a time.").format(max_sync_limit))
@@ -88,11 +85,11 @@ def get_source() -> str:
 
 
 def get_incoming_mails(
-	mailbox: str,
+	account: str,
 	limit: int,
 	last_synced_at: str | None = None,
 ) -> dict[str, list[dict] | str]:
-	"""Returns the incoming mails for the given mailbox."""
+	"""Returns the incoming mails for the given mail account."""
 
 	IM = frappe.qb.DocType("Incoming Mail")
 	query = (
@@ -109,7 +106,7 @@ def get_incoming_mails(
 			IM.body_plain.as_("text"),
 			IM.reply_to,
 		)
-		.where((IM.docstatus == 1) & (IM.receiver == mailbox))
+		.where((IM.docstatus == 1) & (IM.receiver == account))
 		.orderby(IM.processed_at)
 		.limit(limit)
 	)
@@ -135,17 +132,17 @@ def get_incoming_mails(
 
 
 def get_raw_incoming_mails(
-	mailbox: str,
+	account: str,
 	limit: int,
 	last_synced_at: str | None = None,
 ) -> dict[str, list[str] | str]:
-	"""Returns the raw incoming mails for the given mailbox."""
+	"""Returns the raw incoming mails for the given mail account."""
 
 	IM = frappe.qb.DocType("Incoming Mail")
 	query = (
 		frappe.qb.from_(IM)
-		.select(IM.processed_at, IM.name.as_("id"), IM.message)
-		.where((IM.docstatus == 1) & (IM.receiver == mailbox))
+		.select(IM.processed_at, IM.name.as_("id"), IM._message)
+		.where((IM.docstatus == 1) & (IM.receiver == account))
 		.orderby(IM.processed_at)
 		.limit(limit)
 	)
@@ -154,14 +151,22 @@ def get_raw_incoming_mails(
 		query = query.where(IM.processed_at > last_synced_at)
 
 	data = query.run(as_dict=True)
-	mails = [d.message for d in data]
-	last_synced_at = data[-1].processed_at if data else now()
-	last_synced_mail = data[-1].id if data else None
 
+	if not data:
+		return {
+			"mails": [],
+			"last_synced_at": now(),
+			"last_synced_mail": None,
+		}
+
+	MIME = frappe.qb.DocType("MIME Message")
+	mails = (
+		frappe.qb.from_(MIME).select(MIME.message).where(MIME.name.isin([d._message for d in data]))
+	).run(pluck="message")
 	return {
 		"mails": mails,
-		"last_synced_at": last_synced_at,
-		"last_synced_mail": last_synced_mail,
+		"last_synced_at": data[-1].processed_at,
+		"last_synced_mail": data[-1].id,
 	}
 
 

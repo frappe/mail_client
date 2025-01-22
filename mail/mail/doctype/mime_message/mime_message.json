@@ -1,0 +1,69 @@
+{
+ "actions": [],
+ "creation": "2025-01-07 12:01:20.450855",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_kst5",
+  "message"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_kst5",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "message",
+   "fieldtype": "Code",
+   "ignore_xss_filter": 1,
+   "in_list_view": 1,
+   "label": "Message",
+   "no_copy": 1,
+   "read_only": 1,
+   "reqd": 1
+  }
+ ],
+ "in_create": 1,
+ "index_web_pages_for_search": 1,
+ "links": [
+  {
+   "group": "Reference",
+   "link_doctype": "Incoming Mail",
+   "link_fieldname": "_message"
+  },
+  {
+   "group": "Reference",
+   "link_doctype": "Outgoing Mail",
+   "link_fieldname": "_message"
+  },
+  {
+   "group": "Reference",
+   "link_doctype": "Spam Check Log",
+   "link_fieldname": "_message"
+  }
+ ],
+ "modified": "2025-01-10 15:55:04.117842",
+ "modified_by": "Administrator",
+ "module": "Mail",
+ "name": "MIME Message",
+ "naming_rule": "Set by user",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

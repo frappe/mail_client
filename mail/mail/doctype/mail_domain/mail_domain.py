@@ -1,12 +1,18 @@
 # Copyright (c) 2023, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
+
 import frappe
 from frappe import _
 from frappe.model.document import Document
+from frappe.utils import cint
 
-from mail.mail.doctype.mailbox.mailbox import create_postmaster_mailbox
-from mail.mail_server import get_mail_server_domain_api
+from mail.mail.doctype.dkim_key.dkim_key import create_dkim_key
+from mail.mail.doctype.mail_account.mail_account import create_dmarc_account
+from mail.mail.doctype.mail_agent_job.mail_agent_job import create_domain_on_agents, delete_domain_from_agents
+from mail.utils import get_dkim_host, get_dkim_selector, get_dmarc_address
+from mail.utils.cache import get_root_domain_name
+from mail.utils.dns import verify_dns_record
 
 
 class MailDomain(Document):
@@ -15,20 +21,35 @@ class MailDomain(Document):
 		self.name = self.domain_name
 
 	def validate(self) -> None:
+		self.validate_dkim_rsa_key_size()
 		self.validate_newsletter_retention()
+		self.validate_is_verified()
+		self.validate_is_subdomain()
+		self.validate_is_root_domain()
 
-		if self.is_new():
-			self.validate_duplicate()
-			self.access_token = generate_access_token()
-			self.dkim_private_key, self.dkim_public_key = generate_dkim_keys()
-			self.add_or_update_domain_in_mail_server()
+		if self.is_new() or self.has_value_changed("dkim_rsa_key_size"):
+			create_dkim_key(self.domain_name, cint(self.dkim_rsa_key_size))
 			self.refresh_dns_records(do_not_save=True)
 
-		if not self.enabled:
-			self.is_verified = 0
-
 	def after_insert(self) -> None:
-		create_postmaster_mailbox(self.domain_name)
+		create_domain_on_agents(domain_name=self.domain_name)
+
+		if self.is_root_domain:
+			create_dmarc_account()
+
+	def on_trash(self) -> None:
+		if frappe.session.user != "Administrator":
+			frappe.throw(_("Only Administrator can delete Mail Domain."))
+
+		delete_domain_from_agents(domain_name=self.domain_name)
+
+	def validate_dkim_rsa_key_size(self) -> None:
+		"""Validates the DKIM Key Size."""
+
+		if not self.dkim_rsa_key_size:
+			self.dkim_rsa_key_size = frappe.db.get_single_value(
+				"Mail Settings", "default_dkim_rsa_key_size", cache=True
+			)
 
 	def validate_newsletter_retention(self) -> None:
 		"""Validates the Newsletter Retention."""
@@ -51,22 +72,22 @@ class MailDomain(Document):
 				"Mail Settings", "default_newsletter_retention", cache=True
 			)
 
-	def validate_duplicate(self) -> None:
-		"""Validate if the Mail Domain already exists."""
+	def validate_is_verified(self) -> None:
+		"""Validates the Is Verified field."""
 
-		if frappe.db.exists("Mail Domain", {"domain_name": self.domain_name}):
-			frappe.throw(_("Mail Domain {0} already exists.").format(frappe.bold(self.domain_name)))
+		if not self.enabled:
+			self.is_verified = 0
 
-	def add_or_update_domain_in_mail_server(self) -> None:
-		"""Adds or Updates the Domain in the Mail Server."""
+	def validate_is_subdomain(self) -> None:
+		"""Validates the Is Subdomain field."""
 
-		domain_api = get_mail_server_domain_api()
-		domain_api.add_or_update_domain(
-			domain_name=self.domain_name,
-			access_token=self.access_token,
-			dkim_public_key=self.dkim_public_key,
-			mail_host=frappe.utils.get_url(),
-		)
+		if len(self.domain_name.split(".")) > 2:
+			self.is_subdomain = 1
+
+	def validate_is_root_domain(self) -> None:
+		"""Validates the Is Root Domain field."""
+
+		self.is_root_domain = 1 if self.domain_name == get_root_domain_name() else 0
 
 	@frappe.whitelist()
 	def refresh_dns_records(self, do_not_save: bool = False) -> None:
@@ -75,10 +96,7 @@ class MailDomain(Document):
 		self.is_verified = 0
 		self.dns_records.clear()
 
-		domain_api = get_mail_server_domain_api()
-		dns_records = domain_api.get_dns_records(self.domain_name)
-
-		for record in dns_records:
+		for record in get_dns_records(self.domain_name):
 			self.append("dns_records", record)
 
 		if not do_not_save:
@@ -88,8 +106,14 @@ class MailDomain(Document):
 	def verify_dns_records(self, do_not_save: bool = False) -> None:
 		"""Verifies the DNS Records."""
 
-		domain_api = get_mail_server_domain_api()
-		errors = domain_api.verify_dns_records(self.domain_name)
+		errors = []
+		for record in self.dns_records:
+			if not verify_dns_record(record.host, record.type, record.value):
+				errors.append(
+					_("Row #{0}: Failed to verify {1} : {2}.").format(
+						record.idx, frappe.bold(record.type), frappe.bold(record.host)
+					)
+				)
 
 		if not errors:
 			self.is_verified = 1
@@ -105,65 +129,78 @@ class MailDomain(Document):
 	def rotate_dkim_keys(self) -> None:
 		"""Rotates the DKIM Keys."""
 
-		frappe.only_for(["System Manager", "Administrator"])
-		self.dkim_private_key, self.dkim_public_key = generate_dkim_keys()
-		self.add_or_update_domain_in_mail_server()
-		self.save()
+		create_dkim_key(self.domain_name, cint(self.dkim_rsa_key_size))
 		frappe.msgprint(_("DKIM Keys rotated successfully."), indicator="green", alert=True)
 
-	@frappe.whitelist()
-	def rotate_access_token(self) -> None:
-		"""Rotates the Access Token."""
 
-		frappe.only_for(["System Manager", "Administrator"])
-		self.access_token = generate_access_token()
-		self.add_or_update_domain_in_mail_server()
-		self.save()
-		frappe.msgprint(_("Access Token rotated successfully."), indicator="green", alert=True)
+def get_dns_records(domain_name: str) -> list[dict]:
+	"""Returns the DNS Records for the given domain."""
 
+	records = []
+	mail_settings = frappe.get_cached_doc("Mail Settings")
 
-def generate_access_token() -> str:
-	"""Generates and returns the Access Token."""
-
-	return frappe.generate_hash(length=32)
-
-
-def generate_dkim_keys(key_size: int = 2048) -> tuple[str, str]:
-	"""Generates and returns the DKIM Keys (Private and Public)."""
-
-	def get_filtered_dkim_key(key_pem: str) -> str:
-		"""Returns the filtered DKIM Key."""
-
-		key_pem = "".join(key_pem.split())
-		key_pem = (
-			key_pem.replace("-----BEGINPUBLICKEY-----", "")
-			.replace("-----ENDPUBLICKEY-----", "")
-			.replace("-----BEGINRSAPRIVATEKEY-----", "")
-			.replace("----ENDRSAPRIVATEKEY-----", "")
-		)
-
-		return key_pem
-
-	from cryptography.hazmat.backends import default_backend
-	from cryptography.hazmat.primitives import serialization
-	from cryptography.hazmat.primitives.asymmetric import rsa
-
-	private_key = rsa.generate_private_key(
-		public_exponent=65537, key_size=key_size, backend=default_backend()
+	# SPF Record
+	records.append(
+		{
+			"category": "Sending Record",
+			"type": "TXT",
+			"host": domain_name,
+			"value": f"v=spf1 include:{mail_settings.spf_host}.{mail_settings.root_domain_name} ~all",
+			"ttl": mail_settings.default_ttl,
+		},
 	)
-	public_key = private_key.public_key()
 
-	private_key_pem = private_key.private_bytes(
-		encoding=serialization.Encoding.PEM,
-		format=serialization.PrivateFormat.TraditionalOpenSSL,
-		encryption_algorithm=serialization.NoEncryption(),
-	).decode()
-	public_key_pem = public_key.public_bytes(
-		encoding=serialization.Encoding.PEM,
-		format=serialization.PublicFormat.SubjectPublicKeyInfo,
-	).decode()
+	# DKIM Records
+	# RSA
+	records.append(
+		{
+			"category": "Sending Record",
+			"type": "CNAME",
+			"host": f"{get_dkim_selector('rsa')}._domainkey.{domain_name}",
+			"value": f"{get_dkim_host(domain_name, 'rsa')}._domainkey.{mail_settings.root_domain_name}.",
+			"ttl": mail_settings.default_ttl,
+		}
+	)
+	# Ed25519
+	records.append(
+		{
+			"category": "Sending Record",
+			"type": "CNAME",
+			"host": f"{get_dkim_selector('ed25519')}._domainkey.{domain_name}",
+			"value": f"{get_dkim_host(domain_name, 'ed25519')}._domainkey.{mail_settings.root_domain_name}.",
+			"ttl": mail_settings.default_ttl,
+		}
+	)
 
-	private_key = private_key_pem
-	public_key = get_filtered_dkim_key(public_key_pem)
+	# DMARC Record
+	dmarc_address = get_dmarc_address()
+	records.append(
+		{
+			"category": "Sending Record",
+			"type": "TXT",
+			"host": f"_dmarc.{domain_name}",
+			"value": f"v=DMARC1; p=reject; rua=mailto:{dmarc_address}; ruf=mailto:{dmarc_address}; fo=1; aspf=s; adkim=s; pct=100;",
+			"ttl": mail_settings.default_ttl,
+		}
+	)
 
-	return private_key, public_key
+	# MX Record(s)
+	if inbound_agent_groups := frappe.db.get_all(
+		"Mail Agent Group",
+		filters={"enabled": 1, "inbound": 1},
+		fields=["agent_group", "priority"],
+		order_by="priority asc",
+	):
+		for group in inbound_agent_groups:
+			records.append(
+				{
+					"category": "Receiving Record",
+					"type": "MX",
+					"host": domain_name,
+					"value": f"{group.agent_group.split(':')[0]}.",
+					"priority": group.priority,
+					"ttl": mail_settings.default_ttl,
+				}
+			)
+
+	return records

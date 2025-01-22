@@ -8,7 +8,7 @@
   "user",
   "source",
   "column_break_6jsu",
-  "mailbox",
+  "account",
   "last_synced_at",
   "last_synced_mail"
  ],
@@ -19,15 +19,6 @@
    "in_list_view": 1,
    "label": "User",
    "options": "User",
-   "reqd": 1,
-   "search_index": 1
-  },
-  {
-   "fieldname": "mailbox",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Mailbox",
-   "options": "Mailbox",
    "reqd": 1,
    "search_index": 1
   },
@@ -54,11 +45,20 @@
    "fieldname": "last_synced_mail",
    "fieldtype": "Data",
    "label": "Last Synced Mail"
+  },
+  {
+   "fieldname": "account",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Account",
+   "options": "Mail Account",
+   "reqd": 1,
+   "search_index": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-12 12:17:37.936534",
+ "modified": "2025-01-14 12:05:24.820222",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Sync History",
@@ -80,5 +80,6 @@
  ],
  "sort_field": "creation",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "track_changes": 1
 }

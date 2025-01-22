@@ -1,43 +1,35 @@
 import frappe
 from frappe import _
 
-from mail.utils.user import has_role, is_mailbox_owner
-from mail.utils.validation import (
-	validate_mailbox_for_incoming,
-	validate_mailbox_for_outgoing,
-)
+from mail.utils.user import has_role, is_mail_account_owner
 
 
 @frappe.whitelist(methods=["POST"])
-def validate(mailbox: str | None = None, for_inbound: bool = False, for_outbound: bool = False) -> None:
-	"""Validates the mailbox for inbound and outbound emails."""
+def validate(account: str | None = None) -> None:
+	"""Validates the account for inbound and outbound emails."""
 
-	if mailbox:
+	if account:
 		validate_user()
-		validate_mailbox(mailbox)
-
-		if for_inbound:
-			validate_mailbox_for_incoming(mailbox)
-
-		if for_outbound:
-			validate_mailbox_for_outgoing(mailbox)
+		validate_account(account)
 
 
 def validate_user() -> None:
-	"""Validates if the user has the required role to access mailboxes."""
+	"""Validates if the user has the required role to access mail accounts."""
 
 	user = frappe.session.user
 
-	if not has_role(user, "Mailbox User"):
-		frappe.throw(_("User {0} is not allowed to access mailboxes.").format(frappe.bold(user)))
+	if not has_role(user, "Mail User"):
+		frappe.throw(_("User {0} is not allowed to access mail accounts.").format(frappe.bold(user)))
 
 
-def validate_mailbox(mailbox: str) -> None:
-	"""Validates if the mailbox is associated with the user."""
+def validate_account(account: str) -> None:
+	"""Validates if the mail account is associated with the user."""
 
 	user = frappe.session.user
 
-	if not is_mailbox_owner(mailbox, user):
+	if not is_mail_account_owner(account, user):
 		frappe.throw(
-			_("Mailbox {0} is not associated with user {1}").format(frappe.bold(mailbox), frappe.bold(user))
+			_("Mail Account {0} is not associated with user {1}").format(
+				frappe.bold(account), frappe.bold(user)
+			)
 		)

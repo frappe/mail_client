@@ -4,18 +4,25 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "section_break_ceuu",
   "domain_name",
   "enabled",
   "is_verified",
+  "is_subdomain",
+  "is_root_domain",
   "column_break_lr3y",
-  "access_token",
+  "dkim_rsa_key_size",
   "newsletter_retention",
   "dns_records_section",
   "dns_records",
-  "section_break_i51k",
-  "dkim_private_key",
-  "column_break_jqvh",
-  "dkim_public_key"
+  "agent_groups_section",
+  "include_agent_groups",
+  "column_break_vpyy",
+  "exclude_agent_groups",
+  "agents_section",
+  "include_agents",
+  "column_break_x6bd",
+  "exclude_agents"
  ],
  "fields": [
   {
@@ -61,53 +68,103 @@
    "in_list_view": 1,
    "label": "Verified",
    "no_copy": 1,
-   "read_only": 1,
+   "permlevel": 1,
    "search_index": 1
   },
   {
    "fieldname": "newsletter_retention",
    "fieldtype": "Int",
    "label": "Newsletter Retention (Days)",
-   "non_negative": 1
+   "non_negative": 1,
+   "search_index": 1
   },
   {
-   "fieldname": "section_break_i51k",
+   "fieldname": "section_break_ceuu",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval: !doc.__islocal",
+   "fieldname": "is_subdomain",
+   "fieldtype": "Check",
+   "label": "Subdomain",
+   "no_copy": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "dkim_rsa_key_size",
+   "fieldtype": "Select",
+   "label": "DKIM RSA Key Size",
+   "options": "\n2048\n4096"
+  },
+  {
+   "collapsible": 1,
+   "collapsible_depends_on": "eval: doc.include_agents || doc.exclude_agents",
+   "fieldname": "agents_section",
    "fieldtype": "Section Break",
-   "hidden": 1,
-   "label": "DKIM Keys"
+   "label": "Agents"
   },
   {
-   "fieldname": "dkim_private_key",
-   "fieldtype": "Password",
-   "label": "Private Key",
-   "no_copy": 1,
-   "read_only": 1
+   "fieldname": "include_agents",
+   "fieldtype": "Small Text",
+   "label": "Include Agents",
+   "permlevel": 1
   },
   {
-   "fieldname": "dkim_public_key",
-   "fieldtype": "Text",
-   "label": "Public Key",
-   "no_copy": 1,
-   "read_only": 1
-  },
-  {
-   "fieldname": "access_token",
-   "fieldtype": "Password",
-   "hidden": 1,
-   "label": "Access Token",
-   "no_copy": 1,
-   "read_only": 1
-  },
-  {
-   "fieldname": "column_break_jqvh",
+   "fieldname": "column_break_x6bd",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "exclude_agents",
+   "fieldtype": "Small Text",
+   "label": "Exclude Agents",
+   "permlevel": 1
+  },
+  {
+   "collapsible": 1,
+   "collapsible_depends_on": "eval: doc.include_agent_groups || doc.exclude_agent_groups",
+   "fieldname": "agent_groups_section",
+   "fieldtype": "Section Break",
+   "label": "Agent Groups"
+  },
+  {
+   "fieldname": "include_agent_groups",
+   "fieldtype": "Small Text",
+   "label": "Include Agent Groups",
+   "permlevel": 1
+  },
+  {
+   "fieldname": "column_break_vpyy",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "exclude_agent_groups",
+   "fieldtype": "Small Text",
+   "label": "Exclude Agent Groups",
+   "permlevel": 1
+  },
+  {
+   "default": "0",
+   "depends_on": "eval: doc.is_root_domain",
+   "fieldname": "is_root_domain",
+   "fieldtype": "Check",
+   "label": "Root Domain",
+   "no_copy": 1,
+   "read_only": 1,
+   "search_index": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [
   {
    "group": "Reference",
-   "link_doctype": "Mailbox",
+   "link_doctype": "Mail Account",
+   "link_fieldname": "domain_name"
+  },
+  {
+   "group": "Reference",
+   "link_doctype": "Mail Group",
    "link_fieldname": "domain_name"
   },
   {
@@ -117,16 +174,26 @@
   },
   {
    "group": "Reference",
+   "link_doctype": "DKIM Key",
+   "link_fieldname": "domain_name"
+  },
+  {
+   "group": "Mail",
    "link_doctype": "Incoming Mail",
    "link_fieldname": "domain_name"
   },
   {
-   "group": "Reference",
+   "group": "Mail",
    "link_doctype": "Outgoing Mail",
+   "link_fieldname": "domain_name"
+  },
+  {
+   "group": "Report",
+   "link_doctype": "DMARC Report",
    "link_fieldname": "domain_name"
   }
  ],
- "modified": "2024-11-16 15:34:25.472358",
+ "modified": "2025-01-21 10:22:51.098094",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Domain",
@@ -141,6 +208,18 @@
    "read": 1,
    "report": 1,
    "role": "System Manager",
+   "write": 1
+  },
+  {
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "permlevel": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
    "write": 1
   }
  ],

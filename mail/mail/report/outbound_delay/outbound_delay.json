@@ -9,7 +9,7 @@
  "idx": 0,
  "is_standard": "Yes",
  "letterhead": null,
- "modified": "2024-10-19 16:50:25.069010",
+ "modified": "2025-01-14 09:36:05.547152",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Outbound Delay",
@@ -23,7 +23,7 @@
    "role": "System Manager"
   },
   {
-   "role": "Mailbox User"
+   "role": "Mail User"
   }
  ],
  "timeout": 0

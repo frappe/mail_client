@@ -35,9 +35,9 @@ frappe.query_reports["Mail Tracker"] = {
 			get_data: (txt) => {
 				return [
 					"",
-					"Pending",
+					"In Progress",
 					"Failed",
-					"Queued",
+					"Transferred",
 					"Blocked",
 					"Deferred",
 					"Bounced",
@@ -59,7 +59,7 @@ frappe.query_reports["Mail Tracker"] = {
 			label: __("Sender"),
 			fieldtype: "MultiSelectList",
 			get_data: (txt) => {
-				return frappe.db.get_link_options("Mailbox", txt);
+				return frappe.db.get_link_options("Mail Account", txt);
 			},
 		},
 		{

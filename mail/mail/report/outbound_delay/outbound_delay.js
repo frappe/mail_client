@@ -7,7 +7,7 @@ frappe.query_reports["Outbound Delay"] = {
 			fieldname: "from_date",
 			label: __("From Date"),
 			fieldtype: "Date",
-			default: frappe.datetime.add_days(frappe.datetime.get_today(), -7),
+			default: frappe.datetime.get_today(),
 			reqd: 1,
 		},
 		{
@@ -45,6 +45,22 @@ frappe.query_reports["Outbound Delay"] = {
 			},
 		},
 		{
+			fieldname: "agent",
+			label: __("Agent"),
+			fieldtype: frappe.user.has_role("System Manager") ? "MultiSelectList" : "Data",
+			get_data: (txt) => {
+				return frappe.db.get_link_options("Mail Agent", txt, {
+					enabled: 1,
+					enable_outbound: 1,
+				});
+			},
+		},
+		{
+			fieldname: "priority",
+			label: __("Priority"),
+			fieldtype: "Int",
+		},
+		{
 			fieldname: "ip_address",
 			label: __("IP Address"),
 			fieldtype: "Data",
@@ -54,7 +70,7 @@ frappe.query_reports["Outbound Delay"] = {
 			label: __("Sender"),
 			fieldtype: "MultiSelectList",
 			get_data: (txt) => {
-				return frappe.db.get_link_options("Mailbox", txt);
+				return frappe.db.get_link_options("Mail Account", txt);
 			},
 		},
 		{
