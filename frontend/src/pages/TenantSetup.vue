@@ -18,10 +18,19 @@
 		<ErrorMessage :message="errorMessage" />
 		<Button variant="solid" :loading="createTenant.loading"> Create Tenant </Button>
 	</form>
+
+	<div class="mt-6 text-center">
+		<button class="text-center text-base font-medium hover:underline" @click="logout.submit()">
+			Need to switch accounts? Log out.
+		</button>
+	</div>
 </template>
 <script setup>
 import { ref } from 'vue'
 import { FormControl, Button, createResource, ErrorMessage } from 'frappe-ui'
+import { sessionStore } from '@/stores/session'
+
+const { logout } = sessionStore()
 
 const tenantName = ref('')
 const maxDomains = ref(10)

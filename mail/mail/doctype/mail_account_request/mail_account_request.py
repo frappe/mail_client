@@ -13,7 +13,7 @@ class MailAccountRequest(Document):
 	def before_insert(self):
 		self.request_key = random_string(32)
 
-		if not (self.otp or self.invited_by):
+		if not self.invited_by:
 			self.otp = random.randint(10000, 99999)
 
 	def after_insert(self):

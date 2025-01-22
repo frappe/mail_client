@@ -23,16 +23,15 @@ def signup(email, referrer=None):
 
 @frappe.whitelist(allow_guest=True)
 def resend_otp(account_request: str):
-	new_otp = random.randint(10000, 99999)
 	account_request = frappe.get_doc("Mail Account Request", account_request)
-	account_request.otp = new_otp
+	account_request.otp = random.randint(10000, 99999)
 	account_request.save(ignore_permissions=True)
 	account_request.send_verification_email()
 
 
 @frappe.whitelist(allow_guest=True)
 def verify_otp(account_request: str, otp: str):
-	actual_otp, request_key = frappe.get_value(
+	actual_otp, request_key = frappe.db.get_value(
 		"Mail Account Request", account_request, ["otp", "request_key"]
 	)
 	if otp != actual_otp:
@@ -43,12 +42,14 @@ def verify_otp(account_request: str, otp: str):
 
 @frappe.whitelist(allow_guest=True)
 def get_verified_email(request_key: str):
-	return frappe.get_value("Mail Account Request", {"request_key": request_key}, "email")
+	return frappe.db.get_value(
+		"Mail Account Request", {"request_key": request_key}, ["email", "is_verified"], as_dict=True
+	)
 
 
 @frappe.whitelist(allow_guest=True)
 def create_account(request_key: str, first_name, last_name, password):
-	account_request, email, role = frappe.get_value(
+	account_request, email, role = frappe.db.get_value(
 		"Mail Account Request", {"request_key": request_key}, ["name", "email", "role"]
 	)
 	user = frappe.new_doc("User")
@@ -61,7 +62,7 @@ def create_account(request_key: str, first_name, last_name, password):
 	user.flags.no_welcome_mail = True
 	user.save(ignore_permissions=True)
 
-	frappe.db.set_value("Mail Account Request", account_request, {"otp": None, "request_key": None})
+	frappe.db.set_value("Mail Account Request", account_request, "is_verified", 1)
 
 
 @frappe.whitelist()

@@ -151,7 +151,7 @@ const verifiedEmail = createResource({
 		return { request_key: props.requestKey }
 	},
 	onSuccess(data) {
-		if (data) email.value = data
+		if (data?.email && !data?.is_verified) email.value = data.email
 		else router.replace({ name: 'SignUp' })
 	},
 })
