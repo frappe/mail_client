@@ -8,7 +8,7 @@ from frappe import _
 from frappe.model.document import Document
 from frappe.utils import random_string
 
-from mail.mail.doctype.mail_agent_job.mail_agent_job import (
+from mail.mail.doctype.mail_agent_request_log.mail_agent_request_log import (
 	create_account_on_agents,
 	delete_account_from_agents,
 	patch_account_on_agents,

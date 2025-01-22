@@ -148,7 +148,7 @@
  "links": [
   {
    "group": "Reference",
-   "link_doctype": "Mail Agent Job",
+   "link_doctype": "Mail Agent Request Log",
    "link_fieldname": "agent"
   },
   {
