@@ -5,7 +5,7 @@ from frappe import _
 
 
 @frappe.whitelist(allow_guest=True)
-def signup(email, referrer=None):
+def signup(email):
 	frappe.utils.validate_email_address(email, True)
 	email = email.strip().lower()
 	if frappe.db.exists("User", email):
@@ -75,6 +75,7 @@ def create_account(request_key: str, first_name, last_name, password):
 def create_tenant(tenant_name, max_domains, max_accounts, max_groups):
 	tenant = frappe.new_doc("Mail Tenant")
 	tenant.tenant_name = tenant_name
+	tenant.user = frappe.session.user
 	tenant.max_domains = max_domains
 	tenant.max_accounts = max_accounts
 	tenant.max_groups = max_groups

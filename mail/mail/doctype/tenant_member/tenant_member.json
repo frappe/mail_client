@@ -12,15 +12,17 @@
   {
    "fieldname": "user",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "User",
    "link_filters": "[[\"User\",\"role\",\"in\",[\"Mail User\",\"Mail Admin\"]]]",
-   "options": "User"
+   "options": "User",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-01-21 12:13:06.797043",
+ "modified": "2025-01-23 15:20:11.527521",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Tenant Member",

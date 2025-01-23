@@ -6,6 +6,7 @@
  "engine": "InnoDB",
  "field_order": [
   "tenant_name",
+  "user",
   "logo",
   "column_break_kaqu",
   "max_domains",
@@ -61,11 +62,18 @@
   {
    "fieldname": "section_break_nexu",
    "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "user",
+   "fieldtype": "Link",
+   "label": "User",
+   "link_filters": "[[\"User\",\"role\",\"=\",\"Mail Admin\"]]",
+   "options": "User"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-01-21 13:36:41.539352",
+ "modified": "2025-01-23 15:03:27.322252",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Tenant",
