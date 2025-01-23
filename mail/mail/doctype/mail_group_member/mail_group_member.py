@@ -5,10 +5,7 @@ import frappe
 from frappe import _
 from frappe.model.document import Document
 
-from mail.mail.doctype.mail_agent_request_log.mail_agent_request_log import (
-	create_member_on_agents,
-	delete_member_from_agents,
-)
+from mail.agent import create_member_on_agents, delete_member_from_agents
 
 
 class MailGroupMember(Document):

@@ -8,11 +8,7 @@ from frappe import _
 from frappe.model.document import Document
 from frappe.utils import random_string
 
-from mail.mail.doctype.mail_agent_request_log.mail_agent_request_log import (
-	create_account_on_agents,
-	delete_account_from_agents,
-	patch_account_on_agents,
-)
+from mail.agent import create_account_on_agents, delete_account_from_agents, patch_account_on_agents
 from mail.utils import get_dmarc_address
 from mail.utils.cache import get_root_domain_name
 from mail.utils.user import has_role, is_system_manager

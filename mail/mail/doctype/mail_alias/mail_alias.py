@@ -4,11 +4,7 @@
 import frappe
 from frappe.model.document import Document
 
-from mail.mail.doctype.mail_agent_request_log.mail_agent_request_log import (
-	create_alias_on_agents,
-	delete_alias_from_agents,
-	patch_alias_on_agents,
-)
+from mail.agent import create_alias_on_agents, delete_alias_from_agents, patch_alias_on_agents
 from mail.utils.validation import (
 	is_email_assigned,
 	is_valid_email_for_domain,
