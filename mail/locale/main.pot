@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Mail VERSION\n"
 "Report-Msgid-Bugs-To: developers@frappe.io\n"
-"POT-Creation-Date: 2025-01-23 17:37+0553\n"
-"PO-Revision-Date: 2025-01-23 17:37+0553\n"
+"POT-Creation-Date: 2025-01-23 18:21+0553\n"
+"PO-Revision-Date: 2025-01-23 18:21+0553\n"
 "Last-Translator: developers@frappe.io\n"
 "Language-Team: developers@frappe.io\n"
 "MIME-Version: 1.0\n"
@@ -78,13 +78,13 @@ msgstr ""
 #: mail/mail/doctype/mail_domain/mail_domain.js:49
 #: mail/mail/doctype/mail_domain/mail_domain.js:62
 #: mail/mail/doctype/mail_domain/mail_domain.js:75
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.js:39
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.js:47
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.js:55
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.js:70
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.js:78
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.js:85
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.js:95
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.js:38
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.js:46
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.js:54
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.js:69
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.js:77
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.js:84
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.js:94
 msgid "Actions"
 msgstr ""
 
@@ -151,7 +151,7 @@ msgstr ""
 msgid "Amending {0} is not allowed."
 msgstr ""
 
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.js:64
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.js:63
 msgid "Are you sure you want to force transfer this email to the agent? It may cause duplicate emails to be sent."
 msgstr ""
 
@@ -371,7 +371,7 @@ msgid "Check to enable spam detection."
 msgstr ""
 
 #: mail/mail/doctype/bounce_log/bounce_log.js:16
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.js:223
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.js:209
 msgid "Checking email deliverability..."
 msgstr ""
 
@@ -560,7 +560,7 @@ msgstr ""
 msgid "DSN Report"
 msgstr ""
 
-#. Label of the default_email_address (Data) field in DocType 'Mail Account'
+#. Label of the default_outgoing_email (Data) field in DocType 'Mail Account'
 #: mail/mail/doctype/mail_account/mail_account.json
 msgid "Default Email"
 msgstr ""
@@ -891,19 +891,19 @@ msgstr ""
 msgid "Folder"
 msgstr ""
 
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.js:35
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.js:34
 msgid "Force Accept"
 msgstr ""
 
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.js:124
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.js:110
 msgid "Force Accepting..."
 msgstr ""
 
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.js:61
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.js:60
 msgid "Force Transfer to Agent"
 msgstr ""
 
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.js:166
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.js:152
 msgid "Force Transferring..."
 msgstr ""
 
@@ -1614,7 +1614,7 @@ msgstr ""
 msgid "Newsletter Retention must be less than or equal to {0}."
 msgstr ""
 
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:1062
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:1053
 msgid "No agent or agent group found based on the given criteria."
 msgstr ""
 
@@ -1913,13 +1913,13 @@ msgstr ""
 
 #: frontend/src/components/MailDetails.vue:60
 #: mail/mail/doctype/incoming_mail/incoming_mail.js:12
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.js:74
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.js:73
 msgid "Reply"
 msgstr ""
 
 #: frontend/src/components/MailDetails.vue:67
 #: mail/mail/doctype/incoming_mail/incoming_mail.js:19
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.js:81
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.js:80
 msgid "Reply All"
 msgstr ""
 
@@ -1999,8 +1999,8 @@ msgstr ""
 msgid "Retries"
 msgstr ""
 
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.js:51
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.js:91
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.js:50
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.js:90
 msgid "Retry"
 msgstr ""
 
@@ -2009,8 +2009,8 @@ msgstr ""
 msgid "Retry After"
 msgstr ""
 
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.js:138
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.js:200
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.js:124
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.js:186
 msgid "Retrying..."
 msgstr ""
 
@@ -2371,7 +2371,7 @@ msgid "The domain name used to create DNS records (SPF, DKIM keys, external DMAR
 msgstr ""
 
 #: mail/mail/doctype/bounce_log/bounce_log.js:27
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.js:234
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.js:220
 msgid "The email address {0} appears to be invalid."
 msgstr ""
 
@@ -2380,15 +2380,15 @@ msgid "The email address {0} is already in use and assigned to {1}."
 msgstr ""
 
 #: mail/mail/doctype/bounce_log/bounce_log.js:21
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.js:228
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.js:214
 msgid "The email address {0} is deliverable."
 msgstr ""
 
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:1050
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:1041
 msgid "The following agent groups do not exist or are not enabled for outbound: {0}"
 msgstr ""
 
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:1036
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:1027
 msgid "The following agents do not exist or are not enabled for outbound: {0}"
 msgstr ""
 
@@ -2568,7 +2568,7 @@ msgstr ""
 msgid "Transfer Started At - Submitted At"
 msgstr ""
 
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.js:43
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.js:42
 msgid "Transfer to Agent"
 msgstr ""
 
@@ -2582,7 +2582,7 @@ msgstr ""
 msgid "Transferring"
 msgstr ""
 
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.js:152
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.js:138
 msgid "Transferring..."
 msgstr ""
 

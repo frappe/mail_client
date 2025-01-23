@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 from frappe.translate import get_all_translations
 from frappe.utils import is_html
 
-from mail.utils.cache import get_user_default_email_address
+from mail.utils.cache import get_user_default_outgoing_email
 from mail.utils.user import get_user_email_addresses, has_role, is_system_manager
 
 
@@ -388,7 +388,7 @@ def get_mail_contacts(txt=None) -> list:
 def get_default_outgoing() -> str | None:
 	"""Returns the default email address of the user."""
 
-	return get_user_default_email_address(frappe.session.user)
+	return get_user_default_outgoing_email(frappe.session.user)
 
 
 @frappe.whitelist()

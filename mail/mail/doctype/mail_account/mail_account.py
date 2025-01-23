@@ -30,7 +30,7 @@ class MailAccount(Document):
 		self.validate_user()
 		self.validate_email()
 		self.validate_password()
-		self.validate_default_email_address()
+		self.validate_default_outgoing_email()
 		self.validate_display_name()
 
 	def on_update(self) -> None:
@@ -99,13 +99,13 @@ class MailAccount(Document):
 
 		self.generate_secret()
 
-	def validate_default_email_address(self) -> None:
+	def validate_default_outgoing_email(self) -> None:
 		"""Validates the default outgoing email."""
 
-		if not self.default_email_address:
-			self.default_email_address = self.email
+		if not self.default_outgoing_email:
+			self.default_outgoing_email = self.email
 		else:
-			if self.default_email_address not in [self.email] + get_user_mail_aliases(self.user):
+			if self.default_outgoing_email not in [self.email] + get_user_mail_aliases(self.user):
 				frappe.throw(_("Default Email must be one of the email addresses assigned to the user."))
 
 	def validate_display_name(self) -> None:

@@ -47,7 +47,7 @@ from mail.utils import (
 	get_in_reply_to,
 	get_in_reply_to_mail,
 )
-from mail.utils.cache import get_user_default_email_address
+from mail.utils.cache import get_user_default_outgoing_email
 from mail.utils.dns import get_host_by_ip
 from mail.utils.dt import parsedate_to_datetime
 from mail.utils.email_parser import EmailParser
@@ -1095,7 +1095,7 @@ def create_outgoing_mail(
 	if via_api and not is_newsletter:
 		user = frappe.session.user
 		if sender not in get_user_email_addresses(user, "Mail Account"):
-			doc.sender = get_user_default_email_address(user)
+			doc.sender = get_user_default_outgoing_email(user)
 
 	if not do_not_save:
 		doc.save()

@@ -72,13 +72,13 @@ def get_user_mail_aliases(user: str) -> list:
 	return frappe.cache.hget(f"user|{user}", "mail_aliases", generator)
 
 
-def get_user_default_email_address(user: str) -> str | None:
-	"""Returns the default email address of the user."""
+def get_user_default_outgoing_email(user: str) -> str | None:
+	"""Returns the default outgoing email of the user."""
 
 	def generator() -> str | None:
-		return frappe.db.get_value("Mail Account", {"user": user, "enabled": 1}, "default_email_address")
+		return frappe.db.get_value("Mail Account", {"user": user, "enabled": 1}, "default_outgoing_email")
 
-	return frappe.cache.hget(f"user|{user}", "default_email_address", generator)
+	return frappe.cache.hget(f"user|{user}", "default_outgoing_email", generator)
 
 
 def get_blacklist_for_ip_group(ip_group: str) -> list:
