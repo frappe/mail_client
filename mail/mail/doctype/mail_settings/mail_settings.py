@@ -74,6 +74,7 @@ def create_dmarc_dns_record_for_external_domains() -> None:
 
 	from mail.mail.doctype.dns_record.dns_record import create_or_update_dns_record
 
+	frappe.flags.enqueue_dns_record_update = True
 	create_or_update_dns_record(
 		host="*._report._dmarc",
 		type="TXT",
