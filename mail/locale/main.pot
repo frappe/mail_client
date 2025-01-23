@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Mail VERSION\n"
 "Report-Msgid-Bugs-To: developers@frappe.io\n"
-"POT-Creation-Date: 2025-01-17 16:24+0553\n"
-"PO-Revision-Date: 2025-01-17 16:24+0553\n"
+"POT-Creation-Date: 2025-01-23 17:37+0553\n"
+"PO-Revision-Date: 2025-01-23 17:37+0553\n"
 "Last-Translator: developers@frappe.io\n"
 "Language-Team: developers@frappe.io\n"
 "MIME-Version: 1.0\n"
@@ -58,7 +58,7 @@ msgstr ""
 msgid "API Key"
 msgstr ""
 
-#: mail/agent.py:53 mail/mail/doctype/mail_agent/mail_agent.py:82
+#: mail/agent.py:58 mail/mail/doctype/mail_agent/mail_agent.py:82
 msgid "API Key or Username and Password is required."
 msgstr ""
 
@@ -89,10 +89,10 @@ msgid "Actions"
 msgstr ""
 
 #. Label of the agent (Data) field in DocType 'Mail Agent'
-#. Label of the agent (Link) field in DocType 'Mail Agent Job'
+#. Label of the agent (Link) field in DocType 'Mail Agent Request Log'
 #. Label of the agent (Link) field in DocType 'Outgoing Mail'
 #: mail/mail/doctype/mail_agent/mail_agent.json
-#: mail/mail/doctype/mail_agent_job/mail_agent_job.json
+#: mail/mail/doctype/mail_agent_request_log/mail_agent_request_log.json
 #: mail/mail/doctype/outgoing_mail/outgoing_mail.json
 #: mail/mail/report/outbound_delay/outbound_delay.js:49
 #: mail/mail/report/outbound_delay/outbound_delay.py:99
@@ -256,7 +256,7 @@ msgstr ""
 #. Option for the 'Status' (Select) field in DocType 'Outgoing Mail'
 #: mail/mail/doctype/mail_recipient/mail_recipient.json
 #: mail/mail/doctype/outgoing_mail/outgoing_mail.json
-#: mail/mail/report/outgoing_mail_summary/outgoing_mail_summary.py:334
+#: mail/mail/report/outgoing_mail_summary/outgoing_mail_summary.py:329
 msgid "Blocked"
 msgstr ""
 
@@ -302,7 +302,7 @@ msgstr ""
 #. Option for the 'Status' (Select) field in DocType 'Outgoing Mail'
 #: mail/mail/doctype/mail_recipient/mail_recipient.json
 #: mail/mail/doctype/outgoing_mail/outgoing_mail.json
-#: mail/mail/report/outgoing_mail_summary/outgoing_mail_summary.py:328
+#: mail/mail/report/outgoing_mail_summary/outgoing_mail_summary.py:323
 msgid "Bounced"
 msgstr ""
 
@@ -381,8 +381,8 @@ msgstr ""
 msgid "Cleanup Interval (Seconds)"
 msgstr ""
 
-#. Option for the 'Status' (Select) field in DocType 'Mail Agent Job'
-#: mail/mail/doctype/mail_agent_job/mail_agent_job.json
+#. Option for the 'Status' (Select) field in DocType 'Mail Agent Request Log'
+#: mail/mail/doctype/mail_agent_request_log/mail_agent_request_log.json
 msgid "Completed"
 msgstr ""
 
@@ -441,8 +441,8 @@ msgstr ""
 msgid "Custom header {0} is not allowed."
 msgstr ""
 
-#. Option for the 'Method' (Select) field in DocType 'Mail Agent Job'
-#: mail/mail/doctype/mail_agent_job/mail_agent_job.json
+#. Option for the 'Method' (Select) field in DocType 'Mail Agent Request Log'
+#: mail/mail/doctype/mail_agent_request_log/mail_agent_request_log.json
 msgid "DELETE"
 msgstr ""
 
@@ -463,11 +463,11 @@ msgstr ""
 msgid "DKIM Key"
 msgstr ""
 
-#: mail/mail/doctype/dkim_key/dkim_key.py:129
+#: mail/mail/doctype/dkim_key/dkim_key.py:126
 msgid "DKIM Key not found for the domain {0}"
 msgstr ""
 
-#: mail/mail/doctype/mail_domain/mail_domain.py:122
+#: mail/mail/doctype/mail_domain/mail_domain.py:133
 msgid "DKIM Keys rotated successfully."
 msgstr ""
 
@@ -497,12 +497,14 @@ msgid "DMARC Description"
 msgstr ""
 
 #. Name of a DocType
+#. Option for the 'Type' (Select) field in DocType 'Incoming Mail'
 #: mail/mail/doctype/dmarc_report/dmarc_report.json
+#: mail/mail/doctype/incoming_mail/incoming_mail.json
 #: mail/mail/report/dmarc_report_viewer/dmarc_report_viewer.js:39
 msgid "DMARC Report"
 msgstr ""
 
-#: mail/mail/doctype/incoming_mail/incoming_mail.py:136
+#: mail/mail/doctype/incoming_mail/incoming_mail.py:139
 msgid "DMARC Report Creation Failed"
 msgstr ""
 
@@ -545,7 +547,7 @@ msgstr ""
 msgid "DNS Records"
 msgstr ""
 
-#: mail/mail/doctype/mail_domain/mail_domain.py:109
+#: mail/mail/doctype/mail_domain/mail_domain.py:120
 msgid "DNS Records verified successfully."
 msgstr ""
 
@@ -553,9 +555,18 @@ msgstr ""
 msgid "DNS provider or token not configured. Please manually add the {0} to the DNS provider for the domain {1} to ensure proper email authentication."
 msgstr ""
 
-#. Label of the is_default (Check) field in DocType 'Mail Account'
+#. Option for the 'Type' (Select) field in DocType 'Incoming Mail'
+#: mail/mail/doctype/incoming_mail/incoming_mail.json
+msgid "DSN Report"
+msgstr ""
+
+#. Label of the default_email_address (Data) field in DocType 'Mail Account'
 #: mail/mail/doctype/mail_account/mail_account.json
-msgid "Default Outgoing"
+msgid "Default Email"
+msgstr ""
+
+#: mail/mail/doctype/mail_account/mail_account.py:109
+msgid "Default Email must be one of the email addresses assigned to the user."
 msgstr ""
 
 #. Label of the section_break_l9un (Section Break) field in DocType 'Mail
@@ -568,7 +579,7 @@ msgstr ""
 #. Option for the 'Status' (Select) field in DocType 'Outgoing Mail'
 #: mail/mail/doctype/mail_recipient/mail_recipient.json
 #: mail/mail/doctype/outgoing_mail/outgoing_mail.json
-#: mail/mail/report/outgoing_mail_summary/outgoing_mail_summary.py:322
+#: mail/mail/report/outgoing_mail_summary/outgoing_mail_summary.py:317
 msgid "Deferred"
 msgstr ""
 
@@ -674,9 +685,9 @@ msgstr ""
 msgid "Duplicate Record"
 msgstr ""
 
-#. Label of the duration (Float) field in DocType 'Mail Agent Job'
+#. Label of the duration (Float) field in DocType 'Mail Agent Request Log'
 #. Label of the duration (Float) field in DocType 'Spam Check Log'
-#: mail/mail/doctype/mail_agent_job/mail_agent_job.json
+#: mail/mail/doctype/mail_agent_request_log/mail_agent_request_log.json
 #: mail/mail/doctype/spam_check_log/spam_check_log.json
 msgid "Duration (Seconds)"
 msgstr ""
@@ -720,6 +731,10 @@ msgstr ""
 msgid "Email domain {0} does not match with domain {1}."
 msgstr ""
 
+#: mail/mail/doctype/mail_account/mail_account.py:84
+msgid "Email is mandatory."
+msgstr ""
+
 #. Label of the enable_spamd_for_outbound (Check) field in DocType 'Mail
 #. Settings'
 #: mail/mail/doctype/mail_settings/mail_settings.json
@@ -753,13 +768,13 @@ msgstr ""
 msgid "Enabled"
 msgstr ""
 
-#. Label of the ended_at (Datetime) field in DocType 'Mail Agent Job'
-#: mail/mail/doctype/mail_agent_job/mail_agent_job.json
+#. Label of the ended_at (Datetime) field in DocType 'Mail Agent Request Log'
+#: mail/mail/doctype/mail_agent_request_log/mail_agent_request_log.json
 msgid "Ended At"
 msgstr ""
 
-#. Label of the endpoint (Data) field in DocType 'Mail Agent Job'
-#: mail/mail/doctype/mail_agent_job/mail_agent_job.json
+#. Label of the endpoint (Data) field in DocType 'Mail Agent Request Log'
+#: mail/mail/doctype/mail_agent_request_log/mail_agent_request_log.json
 msgid "Endpoint"
 msgstr ""
 
@@ -776,9 +791,9 @@ msgstr ""
 msgid "Error"
 msgstr ""
 
-#. Label of the error_log (Code) field in DocType 'Mail Agent Job'
+#. Label of the error_log (Code) field in DocType 'Mail Agent Request Log'
 #. Label of the error_log (Code) field in DocType 'Outgoing Mail'
-#: mail/mail/doctype/mail_agent_job/mail_agent_job.json
+#: mail/mail/doctype/mail_agent_request_log/mail_agent_request_log.json
 #: mail/mail/doctype/outgoing_mail/outgoing_mail.json
 msgid "Error Log"
 msgstr ""
@@ -787,6 +802,7 @@ msgstr ""
 #. Label of the error_message (Code) field in DocType 'Outgoing Mail'
 #: mail/mail/doctype/mail_recipient/mail_recipient.json
 #: mail/mail/doctype/outgoing_mail/outgoing_mail.json
+#: mail/mail/report/outgoing_mail_summary/outgoing_mail_summary.py:83
 msgid "Error Message"
 msgstr ""
 
@@ -826,9 +842,9 @@ msgstr ""
 msgid "FAIL"
 msgstr ""
 
-#. Option for the 'Status' (Select) field in DocType 'Mail Agent Job'
+#. Option for the 'Status' (Select) field in DocType 'Mail Agent Request Log'
 #. Option for the 'Status' (Select) field in DocType 'Outgoing Mail'
-#: mail/mail/doctype/mail_agent_job/mail_agent_job.json
+#: mail/mail/doctype/mail_agent_request_log/mail_agent_request_log.json
 #: mail/mail/doctype/outgoing_mail/outgoing_mail.json
 msgid "Failed"
 msgstr ""
@@ -923,12 +939,12 @@ msgstr ""
 msgid "Future date is not allowed."
 msgstr ""
 
-#. Option for the 'Method' (Select) field in DocType 'Mail Agent Job'
-#: mail/mail/doctype/mail_agent_job/mail_agent_job.json
+#. Option for the 'Method' (Select) field in DocType 'Mail Agent Request Log'
+#: mail/mail/doctype/mail_agent_request_log/mail_agent_request_log.json
 msgid "GET"
 msgstr ""
 
-#: mail/mail/doctype/mail_group/mail_group.py:55
+#: mail/mail/doctype/mail_group/mail_group.py:51
 msgid "Group has members. Please remove them first."
 msgstr ""
 
@@ -1133,7 +1149,7 @@ msgstr ""
 msgid "Incoming Mail"
 msgstr ""
 
-#: mail/mail/report/outgoing_mail_summary/outgoing_mail_summary.py:243
+#: mail/mail/report/outgoing_mail_summary/outgoing_mail_summary.py:238
 msgid "Invalid date format"
 msgstr ""
 
@@ -1220,11 +1236,13 @@ msgstr ""
 msgid "MX"
 msgstr ""
 
+#. Option for the 'Type' (Select) field in DocType 'Incoming Mail'
 #. Group in Mail Account's connections
 #. Group in Mail Agent's connections
 #. Group in Mail Agent Group's connections
 #. Group in Mail Domain's connections
 #. Group in Spam Check Log's connections
+#: mail/mail/doctype/incoming_mail/incoming_mail.json
 #: mail/mail/doctype/mail_account/mail_account.json
 #: mail/mail/doctype/mail_agent/mail_agent.json
 #: mail/mail/doctype/mail_agent_group/mail_agent_group.json
@@ -1273,16 +1291,16 @@ msgid "Mail Agent Group {0} is disabled."
 msgstr ""
 
 #. Name of a DocType
-#: mail/mail/doctype/mail_agent_job/mail_agent_job.json
-msgid "Mail Agent Job"
+#: mail/mail/doctype/mail_agent_request_log/mail_agent_request_log.json
+msgid "Mail Agent Request Log"
 msgstr ""
 
 #: mail/mail/doctype/mail_agent/mail_agent.py:51
 msgid "Mail Agent {0} already exists."
 msgstr ""
 
-#: mail/mail/doctype/mail_agent_job/mail_agent_job.py:29
-#: mail/mail/doctype/mail_agent_job/mail_agent_job.py:45
+#: mail/mail/doctype/mail_agent_request_log/mail_agent_request_log.py:25
+#: mail/mail/doctype/mail_agent_request_log/mail_agent_request_log.py:43
 msgid "Mail Agent {0} is disabled."
 msgstr ""
 
@@ -1295,8 +1313,8 @@ msgstr ""
 msgid "Mail Alias"
 msgstr ""
 
-#: mail/mail/doctype/mail_account/mail_account.py:66
-#: mail/mail/doctype/mail_group/mail_group.py:52
+#: mail/mail/doctype/mail_account/mail_account.py:64
+#: mail/mail/doctype/mail_group/mail_group.py:48
 msgid "Mail Alias {0} is enabled. Please disable it first."
 msgstr ""
 
@@ -1342,7 +1360,7 @@ msgstr ""
 msgid "Mail Group Member"
 msgstr ""
 
-#: mail/mail/doctype/mail_group_member/mail_group_member.py:29
+#: mail/mail/doctype/mail_group_member/mail_group_member.py:26
 msgid "Mail Group cannot be a member of itself"
 msgstr ""
 
@@ -1507,7 +1525,7 @@ msgstr ""
 msgid "Member (Type)"
 msgstr ""
 
-#: mail/mail/doctype/mail_group_member/mail_group_member.py:31
+#: mail/mail/doctype/mail_group_member/mail_group_member.py:28
 msgid "Member cannot be the same as the Mail Group"
 msgstr ""
 
@@ -1554,8 +1572,8 @@ msgstr ""
 msgid "Message size limit exceeded ({0} MB). Maximum {1} MB allowed."
 msgstr ""
 
-#. Label of the method (Select) field in DocType 'Mail Agent Job'
-#: mail/mail/doctype/mail_agent_job/mail_agent_job.json
+#. Label of the method (Select) field in DocType 'Mail Agent Request Log'
+#: mail/mail/doctype/mail_agent_request_log/mail_agent_request_log.json
 msgid "Method"
 msgstr ""
 
@@ -1588,15 +1606,15 @@ msgstr ""
 msgid "Newsletter Retention (Days)"
 msgstr ""
 
-#: mail/mail/doctype/mail_domain/mail_domain.py:53
+#: mail/mail/doctype/mail_domain/mail_domain.py:59
 msgid "Newsletter Retention must be greater than 0."
 msgstr ""
 
-#: mail/mail/doctype/mail_domain/mail_domain.py:60
+#: mail/mail/doctype/mail_domain/mail_domain.py:66
 msgid "Newsletter Retention must be less than or equal to {0}."
 msgstr ""
 
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:1061
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:1062
 msgid "No agent or agent group found based on the given criteria."
 msgstr ""
 
@@ -1608,11 +1626,11 @@ msgstr ""
 msgid "No emails to show"
 msgstr ""
 
-#: mail/mail/doctype/dkim_key/dkim_key.py:41
+#: mail/mail/doctype/dkim_key/dkim_key.py:38
 msgid "Only Administrator can delete DKIM Key."
 msgstr ""
 
-#: mail/mail/doctype/incoming_mail/incoming_mail.py:62
+#: mail/mail/doctype/incoming_mail/incoming_mail.py:63
 msgid "Only Administrator can delete Incoming Mail."
 msgstr ""
 
@@ -1620,7 +1638,7 @@ msgstr ""
 msgid "Only Administrator can delete Mail Agent."
 msgstr ""
 
-#: mail/mail/doctype/mail_domain/mail_domain.py:36
+#: mail/mail/doctype/mail_domain/mail_domain.py:42
 msgid "Only Administrator can delete Mail Domain."
 msgstr ""
 
@@ -1639,6 +1657,10 @@ msgstr ""
 #: mail/mail/report/dmarc_report_viewer/dmarc_report_viewer.js:53
 #: mail/mail/report/dmarc_report_viewer/dmarc_report_viewer.py:37
 msgid "Organization"
+msgstr ""
+
+#: mail/mail/doctype/incoming_mail/incoming_mail.py:156
+msgid "Original Envelope Id or Token not found in DSN Report."
 msgstr ""
 
 #. Label of the enable_outbound (Check) field in DocType 'Mail Agent'
@@ -1695,13 +1717,13 @@ msgstr ""
 msgid "PASS"
 msgstr ""
 
-#. Option for the 'Method' (Select) field in DocType 'Mail Agent Job'
-#: mail/mail/doctype/mail_agent_job/mail_agent_job.json
+#. Option for the 'Method' (Select) field in DocType 'Mail Agent Request Log'
+#: mail/mail/doctype/mail_agent_request_log/mail_agent_request_log.json
 msgid "PATCH"
 msgstr ""
 
-#. Option for the 'Method' (Select) field in DocType 'Mail Agent Job'
-#: mail/mail/doctype/mail_agent_job/mail_agent_job.json
+#. Option for the 'Method' (Select) field in DocType 'Mail Agent Request Log'
+#: mail/mail/doctype/mail_agent_request_log/mail_agent_request_log.json
 msgid "POST"
 msgstr ""
 
@@ -1725,7 +1747,7 @@ msgstr ""
 msgid "Please set the DNS Provider Token."
 msgstr ""
 
-#: mail/mail/doctype/mail_settings/mail_settings.py:98
+#: mail/mail/doctype/mail_settings/mail_settings.py:99
 msgid "Please set the {0} in the Mail Settings."
 msgstr ""
 
@@ -1774,7 +1796,7 @@ msgstr ""
 msgid "Private Keys"
 msgstr ""
 
-#: mail/mail/doctype/incoming_mail/incoming_mail.py:197
+#: mail/mail/doctype/incoming_mail/incoming_mail.py:211
 msgid "Process DSN Report Failed"
 msgstr ""
 
@@ -1933,23 +1955,24 @@ msgstr ""
 msgid "Reports"
 msgstr ""
 
-#. Label of the request_data (JSON) field in DocType 'Mail Agent Job'
-#: mail/mail/doctype/mail_agent_job/mail_agent_job.json
+#. Label of the request_data (JSON) field in DocType 'Mail Agent Request Log'
+#: mail/mail/doctype/mail_agent_request_log/mail_agent_request_log.json
 msgid "Request (Data)"
 msgstr ""
 
-#. Label of the request_headers (JSON) field in DocType 'Mail Agent Job'
-#: mail/mail/doctype/mail_agent_job/mail_agent_job.json
+#. Label of the request_headers (JSON) field in DocType 'Mail Agent Request
+#. Log'
+#: mail/mail/doctype/mail_agent_request_log/mail_agent_request_log.json
 msgid "Request (Headers)"
 msgstr ""
 
-#. Label of the request_json (JSON) field in DocType 'Mail Agent Job'
-#: mail/mail/doctype/mail_agent_job/mail_agent_job.json
+#. Label of the request_json (JSON) field in DocType 'Mail Agent Request Log'
+#: mail/mail/doctype/mail_agent_request_log/mail_agent_request_log.json
 msgid "Request (JSON)"
 msgstr ""
 
-#. Label of the request_params (JSON) field in DocType 'Mail Agent Job'
-#: mail/mail/doctype/mail_agent_job/mail_agent_job.json
+#. Label of the request_params (JSON) field in DocType 'Mail Agent Request Log'
+#: mail/mail/doctype/mail_agent_request_log/mail_agent_request_log.json
 msgid "Request (Params)"
 msgstr ""
 
@@ -1960,13 +1983,9 @@ msgstr ""
 msgid "Response"
 msgstr ""
 
-#. Label of the response_json (JSON) field in DocType 'Mail Agent Job'
-#: mail/mail/doctype/mail_agent_job/mail_agent_job.json
+#. Label of the response_json (JSON) field in DocType 'Mail Agent Request Log'
+#: mail/mail/doctype/mail_agent_request_log/mail_agent_request_log.json
 msgid "Response (JSON)"
-msgstr ""
-
-#: mail/mail/report/outgoing_mail_summary/outgoing_mail_summary.py:83
-msgid "Response/Error Message"
 msgstr ""
 
 #: mail/mail/report/dmarc_report_viewer/dmarc_report_viewer.py:49
@@ -1995,6 +2014,11 @@ msgstr ""
 msgid "Retrying..."
 msgstr ""
 
+#. Label of the is_root_domain (Check) field in DocType 'Mail Domain'
+#: mail/mail/doctype/mail_domain/mail_domain.json
+msgid "Root Domain"
+msgstr ""
+
 #. Label of the root_domain_name (Data) field in DocType 'Mail Settings'
 #: mail/mail/doctype/mail_settings/mail_settings.json
 msgid "Root Domain Name"
@@ -2016,7 +2040,7 @@ msgstr ""
 msgid "Row #{0}: Duplicate recipient {1} of type {2}."
 msgstr ""
 
-#: mail/mail/doctype/mail_domain/mail_domain.py:102
+#: mail/mail/doctype/mail_domain/mail_domain.py:113
 msgid "Row #{0}: Failed to verify {1} : {2}."
 msgstr ""
 
@@ -2104,7 +2128,7 @@ msgstr ""
 #. Option for the 'Folder' (Select) field in DocType 'Outgoing Mail'
 #: mail/mail/doctype/mail_recipient/mail_recipient.json
 #: mail/mail/doctype/outgoing_mail/outgoing_mail.json
-#: mail/mail/report/outgoing_mail_summary/outgoing_mail_summary.py:316
+#: mail/mail/report/outgoing_mail_summary/outgoing_mail_summary.py:311
 msgid "Sent"
 msgstr ""
 
@@ -2209,19 +2233,19 @@ msgstr ""
 msgid "SpamAssassin did not return the expected response. This may indicate a permission issue or an unauthorized connection. Please check the following: {0}"
 msgstr ""
 
-#. Label of the started_at (Datetime) field in DocType 'Mail Agent Job'
+#. Label of the started_at (Datetime) field in DocType 'Mail Agent Request Log'
 #. Label of the started_at (Datetime) field in DocType 'Spam Check Log'
-#: mail/mail/doctype/mail_agent_job/mail_agent_job.json
+#: mail/mail/doctype/mail_agent_request_log/mail_agent_request_log.json
 #: mail/mail/doctype/spam_check_log/spam_check_log.json
 msgid "Started At"
 msgstr ""
 
 #. Label of the status (Select) field in DocType 'Incoming Mail'
-#. Label of the status (Select) field in DocType 'Mail Agent Job'
+#. Label of the status (Select) field in DocType 'Mail Agent Request Log'
 #. Label of the status (Select) field in DocType 'Mail Recipient'
 #. Label of the status (Select) field in DocType 'Outgoing Mail'
 #: mail/mail/doctype/incoming_mail/incoming_mail.json
-#: mail/mail/doctype/mail_agent_job/mail_agent_job.json
+#: mail/mail/doctype/mail_agent_request_log/mail_agent_request_log.json
 #: mail/mail/doctype/mail_recipient/mail_recipient.json
 #: mail/mail/doctype/outgoing_mail/outgoing_mail.json
 #: mail/mail/report/mail_tracker/mail_tracker.js:33
@@ -2252,7 +2276,7 @@ msgstr ""
 msgid "Submission Delay"
 msgstr ""
 
-#: mail/mail/doctype/incoming_mail/incoming_mail.py:308
+#: mail/mail/doctype/incoming_mail/incoming_mail.py:322
 msgid "Submit Incoming Mail"
 msgstr ""
 
@@ -2290,7 +2314,7 @@ msgstr ""
 #: mail/mail/doctype/mail_account/mail_account.json
 #: mail/mail/doctype/mail_agent/mail_agent.json
 #: mail/mail/doctype/mail_agent_group/mail_agent_group.json
-#: mail/mail/doctype/mail_agent_job/mail_agent_job.json
+#: mail/mail/doctype/mail_agent_request_log/mail_agent_request_log.json
 #: mail/mail/doctype/mail_alias/mail_alias.json
 #: mail/mail/doctype/mail_contact/mail_contact.json
 #: mail/mail/doctype/mail_domain/mail_domain.json
@@ -2360,11 +2384,11 @@ msgstr ""
 msgid "The email address {0} is deliverable."
 msgstr ""
 
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:1049
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:1050
 msgid "The following agent groups do not exist or are not enabled for outbound: {0}"
 msgstr ""
 
-#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:1035
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.py:1036
 msgid "The following agents do not exist or are not enabled for outbound: {0}"
 msgstr ""
 
@@ -2399,11 +2423,11 @@ msgstr ""
 msgid "The token used to authenticate with your DNS provider."
 msgstr ""
 
-#: mail/mail/doctype/mail_alias/mail_alias.py:49
+#: mail/mail/doctype/mail_alias/mail_alias.py:47
 msgid "The {0} {1} is disabled."
 msgstr ""
 
-#: mail/mail/doctype/mail_account/mail_account.py:69
+#: mail/mail/doctype/mail_account/mail_account.py:67
 msgid "This account is linked to a mail group. Please remove it first."
 msgstr ""
 
@@ -2465,6 +2489,10 @@ msgstr ""
 #. Label of the token (Data) field in DocType 'Outgoing Mail'
 #: mail/mail/doctype/outgoing_mail/outgoing_mail.json
 msgid "Token"
+msgstr ""
+
+#: mail/mail/doctype/incoming_mail/incoming_mail.py:160
+msgid "Token mismatch in DSN Report."
 msgstr ""
 
 #: mail/mail/report/outbound_delay/outbound_delay.py:86
@@ -2566,9 +2594,11 @@ msgid "Trash"
 msgstr ""
 
 #. Label of the type (Select) field in DocType 'DNS Record'
+#. Label of the type (Select) field in DocType 'Incoming Mail'
 #. Label of the type (Select) field in DocType 'Mail Domain DNS Record'
 #. Label of the type (Select) field in DocType 'Mail Recipient'
 #: mail/mail/doctype/dns_record/dns_record.json
+#: mail/mail/doctype/incoming_mail/incoming_mail.json
 #: mail/mail/doctype/mail_domain_dns_record/mail_domain_dns_record.json
 #: mail/mail/doctype/mail_recipient/mail_recipient.json
 msgid "Type"
@@ -2580,7 +2610,7 @@ msgstr ""
 msgid "Unauthenticated Session Timeout (Seconds)"
 msgstr ""
 
-#: mail/mail/doctype/dkim_key/dkim_key.py:199
+#: mail/mail/doctype/dkim_key/dkim_key.py:196
 msgid "Unsupported algorithm. Use 'rsa-sha256' or 'ed25519-sha256'."
 msgstr ""
 
@@ -2598,7 +2628,7 @@ msgstr ""
 msgid "User"
 msgstr ""
 
-#: mail/mail/doctype/mail_account/mail_account.py:80
+#: mail/mail/doctype/mail_account/mail_account.py:78
 msgid "User {0} does not have Mail User role."
 msgstr ""
 
@@ -2665,7 +2695,7 @@ msgstr ""
 msgid "{0} is an invalid email address"
 msgstr ""
 
-#: mail/mail/doctype/incoming_mail/incoming_mail.py:77
+#: mail/mail/doctype/incoming_mail/incoming_mail.py:78
 msgid "{0} is mandatory."
 msgstr ""
 

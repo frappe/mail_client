@@ -47,7 +47,7 @@ from mail.utils import (
 	get_in_reply_to,
 	get_in_reply_to_mail,
 )
-from mail.utils.cache import get_user_default_mail_account
+from mail.utils.cache import get_user_default_email_address
 from mail.utils.dns import get_host_by_ip
 from mail.utils.dt import parsedate_to_datetime
 from mail.utils.email_parser import EmailParser
@@ -939,15 +939,6 @@ class OutgoingMail(Document):
 
 
 @frappe.whitelist()
-def get_default_sender() -> str | None:
-	"""Returns the default sender."""
-
-	return frappe.db.get_value(
-		"Mail Account", {"user": frappe.session.user, "enabled": 1, "is_default": 1}, "name"
-	)
-
-
-@frappe.whitelist()
 def reply_to_mail(source_name, target_doc=None) -> "OutgoingMail":
 	"""Creates an Outgoing Mail as a reply to the given Outgoing Mail."""
 
@@ -1104,7 +1095,7 @@ def create_outgoing_mail(
 	if via_api and not is_newsletter:
 		user = frappe.session.user
 		if sender not in get_user_email_addresses(user, "Mail Account"):
-			doc.sender = get_user_default_mail_account(user)
+			doc.sender = get_user_default_email_address(user)
 
 	if not do_not_save:
 		doc.save()

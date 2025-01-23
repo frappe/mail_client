@@ -10,7 +10,6 @@ frappe.ui.form.on("Outgoing Mail", {
 		frm.trigger("hide_amend_button");
 		frm.trigger("add_actions");
 		frm.trigger("add_comments");
-		frm.trigger("set_sender");
 	},
 
 	set_queries(frm) {
@@ -100,19 +99,6 @@ frappe.ui.form.on("Outgoing Mail", {
 	add_comments(frm) {
 		if (!frm.doc.__islocal && frm.doc.status == "Blocked" && frm.doc.error_message) {
 			frm.dashboard.add_comment(__(frm.doc.error_message), "red", true);
-		}
-	},
-
-	set_sender(frm) {
-		if (!frm.doc.sender) {
-			frappe.call({
-				method: "mail.mail.doctype.outgoing_mail.outgoing_mail.get_default_sender",
-				callback: (r) => {
-					if (r.message) {
-						frm.set_value("sender", r.message);
-					}
-				},
-			});
 		}
 	},
 

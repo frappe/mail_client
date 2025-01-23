@@ -7,11 +7,11 @@
   "section_break_qoc3",
   "enabled",
   "section_break_uphe",
-  "alias_for_type",
-  "alias_for_name",
-  "column_break_wo8t",
   "domain_name",
-  "email"
+  "email",
+  "column_break_wo8t",
+  "alias_for_type",
+  "alias_for_name"
  ],
  "fields": [
   {
@@ -82,7 +82,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-01-16 16:33:52.639367",
+ "modified": "2025-01-23 16:58:29.540707",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Alias",
