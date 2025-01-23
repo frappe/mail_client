@@ -16,11 +16,6 @@
 			@update:modelValue="account.setValue.submit({ enabled: account.doc.enabled })"
 		/>
 		<Switch
-			label="Default Outgoing"
-			v-model="account.doc.is_default"
-			@update:modelValue="account.setValue.submit({ is_default: account.doc.is_default })"
-		/>
-		<Switch
 			label="Track Outgoing Mail"
 			v-model="account.doc.track_outgoing_mail"
 			@update:modelValue="
@@ -80,7 +75,7 @@ const account = createDocumentResource({
 	name: email.value,
 	auto: false,
 	transform(data) {
-		for (const d of ['enabled', 'is_default', 'track_outgoing_mail', 'create_mail_contact']) {
+		for (const d of ['enabled', 'track_outgoing_mail', 'create_mail_contact']) {
 			data[d] = !!data[d]
 		}
 	},

@@ -27,10 +27,12 @@ class MailAlias(Document):
 			if self.has_value_changed("enabled") or self.has_value_changed("email"):
 				create_alias_on_agents(self.alias_for_name, self.email)
 			elif self.has_value_changed("alias_for_name"):
+				self.remove_alias_from_default_email_address()
 				patch_alias_on_agents(
 					self.alias_for_name, self.get_doc_before_save().alias_for_name, self.email
 				)
 		elif self.has_value_changed("enabled"):
+			self.remove_alias_from_default_email_address()
 			delete_alias_from_agents(self.alias_for_name, self.email)
 
 	def on_trash(self) -> None:
@@ -57,3 +59,11 @@ class MailAlias(Document):
 
 		is_email_assigned(self.email, self.doctype, raise_exception=True)
 		is_valid_email_for_domain(self.email, self.domain_name, raise_exception=True)
+
+	def remove_alias_from_default_email_address(self) -> None:
+		"""Removes the alias from the default outgoing email."""
+
+		if account := frappe.db.exists("Mail Account", {"default_email_address": self.email}):
+			account = frappe.get_doc("Mail Account", account)
+			account.default_email_address = None
+			account.save(ignore_permissions=True)

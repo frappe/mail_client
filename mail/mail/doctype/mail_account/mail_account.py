@@ -10,7 +10,7 @@ from frappe.utils import random_string
 
 from mail.agent import create_account_on_agents, delete_account_from_agents, patch_account_on_agents
 from mail.utils import get_dmarc_address
-from mail.utils.cache import get_root_domain_name
+from mail.utils.cache import get_root_domain_name, get_user_mail_aliases
 from mail.utils.user import has_role, is_system_manager
 from mail.utils.validation import (
 	is_email_assigned,
@@ -30,8 +30,8 @@ class MailAccount(Document):
 		self.validate_user()
 		self.validate_email()
 		self.validate_password()
+		self.validate_default_email_address()
 		self.validate_display_name()
-		self.validate_default_account()
 
 	def on_update(self) -> None:
 		frappe.cache.delete_value(f"user|{self.user}")
@@ -80,6 +80,9 @@ class MailAccount(Document):
 	def validate_email(self) -> None:
 		"""Validates the email address."""
 
+		if not self.email:
+			frappe.throw(_("Email is mandatory."))
+
 		is_email_assigned(self.email, self.doctype, raise_exception=True)
 		is_valid_email_for_domain(self.email, self.domain_name, raise_exception=True)
 
@@ -96,27 +99,20 @@ class MailAccount(Document):
 
 		self.generate_secret()
 
+	def validate_default_email_address(self) -> None:
+		"""Validates the default outgoing email."""
+
+		if not self.default_email_address:
+			self.default_email_address = self.email
+		else:
+			if self.default_email_address not in [self.email] + get_user_mail_aliases(self.user):
+				frappe.throw(_("Default Email must be one of the email addresses assigned to the user."))
+
 	def validate_display_name(self) -> None:
 		"""Validates the display name."""
 
 		if self.is_new() and not self.display_name:
 			self.display_name = frappe.db.get_value("User", self.user, "full_name")
-
-	def validate_default_account(self) -> None:
-		"""Validates the default account."""
-
-		if not self.enabled:
-			self.is_default = 0
-			return
-
-		filters = {"user": self.user, "enabled": 1, "is_default": 1, "name": ["!=", self.name]}
-		has_default_account = frappe.db.exists("Mail Account", filters)
-
-		if self.is_default:
-			if has_default_account:
-				frappe.db.set_value("Mail Account", filters, "is_default", 0)
-		elif not has_default_account:
-			self.is_default = 1
 
 	def generate_secret(self) -> None:
 		"""Generates secret from password"""
