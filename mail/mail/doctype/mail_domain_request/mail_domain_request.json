@@ -15,20 +15,26 @@
   {
    "fieldname": "domain_name",
    "fieldtype": "Data",
-   "label": "Domain Name"
+   "in_list_view": 1,
+   "label": "Domain Name",
+   "reqd": 1
   },
   {
    "fieldname": "mail_tenant",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Mail Tenant",
-   "options": "Mail Tenant"
+   "options": "Mail Tenant",
+   "reqd": 1
   },
   {
    "fieldname": "user",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "User",
    "link_filters": "[[\"User\",\"role\",\"=\",\"Mail Admin\"]]",
-   "options": "User"
+   "options": "User",
+   "reqd": 1
   },
   {
    "fieldname": "column_break_batf",
@@ -44,7 +50,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-01-23 16:17:02.692084",
+ "modified": "2025-01-23 18:29:54.128577",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Domain Request",
@@ -61,9 +67,24 @@
    "role": "System Manager",
    "share": 1,
    "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "if_owner": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Mail Admin",
+   "share": 1,
+   "write": 1
   }
  ],
+ "show_title_field_in_link": 1,
  "sort_field": "creation",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "title_field": "domain_name"
 }

@@ -62,7 +62,7 @@ router.beforeEach(async (to, from, next) => {
 
 	const { userResource } = userStore()
 	await userResource.promise
-	if (!userResource.data?.mail_tenant)
+	if (!(userResource.data?.tenant && userResource.data?.tenant_domains.length))
 		return next(to.meta.isSetup ? undefined : { name: 'TenantSetup' })
 
 	next(to.meta.isLogin || to.meta.isSetup ? { name: 'Inbox' } : undefined)

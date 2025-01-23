@@ -81,3 +81,12 @@ def create_tenant(tenant_name, max_domains, max_accounts, max_groups):
 	tenant.max_groups = max_groups
 	tenant.append("tenant_members", {"user": frappe.session.user})
 	tenant.insert()
+
+
+@frappe.whitelist()
+def create_domain_request(domain_name, mail_tenant):
+	domain_request = frappe.new_doc("Mail Domain Request")
+	domain_request.domain_name = domain_name
+	domain_request.mail_tenant = mail_tenant
+	domain_request.user = frappe.session.user
+	domain_request.insert()

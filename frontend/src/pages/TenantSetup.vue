@@ -1,5 +1,11 @@
 <template>
-	<form class="flex flex-col space-y-4" @submit.prevent="createTenant.submit()">
+	<FormControl type="text" label="User" :value="user.data?.name" disabled class="mb-4" />
+
+	<form
+		v-if="!user.data?.tenant"
+		class="flex flex-col space-y-4"
+		@submit.prevent="createTenant.submit()"
+	>
 		<FormControl
 			type="text"
 			label="Tenant Name"
@@ -15,8 +21,27 @@
 			required
 		/>
 		<FormControl type="number" label="Maximum No. of Groups" v-model="maxGroups" required />
-		<ErrorMessage :message="errorMessage" />
+		<ErrorMessage :message="createTenant.error?.messages[0]" />
 		<Button variant="solid" :loading="createTenant.loading"> Create Tenant </Button>
+	</form>
+
+	<form v-else class="flex flex-col space-y-4" @submit.prevent="createDomainRequest.submit()">
+		<FormControl
+			type="text"
+			label="Tenant Name"
+			:value="user.data?.tenant_name"
+			required
+			disabled
+		/>
+		<FormControl
+			type="text"
+			label="Domain Name"
+			placeholder="yourcompany.com"
+			v-model="domainName"
+			required
+		/>
+		<ErrorMessage :message="createDomainRequest.error?.messages[0]" />
+		<Button variant="solid" :loading="createDomainRequest.loading"> Add Domain </Button>
 	</form>
 
 	<div class="mt-6 text-center">
@@ -26,17 +51,18 @@
 	</div>
 </template>
 <script setup>
-import { ref } from 'vue'
+import { ref, inject } from 'vue'
 import { FormControl, Button, createResource, ErrorMessage } from 'frappe-ui'
 import { sessionStore } from '@/stores/session'
 
+const user = inject('$user')
 const { logout } = sessionStore()
 
 const tenantName = ref('')
 const maxDomains = ref(10)
 const maxAccounts = ref(1000)
 const maxGroups = ref(100)
-const errorMessage = ref('')
+const domainName = ref('')
 
 const createTenant = createResource({
 	url: 'mail.api.account.create_tenant',
@@ -51,8 +77,18 @@ const createTenant = createResource({
 	onSuccess() {
 		window.location.reload()
 	},
-	onError(error) {
-		errorMessage.value = error.messages[0]
+})
+
+const createDomainRequest = createResource({
+	url: 'mail.api.account.create_domain_request',
+	makeParams() {
+		return {
+			domain_name: domainName.value,
+			mail_tenant: user.data?.tenant,
+		}
+	},
+	onSuccess() {
+		window.location.reload()
 	},
 })
 </script>

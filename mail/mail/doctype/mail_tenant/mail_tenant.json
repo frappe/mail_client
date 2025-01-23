@@ -73,7 +73,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-01-23 15:03:27.322252",
+ "modified": "2025-01-23 18:28:43.433817",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Tenant",
@@ -106,6 +106,7 @@
    "write": 1
   }
  ],
+ "show_title_field_in_link": 1,
  "sort_field": "creation",
  "sort_order": "DESC",
  "states": [],
