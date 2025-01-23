@@ -145,6 +145,7 @@
    "fieldtype": "Data",
    "label": "Default Email",
    "no_copy": 1,
+   "options": "Email",
    "unique": 1
   }
  ],
@@ -176,7 +177,7 @@
    "link_fieldname": "sender"
   }
  ],
- "modified": "2025-01-23 18:20:44.586300",
+ "modified": "2025-01-24 11:47:24.297689",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Account",

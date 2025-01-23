@@ -1,9 +1,7 @@
-from typing import Literal
-
 import frappe
 from frappe.utils.caching import request_cache
 
-from mail.utils.cache import get_user_mail_accounts, get_user_mail_aliases
+from mail.utils.cache import get_user_mail_account, get_user_mail_aliases
 
 
 @request_cache
@@ -13,16 +11,16 @@ def is_system_manager(user: str) -> bool:
 	return user == "Administrator" or has_role(user, "System Manager")
 
 
-def get_user_email_addresses(user: str, type: Literal["Mail Account", "Mail Alias"] | None = None) -> list:
+def get_user_email_addresses(user: str) -> list:
 	"""Returns the list of email addresses associated with the user."""
 
-	if type:
-		if type == "Mail Account":
-			return get_user_mail_accounts(user)
-		elif type == "Mail Alias":
-			return get_user_mail_aliases(user)
+	email_addresses = []
+	if account := get_user_mail_account(user):
+		email_addresses.append(account)
+	if aliases := get_user_mail_aliases(user):
+		email_addresses.extend(aliases)
 
-	return get_user_mail_accounts(user) + get_user_mail_aliases(user)
+	return email_addresses
 
 
 @request_cache
