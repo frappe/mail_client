@@ -1,8 +1,7 @@
 # Copyright (c) 2025, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
-import crypt
-
+import bcrypt
 import frappe
 from frappe import _
 from frappe.model.document import Document
@@ -117,9 +116,9 @@ class MailAccount(Document):
 	def generate_secret(self) -> None:
 		"""Generates secret from password"""
 
-		password = self.get_password("password")
-		salt = crypt.mksalt(crypt.METHOD_SHA512)
-		self.secret = crypt.crypt(password, salt)
+		password = self.get_password("password").encode("utf-8")
+		salt = bcrypt.gensalt()
+		self.secret = bcrypt.hashpw(password, salt).decode()
 
 
 def create_mail_account(
