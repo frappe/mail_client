@@ -9,7 +9,8 @@
   "mail_tenant",
   "user",
   "column_break_batf",
-  "verification_key"
+  "verification_key",
+  "is_verified"
  ],
  "fields": [
   {
@@ -17,6 +18,7 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Domain Name",
+   "read_only_depends_on": "eval:doc.is_verified",
    "reqd": 1
   },
   {
@@ -25,6 +27,7 @@
    "in_list_view": 1,
    "label": "Mail Tenant",
    "options": "Mail Tenant",
+   "read_only_depends_on": "eval:doc.is_verified",
    "reqd": 1
   },
   {
@@ -34,6 +37,7 @@
    "label": "User",
    "link_filters": "[[\"User\",\"role\",\"=\",\"Mail Admin\"]]",
    "options": "User",
+   "read_only_depends_on": "eval:doc.is_verified",
    "reqd": 1
   },
   {
@@ -46,11 +50,18 @@
    "label": "Verification Key",
    "read_only": 1,
    "unique": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "is_verified",
+   "fieldtype": "Check",
+   "label": "Is Verified",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-01-23 18:29:54.128577",
+ "modified": "2025-01-24 13:34:49.894239",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Domain Request",

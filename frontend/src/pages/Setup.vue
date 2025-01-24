@@ -28,7 +28,7 @@
 	<form
 		v-else
 		class="flex flex-col space-y-4"
-		@submit.prevent="verificationKey ? verifyKey.submit() : createDomainRequest.submit()"
+		@submit.prevent="domainRequest ? verifyKey.submit() : createDomainRequest.submit()"
 	>
 		<FormControl
 			type="text"
@@ -43,14 +43,14 @@
 			placeholder="https://example.com"
 			v-model="domainName"
 			required
-			:disabled="!!verificationKey"
+			:disabled="!!domainRequest"
 		/>
 
 		<FormControl
-			v-if="verificationKey"
+			v-if="domainRequest"
 			type="text"
 			:label="__('Verification Key')"
-			:value="verificationKey"
+			:value="domainRequest.verification_key"
 			:description="__('Paste this key in to the DNS records for your domain.')"
 			required
 			disabled
@@ -63,7 +63,7 @@
 			"
 		/>
 		<Button variant="solid" :loading="createDomainRequest.loading || verifyKey.loading">
-			{{ verificationKey ? __('Verify') : __('Add Domain') }}
+			{{ domainRequest ? __('Verify') : __('Add Domain') }}
 		</Button>
 	</form>
 
@@ -86,8 +86,8 @@ const maxDomains = ref(10)
 const maxAccounts = ref(1000)
 const maxGroups = ref(100)
 const domainName = ref('')
-const verificationKey = ref('')
 const errorMessage = ref('')
+const domainRequest = ref(null)
 
 const createTenant = createResource({
 	url: 'mail.api.account.create_tenant',
@@ -113,17 +113,14 @@ const createDomainRequest = createResource({
 		}
 	},
 	onSuccess(data) {
-		verificationKey.value = data
+		domainRequest.value = data
 	},
 })
 
 const verifyKey = createResource({
 	url: 'mail.api.account.verify_domain_key',
 	makeParams() {
-		return {
-			domain_name: domainName.value,
-			verification_key: verificationKey.value,
-		}
+		return { domainRequest: domainRequest.value.name }
 	},
 	onSuccess(data) {
 		if (data) window.location.reload()

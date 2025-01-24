@@ -6,12 +6,12 @@
  "field_order": [
   "section_break_ceuu",
   "domain_name",
+  "mail_tenant",
   "enabled",
   "is_verified",
   "is_subdomain",
   "is_root_domain",
   "column_break_lr3y",
-  "mail_tenant",
   "dkim_rsa_key_size",
   "newsletter_retention",
   "dns_records_section",
@@ -201,7 +201,7 @@
    "link_fieldname": "domain_name"
   }
  ],
- "modified": "2025-01-23 17:44:55.186964",
+ "modified": "2025-01-24 13:45:54.747877",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Domain",

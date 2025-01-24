@@ -92,9 +92,10 @@ def create_domain_request(domain_name, mail_tenant):
 	domain_request.mail_tenant = mail_tenant
 	domain_request.user = frappe.session.user
 	domain_request.insert()
-	return domain_request.verification_key
+	return domain_request
 
 
 @frappe.whitelist()
-def verify_domain_key(domain_name, verification_key):
-	return verify_dns_record(domain_name, "TXT", verification_key)
+def verify_domain_key(domain_request):
+	doc = frappe.get_doc("Mail Domain Request", domain_request)
+	return doc.verify_key()
