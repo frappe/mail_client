@@ -6,6 +6,7 @@
  "field_order": [
   "folder",
   "sender",
+  "from_",
   "display_name",
   "reply_to",
   "column_break_9ywf",
@@ -82,8 +83,9 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Sender",
+   "no_copy": 1,
    "options": "Mail Account",
-   "reqd": 1,
+   "read_only": 1,
    "search_index": 1
   },
   {
@@ -135,7 +137,6 @@
   },
   {
    "depends_on": "eval: doc.docstatus != 0",
-   "fetch_from": "sender.domain_name",
    "fieldname": "domain_name",
    "fieldtype": "Link",
    "in_standard_filter": 1,
@@ -296,9 +297,6 @@
    "label": "More Info"
   },
   {
-   "depends_on": "eval: doc.sender",
-   "fetch_from": "sender.reply_to",
-   "fetch_if_empty": 1,
    "fieldname": "reply_to",
    "fieldtype": "Data",
    "ignore_xss_filter": 1,
@@ -343,9 +341,6 @@
    "read_only": 1
   },
   {
-   "depends_on": "eval: doc.sender",
-   "fetch_from": "sender.display_name",
-   "fetch_if_empty": 1,
    "fieldname": "display_name",
    "fieldtype": "Data",
    "label": "Display Name"
@@ -621,12 +616,22 @@
    "no_copy": 1,
    "read_only": 1,
    "set_only_once": 1
+  },
+  {
+   "fieldname": "from_",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "From",
+   "options": "Email",
+   "reqd": 1,
+   "search_index": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-01-17 15:45:55.949734",
+ "modified": "2025-01-24 12:32:11.104685",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Outgoing Mail",

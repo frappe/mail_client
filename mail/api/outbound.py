@@ -25,9 +25,9 @@ def send(
 ) -> str:
 	"""Send Mail."""
 
-	display_name, sender = parseaddr(from_)
+	display_name, from_ = parseaddr(from_)
 	doc = create_outgoing_mail(
-		sender=sender,
+		from_=from_,
 		display_name=display_name,
 		to=to,
 		cc=cc,
@@ -56,13 +56,13 @@ def send_raw(
 ) -> str:
 	"""Send Raw Mail."""
 
-	display_name, sender = parseaddr(from_)
+	display_name, from_ = parseaddr(from_)
 	raw_message = raw_message or get_message_from_files()
 	if not raw_message:
 		frappe.throw(_("The raw message is required."), frappe.MandatoryError)
 
 	doc = create_outgoing_mail(
-		sender=sender,
+		from_=from_,
 		to=to,
 		display_name=display_name,
 		raw_message=raw_message,
