@@ -8,7 +8,7 @@
 	>
 		<FormControl
 			type="text"
-			label="Tenant Name"
+			:label="__('Tenant Name')"
 			placeholder="yourcompany.frappemail.com"
 			v-model="tenantName"
 			required
@@ -16,7 +16,7 @@
 		<FormControl type="number" label="Maximum No. of Domains" v-model="maxDomains" required />
 		<FormControl
 			type="number"
-			label="Maximum No. of Accounts"
+			:label="__('Maximum No. of Accounts')"
 			v-model="maxAccounts"
 			required
 		/>
@@ -25,28 +25,51 @@
 		<Button variant="solid" :loading="createTenant.loading"> Create Tenant </Button>
 	</form>
 
-	<form v-else class="flex flex-col space-y-4" @submit.prevent="createDomainRequest.submit()">
+	<form
+		v-else
+		class="flex flex-col space-y-4"
+		@submit.prevent="verificationKey ? verifyKey.submit() : createDomainRequest.submit()"
+	>
 		<FormControl
 			type="text"
-			label="Tenant Name"
+			:label="__('Tenant Name')"
 			:value="user.data?.tenant_name"
 			required
 			disabled
 		/>
 		<FormControl
-			type="text"
-			label="Domain Name"
-			placeholder="yourcompany.com"
+			type="url"
+			:label="__('Domain Name')"
+			placeholder="https://example.com"
 			v-model="domainName"
 			required
+			:disabled="!!verificationKey"
 		/>
-		<ErrorMessage :message="createDomainRequest.error?.messages[0]" />
-		<Button variant="solid" :loading="createDomainRequest.loading"> Add Domain </Button>
+
+		<FormControl
+			v-if="verificationKey"
+			type="text"
+			:label="__('Verification Key')"
+			:value="verificationKey"
+			:description="__('Paste this key in to the DNS records for your domain.')"
+			required
+			disabled
+		/>
+		<ErrorMessage
+			:message="
+				createDomainRequest.error?.messages[0] ||
+				verifyKey.error?.messages[0] ||
+				errorMessage
+			"
+		/>
+		<Button variant="solid" :loading="createDomainRequest.loading || verifyKey.loading">
+			{{ verificationKey ? __('Verify') : __('Add Domain') }}
+		</Button>
 	</form>
 
 	<div class="mt-6 text-center">
 		<button class="text-center text-base font-medium hover:underline" @click="logout.submit()">
-			Need to switch accounts? Log out.
+			{{ __('Need to switch accounts? Log out.') }}
 		</button>
 	</div>
 </template>
@@ -63,6 +86,8 @@ const maxDomains = ref(10)
 const maxAccounts = ref(1000)
 const maxGroups = ref(100)
 const domainName = ref('')
+const verificationKey = ref('')
+const errorMessage = ref('')
 
 const createTenant = createResource({
 	url: 'mail.api.account.create_tenant',
@@ -87,8 +112,22 @@ const createDomainRequest = createResource({
 			mail_tenant: user.data?.tenant,
 		}
 	},
-	onSuccess() {
-		window.location.reload()
+	onSuccess(data) {
+		verificationKey.value = data
+	},
+})
+
+const verifyKey = createResource({
+	url: 'mail.api.account.verify_domain_key',
+	makeParams() {
+		return {
+			domain_name: domainName.value,
+			verification_key: verificationKey.value,
+		}
+	},
+	onSuccess(data) {
+		if (data) window.location.reload()
+		else errorMessage.value = 'Failed to verify DNS records.'
 	},
 })
 </script>

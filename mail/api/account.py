@@ -3,6 +3,8 @@ import random
 import frappe
 from frappe import _
 
+from mail.utils.dns import verify_dns_record
+
 
 @frappe.whitelist(allow_guest=True)
 def signup(email):
@@ -90,3 +92,9 @@ def create_domain_request(domain_name, mail_tenant):
 	domain_request.mail_tenant = mail_tenant
 	domain_request.user = frappe.session.user
 	domain_request.insert()
+	return domain_request.verification_key
+
+
+@frappe.whitelist()
+def verify_domain_key(domain_name, verification_key):
+	return verify_dns_record(domain_name, "TXT", verification_key)

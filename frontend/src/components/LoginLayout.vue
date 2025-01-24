@@ -44,11 +44,11 @@ const route = useRoute()
 const title = computed(() => {
 	switch (route.name) {
 		case 'Login':
-			return 'Sign in to your account'
-		case 'TenantSetup':
-			return 'Setup mail tenant'
+			return __('Sign in to your account')
+		case 'Setup':
+			return __('Set up mail tenant and domain')
 		default:
-			return 'Create a new account'
+			return __('Create a new account')
 	}
 })
 </script>

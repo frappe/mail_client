@@ -30,8 +30,8 @@ const routes = [
 	},
 	{
 		path: '/setup',
-		name: 'TenantSetup',
-		component: () => import('@/pages/TenantSetup.vue'),
+		name: 'Setup',
+		component: () => import('@/pages/Setup.vue'),
 		meta: { isSetup: true },
 	},
 	{
@@ -63,7 +63,7 @@ router.beforeEach(async (to, from, next) => {
 	const { userResource } = userStore()
 	await userResource.promise
 	if (!(userResource.data?.tenant && userResource.data?.tenant_domains.length))
-		return next(to.meta.isSetup ? undefined : { name: 'TenantSetup' })
+		return next(to.meta.isSetup ? undefined : { name: 'Setup' })
 
 	next(to.meta.isLogin || to.meta.isSetup ? { name: 'Inbox' } : undefined)
 })
