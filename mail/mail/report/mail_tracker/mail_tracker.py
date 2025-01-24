@@ -60,6 +60,12 @@ def get_columns() -> list[dict]:
 			"width": 200,
 		},
 		{
+			"label": _("From"),
+			"fieldname": "from_",
+			"fieldtype": "Data",
+			"width": 200,
+		},
+		{
 			"label": _("Message ID"),
 			"fieldname": "message_id",
 			"fieldtype": "Data",
@@ -105,6 +111,7 @@ def get_data(filters: dict | None = None) -> list[dict]:
 			OM.open_count,
 			OM.domain_name,
 			OM.sender,
+			OM.from_,
 			OM.message_id,
 			OM.tracking_id,
 			OM.first_opened_at,
@@ -123,6 +130,7 @@ def get_data(filters: dict | None = None) -> list[dict]:
 
 	for field in [
 		"name",
+		"from_",
 		"message_id",
 		"tracking_id",
 	]:

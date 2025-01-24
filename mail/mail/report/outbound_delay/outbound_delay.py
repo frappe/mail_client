@@ -117,6 +117,12 @@ def get_columns() -> list[dict]:
 			"width": 200,
 		},
 		{
+			"label": _("From"),
+			"fieldname": "from_",
+			"fieldtype": "Data",
+			"width": 200,
+		},
+		{
 			"label": _("Recipient"),
 			"fieldname": "recipient",
 			"fieldtype": "Data",
@@ -157,6 +163,7 @@ def get_data(filters: dict | None = None) -> list[dict]:
 			OM.agent,
 			OM.ip_address,
 			OM.sender,
+			OM.from_,
 			MR.email.as_("recipient"),
 			OM.message_id,
 		)
@@ -178,6 +185,7 @@ def get_data(filters: dict | None = None) -> list[dict]:
 		"name",
 		"priority",
 		"ip_address",
+		"from_",
 		"message_id",
 	]:
 		if filters.get(field):

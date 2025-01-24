@@ -74,6 +74,11 @@ frappe.query_reports["Outgoing Mail Summary"] = {
 			},
 		},
 		{
+			fieldname: "from_",
+			label: __("From"),
+			fieldtype: "Data",
+		},
+		{
 			fieldname: "email",
 			label: __("Recipient"),
 			fieldtype: "Data",

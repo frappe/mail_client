@@ -63,6 +63,11 @@ frappe.query_reports["Mail Tracker"] = {
 			},
 		},
 		{
+			fieldname: "from_",
+			label: __("From"),
+			fieldtype: "Data",
+		},
+		{
 			fieldname: "message_id",
 			label: __("Message ID"),
 			fieldtype: "Data",
