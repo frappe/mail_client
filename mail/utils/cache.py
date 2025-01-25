@@ -56,8 +56,8 @@ def get_account_for_email(email: str) -> str | None:
 	"""Returns the mail account for the email."""
 
 	def generator() -> str | None:
-		if frappe.db.exists("Mail Account", email):
-			return email
+		if account := frappe.db.exists("Mail Account", {"email": email}):
+			return account
 		elif alias := frappe.db.exists("Mail Alias", {"email": email, "alias_for_type": "Mail Account"}):
 			return frappe.db.get_value("Mail Alias", alias, "alias_for_name")
 

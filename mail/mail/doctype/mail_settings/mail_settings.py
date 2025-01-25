@@ -15,9 +15,7 @@ class MailSettings(Document):
 		self.validate_spf_host()
 
 	def on_update(self) -> None:
-		frappe.cache.delete_value("smtp_limits")
-		frappe.cache.delete_value("imap_limits")
-		frappe.cache.delete_value("root_domain_name")
+		self.clear_cache()
 
 		if self.has_value_changed("root_domain_name"):
 			create_dmarc_dns_record_for_external_domains()
@@ -67,6 +65,13 @@ class MailSettings(Document):
 				frappe.delete_doc("DNS Record", spf_dns_record, ignore_permissions=True)
 
 		create_or_update_spf_dns_record(self.spf_host)
+
+	def clear_cache(self) -> None:
+		"""Clears the Cache."""
+
+		frappe.cache.delete_value("root_domain_name")
+		frappe.cache.delete_value("smtp_limits")
+		frappe.cache.delete_value("imap_limits")
 
 
 def create_dmarc_dns_record_for_external_domains() -> None:

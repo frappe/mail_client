@@ -33,7 +33,7 @@ class MailAccount(Document):
 		self.validate_display_name()
 
 	def on_update(self) -> None:
-		frappe.cache.delete_value(f"user|{self.user}")
+		self.clear_cache()
 
 		if self.enabled:
 			if self.has_value_changed("enabled") or self.has_value_changed("email"):
@@ -46,7 +46,7 @@ class MailAccount(Document):
 			delete_account_from_agents(self.email)
 
 	def on_trash(self) -> None:
-		frappe.cache.delete_value(f"user|{self.user}")
+		self.clear_cache()
 
 		if self.enabled:
 			delete_account_from_agents(self.email)
@@ -112,6 +112,12 @@ class MailAccount(Document):
 
 		if self.is_new() and not self.display_name:
 			self.display_name = frappe.db.get_value("User", self.user, "full_name")
+
+	def clear_cache(self) -> None:
+		"""Clears the Cache."""
+
+		frappe.cache.delete_value(f"user|{self.user}")
+		frappe.cache.delete_value(f"email|{self.email}")
 
 	def generate_secret(self) -> None:
 		"""Generates secret from password"""

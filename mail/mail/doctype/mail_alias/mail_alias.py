@@ -23,6 +23,8 @@ class MailAlias(Document):
 		self.validate_email()
 
 	def on_update(self) -> None:
+		self.clear_cache()
+
 		if self.enabled:
 			if self.has_value_changed("enabled") or self.has_value_changed("email"):
 				create_alias_on_agents(self.alias_for_name, self.email)
@@ -36,6 +38,8 @@ class MailAlias(Document):
 			delete_alias_from_agents(self.alias_for_name, self.email)
 
 	def on_trash(self) -> None:
+		self.clear_cache()
+
 		if self.enabled:
 			delete_alias_from_agents(self.alias_for_name, self.email)
 
@@ -59,6 +63,21 @@ class MailAlias(Document):
 
 		is_email_assigned(self.email, self.doctype, raise_exception=True)
 		is_valid_email_for_domain(self.email, self.domain_name, raise_exception=True)
+
+	def clear_cache(self) -> None:
+		"""Clears the Cache."""
+
+		frappe.cache.delete_value(f"email|{self.email}")
+
+		if self.alias_for_type == "Mail Account":
+			user = frappe.db.get_value("Mail Account", self.alias_for_name, "user")
+			frappe.cache.delete_value(f"user|{user}")
+
+		if self.has_value_changed("alias_for_type") or self.has_value_changed("alias_for_name"):
+			if previous_doc := self.get_doc_before_save():
+				if previous_doc.alias_for_type == "Mail Account":
+					user = frappe.db.get_value("Mail Account", previous_doc.alias_for_name, "user")
+					frappe.cache.delete_value(f"user|{user}")
 
 	def remove_alias_set_as_default_outgoing_email(self) -> None:
 		"""Removes the alias set as the default outgoing email."""

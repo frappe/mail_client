@@ -25,7 +25,7 @@ class IPBlacklist(Document):
 		self.set_host()
 
 	def on_update(self) -> None:
-		frappe.cache.delete_value(f"blacklist|{self.ip_group}")
+		self.clear_cache()
 
 		if self.is_blacklisted:
 			if self.has_value_changed("is_blacklisted"):
@@ -34,7 +34,7 @@ class IPBlacklist(Document):
 			unblock_ip_on_agents(self.ip_address)
 
 	def on_trash(self) -> None:
-		frappe.cache.delete_value(f"blacklist|{self.ip_group}")
+		self.clear_cache()
 
 		if self.is_blacklisted:
 			unblock_ip_on_agents(self.ip_address)
@@ -68,6 +68,11 @@ class IPBlacklist(Document):
 		"""Sets the host for the IP address"""
 
 		self.host = get_host_by_ip(self.ip_address_expanded)
+
+	def clear_cache(self) -> None:
+		"""Clears the Cache."""
+
+		frappe.cache.delete_value(f"blacklist|{self.ip_group}")
 
 
 def get_ip_version(ip_address: str) -> Literal["IPv4", "IPv6"]:
