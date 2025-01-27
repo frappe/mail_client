@@ -13,7 +13,9 @@
   "send_email",
   "request_key",
   "otp",
-  "is_verified"
+  "column_break_vcxy",
+  "is_verified",
+  "is_expired"
  ],
  "fields": [
   {
@@ -78,11 +80,22 @@
    "fieldtype": "Check",
    "label": "Is Verified",
    "read_only": 1
+  },
+  {
+   "fieldname": "column_break_vcxy",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_expired",
+   "fieldtype": "Check",
+   "label": "Is Expired",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-01-22 12:42:29.143240",
+ "modified": "2025-01-27 14:59:25.507405",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Account Request",

@@ -47,7 +47,7 @@ def get_user_info() -> dict:
 	if user.tenant:
 		user.tenant_name = frappe.db.get_value("Mail Tenant", user.tenant, "tenant_name")
 
-	user.default_outgoing = get_user_default_mail_account(frappe.session.user)
+	user.default_outgoing = get_user_mail_account(frappe.session.user)
 
 	return user
 

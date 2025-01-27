@@ -43,9 +43,12 @@ def verify_otp(account_request: str, otp: str):
 
 
 @frappe.whitelist(allow_guest=True)
-def get_verified_email(request_key: str):
+def get_account_request(request_key: str):
 	return frappe.db.get_value(
-		"Mail Account Request", {"request_key": request_key}, ["email", "is_verified"], as_dict=True
+		"Mail Account Request",
+		{"request_key": request_key},
+		["email", "is_verified", "is_expired"],
+		as_dict=True,
 	)
 
 

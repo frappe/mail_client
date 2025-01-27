@@ -196,6 +196,7 @@ scheduler_events = {
 	# ],
 	"daily": [
 		"mail.tasks.enqueue_delete_newsletters",
+		"mail.mail.doctype.mail_account_request.mail_account_request.expire_mail_account_requests",
 	],
 	# "hourly": [
 	#     "mail.tasks.hourly"

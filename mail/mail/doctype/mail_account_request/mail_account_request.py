@@ -6,7 +6,7 @@ import random
 import frappe
 from frappe import _
 from frappe.model.document import Document
-from frappe.utils import get_url, random_string
+from frappe.utils import add_days, get_url, nowdate, random_string
 
 
 class MailAccountRequest(Document):
@@ -47,3 +47,13 @@ class MailAccountRequest(Document):
 			now=True,
 		)
 		frappe.msgprint(_("Verification mail sent successfully."), indicator="green", alert=True)
+
+
+def expire_mail_account_requests():
+	seven_days_before = add_days(nowdate(), -7)
+	for d in frappe.get_all(
+		"Mail Account Request",
+		filters={"is_expired": 0, "creation": ["<", seven_days_before]},
+		pluck="name",
+	):
+		frappe.db.set_value("Mail Account Request", d, "is_expired", 1)

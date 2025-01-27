@@ -145,13 +145,13 @@ const verifyOtp = createResource({
 	},
 })
 
-const verifiedEmail = createResource({
-	url: 'mail.api.account.get_verified_email',
+const getAccountRequest = createResource({
+	url: 'mail.api.account.get_account_request',
 	makeParams() {
 		return { request_key: props.requestKey }
 	},
 	onSuccess(data) {
-		if (data?.email && !data?.is_verified) email.value = data.email
+		if (data?.email && !data?.is_verified && !data?.is_expired) email.value = data.email
 		else router.replace({ name: 'SignUp' })
 	},
 })
@@ -180,7 +180,7 @@ watch(
 	(val) => {
 		isVerificationStep.value = false
 		if (!val) return
-		if (val.length === 32) verifiedEmail.submit()
+		if (val.length === 32) getAccountRequest.submit()
 		else router.replace({ name: 'SignUp' })
 	},
 	{ immediate: true }
