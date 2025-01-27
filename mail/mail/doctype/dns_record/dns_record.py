@@ -20,7 +20,10 @@ class DNSRecord(Document):
 
 	def on_update(self) -> None:
 		if self.has_value_changed("value") or self.has_value_changed("ttl"):
-			if frappe.flags.enqueue_dns_record_update:
+			if frappe.flags.do_not_enqueue:
+				self.create_or_update_record_in_dns_provider()
+				self.reload()
+			else:
 				frappe.enqueue_doc(
 					self.doctype,
 					self.name,
@@ -29,9 +32,6 @@ class DNSRecord(Document):
 					enqueue_after_commit=True,
 					at_front=True,
 				)
-			else:
-				self.create_or_update_record_in_dns_provider()
-				self.reload()
 
 	def on_trash(self) -> None:
 		self.delete_record_from_dns_provider()
@@ -144,8 +144,12 @@ def create_or_update_dns_record(
 	category: str | None = None,
 	attached_to_doctype: str | None = None,
 	attached_to_docname: str | None = None,
+	do_not_enqueue: bool = False,
 ) -> "DNSRecord":
 	"""Creates or updates a DNS Record"""
+
+	if do_not_enqueue:
+		frappe.flags.do_not_enqueue = True
 
 	if dns_record := frappe.db.exists("DNS Record", {"host": host, "type": type}):
 		dns_record = frappe.get_doc("DNS Record", dns_record)

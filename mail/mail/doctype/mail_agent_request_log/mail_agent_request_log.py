@@ -17,7 +17,15 @@ class MailAgentRequestLog(Document):
 		self.validate_endpoint()
 
 	def after_insert(self) -> None:
-		self.enqueue_execute()
+		if frappe.flags.do_not_enqueue:
+			self.execute()
+		else:
+			frappe.enqueue_doc(
+				self.doctype,
+				self.name,
+				"execute",
+				enqueue_after_commit=True,
+			)
 
 	def validate_agent(self) -> None:
 		"""Validate if the agent is enabled."""
@@ -29,16 +37,6 @@ class MailAgentRequestLog(Document):
 		"""Validates the endpoint."""
 
 		self.endpoint = quote(self.endpoint)
-
-	def enqueue_execute(self) -> None:
-		"""Enqueues the job to be executed."""
-
-		frappe.enqueue_doc(
-			self.doctype,
-			self.name,
-			"execute",
-			enqueue_after_commit=True,
-		)
 
 	def execute(self) -> None:
 		"""Executes the job."""
@@ -129,8 +127,12 @@ def create_mail_agent_request_log(
 	request_params: dict | None = None,
 	request_data: str | None = None,
 	request_json: dict | None = None,
+	do_not_enqueue: bool = False,
 ) -> "MailAgentRequestLog":
 	"""Creates a new Mail Agent Request Log."""
+
+	if do_not_enqueue:
+		frappe.flags.do_not_enqueue = True
 
 	agent_request_log = frappe.new_doc("Mail Agent Request Log")
 	agent_request_log.agent = agent
