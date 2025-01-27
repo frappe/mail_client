@@ -100,7 +100,7 @@ class MailAgent(Document):
 			name=name, type="apiKey", secrets=secret, roles=["admin"], enabledPermissions=["authenticate"]
 		)
 		agent_api = AgentAPI(self.base_url, username=self.username, password=self.get_password("password"))
-		response = agent_api.request(method="POST", endpoint="/api/principal", json=principal.__dict__)
+		response = agent_api.request(method="POST", endpoint="/api/principal", json=principal.__dict__).json()
 
 		if error := response.get("error"):
 			frappe.throw(error)
