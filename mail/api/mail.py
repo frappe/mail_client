@@ -43,6 +43,11 @@ def get_user_info() -> dict:
 	)
 	user["roles"] = frappe.get_roles(user.name)
 	user.mail_user = "Mail User" in user.roles
+	user.tenant = frappe.db.get_value("Tenant Member", {"user": frappe.session.user}, "parent")
+	if user.tenant:
+		user.tenant_name = frappe.db.get_value("Mail Tenant", user.tenant, "tenant_name")
+
+	user.default_outgoing = get_user_mail_account(frappe.session.user)
 
 	return user
 
@@ -381,13 +386,6 @@ def get_mail_contacts(txt=None) -> list:
 			contact.update(details)
 
 	return contacts
-
-
-@frappe.whitelist()
-def get_default_outgoing() -> str | None:
-	"""Returns the default email address of the user."""
-
-	return get_user_default_outgoing_email(frappe.session.user)
 
 
 @frappe.whitelist()

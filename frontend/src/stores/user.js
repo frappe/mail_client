@@ -14,11 +14,6 @@ export const userStore = defineStore('mail-users', () => {
 		auto: true,
 	})
 
-	const defaultOutgoing = createResource({
-		url: 'mail.api.mail.get_default_outgoing',
-		auto: true,
-	})
-
 	const currentMail = reactive({
 		incoming: JSON.parse(sessionStorage.getItem('currentIncomingMail')) || null,
 		sent: JSON.parse(sessionStorage.getItem('currentSentMail')) || null,
@@ -36,5 +31,5 @@ export const userStore = defineStore('mail-users', () => {
 		sessionStorage.setItem(itemName, JSON.stringify(mail))
 	}
 
-	return { userResource, defaultOutgoing, currentMail, setCurrentMail }
+	return { userResource, currentMail, setCurrentMail }
 })

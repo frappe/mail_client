@@ -216,7 +216,7 @@ const bcc = ref(false)
 const emoji = ref()
 const isSend = ref(false)
 const isMailWatcherActive = ref(true)
-const { defaultOutgoing, setCurrentMail } = userStore()
+const { setCurrentMail } = userStore()
 
 const SYNC_DEBOUNCE_TIME = 1500
 
@@ -264,7 +264,7 @@ const syncMail = useDebounceFn(() => {
 }, SYNC_DEBOUNCE_TIME)
 
 const emptyMail = {
-	from: defaultOutgoing.data,
+	from: user.data?.default_outgoing,
 	to: '',
 	cc: '',
 	bcc: '',

@@ -1,0 +1,139 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-01-21 12:04:29.174018",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "tenant_name",
+  "user",
+  "logo",
+  "column_break_kaqu",
+  "max_domains",
+  "max_accounts",
+  "max_groups",
+  "section_break_nexu",
+  "tenant_members"
+ ],
+ "fields": [
+  {
+   "fieldname": "tenant_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Tenant Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "tenant_members",
+   "fieldtype": "Table",
+   "label": "Tenant Members",
+   "options": "Tenant Member"
+  },
+  {
+   "fieldname": "logo",
+   "fieldtype": "Attach Image",
+   "label": "Logo"
+  },
+  {
+   "fieldname": "column_break_kaqu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "10",
+   "fieldname": "max_domains",
+   "fieldtype": "Int",
+   "label": "Maximum No. of Domains",
+   "permlevel": 1,
+   "reqd": 1
+  },
+  {
+   "default": "1000",
+   "fieldname": "max_accounts",
+   "fieldtype": "Int",
+   "label": "Maximum No. of Accounts",
+   "permlevel": 1,
+   "reqd": 1
+  },
+  {
+   "default": "100",
+   "fieldname": "max_groups",
+   "fieldtype": "Int",
+   "label": "Maximum No. of Groups",
+   "permlevel": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_nexu",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "user",
+   "fieldtype": "Link",
+   "label": "User",
+   "link_filters": "[[\"User\",\"role\",\"=\",\"Mail Admin\"]]",
+   "options": "User"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-01-27 12:57:35.410648",
+ "modified_by": "Administrator",
+ "module": "Mail",
+ "name": "Mail Tenant",
+ "naming_rule": "UUID",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "if_owner": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Mail Admin",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "permlevel": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "permlevel": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Mail Admin",
+   "share": 1
+  }
+ ],
+ "show_title_field_in_link": 1,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "tenant_name"
+}

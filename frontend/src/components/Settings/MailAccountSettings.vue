@@ -5,7 +5,7 @@
 		<Link
 			v-model="email"
 			doctype="Mail Account"
-			:filters="{ user: userResource.data?.name }"
+			:filters="{ user: user.data?.name }"
 			class="ml-auto"
 		/>
 	</div>
@@ -54,13 +54,13 @@
 	</div>
 </template>
 <script setup>
-import { ref, watch, onMounted } from 'vue'
+import { ref, inject, watch, onMounted } from 'vue'
 import { Switch, TextInput, createDocumentResource } from 'frappe-ui'
 import Link from '@/components/Controls/Link.vue'
-import { userStore } from '@/stores/user'
 
-const { userResource, defaultOutgoing } = userStore()
-const email = ref(defaultOutgoing.data)
+const user = inject('$user')
+
+const email = ref(user.data?.default_outgoing)
 
 const fetchMailAccount = () => {
 	account.name = email.value

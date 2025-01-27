@@ -10,6 +10,31 @@ const routes = [
 		},
 	},
 	{
+		path: '/signup',
+		name: 'SignUp',
+		component: () => import('@/pages/SignUp.vue'),
+		meta: { isLogin: true },
+	},
+	{
+		path: '/signup/:requestKey',
+		name: 'AccountSetup',
+		component: () => import('@/pages/SignUp.vue'),
+		props: true,
+		meta: { isLogin: true },
+	},
+	{
+		path: '/login',
+		name: 'Login',
+		component: () => import('@/pages/Login.vue'),
+		meta: { isLogin: true },
+	},
+	{
+		path: '/setup',
+		name: 'Setup',
+		component: () => import('@/pages/Setup.vue'),
+		meta: { isSetup: true },
+	},
+	{
 		path: '/inbox',
 		name: 'Inbox',
 		component: () => import('@/pages/Inbox.vue'),
@@ -26,21 +51,20 @@ const routes = [
 	},
 ]
 
-let router = createRouter({
+const router = createRouter({
 	history: createWebHistory('/mail'),
 	routes,
 })
 
 router.beforeEach(async (to, from, next) => {
-	const { userResource } = userStore()
 	const { isLoggedIn } = sessionStore()
+	if (!isLoggedIn) return next(to.meta.isLogin ? undefined : { name: 'Login' })
 
-	isLoggedIn && (await userResource.promise)
+	const { userResource } = userStore()
+	await userResource.promise
+	if (!userResource.data?.tenant) return next(to.meta.isSetup ? undefined : { name: 'Setup' })
 
-	if (!isLoggedIn) {
-		window.location.href = '/login'
-	} else {
-		next()
-	}
+	next(to.meta.isLogin || to.meta.isSetup ? { name: 'Inbox' } : undefined)
 })
+
 export default router

@@ -6,6 +6,7 @@
  "field_order": [
   "section_break_ceuu",
   "domain_name",
+  "mail_tenant",
   "enabled",
   "is_verified",
   "is_subdomain",
@@ -153,6 +154,13 @@
    "no_copy": 1,
    "read_only": 1,
    "search_index": 1
+  },
+  {
+   "fieldname": "mail_tenant",
+   "fieldtype": "Link",
+   "label": "Mail Tenant",
+   "options": "Mail Tenant",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
@@ -193,7 +201,7 @@
    "link_fieldname": "domain_name"
   }
  ],
- "modified": "2025-01-21 10:22:51.098094",
+ "modified": "2025-01-24 13:45:54.747877",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Domain",

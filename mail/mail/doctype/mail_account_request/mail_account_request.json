@@ -1,0 +1,123 @@
+{
+ "actions": [],
+ "creation": "2025-01-14 15:10:13.672435",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "email",
+  "tenant",
+  "column_break_hswp",
+  "role",
+  "invited_by",
+  "email_verification_section",
+  "send_email",
+  "request_key",
+  "otp",
+  "column_break_vcxy",
+  "is_verified",
+  "is_expired"
+ ],
+ "fields": [
+  {
+   "fieldname": "column_break_hswp",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "request_key",
+   "fieldtype": "Data",
+   "label": "Request Key",
+   "read_only": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "email",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Email",
+   "reqd": 1
+  },
+  {
+   "fieldname": "tenant",
+   "fieldtype": "Link",
+   "label": "Tenant",
+   "mandatory_depends_on": "eval:doc.role == 'Mail User'",
+   "options": "Mail Tenant"
+  },
+  {
+   "fieldname": "role",
+   "fieldtype": "Select",
+   "label": "Role",
+   "options": "Mail User\nMail Admin"
+  },
+  {
+   "default": "1",
+   "fieldname": "send_email",
+   "fieldtype": "Check",
+   "label": "Send Email"
+  },
+  {
+   "fieldname": "otp",
+   "fieldtype": "Data",
+   "label": "OTP",
+   "read_only": 1
+  },
+  {
+   "fieldname": "invited_by",
+   "fieldtype": "Link",
+   "label": "Invited By",
+   "link_filters": "[[\"User\",\"role\",\"=\",\"Mail Admin\"]]",
+   "mandatory_depends_on": "eval:doc.tenant",
+   "options": "User"
+  },
+  {
+   "fieldname": "email_verification_section",
+   "fieldtype": "Section Break",
+   "label": "Email Verification"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_verified",
+   "fieldtype": "Check",
+   "label": "Is Verified",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_vcxy",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_expired",
+   "fieldtype": "Check",
+   "label": "Is Expired",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-01-27 14:59:25.507405",
+ "modified_by": "Administrator",
+ "module": "Mail",
+ "name": "Mail Account Request",
+ "naming_rule": "UUID",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "show_title_field_in_link": 1,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "email"
+}

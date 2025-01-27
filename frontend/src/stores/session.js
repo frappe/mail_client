@@ -5,10 +5,10 @@ import router from '@/router'
 import { ref, computed } from 'vue'
 
 export const sessionStore = defineStore('mail-session', () => {
-	let { userResource } = userStore()
+	const { userResource } = userStore()
 
-	function sessionUser() {
-		let cookies = new URLSearchParams(document.cookie.split('; ').join('&'))
+	const sessionUser = () => {
+		const cookies = new URLSearchParams(document.cookie.split('; ').join('&'))
 		let _sessionUser = cookies.get('user_id')
 		if (_sessionUser === 'Guest') {
 			_sessionUser = null
@@ -16,7 +16,7 @@ export const sessionStore = defineStore('mail-session', () => {
 		return _sessionUser
 	}
 
-	let user = ref(sessionUser())
+	const user = ref(sessionUser())
 	const isLoggedIn = computed(() => !!user.value)
 
 	const login = createResource({
@@ -28,7 +28,8 @@ export const sessionStore = defineStore('mail-session', () => {
 			userResource.reload()
 			user.value = sessionUser()
 			login.reset()
-			router.replace({ path: '/' })
+			router.replace({ name: 'Inbox' })
+			window.location.reload()
 		},
 	})
 

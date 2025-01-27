@@ -7,4 +7,5 @@ node_modules
 __pycache__
 mail/public/frontend
 mail/www/mail.html
+mail/public/css/email.css
 .vscode
