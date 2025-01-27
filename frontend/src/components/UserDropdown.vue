@@ -60,11 +60,14 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import MailLogo from '@/components/Icons/MailLogo.vue'
 import Settings from '@/components/Modals/Settings.vue'
 import { sessionStore } from '@/stores/session'
 import { Dropdown } from 'frappe-ui'
 import {
+	Home,
+	LayoutDashboard,
 	ChevronDown,
 	LogIn,
 	LogOut,
@@ -74,9 +77,10 @@ import {
 import { convertToTitleCase } from '../utils'
 import { userStore } from '@/stores/user'
 
-const { logout, branding } = sessionStore()
+const { isLoggedIn, logout, branding } = sessionStore()
 const { userResource } = userStore()
-let { isLoggedIn } = sessionStore()
+const router = useRouter()
+
 const showSettings = ref(false)
 
 const props = defineProps({
@@ -88,16 +92,31 @@ const props = defineProps({
 
 const userDropdownOptions = [
 	{
+		icon: Home,
+		label: 'Home',
+		onClick: () => {
+			router.push('/')
+		},
+		condition: () => userResource.data.roles.includes('Mail Admin'),
+	},
+	{
+		icon: LayoutDashboard,
+		label: 'Admin Dashboard',
+		onClick: () => {
+			router.push('/dashboard/domains')
+		},
+		condition: () => userResource.data.roles.includes('Mail Admin'),
+	},
+	{
 		icon: ArrowRightLeft,
 		label: 'Switch to Desk',
 		onClick: () => {
 			window.location.href = '/app'
 		},
 		condition: () => {
-			let cookies = new URLSearchParams(document.cookie.split('; ').join('&'))
-			let system_user = cookies.get('system_user')
-			if (system_user === 'yes') return true
-			else return false
+			const cookies = new URLSearchParams(document.cookie.split('; ').join('&'))
+			const system_user = cookies.get('system_user')
+			return system_user === 'yes'
 		},
 	},
 	{
@@ -106,29 +125,11 @@ const userDropdownOptions = [
 		onClick: () => {
 			showSettings.value = true
 		},
-		condition: () => {
-			return isLoggedIn
-		},
 	},
 	{
 		icon: LogOut,
-		label: 'Log out',
-		onClick: () => {
-			logout.submit()
-		},
-		condition: () => {
-			return isLoggedIn
-		},
-	},
-	{
-		icon: LogIn,
-		label: 'Log in',
-		onClick: () => {
-			window.location.href = '/login'
-		},
-		condition: () => {
-			return !isLoggedIn
-		},
+		label: 'Log Out',
+		onClick: logout.submit,
 	},
 ]
 </script>

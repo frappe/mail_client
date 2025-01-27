@@ -40,6 +40,7 @@
 </template>
 
 <script setup>
+import { useRoute } from 'vue-router'
 import UserDropdown from '@/components/UserDropdown.vue'
 import SidebarLink from '@/components/SidebarLink.vue'
 import { useStorage } from '@vueuse/core'
@@ -47,7 +48,13 @@ import { ref, computed } from 'vue'
 import { ArrowLeftFromLine } from 'lucide-vue-next'
 import { getSidebarLinks } from '../utils'
 
-const sidebarLinks = computed(() => getSidebarLinks())
+const route = useRoute()
+
+const sidebarLinks = computed(() =>
+	getSidebarLinks().filter((link) =>
+		route.meta.isDashboard ? link.forDashboard : !link.forDashboard
+	)
+)
 
 const getSidebarFromStorage = () => {
 	return useStorage('sidebar_is_collapsed', false)

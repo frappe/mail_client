@@ -35,6 +35,13 @@ export function getSidebarLinks() {
 			to: 'Drafts',
 			activeFor: ['Drafts'],
 		},
+		{
+			label: 'Domains',
+			icon: 'Globe',
+			to: 'Domains',
+			activeFor: ['Domains'],
+			forDashboard: true,
+		},
 	]
 }
 

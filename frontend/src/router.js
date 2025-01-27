@@ -49,6 +49,12 @@ const routes = [
 		name: 'Drafts',
 		component: () => import('@/pages/Drafts.vue'),
 	},
+	{
+		path: '/dashboard/domains',
+		name: 'Domains',
+		component: () => import('@/pages/dashboard/Domains.vue'),
+		meta: { isDashboard: true },
+	},
 ]
 
 const router = createRouter({
