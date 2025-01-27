@@ -16,6 +16,10 @@
   "ended_at",
   "column_break_zwxg",
   "duration",
+  "section_break_lytm",
+  "execute_on_start",
+  "column_break_b2lb",
+  "execute_on_end",
   "section_break_b0pd",
   "request_headers",
   "request_params",
@@ -42,13 +46,14 @@
    "set_only_once": 1
   },
   {
+   "default": "Queued",
    "fieldname": "status",
    "fieldtype": "Select",
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Status",
    "no_copy": 1,
-   "options": "\nFailed\nCompleted",
+   "options": "\nQueued\nRunning\nFailed\nCompleted",
    "read_only": 1,
    "search_index": 1
   },
@@ -150,11 +155,31 @@
    "label": "Response (JSON)",
    "no_copy": 1,
    "read_only": 1
+  },
+  {
+   "fieldname": "section_break_lytm",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "execute_on_start",
+   "fieldtype": "Small Text",
+   "label": "Execute on Start",
+   "set_only_once": 1
+  },
+  {
+   "fieldname": "column_break_b2lb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "execute_on_end",
+   "fieldtype": "Small Text",
+   "label": "Execute on End",
+   "set_only_once": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-01-21 15:45:16.679501",
+ "modified": "2025-01-27 16:11:30.131659",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Agent Request Log",

@@ -2,6 +2,7 @@
 # For license information, please see license.txt
 
 
+import json
 from urllib.parse import quote
 
 import frappe
@@ -16,7 +17,7 @@ class MailAgentRequestLog(Document):
 		self.validate_endpoint()
 
 	def after_insert(self) -> None:
-		self.execute()
+		self.enqueue_execute()
 
 	def validate_agent(self) -> None:
 		"""Validate if the agent is enabled."""
@@ -29,46 +30,95 @@ class MailAgentRequestLog(Document):
 
 		self.endpoint = quote(self.endpoint)
 
+	def enqueue_execute(self) -> None:
+		"""Enqueues the job to be executed."""
+
+		frappe.enqueue_doc(
+			self.doctype,
+			self.name,
+			"execute",
+			enqueue_after_commit=True,
+		)
+
 	def execute(self) -> None:
 		"""Executes the job."""
 
+		started_at = now()
+		self._db_set(status="Running", started_at=started_at, commit=True)
+
+		kwargs = {}
+		try:
+			self._execute_method_on_start()
+			self._execute_request()
+			self._execute_method_on_end()
+			kwargs["status"] = "Completed"
+		except Exception:
+			error_log = frappe.get_traceback(with_context=True)
+			kwargs["error_log"] = error_log
+			kwargs["status"] = "Failed"
+		finally:
+			kwargs["ended_at"] = now()
+			kwargs["duration"] = time_diff_in_seconds(kwargs["ended_at"], started_at)
+			self._db_set(**kwargs, commit=True)
+
+	def _execute_method_on_start(self) -> None:
+		"""Executes the method on start."""
+
+		if self.execute_on_start:
+			method = frappe.get_attr(self.execute_on_start)
+			method(self)
+
+	def _execute_request(self) -> None:
+		"""Executes the request."""
+
+		agent = frappe.get_cached_doc("Mail Agent", self.agent)
+
+		if not agent.enabled:
+			frappe.throw(_("Mail Agent {0} is disabled.").format(self.agent))
+
 		from mail.agent import AgentAPI
 
-		self.started_at = now()
+		agent_api = AgentAPI(
+			agent.base_url,
+			api_key=agent.get_password("api_key"),
+			username=agent.username,
+			password=agent.get_password("password"),
+		)
+		response = agent_api.request(
+			method=self.method,
+			endpoint=self.endpoint,
+			params=self.request_params,
+			data=self.request_data,
+			json=self.request_json,
+			headers=self.request_headers,
+		)
 
-		try:
-			agent = frappe.get_cached_doc("Mail Agent", self.agent)
+		response_json = json.dumps(response.json())
+		if response.status_code == 200:
+			self._db_set(response_json=response_json)
+		else:
+			frappe.throw(title=_("Agent Request Failed"), msg=response_json)
 
-			if not agent.enabled:
-				frappe.throw(_("Mail Agent {0} is disabled.").format(self.agent))
+	def _execute_method_on_end(self) -> None:
+		"""Executes the method on end."""
 
-			agent_api = AgentAPI(
-				agent.base_url,
-				api_key=agent.get_password("api_key"),
-				username=agent.username,
-				password=agent.get_password("password"),
-			)
-			response = agent_api.request(
-				method=self.method,
-				endpoint=self.endpoint,
-				params=self.request_params,
-				data=self.request_data,
-				json=self.request_json,
-				headers=self.request_headers,
-			)
+		if self.execute_on_end:
+			method = frappe.get_attr(self.execute_on_end)
+			method(self)
 
-			self.status = "Completed"
-			if response.get("error"):
-				self.status = "Failed"
+	def _db_set(
+		self,
+		update_modified: bool = True,
+		commit: bool = False,
+		notify_update: bool = False,
+		**kwargs,
+	) -> None:
+		"""Updates the document with the given key-value pairs."""
 
-			self.response_json = response
-		except Exception:
-			self.status = "Failed"
-			self.error_log = frappe.get_traceback()
-		finally:
-			self.ended_at = now()
-			self.duration = time_diff_in_seconds(self.ended_at, self.started_at)
-			self.db_update()
+		self.db_set(kwargs, update_modified=update_modified, commit=commit)
+
+		if notify_update:
+			self.notify_update()
 
 
 def create_mail_agent_request_log(

@@ -91,9 +91,8 @@ class AgentAPI:
 			timeout=timeout,
 			json=json,
 		)
-		response.raise_for_status()
 
-		return response.json()
+		return response
 
 
 def block_ip_on_agents(ip_address: str, agents: list[str] | None = None) -> None:
