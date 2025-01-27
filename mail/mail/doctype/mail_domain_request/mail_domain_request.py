@@ -18,7 +18,7 @@ class MailDomainRequest(Document):
 			frappe.throw(_("Invalid domain name"))
 
 	def before_insert(self):
-		self.verification_key = random_string(48)
+		self.verification_key = "frappe-mail-verification=" + random_string(48)
 
 	@frappe.whitelist()
 	def verify_key(self):
