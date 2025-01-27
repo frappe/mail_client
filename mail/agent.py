@@ -7,7 +7,10 @@ import frappe
 import requests
 from frappe import _
 
-from mail.mail.doctype.mail_agent_request_log.mail_agent_request_log import create_mail_agent_request_log
+from mail.mail.doctype.mail_agent_request_log.mail_agent_request_log import (
+	MailAgentRequestLog,
+	create_mail_agent_request_log,
+)
 from mail.utils import get_dkim_selector
 from mail.utils.cache import get_primary_agents
 
@@ -95,6 +98,29 @@ class AgentAPI:
 		return response
 
 
+def reload_configuration(agents: list[str] | None = None) -> None:
+	"""Reloads the configuration on all primary agents."""
+
+	primary_agents = agents or get_primary_agents()
+
+	if not primary_agents:
+		return
+
+	for agent in primary_agents:
+		create_mail_agent_request_log(
+			agent=agent,
+			method="GET",
+			endpoint="/api/reload",
+			do_not_enqueue=True,
+		)
+
+
+def reload_configuration_on_request_log_agent(request_log: MailAgentRequestLog):
+	"""Reloads the configuration on the agent of the request log."""
+
+	reload_configuration([request_log.agent])
+
+
 def block_ip_on_agents(ip_address: str, agents: list[str] | None = None) -> None:
 	"""Blocks an IP address on all primary agents."""
 
@@ -119,6 +145,7 @@ def block_ip_on_agents(ip_address: str, agents: list[str] | None = None) -> None
 			method="POST",
 			endpoint="/api/settings",
 			request_data=request_data,
+			execute_on_end="mail.agent.reload_configuration_on_request_log_agent",
 		)
 
 
@@ -133,7 +160,11 @@ def unblock_ip_on_agents(ip_address: str, agents: list[str] | None = None) -> No
 	request_data = json.dumps([{"type": "delete", "keys": [f"server.blocked-ip.{ip_address}"]}])
 	for agent in primary_agents:
 		create_mail_agent_request_log(
-			agent=agent, method="POST", endpoint="/api/settings", request_data=request_data
+			agent=agent,
+			method="POST",
+			endpoint="/api/settings",
+			request_data=request_data,
+			execute_on_end="mail.agent.reload_configuration_on_request_log_agent",
 		)
 
 
@@ -183,6 +214,7 @@ def create_dkim_key_on_agents(
 			method="POST",
 			endpoint="/api/settings",
 			request_data=request_data,
+			execute_on_end="mail.agent.reload_configuration_on_request_log_agent",
 		)
 
 
@@ -208,7 +240,11 @@ def delete_dkim_key_from_agents(domain_name: str, agents: list[str] | None = Non
 	)
 	for agent in primary_agents:
 		create_mail_agent_request_log(
-			agent=agent, method="POST", endpoint="/api/settings", request_data=request_data
+			agent=agent,
+			method="POST",
+			endpoint="/api/settings",
+			request_data=request_data,
+			execute_on_end="mail.agent.reload_configuration_on_request_log_agent",
 		)
 
 

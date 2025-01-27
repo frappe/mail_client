@@ -127,6 +127,8 @@ def create_mail_agent_request_log(
 	request_params: dict | None = None,
 	request_data: str | None = None,
 	request_json: dict | None = None,
+	execute_on_start: str | None = None,
+	execute_on_end: str | None = None,
 	do_not_enqueue: bool = False,
 ) -> "MailAgentRequestLog":
 	"""Creates a new Mail Agent Request Log."""
@@ -134,14 +136,16 @@ def create_mail_agent_request_log(
 	if do_not_enqueue:
 		frappe.flags.do_not_enqueue = True
 
-	agent_request_log = frappe.new_doc("Mail Agent Request Log")
-	agent_request_log.agent = agent
-	agent_request_log.method = method
-	agent_request_log.endpoint = endpoint
-	agent_request_log.request_headers = request_headers
-	agent_request_log.request_params = request_params
-	agent_request_log.request_data = request_data
-	agent_request_log.request_json = request_json
-	agent_request_log.insert()
+	request_log = frappe.new_doc("Mail Agent Request Log")
+	request_log.agent = agent
+	request_log.method = method
+	request_log.endpoint = endpoint
+	request_log.request_headers = request_headers
+	request_log.request_params = request_params
+	request_log.request_data = request_data
+	request_log.request_json = request_json
+	request_log.execute_on_start = execute_on_start
+	request_log.execute_on_end = execute_on_end
+	request_log.insert()
 
-	return agent_request_log
+	return request_log
