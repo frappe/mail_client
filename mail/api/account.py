@@ -74,13 +74,10 @@ def create_account(request_key: str, first_name, last_name, password):
 
 
 @frappe.whitelist()
-def create_tenant(tenant_name, max_domains, max_accounts, max_groups):
+def create_tenant(tenant_name):
 	tenant = frappe.new_doc("Mail Tenant")
 	tenant.tenant_name = tenant_name
 	tenant.user = frappe.session.user
-	tenant.max_domains = max_domains
-	tenant.max_accounts = max_accounts
-	tenant.max_groups = max_groups
 	tenant.append("tenant_members", {"user": frappe.session.user})
 	tenant.insert()
 

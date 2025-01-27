@@ -46,7 +46,7 @@ const title = computed(() => {
 		case 'Login':
 			return __('Sign in to your account')
 		case 'Setup':
-			return __('Set up mail tenant and domain')
+			return __('Set up organization')
 		default:
 			return __('Create a new account')
 	}
