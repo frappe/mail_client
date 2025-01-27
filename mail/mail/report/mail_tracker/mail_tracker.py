@@ -6,7 +6,8 @@ from frappe import _
 from frappe.query_builder import Criterion, Order
 from frappe.query_builder.functions import Date
 
-from mail.utils.user import get_user_email_addresses, has_role, is_system_manager
+from mail.utils.cache import get_user_mail_account
+from mail.utils.user import has_role, is_system_manager
 
 
 def execute(filters: dict | None = None) -> tuple:
@@ -59,6 +60,12 @@ def get_columns() -> list[dict]:
 			"width": 200,
 		},
 		{
+			"label": _("From"),
+			"fieldname": "from_",
+			"fieldtype": "Data",
+			"width": 200,
+		},
+		{
 			"label": _("Message ID"),
 			"fieldname": "message_id",
 			"fieldtype": "Data",
@@ -104,6 +111,7 @@ def get_data(filters: dict | None = None) -> list[dict]:
 			OM.open_count,
 			OM.domain_name,
 			OM.sender,
+			OM.from_,
 			OM.message_id,
 			OM.tracking_id,
 			OM.first_opened_at,
@@ -122,6 +130,7 @@ def get_data(filters: dict | None = None) -> list[dict]:
 
 	for field in [
 		"name",
+		"from_",
 		"message_id",
 		"tracking_id",
 	]:
@@ -139,10 +148,10 @@ def get_data(filters: dict | None = None) -> list[dict]:
 	user = frappe.session.user
 	if not is_system_manager(user):
 		conditions = []
-		accounts = get_user_email_addresses(user, "Mail Account")
+		account = get_user_mail_account(user)
 
-		if has_role(user, "Mail User") and accounts:
-			conditions.append(OM.sender.isin(accounts))
+		if has_role(user, "Mail User") and account:
+			conditions.append(OM.sender == account)
 
 		if not conditions:
 			return []

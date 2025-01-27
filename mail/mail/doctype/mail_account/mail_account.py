@@ -1,20 +1,15 @@
 # Copyright (c) 2025, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
-import crypt
-
+import bcrypt
 import frappe
 from frappe import _
 from frappe.model.document import Document
 from frappe.utils import random_string
 
-from mail.mail.doctype.mail_agent_job.mail_agent_job import (
-	create_account_on_agents,
-	delete_account_from_agents,
-	patch_account_on_agents,
-)
+from mail.agent import create_account_on_agents, delete_account_from_agents, patch_account_on_agents
 from mail.utils import get_dmarc_address
-from mail.utils.cache import get_root_domain_name
+from mail.utils.cache import get_root_domain_name, get_user_mail_aliases
 from mail.utils.user import has_role, is_system_manager
 from mail.utils.validation import (
 	is_email_assigned,
@@ -34,11 +29,11 @@ class MailAccount(Document):
 		self.validate_user()
 		self.validate_email()
 		self.validate_password()
+		self.validate_default_outgoing_email()
 		self.validate_display_name()
-		self.validate_default_account()
 
 	def on_update(self) -> None:
-		frappe.cache.delete_value(f"user|{self.user}")
+		self.clear_cache()
 
 		if self.enabled:
 			if self.has_value_changed("enabled") or self.has_value_changed("email"):
@@ -51,7 +46,7 @@ class MailAccount(Document):
 			delete_account_from_agents(self.email)
 
 	def on_trash(self) -> None:
-		frappe.cache.delete_value(f"user|{self.user}")
+		self.clear_cache()
 
 		if self.enabled:
 			delete_account_from_agents(self.email)
@@ -84,6 +79,9 @@ class MailAccount(Document):
 	def validate_email(self) -> None:
 		"""Validates the email address."""
 
+		if not self.email:
+			frappe.throw(_("Email is mandatory."))
+
 		is_email_assigned(self.email, self.doctype, raise_exception=True)
 		is_valid_email_for_domain(self.email, self.domain_name, raise_exception=True)
 
@@ -100,34 +98,33 @@ class MailAccount(Document):
 
 		self.generate_secret()
 
+	def validate_default_outgoing_email(self) -> None:
+		"""Validates the default outgoing email."""
+
+		if not self.default_outgoing_email:
+			self.default_outgoing_email = self.email
+		else:
+			if self.default_outgoing_email not in [self.email] + get_user_mail_aliases(self.user):
+				frappe.throw(_("Default Email must be one of the email addresses assigned to the user."))
+
 	def validate_display_name(self) -> None:
 		"""Validates the display name."""
 
 		if self.is_new() and not self.display_name:
 			self.display_name = frappe.db.get_value("User", self.user, "full_name")
 
-	def validate_default_account(self) -> None:
-		"""Validates the default account."""
+	def clear_cache(self) -> None:
+		"""Clears the Cache."""
 
-		if not self.enabled:
-			self.is_default = 0
-			return
-
-		filters = {"user": self.user, "enabled": 1, "is_default": 1, "name": ["!=", self.name]}
-		has_default_account = frappe.db.exists("Mail Account", filters)
-
-		if self.is_default:
-			if has_default_account:
-				frappe.db.set_value("Mail Account", filters, "is_default", 0)
-		elif not has_default_account:
-			self.is_default = 1
+		frappe.cache.delete_value(f"user|{self.user}")
+		frappe.cache.delete_value(f"email|{self.email}")
 
 	def generate_secret(self) -> None:
 		"""Generates secret from password"""
 
-		password = self.get_password("password")
-		salt = crypt.mksalt(crypt.METHOD_SHA512)
-		self.secret = crypt.crypt(password, salt)
+		password = self.get_password("password").encode("utf-8")
+		salt = bcrypt.gensalt()
+		self.secret = bcrypt.hashpw(password, salt).decode()
 
 
 def create_mail_account(

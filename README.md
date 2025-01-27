@@ -5,6 +5,8 @@
 
 **End-to-End Email Management Platform**
 
+![architecture](docs/screenshots/architecture.png)
+
 </div>
 
 ## Frappe Mail

@@ -12,6 +12,8 @@ def get_root_domain_name() -> str | None:
 
 
 def get_smtp_limits() -> dict:
+	"""Returns the SMTP limits."""
+
 	def generator() -> dict:
 		mail_settings = frappe.get_cached_doc("Mail Settings")
 		return {
@@ -26,6 +28,8 @@ def get_smtp_limits() -> dict:
 
 
 def get_imap_limits() -> dict:
+	"""Returns the IMAP limits."""
+
 	def generator() -> dict:
 		mail_settings = frappe.get_cached_doc("Mail Settings")
 		return {
@@ -39,23 +43,34 @@ def get_imap_limits() -> dict:
 	return frappe.cache.get_value("imap_limits", generator)
 
 
-def get_user_mail_accounts(user: str) -> list:
-	def generator() -> list:
-		MAIL_ACCOUNT = frappe.qb.DocType("Mail Account")
-		return (
-			frappe.qb.from_(MAIL_ACCOUNT)
-			.select("name")
-			.where((MAIL_ACCOUNT.enabled == 1) & (MAIL_ACCOUNT.user == user))
-		).run(pluck="name")
+def get_user_mail_account(user: str) -> str | None:
+	"""Returns the mail account of the user."""
 
-	return frappe.cache.hget(f"user|{user}", "mail_accounts", generator)
+	def generator() -> str | None:
+		return frappe.db.get_value("Mail Account", {"user": user, "enabled": 1}, "name")
+
+	return frappe.cache.hget(f"user|{user}", "mail_account", generator)
+
+
+def get_account_for_email(email: str) -> str | None:
+	"""Returns the mail account for the email."""
+
+	def generator() -> str | None:
+		if account := frappe.db.exists("Mail Account", {"email": email}):
+			return account
+		elif alias := frappe.db.exists("Mail Alias", {"email": email, "alias_for_type": "Mail Account"}):
+			return frappe.db.get_value("Mail Alias", alias, "alias_for_name")
+
+	return frappe.cache.hget(f"email|{email}", "mail_account", generator)
 
 
 def get_user_mail_aliases(user: str) -> list:
-	def generator() -> list:
-		accounts = get_user_mail_accounts(user)
+	"""Returns the mail aliases of the user."""
 
-		if not accounts:
+	def generator() -> list:
+		account = get_user_mail_account(user)
+
+		if not account:
 			return []
 
 		MAIL_ALIAS = frappe.qb.DocType("Mail Alias")
@@ -65,20 +80,20 @@ def get_user_mail_aliases(user: str) -> list:
 			.where(
 				(MAIL_ALIAS.enabled == 1)
 				& (MAIL_ALIAS.alias_for_type == "Mail Account")
-				& (MAIL_ALIAS.alias_for_name.isin(accounts))
+				& (MAIL_ALIAS.alias_for_name == account)
 			)
 		).run(pluck="name")
 
 	return frappe.cache.hget(f"user|{user}", "mail_aliases", generator)
 
 
-def get_user_default_mail_account(user: str) -> str | None:
-	"""Returns the default mail account of the user."""
+def get_user_default_outgoing_email(user: str) -> str | None:
+	"""Returns the default outgoing email of the user."""
 
 	def generator() -> str | None:
-		return frappe.db.get_value("Mail Account", {"user": user, "enabled": 1, "is_default": 1}, "name")
+		return frappe.db.get_value("Mail Account", {"user": user, "enabled": 1}, "default_outgoing_email")
 
-	return frappe.cache.hget(f"user|{user}", "default_mail_account", generator)
+	return frappe.cache.hget(f"user|{user}", "default_outgoing_email", generator)
 
 
 def get_blacklist_for_ip_group(ip_group: str) -> list:

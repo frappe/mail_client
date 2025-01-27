@@ -5,11 +5,7 @@ import frappe
 from frappe import _
 from frappe.model.document import Document
 
-from mail.mail.doctype.mail_agent_job.mail_agent_job import (
-	create_group_on_agents,
-	delete_group_from_agents,
-	patch_group_on_agents,
-)
+from mail.agent import create_group_on_agents, delete_group_from_agents, patch_group_on_agents
 from mail.utils.validation import (
 	is_email_assigned,
 	is_valid_email_for_domain,

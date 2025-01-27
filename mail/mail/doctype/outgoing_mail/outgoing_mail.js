@@ -2,21 +2,11 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on("Outgoing Mail", {
-	setup(frm) {
-		frm.trigger("set_queries");
-	},
-
 	refresh(frm) {
 		frm.trigger("hide_amend_button");
 		frm.trigger("add_actions");
 		frm.trigger("add_comments");
-		frm.trigger("set_sender");
-	},
-
-	set_queries(frm) {
-		frm.set_query("sender", () => ({
-			query: "mail.utils.query.get_sender",
-		}));
+		frm.trigger("set_from_");
 	},
 
 	hide_amend_button(frm) {
@@ -103,13 +93,13 @@ frappe.ui.form.on("Outgoing Mail", {
 		}
 	},
 
-	set_sender(frm) {
-		if (!frm.doc.sender) {
+	set_from_(frm) {
+		if (!frm.doc.from_) {
 			frappe.call({
-				method: "mail.mail.doctype.outgoing_mail.outgoing_mail.get_default_sender",
+				method: "mail.mail.doctype.outgoing_mail.outgoing_mail.get_from_",
 				callback: (r) => {
 					if (r.message) {
-						frm.set_value("sender", r.message);
+						frm.set_value("from_", r.message);
 					}
 				},
 			});

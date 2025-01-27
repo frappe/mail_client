@@ -157,7 +157,7 @@
  "modified": "2025-01-21 15:45:16.679501",
  "modified_by": "Administrator",
  "module": "Mail",
- "name": "Mail Agent Job",
+ "name": "Mail Agent Request Log",
  "naming_rule": "Random",
  "owner": "Administrator",
  "permissions": [

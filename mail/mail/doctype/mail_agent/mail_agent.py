@@ -32,11 +32,14 @@ class MailAgent(Document):
 		self.validate_api_key()
 
 	def on_update(self) -> None:
-		frappe.cache.delete_value("primary_agents")
+		self.clear_cache()
+
 		if self.has_value_changed("enabled") or self.has_value_changed("enable_outbound"):
 			create_or_update_spf_dns_record()
 
 	def on_trash(self) -> None:
+		self.clear_cache()
+
 		if frappe.session.user != "Administrator":
 			frappe.throw(_("Only Administrator can delete Mail Agent."))
 
@@ -82,6 +85,11 @@ class MailAgent(Document):
 				frappe.throw(_("API Key or Username and Password is required."))
 
 			self.api_key = self.__generate_api_key()
+
+	def clear_cache(self) -> None:
+		"""Clears the cache."""
+
+		frappe.cache.delete_value("primary_agents")
 
 	def __generate_api_key(self) -> str:
 		"""Generates API Key for the given agent."""

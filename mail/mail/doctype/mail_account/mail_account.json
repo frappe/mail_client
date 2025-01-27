@@ -6,7 +6,6 @@
  "field_order": [
   "section_break_rgmz",
   "enabled",
-  "is_default",
   "track_outgoing_mail",
   "create_mail_contact",
   "column_break_47zs",
@@ -15,6 +14,7 @@
   "email",
   "password",
   "secret",
+  "default_outgoing_email",
   "section_break_gexs",
   "display_name",
   "override_display_name_api",
@@ -75,10 +75,12 @@
    "options": "User",
    "permlevel": 1,
    "reqd": 1,
-   "search_index": 1,
-   "set_only_once": 1
+   "set_only_once": 1,
+   "unique": 1
   },
   {
+   "fetch_from": "user.email",
+   "fetch_if_empty": 1,
    "fieldname": "email",
    "fieldtype": "Data",
    "in_list_view": 1,
@@ -86,7 +88,7 @@
    "label": "Email",
    "no_copy": 1,
    "options": "Email",
-   "reqd": 1,
+   "read_only": 1,
    "set_only_once": 1,
    "unique": 1
   },
@@ -139,11 +141,12 @@
    "read_only": 1
   },
   {
-   "default": "0",
-   "fieldname": "is_default",
-   "fieldtype": "Check",
-   "label": "Default Outgoing",
-   "search_index": 1
+   "fieldname": "default_outgoing_email",
+   "fieldtype": "Data",
+   "label": "Default Email",
+   "no_copy": 1,
+   "options": "Email",
+   "unique": 1
   }
  ],
  "index_web_pages_for_search": 1,
@@ -174,7 +177,7 @@
    "link_fieldname": "sender"
   }
  ],
- "modified": "2025-01-16 16:34:18.404967",
+ "modified": "2025-01-24 11:47:24.297689",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Account",

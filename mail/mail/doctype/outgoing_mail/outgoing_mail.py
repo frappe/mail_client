@@ -47,7 +47,7 @@ from mail.utils import (
 	get_in_reply_to,
 	get_in_reply_to_mail,
 )
-from mail.utils.cache import get_user_default_mail_account
+from mail.utils.cache import get_account_for_email, get_user_default_outgoing_email, get_user_mail_account
 from mail.utils.dns import get_host_by_ip
 from mail.utils.dt import parsedate_to_datetime
 from mail.utils.email_parser import EmailParser
@@ -89,9 +89,14 @@ class OutgoingMail(Document):
 		self.set_folder()
 		self.set_priority()
 		self.set_token()
+		self.validate_from_()
+		self.set_sender()
+		self.set_domain_name()
 		self.load_runtime()
 		self.validate_domain_name()
 		self.validate_sender()
+		self.set_display_name()
+		self.set_reply_to()
 		self.validate_in_reply_to()
 		self.validate_recipients()
 		self.validate_custom_headers()
@@ -161,6 +166,39 @@ class OutgoingMail(Document):
 		if not self.token:
 			self.token = random_string(10)
 
+	def validate_from_(self) -> None:
+		"""Validates the from address."""
+
+		user = frappe.session.user
+
+		if is_system_manager(user):
+			return
+
+		if self.from_ not in get_user_email_addresses(user):
+			frappe.throw(_("You are not allowed to send from address {0}.").format(frappe.bold(self.from_)))
+
+	def set_sender(self) -> None:
+		"""Sets the sender."""
+
+		account = (
+			get_account_for_email(self.from_)
+			if is_system_manager(frappe.session.user)
+			else get_user_mail_account(frappe.session.user)
+		)
+
+		if not account:
+			if is_system_manager(frappe.session.user):
+				frappe.throw(_("No Mail Account found for email {0}.").format(frappe.bold(self.from_)))
+
+			frappe.throw(_("No Mail Account found for user {0}.").format(frappe.bold(frappe.session.user)))
+
+		self.sender = account
+
+	def set_domain_name(self) -> None:
+		"""Sets the domain name."""
+
+		self.domain_name = self.from_.split("@", 1)[1]
+
 	def load_runtime(self) -> None:
 		"""Loads the runtime properties."""
 
@@ -182,10 +220,26 @@ class OutgoingMail(Document):
 
 		user = frappe.session.user
 		if (self.runtime.mail_account.user != user) and not is_system_manager(user):
-			frappe.throw(_("You are not allowed to send from address {0}.").format(frappe.bold(self.sender)))
+			frappe.throw(
+				_("Mail Account {0} does not belong to user {1}.").format(
+					frappe.bold(self.sender), frappe.bold(user)
+				)
+			)
 
 		if not self.runtime.mail_account.enabled:
 			frappe.throw(_("Mail Account {0} is disabled.").format(frappe.bold(self.sender)))
+
+	def set_display_name(self) -> None:
+		"""Sets the Display Name."""
+
+		if not self.display_name:
+			self.display_name = self.runtime.mail_account.display_name
+
+	def set_reply_to(self) -> None:
+		"""Sets the Reply To."""
+
+		if not self.reply_to:
+			self.reply_to = self.runtime.mail_account.reply_to
 
 	def validate_in_reply_to(self) -> None:
 		"""Validates the In Reply To."""
@@ -396,7 +450,7 @@ class OutgoingMail(Document):
 							del parser["Reply-To"]
 
 				self.body_html = self.body_plain = None
-				parser.update_header("From", formataddr((self.display_name, self.sender)))
+				parser.update_header("From", formataddr((self.display_name, self.from_)))
 				self.subject = parser.get_subject()
 				self.reply_to = parser.get_reply_to()
 				self.message_id = parser.get_message_id() or self.message_id
@@ -417,7 +471,7 @@ class OutgoingMail(Document):
 			if self.in_reply_to:
 				message["In-Reply-To"] = self.in_reply_to
 
-			message["From"] = formataddr((self.display_name, self.sender))
+			message["From"] = formataddr((self.display_name, self.from_))
 
 			for type in ["To", "Cc"]:
 				if recipients := self._get_recipients(type):
@@ -907,7 +961,7 @@ class OutgoingMail(Document):
 
 			with SMTPContext(agent_or_group, 465, username, password, use_ssl=True) as server:
 				mail_options = [f"ENVID={self.name}:{self.token}", f"MT-PRIORITY={self.priority}"]
-				server.sendmail(self.sender, recipients, self.message, mail_options=mail_options)
+				server.sendmail(self.from_, recipients, self.message, mail_options=mail_options)
 
 			transfer_completed_at = now()
 			transfer_completed_after = time_diff_in_seconds(transfer_completed_at, transfer_started_at)
@@ -939,12 +993,10 @@ class OutgoingMail(Document):
 
 
 @frappe.whitelist()
-def get_default_sender() -> str | None:
-	"""Returns the default sender."""
+def get_from_() -> str | None:
+	"""Returns the default outgoing email address of the user."""
 
-	return frappe.db.get_value(
-		"Mail Account", {"user": frappe.session.user, "enabled": 1, "is_default": 1}, "name"
-	)
+	return get_user_default_outgoing_email(frappe.session.user)
 
 
 @frappe.whitelist()
@@ -957,7 +1009,7 @@ def reply_to_mail(source_name, target_doc=None) -> "OutgoingMail":
 
 	target_doc.in_reply_to_mail_type = source_doc.doctype
 	target_doc.in_reply_to_mail_name = source_name
-	target_doc.sender = source_doc.sender
+	target_doc.from_ = source_doc.from_
 	target_doc.subject = f"Re: {source_doc.subject}"
 
 	recipient_types = ["To", "Cc"] if frappe.flags.args.all else ["To"]
@@ -1065,7 +1117,7 @@ def get_random_agent_or_agent_group(
 
 
 def create_outgoing_mail(
-	sender: str,
+	from_: str,
 	to: str | list[str],
 	display_name: str | None = None,
 	cc: str | list[str] | None = None,
@@ -1086,7 +1138,7 @@ def create_outgoing_mail(
 	"""Creates the outgoing mail."""
 
 	doc: OutgoingMail = frappe.new_doc("Outgoing Mail")
-	doc.sender = sender
+	doc.from_ = from_
 	doc.display_name = display_name
 	doc._add_recipient("To", to)
 	doc._add_recipient("Cc", cc)
@@ -1103,8 +1155,8 @@ def create_outgoing_mail(
 
 	if via_api and not is_newsletter:
 		user = frappe.session.user
-		if sender not in get_user_email_addresses(user, "Mail Account"):
-			doc.sender = get_user_default_mail_account(user)
+		if from_ not in get_user_email_addresses(user):
+			from_ = get_user_default_outgoing_email(user)
 
 	if not do_not_save:
 		doc.save()
@@ -1184,7 +1236,7 @@ def get_permission_query_condition(user: str | None = None) -> str:
 	if is_system_manager(user):
 		return ""
 
-	if accounts := ", ".join(repr(m) for m in get_user_email_addresses(user, "Mail Account")):
-		return f"(`tabOutgoing Mail`.`sender` IN ({accounts})) AND (`tabOutgoing Mail`.`docstatus` != 2)"
+	if account := get_user_mail_account(user):
+		return f'(`tabOutgoing Mail`.`sender` = "{account}") AND (`tabOutgoing Mail`.`docstatus` != 2)'
 	else:
 		return "1=0"

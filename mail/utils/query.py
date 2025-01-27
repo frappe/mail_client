@@ -1,43 +1,8 @@
 import frappe
 from frappe.query_builder import Criterion, Order
 
-from mail.utils.user import get_user_email_addresses, has_role, is_system_manager
-
-
-@frappe.whitelist()
-@frappe.validate_and_sanitize_search_inputs
-def get_sender(
-	doctype: str | None = None,
-	txt: str | None = None,
-	searchfield: str | None = None,
-	start: int = 0,
-	page_len: int = 20,
-	filters: dict | None = None,
-) -> list:
-	"""Returns the sender."""
-
-	MAIL_ACCOUNT = frappe.qb.DocType("Mail Account")
-	MAIL_DOMAIN = frappe.qb.DocType("Mail Domain")
-	query = (
-		frappe.qb.from_(MAIL_DOMAIN)
-		.left_join(MAIL_ACCOUNT)
-		.on(MAIL_DOMAIN.name == MAIL_ACCOUNT.domain_name)
-		.select(MAIL_ACCOUNT.name)
-		.where(
-			(MAIL_DOMAIN.enabled == 1)
-			& (MAIL_DOMAIN.is_verified == 1)
-			& (MAIL_ACCOUNT.enabled == 1)
-			& (MAIL_ACCOUNT[searchfield].like(f"%{txt}%"))
-		)
-		.offset(start)
-		.limit(page_len)
-	)
-
-	user = frappe.session.user
-	if not is_system_manager(user):
-		query = query.where(MAIL_ACCOUNT.user == user)
-
-	return query.run(as_dict=False)
+from mail.utils.cache import get_user_mail_account
+from mail.utils.user import has_role, is_system_manager
 
 
 @frappe.whitelist()
@@ -66,10 +31,10 @@ def get_outgoing_mails(
 
 	if not is_system_manager(user):
 		conditions = []
-		accounts = get_user_email_addresses(user, "Mail Account")
+		account = get_user_mail_account(user)
 
-		if has_role(user, "Mail User") and accounts:
-			conditions.append(OM.sender.isin(accounts))
+		if has_role(user, "Mail User") and account:
+			conditions.append(OM.sender == account)
 
 		if not conditions:
 			return []

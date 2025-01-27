@@ -6,8 +6,8 @@ from bs4 import BeautifulSoup
 from frappe.translate import get_all_translations
 from frappe.utils import is_html
 
-from mail.utils.cache import get_user_default_mail_account
-from mail.utils.user import get_user_email_addresses, has_role, is_system_manager
+from mail.utils.cache import get_user_default_outgoing_email, get_user_mail_account
+from mail.utils.user import has_role, is_system_manager
 
 
 def check_app_permission() -> bool:
@@ -68,11 +68,10 @@ def get_translations() -> dict:
 def get_incoming_mails(start: int = 0) -> list:
 	"""Returns incoming mails for the current user."""
 
-	accounts = get_user_email_addresses(frappe.session.user, "Mail Account")
-
+	account = get_user_mail_account(frappe.session.user)
 	mails = frappe.get_all(
 		"Incoming Mail",
-		{"receiver": ["in", accounts], "docstatus": 1},
+		{"receiver": account, "docstatus": 1},
 		[
 			"name",
 			"sender",
@@ -110,7 +109,7 @@ def get_draft_mails(start: int = 0) -> list:
 def get_outgoing_mails(status: str, start: int = 0) -> list:
 	"""Returns outgoing mails for the current user."""
 
-	accounts = get_user_email_addresses(frappe.session.user, "Mail Account")
+	account = get_user_mail_account(frappe.session.user)
 
 	if status == "Draft":
 		docstatus = 0
@@ -122,7 +121,7 @@ def get_outgoing_mails(status: str, start: int = 0) -> list:
 
 	mails = frappe.get_all(
 		"Outgoing Mail",
-		{"sender": ["in", accounts], "docstatus": docstatus, "status": status},
+		{"sender": account, "docstatus": docstatus, "status": status},
 		[
 			"name",
 			"subject",
@@ -403,10 +402,10 @@ def update_draft_mail(
 ):
 	"""Update draft mail."""
 
-	display_name, sender = parseaddr(from_)
+	display_name, from_ = parseaddr(from_)
 
 	doc = frappe.get_doc("Outgoing Mail", mail_id)
-	doc.sender = sender
+	doc.from_ = from_
 	doc.display_name = display_name
 	doc._update_recipients("To", to)
 	doc._update_recipients("Cc", cc)
