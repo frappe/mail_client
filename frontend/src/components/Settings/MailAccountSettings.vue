@@ -59,7 +59,7 @@
 	</div>
 </template>
 <script setup>
-import { ref, watch, onMounted } from 'vue'
+import { ref, inject, watch, onMounted } from 'vue'
 import { Switch, TextInput, createDocumentResource } from 'frappe-ui'
 import Link from '@/components/Controls/Link.vue'
 

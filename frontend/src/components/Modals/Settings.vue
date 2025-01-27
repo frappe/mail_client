@@ -49,7 +49,7 @@ const tabs = [
 		component: markRaw(UserSettings),
 	},
 	{
-		label: 'Mailbox',
+		label: 'Mail Account',
 		icon: Mailbox,
 		component: markRaw(MailAccountSettings),
 	},
