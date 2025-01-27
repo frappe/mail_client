@@ -1,5 +1,6 @@
 {
  "actions": [],
+ "autoname": "hash",
  "creation": "2025-01-14 15:10:13.672435",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -26,6 +27,7 @@
    "fieldname": "request_key",
    "fieldtype": "Data",
    "label": "Request Key",
+   "no_copy": 1,
    "read_only": 1,
    "unique": 1
   },
@@ -34,14 +36,17 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Email",
-   "reqd": 1
+   "options": "Email",
+   "reqd": 1,
+   "search_index": 1
   },
   {
    "fieldname": "tenant",
    "fieldtype": "Link",
    "label": "Tenant",
-   "mandatory_depends_on": "eval:doc.role == 'Mail User'",
-   "options": "Mail Tenant"
+   "mandatory_depends_on": "eval:doc.role == \"Mail User\"",
+   "options": "Mail Tenant",
+   "search_index": 1
   },
   {
    "fieldname": "role",
@@ -59,6 +64,7 @@
    "fieldname": "otp",
    "fieldtype": "Data",
    "label": "OTP",
+   "no_copy": 1,
    "read_only": 1
   },
   {
@@ -67,7 +73,8 @@
    "label": "Invited By",
    "link_filters": "[[\"User\",\"role\",\"=\",\"Mail Admin\"]]",
    "mandatory_depends_on": "eval:doc.tenant",
-   "options": "User"
+   "options": "User",
+   "search_index": 1
   },
   {
    "fieldname": "email_verification_section",
@@ -79,7 +86,9 @@
    "fieldname": "is_verified",
    "fieldtype": "Check",
    "label": "Is Verified",
-   "read_only": 1
+   "no_copy": 1,
+   "read_only": 1,
+   "search_index": 1
   },
   {
    "fieldname": "column_break_vcxy",
@@ -90,16 +99,18 @@
    "fieldname": "is_expired",
    "fieldtype": "Check",
    "label": "Is Expired",
-   "read_only": 1
+   "no_copy": 1,
+   "read_only": 1,
+   "search_index": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-01-27 14:59:25.507405",
+ "modified": "2025-01-27 19:16:18.115816",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Account Request",
- "naming_rule": "UUID",
+ "naming_rule": "Random",
  "owner": "Administrator",
  "permissions": [
   {
@@ -119,5 +130,6 @@
  "sort_field": "creation",
  "sort_order": "DESC",
  "states": [],
- "title_field": "email"
+ "title_field": "email",
+ "track_changes": 1
 }

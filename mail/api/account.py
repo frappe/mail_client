@@ -3,8 +3,6 @@ import random
 import frappe
 from frappe import _
 
-from mail.utils.dns import verify_dns_record
-
 
 @frappe.whitelist(allow_guest=True)
 def signup(email):
