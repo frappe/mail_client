@@ -1,6 +1,6 @@
 {
  "actions": [],
- "allow_rename": 1,
+ "autoname": "hash",
  "creation": "2025-01-23 15:53:06.753685",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -18,8 +18,9 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Domain Name",
-   "read_only_depends_on": "eval:doc.is_verified",
-   "reqd": 1
+   "reqd": 1,
+   "search_index": 1,
+   "set_only_once": 1
   },
   {
    "fieldname": "mail_tenant",
@@ -27,8 +28,8 @@
    "in_list_view": 1,
    "label": "Mail Tenant",
    "options": "Mail Tenant",
-   "read_only_depends_on": "eval:doc.is_verified",
-   "reqd": 1
+   "reqd": 1,
+   "set_only_once": 1
   },
   {
    "fieldname": "user",
@@ -37,8 +38,8 @@
    "label": "User",
    "link_filters": "[[\"User\",\"role\",\"=\",\"Mail Admin\"]]",
    "options": "User",
-   "read_only_depends_on": "eval:doc.is_verified",
-   "reqd": 1
+   "reqd": 1,
+   "set_only_once": 1
   },
   {
    "fieldname": "column_break_batf",
@@ -48,6 +49,7 @@
    "fieldname": "verification_key",
    "fieldtype": "Data",
    "label": "Verification Key",
+   "no_copy": 1,
    "read_only": 1,
    "unique": 1
   },
@@ -56,15 +58,18 @@
    "fieldname": "is_verified",
    "fieldtype": "Check",
    "label": "Is Verified",
-   "read_only": 1
+   "no_copy": 1,
+   "read_only": 1,
+   "search_index": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-01-24 13:34:49.894239",
+ "modified": "2025-01-27 19:33:02.666068",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Domain Request",
+ "naming_rule": "Random",
  "owner": "Administrator",
  "permissions": [
   {

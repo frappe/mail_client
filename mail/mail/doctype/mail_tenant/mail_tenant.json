@@ -1,6 +1,6 @@
 {
  "actions": [],
- "allow_rename": 1,
+ "autoname": "hash",
  "creation": "2025-01-21 12:04:29.174018",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -21,7 +21,8 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Tenant Name",
-   "reqd": 1
+   "reqd": 1,
+   "search_index": 1
   },
   {
    "fieldname": "tenant_members",
@@ -71,16 +72,17 @@
    "fieldtype": "Link",
    "label": "User",
    "link_filters": "[[\"User\",\"role\",\"=\",\"Mail Admin\"]]",
-   "options": "User"
+   "options": "User",
+   "search_index": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-01-27 12:57:35.410648",
+ "modified": "2025-01-27 19:26:31.436007",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Tenant",
- "naming_rule": "UUID",
+ "naming_rule": "Random",
  "owner": "Administrator",
  "permissions": [
   {
@@ -135,5 +137,6 @@
  "sort_field": "creation",
  "sort_order": "DESC",
  "states": [],
- "title_field": "tenant_name"
+ "title_field": "tenant_name",
+ "track_changes": 1
 }

@@ -5,8 +5,8 @@
  "engine": "InnoDB",
  "field_order": [
   "section_break_ceuu",
-  "domain_name",
   "mail_tenant",
+  "domain_name",
   "enabled",
   "is_verified",
   "is_subdomain",
@@ -158,9 +158,13 @@
   {
    "fieldname": "mail_tenant",
    "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Mail Tenant",
+   "no_copy": 1,
    "options": "Mail Tenant",
-   "reqd": 1
+   "reqd": 1,
+   "search_index": 1
   }
  ],
  "index_web_pages_for_search": 1,
@@ -201,7 +205,7 @@
    "link_fieldname": "domain_name"
   }
  ],
- "modified": "2025-01-24 13:45:54.747877",
+ "modified": "2025-01-27 19:40:04.638213",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Domain",
