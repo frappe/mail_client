@@ -24,6 +24,15 @@ def get_user_email_addresses(user: str) -> list:
 
 
 @request_cache
+def is_mail_tenant_admin(tenant: str, user: str) -> bool:
+	"""Returns True if the user is an admin of the mail tenant else False."""
+
+	return has_role(user, "Mail Admin") and frappe.db.exists(
+		"Mail Tenant Member", {"tenant": tenant, "user": user}
+	)
+
+
+@request_cache
 def is_mail_account_owner(account: str, user: str) -> bool:
 	"""Returns True if the mail account is associated with the user else False."""
 

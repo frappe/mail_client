@@ -150,6 +150,7 @@ email_css = ["/assets/mail/css/email.css"]
 # Permissions evaluated in scripted ways
 
 permission_query_conditions = {
+	"Mail Tenant": "mail.mail.doctype.mail_tenant.mail_tenant.get_permission_query_condition",
 	"Mail Account": "mail.mail.doctype.mail_account.mail_account.get_permission_query_condition",
 	"Mail Contact": "mail.mail.doctype.mail_contact.mail_contact.get_permission_query_condition",
 	"Outgoing Mail": "mail.mail.doctype.outgoing_mail.outgoing_mail.get_permission_query_condition",
@@ -157,6 +158,7 @@ permission_query_conditions = {
 }
 
 has_permission = {
+	"Mail Tenant": "mail.mail.doctype.mail_tenant.mail_tenant.has_permission",
 	"Mail Account": "mail.mail.doctype.mail_account.mail_account.has_permission",
 	"Mail Contact": "mail.mail.doctype.mail_contact.mail_contact.has_permission",
 	"Outgoing Mail": "mail.mail.doctype.outgoing_mail.outgoing_mail.has_permission",

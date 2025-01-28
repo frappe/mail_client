@@ -12,8 +12,17 @@ class MailTenantMember(Document):
 	def validate(self):
 		self.validate_user()
 
+	def on_update(self):
+		self.clear_cache()
+
+	def on_trash(self):
+		self.clear_cache()
+
 	def validate_user(self):
 		if not has_role(self.user, ["Mail Admin", "Mail User"]):
 			frappe.throw(
 				_("User {0} does not have Mail Admin or Mail User role.").format(frappe.bold(self.user))
 			)
+
+	def clear_cache(self):
+		frappe.cache.delete_value(f"user|{self.user}")
