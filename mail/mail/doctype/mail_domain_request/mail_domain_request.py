@@ -38,6 +38,8 @@ class MailDomainRequest(Document):
 		if self.is_verified:
 			self.create_domain()
 
+		self.save()
+
 		return self.is_verified
 
 	def create_domain(self) -> str:
@@ -45,7 +47,8 @@ class MailDomainRequest(Document):
 
 		domain = frappe.new_doc("Mail Domain")
 		domain.domain_name = self.domain_name
-		domain.mail_tenant = self.mail_tenant
+		domain.tenant = self.mail_tenant
 		domain.verified = self.is_verified
 		domain.insert()
+
 		return domain.name

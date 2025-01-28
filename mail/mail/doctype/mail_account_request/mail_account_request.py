@@ -57,7 +57,7 @@ class MailAccountRequest(Document):
 			args=args,
 			now=True,
 		)
-		frappe.msgprint(_("Verification mail sent successfully."), indicator="green", alert=True)
+		frappe.msgprint(_("Verification email sent successfully."), indicator="green", alert=True)
 
 
 def expire_mail_account_requests() -> None:

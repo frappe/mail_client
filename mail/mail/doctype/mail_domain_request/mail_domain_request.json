@@ -6,7 +6,7 @@
  "engine": "InnoDB",
  "field_order": [
   "domain_name",
-  "mail_tenant",
+  "tenant",
   "user",
   "column_break_batf",
   "verification_key",
@@ -20,15 +20,6 @@
    "label": "Domain Name",
    "reqd": 1,
    "search_index": 1,
-   "set_only_once": 1
-  },
-  {
-   "fieldname": "mail_tenant",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Mail Tenant",
-   "options": "Mail Tenant",
-   "reqd": 1,
    "set_only_once": 1
   },
   {
@@ -61,11 +52,20 @@
    "no_copy": 1,
    "read_only": 1,
    "search_index": 1
+  },
+  {
+   "fieldname": "tenant",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Tenant",
+   "options": "Mail Tenant",
+   "reqd": 1,
+   "set_only_once": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-01-27 19:33:02.666068",
+ "modified": "2025-01-27 21:43:17.779219",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Domain Request",
@@ -86,15 +86,9 @@
   },
   {
    "create": 1,
-   "delete": 1,
-   "email": 1,
-   "export": 1,
    "if_owner": 1,
-   "print": 1,
    "read": 1,
-   "report": 1,
    "role": "Mail Admin",
-   "share": 1,
    "write": 1
   }
  ],
