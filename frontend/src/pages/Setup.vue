@@ -1,5 +1,5 @@
 <template>
-	<FormControl type="text" label="User" :value="user.data?.name" disabled class="mb-4" />
+	<FormControl type="text" label="User" :value="user.data?.name" readonly class="mb-4" />
 
 	<form
 		v-if="!user.data?.tenant"
@@ -33,7 +33,7 @@ const { logout } = sessionStore()
 const tenantName = ref('')
 
 const createTenant = createResource({
-	url: 'mail.api.account.create_tenant',
+	url: 'mail.api.admin.create_tenant',
 	makeParams() {
 		return { tenant_name: tenantName.value }
 	},

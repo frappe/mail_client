@@ -6,7 +6,7 @@
 			placeholder="johndoe@mail.com"
 			autocomplete="email"
 			v-model="email"
-			:disabled="!!props.requestKey || isVerificationStep"
+			:readonly="!!props.requestKey || isVerificationStep"
 			required
 		/>
 		<FormControl
