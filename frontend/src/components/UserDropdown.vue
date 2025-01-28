@@ -94,17 +94,13 @@ const userDropdownOptions = [
 	{
 		icon: Home,
 		label: 'Home',
-		onClick: () => {
-			router.push('/')
-		},
+		onClick: () => router.push('/'),
 		condition: () => userResource.data.roles.includes('Mail Admin'),
 	},
 	{
 		icon: LayoutDashboard,
 		label: 'Admin Dashboard',
-		onClick: () => {
-			router.push('/dashboard/domains')
-		},
+		onClick: () => router.push('/dashboard'),
 		condition: () => userResource.data.roles.includes('Mail Admin'),
 	},
 	{

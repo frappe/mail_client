@@ -5,9 +5,7 @@ import { sessionStore } from '@/stores/session'
 const routes = [
 	{
 		path: '/',
-		redirect: {
-			name: 'Inbox',
-		},
+		redirect: { name: 'Inbox' },
 	},
 	{
 		path: '/signup',
@@ -50,6 +48,11 @@ const routes = [
 		component: () => import('@/pages/Drafts.vue'),
 	},
 	{
+		path: '/dashboard',
+		redirect: { name: 'Domains' },
+		meta: { isDashboard: true },
+	},
+	{
 		path: '/dashboard/domains',
 		name: 'Domains',
 		component: () => import('@/pages/dashboard/Domains.vue'),
@@ -68,7 +71,12 @@ router.beforeEach(async (to, from, next) => {
 
 	const { userResource } = userStore()
 	await userResource.promise
-	if (!userResource.data?.tenant) return next(to.meta.isSetup ? undefined : { name: 'Setup' })
+	const isAdmin = userResource.data.name === 'Administrator'
+	const isMailAdmin = userResource.data?.roles.includes('Mail Admin')
+	if (!isAdmin && isMailAdmin && !userResource.data?.tenant)
+		return next(to.meta.isSetup ? undefined : { name: 'Setup' })
+
+	if (!isMailAdmin && to.meta.isDashboard) return next({ name: 'Inbox' })
 
 	next(to.meta.isLogin || to.meta.isSetup ? { name: 'Inbox' } : undefined)
 })
