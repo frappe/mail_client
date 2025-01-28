@@ -5,15 +5,52 @@ import frappe
 from frappe import _
 from frappe.model.document import Document
 
-from mail.utils.user import has_role
+from mail.utils.cache import get_user_mail_tenant
+from mail.utils.user import has_role, is_mail_tenant_admin, is_system_manager
 
 
 class MailTenantMember(Document):
 	def validate(self):
 		self.validate_user()
 
+	def on_update(self):
+		self.clear_cache()
+
+	def on_trash(self):
+		self.clear_cache()
+
 	def validate_user(self):
 		if not has_role(self.user, ["Mail Admin", "Mail User"]):
 			frappe.throw(
 				_("User {0} does not have Mail Admin or Mail User role.").format(frappe.bold(self.user))
 			)
+
+	def clear_cache(self):
+		frappe.cache.delete_value(f"user|{self.user}")
+
+
+def has_permission(doc: "Document", ptype: str, user: str) -> bool:
+	if doc.doctype != "Mail Tenant Member":
+		return False
+
+	if is_system_manager(user):
+		return True
+
+	if is_mail_tenant_admin(doc.tenant, user):
+		return True
+
+	return False
+
+
+def get_permission_query_condition(user: str | None = None) -> str:
+	if not user:
+		user = frappe.session.user
+
+	if is_system_manager(user):
+		return ""
+
+	if has_role(user, "Mail Admin"):
+		if tenant := get_user_mail_tenant(user):
+			return f'(`tabMail Tenant Member`.`tenant` = "{tenant}")'
+
+	return "1=0"
