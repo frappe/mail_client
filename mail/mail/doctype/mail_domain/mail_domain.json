@@ -160,7 +160,7 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "in_standard_filter": 1,
-   "label": "Mail Tenant",
+   "label": "Tenant",
    "no_copy": 1,
    "options": "Mail Tenant",
    "reqd": 1,
@@ -205,7 +205,7 @@
    "link_fieldname": "domain_name"
   }
  ],
- "modified": "2025-01-27 19:40:04.638213",
+ "modified": "2025-01-27 20:03:04.601562",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Domain",
