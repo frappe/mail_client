@@ -23,6 +23,6 @@ def create_domain_request(domain_name, mail_tenant):
 
 
 @frappe.whitelist()
-def verify_domain_key(domain_request):
+def verify_dns_record(domain_request):
 	doc = frappe.get_doc("Mail Domain Request", domain_request)
 	return doc.verify_key()

@@ -112,7 +112,7 @@ export const raiseToast = (message, type = 'success') => {
 	if (type === 'success')
 		return toast({
 			title: 'Success',
-			text: message,
+			text: __(message),
 			icon: 'check-circle',
 			position: 'bottom-right',
 			iconClasses: 'text-green-500',
@@ -125,7 +125,7 @@ export const raiseToast = (message, type = 'success') => {
 		div.textContent || div.innerText || 'Failed to perform action. Please try again later.'
 	toast({
 		title: 'Error',
-		text: text,
+		text: __(text),
 		icon: 'alert-circle',
 		position: 'bottom-right',
 		iconClasses: 'text-red-500',
