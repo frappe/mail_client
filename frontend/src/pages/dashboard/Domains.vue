@@ -1,18 +1,79 @@
 <template>
-	<div class="h-full">
+	<div class="h-full flex flex-col">
 		<header
 			class="sticky top-0 z-10 flex items-center justify-between border-b bg-white px-3 py-2.5 sm:px-5"
 		>
 			<Breadcrumbs :items="[{ label: 'Domains' }]" />
 			<Button :label="__('Add Domain')" iconLeft="plus" @click="showAddDomain = true" />
 		</header>
+		<div class="m-8 flex-1 flex flex-col">
+			<ListView
+				class="flex-1"
+				:columns="LIST_COLUMNS"
+				:rows="domains?.data || []"
+				:options="LIST_OPTIONS"
+				row-key="name"
+			/>
+		</div>
 	</div>
-	<AddDomain v-model="showAddDomain" />
+	<AddDomain v-model="showAddDomain" @reloadDomains="domains.reload()" />
 </template>
 <script setup>
-import { ref } from 'vue'
-import { Button, Breadcrumbs } from 'frappe-ui'
+import { ref, inject } from 'vue'
+import { Button, Breadcrumbs, ListView, createListResource } from 'frappe-ui'
 import AddDomain from '@/components/Modals/AddDomain.vue'
 
+const user = inject('$user')
+
 const showAddDomain = ref(false)
+
+const LIST_COLUMNS = [
+	{
+		label: 'Domain',
+		key: 'name',
+	},
+	{
+		label: 'Status',
+		key: 'status',
+	},
+	{
+		label: 'Verified',
+		key: 'is_verified',
+	},
+]
+
+const LIST_OPTIONS = {
+	selectable: false,
+	showTooltip: false,
+	emptyState: {
+		title: __('No Domains Configured'),
+		description: __('Please add a domain to proceed with sending and receiving emails.'),
+		button: {
+			label: __('Add Domain'),
+			variant: 'solid',
+			iconLeft: 'plus',
+			onClick: () => {
+				showAddDomain.value = true
+			},
+		},
+	},
+}
+
+const domains = createListResource({
+	doctype: 'Mail Domain',
+	fields: ['name', 'enabled', 'is_verified'],
+	filters: { mail_tenant: user.data?.tenant },
+	auto: true,
+	pageLength: 50,
+	cache: ['mailDomains', user.data?.tenant],
+	transform(data) {
+		return data.map((domain) => ({
+			...domain,
+			status: domain.enabled ? 'Enabled' : 'Disabled',
+		}))
+	},
+	onSuccess(data) {
+		console.log(data)
+	},
+})
 </script>

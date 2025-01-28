@@ -61,6 +61,8 @@ const user = inject('$user')
 const domainName = ref('')
 const verificationError = ref('')
 
+const emit = defineEmits(['reloadDomains'])
+
 const domainRequest = createResource({
 	url: 'mail.api.admin.create_domain_request',
 	makeParams() {
@@ -76,6 +78,7 @@ const verifyDNS = createResource({
 	onSuccess(data) {
 		if (data) {
 			show.value = false
+			emit('reloadDomains')
 			raiseToast('Domain added successfully!')
 		} else verificationError.value = __('Failed to verify DNS record.')
 	},

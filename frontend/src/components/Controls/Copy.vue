@@ -29,10 +29,14 @@ const props = defineProps({
 })
 
 const copyToClipBoard = async (text) => {
-	await navigator.clipboard.writeText(text)
-	message.value = 'Copied!'
-	setTimeout(() => {
-		message.value = 'Copy'
-	}, 2000)
+	try {
+		await navigator.clipboard.writeText(text)
+		message.value = 'Copied!'
+		setTimeout(() => {
+			message.value = 'Copy'
+		}, 2000)
+	} catch (e) {
+		alert('Failed to copy text. Please copy from here: ' + text)
+	}
 }
 </script>
