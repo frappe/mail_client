@@ -3,7 +3,7 @@
 		<header
 			class="sticky top-0 z-10 flex items-center justify-between border-b bg-white px-3 py-2.5 sm:px-5"
 		>
-			<Breadcrumbs :items="breadcrumbs">
+			<Breadcrumbs :items="[{ label: 'Inbox' }]">
 				<template #suffix>
 					<div v-if="incomingMailCount.data" class="self-end text-xs text-gray-600 ml-2">
 						{{
@@ -52,7 +52,7 @@
 </template>
 <script setup>
 import { Breadcrumbs, createListResource, createResource } from 'frappe-ui'
-import { computed, inject, ref, onMounted } from 'vue'
+import { inject, ref, onMounted } from 'vue'
 import { formatNumber, startResizing, singularize } from '@/utils'
 import HeaderActions from '@/components/HeaderActions.vue'
 import MailDetails from '@/components/MailDetails.vue'
@@ -99,13 +99,4 @@ const incomingMailCount = createResource({
 const loadMoreEmails = useDebounceFn(() => {
 	if (incomingMails.hasNextPage) incomingMails.next()
 }, 500)
-
-const breadcrumbs = computed(() => {
-	return [
-		{
-			label: `Inbox`,
-			route: { name: 'Inbox' },
-		},
-	]
-})
 </script>
