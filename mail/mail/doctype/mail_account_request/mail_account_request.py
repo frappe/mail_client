@@ -10,6 +10,10 @@ from frappe.utils import add_days, get_url, nowdate, random_string
 
 
 class MailAccountRequest(Document):
+	def validate(self) -> None:
+		self.validate_role()
+		self.validate_tenant()
+
 	def before_insert(self) -> None:
 		self.set_request_key()
 
@@ -19,6 +23,20 @@ class MailAccountRequest(Document):
 	def after_insert(self) -> None:
 		if self.send_email:
 			self.send_verification_email()
+
+	def validate_role(self) -> None:
+		if not self.role:
+			frappe.throw(_("Role is mandatory."))
+
+		if self.role not in ["Mail User", "Mail Admin"]:
+			frappe.throw(_("Invalid role. Please select a valid role."))
+
+	def validate_tenant(self) -> None:
+		if self.role == "Mail Admin":
+			self.tenant = None
+		elif self.role == "Mail User":
+			if not self.tenant:
+				frappe.throw(_("Tenant is mandatory for Mail User role."))
 
 	def set_request_key(self) -> None:
 		"""Sets a random key for the request."""

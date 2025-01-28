@@ -146,6 +146,6 @@ def create_mail_agent_request_log(
 	request_log.request_json = request_json
 	request_log.execute_on_start = execute_on_start
 	request_log.execute_on_end = execute_on_end
-	request_log.insert()
+	request_log.insert(ignore_permissions=True)
 
 	return request_log
