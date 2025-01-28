@@ -109,4 +109,4 @@ def verify_domain_key(domain_request: str) -> bool:
 	"""Verify the domain request key"""
 
 	doc = frappe.get_doc("Mail Domain Request", domain_request)
-	return doc.verify_key()
+	return doc.verify_and_create_domain(save=True)

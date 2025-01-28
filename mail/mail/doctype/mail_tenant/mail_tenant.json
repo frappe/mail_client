@@ -75,11 +75,26 @@
  "links": [
   {
    "group": "Reference",
+   "link_doctype": "Mail Account Request",
+   "link_fieldname": "tenant"
+  },
+  {
+   "group": "Reference",
+   "link_doctype": "Mail Domain Request",
+   "link_fieldname": "tenant"
+  },
+  {
+   "group": "Reference",
    "link_doctype": "Mail Tenant Member",
+   "link_fieldname": "tenant"
+  },
+  {
+   "group": "Reference",
+   "link_doctype": "Mail Domain",
    "link_fieldname": "tenant"
   }
  ],
- "modified": "2025-01-28 10:10:25.105911",
+ "modified": "2025-01-28 12:02:08.663645",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Tenant",

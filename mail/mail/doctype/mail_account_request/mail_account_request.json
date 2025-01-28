@@ -74,7 +74,7 @@
    "fieldtype": "Link",
    "label": "Invited By",
    "link_filters": "[[\"User\",\"role\",\"=\",\"Mail Admin\"]]",
-   "mandatory_depends_on": "eval:doc.tenant",
+   "mandatory_depends_on": "eval: doc.role == \"Mail User\"",
    "options": "User",
    "search_index": 1
   },
@@ -110,7 +110,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-01-27 21:19:02.587409",
+ "modified": "2025-01-28 13:44:42.740701",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Account Request",
