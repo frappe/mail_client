@@ -177,7 +177,7 @@
    "link_fieldname": "sender"
   }
  ],
- "modified": "2025-01-24 11:47:24.297689",
+ "modified": "2025-01-29 12:44:05.165383",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Account",
@@ -197,6 +197,17 @@
    "write": 1
   },
   {
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Mail Admin",
+   "share": 1,
+   "write": 1
+  },
+  {
    "read": 1,
    "role": "Mail User",
    "write": 1
@@ -210,6 +221,18 @@
    "read": 1,
    "report": 1,
    "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "permlevel": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Mail Admin",
    "share": 1,
    "write": 1
   },

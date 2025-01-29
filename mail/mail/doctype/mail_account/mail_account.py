@@ -1,6 +1,8 @@
 # Copyright (c) 2025, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
+from typing import Literal
+
 import bcrypt
 import frappe
 from frappe import _
@@ -9,7 +11,7 @@ from frappe.utils import random_string
 
 from mail.agent import create_account_on_agents, delete_account_from_agents, patch_account_on_agents
 from mail.utils import get_dmarc_address
-from mail.utils.cache import get_aliases_for_user, get_root_domain_name
+from mail.utils.cache import get_aliases_for_user
 from mail.utils.user import has_role, is_system_manager
 from mail.utils.validation import (
 	is_email_assigned,
@@ -128,43 +130,53 @@ class MailAccount(Document):
 
 
 def create_mail_account(
-	domain_name: str,
 	email: str,
-	display_name: str | None = None,
-	user: str | None = None,
+	first_name: str,
+	last_name: str | None = None,
+	password: str | None = None,
+	role: Literal["Mail User", "Mail Admin"] = "Mail User",
 ) -> "MailAccount":
 	"""Creates a Mail Account"""
 
-	user = user or email
+	if role not in ["Mail User", "Mail Admin"]:
+		frappe.throw(_("Invalid role. Please select a valid role."))
+
+	roles = ["Mail User"]
+	if role == "Mail Admin":
+		roles.append("Mail Admin")
 
 	if not frappe.db.exists("Mail Account", email):
-		if not frappe.db.exists("User", user):
+		if not frappe.db.exists("User", {"email": email}):
 			account_user = frappe.new_doc("User")
-			account_user.email = user
-			account_user.username = user
-			account_user.first_name = display_name
-			account_user.user_type = "System User"
+			account_user.first_name = first_name
+			account_user.last_name = last_name
+			account_user.username = email
+			account_user.email = email
+			account_user.owner = email
 			account_user.send_welcome_email = 0
-			account_user.append_roles("Mail User")
+			if password:
+				account_user.new_password = password
+			for role in roles:
+				account_user.append_roles(role)
 			account_user.insert(ignore_permissions=True)
+		else:
+			frappe.throw(_("User with email {0} already exists.").format(frappe.bold(email)))
 
 		account = frappe.new_doc("Mail Account")
-		account.domain_name = domain_name
-		account.email = email
-		account.display_name = display_name
-		account.user = user
+		account.domain_name = email.split("@")[1]
+		account.user = email
 		account.insert(ignore_permissions=True)
 
 		return account
-
-	return frappe.get_doc("Mail Account", email)
+	else:
+		frappe.throw(_("Mail Account {0} already exists.").format(frappe.bold(email)))
 
 
 def create_dmarc_account() -> None:
 	"""Creates a DMARC account"""
 
 	frappe.flags.ignore_domain_validation = True
-	create_mail_account(get_root_domain_name(), get_dmarc_address(), "DMARC")
+	create_mail_account(email=get_dmarc_address(), first_name="DMARC")
 
 
 def get_permission_query_condition(user: str | None = None) -> str:

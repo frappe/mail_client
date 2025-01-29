@@ -5,11 +5,16 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "section_break_ikiq",
+  "is_invite",
+  "section_break_lwpm",
   "email",
-  "tenant",
-  "column_break_hswp",
   "role",
+  "column_break_hswp",
   "invited_by",
+  "tenant",
+  "domain_name",
+  "account",
   "email_verification_section",
   "is_verified",
   "is_expired",
@@ -26,6 +31,7 @@
   {
    "fieldname": "request_key",
    "fieldtype": "Data",
+   "in_standard_filter": 1,
    "label": "Request Key",
    "no_copy": 1,
    "read_only": 1,
@@ -39,22 +45,30 @@
    "label": "Email",
    "options": "Email",
    "reqd": 1,
-   "search_index": 1
+   "search_index": 1,
+   "set_only_once": 1
   },
   {
    "fieldname": "tenant",
    "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Tenant",
-   "mandatory_depends_on": "eval: doc.role == \"Mail User\"",
+   "mandatory_depends_on": "eval: doc.is_invite",
+   "no_copy": 1,
    "options": "Mail Tenant",
-   "search_index": 1
+   "search_index": 1,
+   "set_only_once": 1
   },
   {
    "fieldname": "role",
    "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Role",
    "options": "\nMail User\nMail Admin",
-   "reqd": 1
+   "reqd": 1,
+   "set_only_once": 1
   },
   {
    "default": "1",
@@ -72,11 +86,15 @@
   {
    "fieldname": "invited_by",
    "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Invited By",
    "link_filters": "[[\"User\",\"role\",\"=\",\"Mail Admin\"]]",
-   "mandatory_depends_on": "eval: doc.role == \"Mail User\"",
+   "mandatory_depends_on": "eval: doc.is_invite",
+   "no_copy": 1,
    "options": "User",
-   "search_index": 1
+   "search_index": 1,
+   "set_only_once": 1
   },
   {
    "fieldname": "email_verification_section",
@@ -106,11 +124,48 @@
    "no_copy": 1,
    "read_only": 1,
    "search_index": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "is_invite",
+   "fieldtype": "Check",
+   "label": "Is Invite",
+   "search_index": 1,
+   "set_only_once": 1
+  },
+  {
+   "fieldname": "section_break_ikiq",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "section_break_lwpm",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "account",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Account",
+   "mandatory_depends_on": "eval: doc.is_invite",
+   "options": "Email",
+   "search_index": 1,
+   "set_only_once": 1
+  },
+  {
+   "fieldname": "domain_name",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Domain",
+   "mandatory_depends_on": "eval: doc.is_invite",
+   "options": "Mail Domain",
+   "search_index": 1,
+   "set_only_once": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-01-28 13:44:42.740701",
+ "modified": "2025-01-29 16:22:46.334378",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Account Request",
@@ -127,6 +182,16 @@
    "report": 1,
    "role": "System Manager",
    "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Mail Admin",
    "write": 1
   }
  ],
