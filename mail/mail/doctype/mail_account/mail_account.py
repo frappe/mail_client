@@ -9,7 +9,7 @@ from frappe.utils import random_string
 
 from mail.agent import create_account_on_agents, delete_account_from_agents, patch_account_on_agents
 from mail.utils import get_dmarc_address
-from mail.utils.cache import get_root_domain_name, get_user_mail_aliases
+from mail.utils.cache import get_aliases_for_user, get_root_domain_name
 from mail.utils.user import has_role, is_system_manager
 from mail.utils.validation import (
 	is_email_assigned,
@@ -104,7 +104,7 @@ class MailAccount(Document):
 		if not self.default_outgoing_email:
 			self.default_outgoing_email = self.email
 		else:
-			if self.default_outgoing_email not in [self.email] + get_user_mail_aliases(self.user):
+			if self.default_outgoing_email not in [self.email] + get_aliases_for_user(self.user):
 				frappe.throw(_("Default Email must be one of the email addresses assigned to the user."))
 
 	def validate_display_name(self) -> None:

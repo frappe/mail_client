@@ -22,7 +22,7 @@ from mail.mail.doctype.mime_message.mime_message import (
 	update_mime_message,
 )
 from mail.utils import get_dmarc_address, get_in_reply_to_mail, load_compressed_file
-from mail.utils.cache import get_user_mail_account
+from mail.utils.cache import get_account_for_user
 from mail.utils.email_parser import EmailParser, extract_ip_and_host, extract_spam_status
 from mail.utils.user import is_mail_account_owner, is_system_manager
 
@@ -290,7 +290,7 @@ def get_permission_query_condition(user: str | None = None) -> str:
 	if is_system_manager(user):
 		return ""
 
-	if account := get_user_mail_account(user):
+	if account := get_account_for_user(user):
 		return f'(`tabIncoming Mail`.`receiver` = "{account}") AND (`tabIncoming Mail`.`docstatus` = 1)'
 	else:
 		return "1=0"

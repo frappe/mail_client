@@ -6,7 +6,7 @@ import frappe
 from frappe import _
 from frappe.model.document import Document
 
-from mail.utils.cache import get_user_mail_tenant
+from mail.utils.cache import get_tenant_for_user
 from mail.utils.user import has_role, is_mail_tenant_admin, is_system_manager
 
 
@@ -68,7 +68,7 @@ def get_permission_query_condition(user: str | None = None) -> str:
 		return ""
 
 	if has_role(user, "Mail Admin"):
-		if tenant := get_user_mail_tenant(user):
+		if tenant := get_tenant_for_user(user):
 			return f'(`tabMail Tenant`.`name` = "{tenant}")'
 
 	return "1=0"

@@ -11,7 +11,7 @@ from mail.agent import create_domain_on_agents, delete_domain_from_agents
 from mail.mail.doctype.dkim_key.dkim_key import create_dkim_key
 from mail.mail.doctype.mail_account.mail_account import create_dmarc_account
 from mail.utils import get_dkim_host, get_dkim_selector, get_dmarc_address
-from mail.utils.cache import get_root_domain_name, get_user_mail_tenant
+from mail.utils.cache import get_root_domain_name, get_tenant_for_user
 from mail.utils.dns import verify_dns_record
 from mail.utils.user import has_role, is_mail_tenant_admin, is_system_manager
 
@@ -259,7 +259,7 @@ def get_permission_query_condition(user: str | None = None) -> str:
 		return ""
 
 	if has_role(user, "Mail Admin"):
-		if tenant := get_user_mail_tenant(user):
+		if tenant := get_tenant_for_user(user):
 			return f'(`tabMail Domain`.`tenant` = "{tenant}")'
 
 	return "1=0"

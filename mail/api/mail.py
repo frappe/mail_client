@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 from frappe.translate import get_all_translations
 from frappe.utils import is_html
 
-from mail.utils.cache import get_user_default_outgoing_email, get_user_mail_account
+from mail.utils.cache import get_account_for_user, get_default_outgoing_email_for_user
 from mail.utils.user import has_role, is_system_manager
 
 
@@ -47,7 +47,7 @@ def get_user_info() -> dict:
 	if user.tenant:
 		user.tenant_name = frappe.db.get_value("Mail Tenant", user.tenant, "tenant_name")
 
-	user.default_outgoing = get_user_default_outgoing_email(frappe.session.user)
+	user.default_outgoing = get_default_outgoing_email_for_user(frappe.session.user)
 
 	return user
 
@@ -68,7 +68,7 @@ def get_translations() -> dict:
 def get_incoming_mails(start: int = 0) -> list:
 	"""Returns incoming mails for the current user."""
 
-	account = get_user_mail_account(frappe.session.user)
+	account = get_account_for_user(frappe.session.user)
 	mails = frappe.get_all(
 		"Incoming Mail",
 		{"receiver": account, "docstatus": 1},
@@ -109,7 +109,7 @@ def get_draft_mails(start: int = 0) -> list:
 def get_outgoing_mails(status: str, start: int = 0) -> list:
 	"""Returns outgoing mails for the current user."""
 
-	account = get_user_mail_account(frappe.session.user)
+	account = get_account_for_user(frappe.session.user)
 
 	if status == "Draft":
 		docstatus = 0

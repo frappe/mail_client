@@ -43,7 +43,7 @@ def get_imap_limits() -> dict:
 	return frappe.cache.get_value("imap_limits", generator)
 
 
-def get_user_mail_tenant(user: str) -> str | None:
+def get_tenant_for_user(user: str) -> str | None:
 	"""Returns the mail tenant of the user."""
 
 	def generator() -> str | None:
@@ -52,7 +52,7 @@ def get_user_mail_tenant(user: str) -> str | None:
 	return frappe.cache.hget(f"user|{user}", "mail_tenant", generator)
 
 
-def get_user_mail_account(user: str) -> str | None:
+def get_account_for_user(user: str) -> str | None:
 	"""Returns the mail account of the user."""
 
 	def generator() -> str | None:
@@ -73,11 +73,11 @@ def get_account_for_email(email: str) -> str | None:
 	return frappe.cache.hget(f"email|{email}", "mail_account", generator)
 
 
-def get_user_mail_aliases(user: str) -> list:
+def get_aliases_for_user(user: str) -> list:
 	"""Returns the mail aliases of the user."""
 
 	def generator() -> list:
-		account = get_user_mail_account(user)
+		account = get_account_for_user(user)
 
 		if not account:
 			return []
@@ -96,7 +96,7 @@ def get_user_mail_aliases(user: str) -> list:
 	return frappe.cache.hget(f"user|{user}", "mail_aliases", generator)
 
 
-def get_user_default_outgoing_email(user: str) -> str | None:
+def get_default_outgoing_email_for_user(user: str) -> str | None:
 	"""Returns the default outgoing email of the user."""
 
 	def generator() -> str | None:

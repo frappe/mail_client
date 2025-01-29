@@ -47,7 +47,7 @@ from mail.utils import (
 	get_in_reply_to,
 	get_in_reply_to_mail,
 )
-from mail.utils.cache import get_account_for_email, get_user_default_outgoing_email, get_user_mail_account
+from mail.utils.cache import get_account_for_email, get_account_for_user, get_default_outgoing_email_for_user
 from mail.utils.dns import get_host_by_ip
 from mail.utils.dt import parsedate_to_datetime
 from mail.utils.email_parser import EmailParser
@@ -183,7 +183,7 @@ class OutgoingMail(Document):
 		account = (
 			get_account_for_email(self.from_)
 			if is_system_manager(frappe.session.user)
-			else get_user_mail_account(frappe.session.user)
+			else get_account_for_user(frappe.session.user)
 		)
 
 		if not account:
@@ -996,7 +996,7 @@ class OutgoingMail(Document):
 def get_from_() -> str | None:
 	"""Returns the default outgoing email address of the user."""
 
-	return get_user_default_outgoing_email(frappe.session.user)
+	return get_default_outgoing_email_for_user(frappe.session.user)
 
 
 @frappe.whitelist()
@@ -1156,7 +1156,7 @@ def create_outgoing_mail(
 	if via_api and not is_newsletter:
 		user = frappe.session.user
 		if from_ not in get_user_email_addresses(user):
-			from_ = get_user_default_outgoing_email(user)
+			from_ = get_default_outgoing_email_for_user(user)
 
 	if not do_not_save:
 		doc.save()
@@ -1236,7 +1236,7 @@ def get_permission_query_condition(user: str | None = None) -> str:
 	if is_system_manager(user):
 		return ""
 
-	if account := get_user_mail_account(user):
+	if account := get_account_for_user(user):
 		return f'(`tabOutgoing Mail`.`sender` = "{account}") AND (`tabOutgoing Mail`.`docstatus` != 2)'
 	else:
 		return "1=0"

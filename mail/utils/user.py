@@ -1,7 +1,7 @@
 import frappe
 from frappe.utils.caching import request_cache
 
-from mail.utils.cache import get_user_mail_account, get_user_mail_aliases, get_user_mail_tenant
+from mail.utils.cache import get_account_for_user, get_aliases_for_user, get_tenant_for_user
 
 
 @request_cache
@@ -15,9 +15,9 @@ def get_user_email_addresses(user: str) -> list:
 	"""Returns the list of email addresses associated with the user."""
 
 	email_addresses = []
-	if account := get_user_mail_account(user):
+	if account := get_account_for_user(user):
 		email_addresses.append(account)
-	if aliases := get_user_mail_aliases(user):
+	if aliases := get_aliases_for_user(user):
 		email_addresses.extend(aliases)
 
 	return email_addresses
@@ -27,7 +27,7 @@ def get_user_email_addresses(user: str) -> list:
 def get_user_tenant() -> str | None:
 	"""Returns the mail tenant of the user."""
 
-	return get_user_mail_tenant(frappe.session.user)
+	return get_tenant_for_user(frappe.session.user)
 
 
 @request_cache
