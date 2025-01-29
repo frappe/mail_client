@@ -5,8 +5,8 @@
  "engine": "InnoDB",
  "field_order": [
   "section_break_ceuu",
+  "tenant",
   "domain_name",
-  "mail_tenant",
   "enabled",
   "is_verified",
   "is_subdomain",
@@ -156,15 +156,25 @@
    "search_index": 1
   },
   {
-   "fieldname": "mail_tenant",
+   "fieldname": "tenant",
    "fieldtype": "Link",
-   "label": "Mail Tenant",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Tenant",
+   "no_copy": 1,
    "options": "Mail Tenant",
-   "reqd": 1
+   "permlevel": 1,
+   "reqd": 1,
+   "search_index": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [
+  {
+   "group": "Reference",
+   "link_doctype": "Mail Domain Request",
+   "link_fieldname": "domain_name"
+  },
   {
    "group": "Reference",
    "link_doctype": "Mail Account",
@@ -201,7 +211,7 @@
    "link_fieldname": "domain_name"
   }
  ],
- "modified": "2025-01-24 13:45:54.747877",
+ "modified": "2025-01-29 11:32:31.994852",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Domain",
@@ -219,6 +229,15 @@
    "write": 1
   },
   {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Mail Admin",
+   "write": 1
+  },
+  {
    "delete": 1,
    "email": 1,
    "export": 1,
@@ -229,6 +248,16 @@
    "role": "System Manager",
    "share": 1,
    "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "permlevel": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Mail Admin",
+   "share": 1
   }
  ],
  "sort_field": "creation",

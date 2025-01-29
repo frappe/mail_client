@@ -1,5 +1,6 @@
 {
  "actions": [],
+ "autoname": "hash",
  "creation": "2025-01-14 15:10:13.672435",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -10,12 +11,12 @@
   "role",
   "invited_by",
   "email_verification_section",
-  "send_email",
-  "request_key",
-  "otp",
-  "column_break_vcxy",
   "is_verified",
-  "is_expired"
+  "is_expired",
+  "send_email",
+  "column_break_vcxy",
+  "request_key",
+  "otp"
  ],
  "fields": [
   {
@@ -26,6 +27,7 @@
    "fieldname": "request_key",
    "fieldtype": "Data",
    "label": "Request Key",
+   "no_copy": 1,
    "read_only": 1,
    "unique": 1
   },
@@ -33,21 +35,26 @@
    "fieldname": "email",
    "fieldtype": "Data",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Email",
-   "reqd": 1
+   "options": "Email",
+   "reqd": 1,
+   "search_index": 1
   },
   {
    "fieldname": "tenant",
    "fieldtype": "Link",
    "label": "Tenant",
-   "mandatory_depends_on": "eval:doc.role == 'Mail User'",
-   "options": "Mail Tenant"
+   "mandatory_depends_on": "eval: doc.role == \"Mail User\"",
+   "options": "Mail Tenant",
+   "search_index": 1
   },
   {
    "fieldname": "role",
    "fieldtype": "Select",
    "label": "Role",
-   "options": "Mail User\nMail Admin"
+   "options": "\nMail User\nMail Admin",
+   "reqd": 1
   },
   {
    "default": "1",
@@ -59,6 +66,7 @@
    "fieldname": "otp",
    "fieldtype": "Data",
    "label": "OTP",
+   "no_copy": 1,
    "read_only": 1
   },
   {
@@ -66,8 +74,9 @@
    "fieldtype": "Link",
    "label": "Invited By",
    "link_filters": "[[\"User\",\"role\",\"=\",\"Mail Admin\"]]",
-   "mandatory_depends_on": "eval:doc.tenant",
-   "options": "User"
+   "mandatory_depends_on": "eval: doc.role == \"Mail User\"",
+   "options": "User",
+   "search_index": 1
   },
   {
    "fieldname": "email_verification_section",
@@ -76,10 +85,13 @@
   },
   {
    "default": "0",
+   "depends_on": "eval: !doc.__islocal",
    "fieldname": "is_verified",
    "fieldtype": "Check",
    "label": "Is Verified",
-   "read_only": 1
+   "no_copy": 1,
+   "read_only": 1,
+   "search_index": 1
   },
   {
    "fieldname": "column_break_vcxy",
@@ -87,19 +99,22 @@
   },
   {
    "default": "0",
+   "depends_on": "eval: !doc.__islocal",
    "fieldname": "is_expired",
    "fieldtype": "Check",
    "label": "Is Expired",
-   "read_only": 1
+   "no_copy": 1,
+   "read_only": 1,
+   "search_index": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-01-27 14:59:25.507405",
+ "modified": "2025-01-28 13:44:42.740701",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Account Request",
- "naming_rule": "UUID",
+ "naming_rule": "Random",
  "owner": "Administrator",
  "permissions": [
   {
@@ -119,5 +134,6 @@
  "sort_field": "creation",
  "sort_order": "DESC",
  "states": [],
- "title_field": "email"
+ "title_field": "email",
+ "track_changes": 1
 }

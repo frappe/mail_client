@@ -10,33 +10,62 @@ from frappe.utils import add_days, get_url, nowdate, random_string
 
 
 class MailAccountRequest(Document):
-	def before_insert(self):
-		self.request_key = random_string(32)
+	def validate(self) -> None:
+		self.validate_role()
+		self.validate_tenant()
+
+	def before_insert(self) -> None:
+		self.set_request_key()
 
 		if not self.invited_by:
-			self.otp = random.randint(10000, 99999)
+			self.set_otp()
 
-	def after_insert(self):
+	def after_insert(self) -> None:
 		if self.send_email:
 			self.send_verification_email()
 
+	def validate_role(self) -> None:
+		if not self.role:
+			frappe.throw(_("Role is mandatory."))
+
+		if self.role not in ["Mail User", "Mail Admin"]:
+			frappe.throw(_("Invalid role. Please select a valid role."))
+
+	def validate_tenant(self) -> None:
+		if self.role == "Mail Admin":
+			self.tenant = None
+		elif self.role == "Mail User":
+			if not self.tenant:
+				frappe.throw(_("Tenant is mandatory for Mail User role."))
+
+	def set_request_key(self) -> None:
+		"""Sets a random key for the request."""
+
+		self.request_key = random_string(32)
+
+	def set_otp(self) -> None:
+		"""Sets a random 5-digit OTP for the request."""
+
+		self.otp = random.randint(10000, 99999)
+
 	@frappe.whitelist()
-	def send_verification_email(self):
+	def send_verification_email(self) -> None:
+		"""Send verification email to the user."""
+
 		link = get_url() + "/signup/" + self.request_key
 		args = {
 			"link": link,
 			"otp": self.otp,
-			"image_path": "https://github.com/frappe/gameplan/assets/9355208/447035d0-0686-41d2-910a-a3d21928ab94",
+			"image_path": "https://frappe.io/files/Frappe-black.png",
 		}
 
 		if self.invited_by:
-			subject = f"You have been invited by {self.invited_by} to join Frappe Mail"
+			subject = _("You have been invited by {0} to join Frappe Mail").format(self.invited_by)
 			template = "invite_signup"
 			tenant_name = frappe.db.get_value("Mail Tenant", self.tenant, "tenant_name")
 			args.update({"invited_by": self.invited_by, "tenant": tenant_name})
-
 		else:
-			subject = f"{self.otp} - OTP for Frappe Mail Account Verification"
+			subject = _("{0} - OTP for Frappe Mail Account Verification").format(self.otp)
 			template = "self_signup"
 
 		frappe.sendmail(
@@ -46,14 +75,15 @@ class MailAccountRequest(Document):
 			args=args,
 			now=True,
 		)
-		frappe.msgprint(_("Verification mail sent successfully."), indicator="green", alert=True)
+		frappe.msgprint(_("Verification email sent successfully."), indicator="green", alert=True)
 
 
-def expire_mail_account_requests():
-	seven_days_before = add_days(nowdate(), -7)
-	for d in frappe.get_all(
+def expire_mail_account_requests() -> None:
+	"""Called by scheduler to expire mail account requests older than 7 days."""
+
+	frappe.db.set_value(
 		"Mail Account Request",
-		filters={"is_expired": 0, "creation": ["<", seven_days_before]},
-		pluck="name",
-	):
-		frappe.db.set_value("Mail Account Request", d, "is_expired", 1)
+		{"is_expired": 0, "creation": ["<", add_days(nowdate(), -7)]},
+		"is_expired",
+		1,
+	)

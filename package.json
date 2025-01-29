@@ -5,9 +5,7 @@
     "test-local": "cypress open --e2e --browser chrome",
     "postinstall": "cd frontend && yarn install --check-files",
     "dev": "cd frontend && yarn dev",
-    "build": "yarn build-app && yarn build-email-css",
-    "build-app": "cd frontend && yarn build",
-		"build-email-css": "npx tailwindcss -i ./mail/public/email/style.css -o ./mail/public/css/email.css --config ./mail/public/email/tailwind.config.js"
+    "build": "cd frontend && yarn build"
   },
   "repository": "https://github.com/frappe/mail",
   "author": "Frappe",

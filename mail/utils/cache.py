@@ -43,6 +43,15 @@ def get_imap_limits() -> dict:
 	return frappe.cache.get_value("imap_limits", generator)
 
 
+def get_user_mail_tenant(user: str) -> str | None:
+	"""Returns the mail tenant of the user."""
+
+	def generator() -> str | None:
+		return frappe.db.get_value("Mail Tenant Member", {"user": user}, "tenant")
+
+	return frappe.cache.hget(f"user|{user}", "mail_tenant", generator)
+
+
 def get_user_mail_account(user: str) -> str | None:
 	"""Returns the mail account of the user."""
 
