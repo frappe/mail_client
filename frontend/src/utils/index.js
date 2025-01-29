@@ -39,7 +39,7 @@ export function getSidebarLinks() {
 			label: 'Domains',
 			icon: 'Globe',
 			to: 'Domains',
-			activeFor: ['Domains'],
+			activeFor: ['Domains', 'Domain'],
 			forDashboard: true,
 		},
 	]

@@ -58,6 +58,13 @@ const routes = [
 		component: () => import('@/pages/dashboard/Domains.vue'),
 		meta: { isDashboard: true },
 	},
+	{
+		path: '/dashboard/domains/:domainName',
+		name: 'Domain',
+		component: () => import('@/pages/dashboard/Domain.vue'),
+		props: true,
+		meta: { isDashboard: true },
+	},
 ]
 
 const router = createRouter({

@@ -20,10 +20,12 @@
 </template>
 <script setup>
 import { ref, inject } from 'vue'
+import { useRouter } from 'vue-router'
 import { Button, Breadcrumbs, ListView, createListResource } from 'frappe-ui'
 import AddDomain from '@/components/Modals/AddDomain.vue'
 
 const user = inject('$user')
+const router = useRouter()
 
 const showAddDomain = ref(false)
 
@@ -57,12 +59,13 @@ const LIST_OPTIONS = {
 			},
 		},
 	},
+	onRowClick: (row) => router.push({ name: 'Domain', params: { domainName: row.name } }),
 }
 
 const domains = createListResource({
 	doctype: 'Mail Domain',
 	fields: ['name', 'enabled', 'is_verified'],
-	filters: { mail_tenant: user.data?.tenant },
+	filters: { tenant: user.data?.tenant },
 	auto: true,
 	pageLength: 50,
 	cache: ['mailDomains', user.data?.tenant],
@@ -71,9 +74,6 @@ const domains = createListResource({
 			...domain,
 			status: domain.enabled ? 'Enabled' : 'Disabled',
 		}))
-	},
-	onSuccess(data) {
-		console.log(data)
 	},
 })
 </script>
