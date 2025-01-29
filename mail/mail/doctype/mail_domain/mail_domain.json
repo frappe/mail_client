@@ -5,13 +5,14 @@
  "engine": "InnoDB",
  "field_order": [
   "section_break_ceuu",
-  "tenant",
   "domain_name",
   "enabled",
   "is_verified",
   "is_subdomain",
   "is_root_domain",
   "column_break_lr3y",
+  "tenant",
+  "tenant_name",
   "dkim_rsa_key_size",
   "newsletter_retention",
   "dns_records_section",
@@ -166,6 +167,14 @@
    "permlevel": 1,
    "reqd": 1,
    "search_index": 1
+  },
+  {
+   "fetch_from": "tenant.tenant_name",
+   "fieldname": "tenant_name",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Tenant Name",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
@@ -211,7 +220,7 @@
    "link_fieldname": "domain_name"
   }
  ],
- "modified": "2025-01-29 11:32:31.994852",
+ "modified": "2025-01-29 16:21:13.816735",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Domain",

@@ -6,7 +6,7 @@
 			<Breadcrumbs :items="[{ label: 'Domains' }]" />
 			<Button :label="__('Add Domain')" iconLeft="plus" @click="showAddDomain = true" />
 		</header>
-		<div class="m-8 flex-1 flex flex-col">
+		<div class="m-6 flex-1 flex flex-col">
 			<ListView
 				class="flex-1"
 				:columns="LIST_COLUMNS"
