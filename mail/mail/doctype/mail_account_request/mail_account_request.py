@@ -8,6 +8,9 @@ from frappe import _
 from frappe.model.document import Document
 from frappe.utils import add_days, get_url, nowdate, random_string
 
+from mail.utils.cache import get_tenant_for_user
+from mail.utils.user import has_role, is_mail_tenant_admin, is_system_manager
+
 
 class MailAccountRequest(Document):
 	def validate(self) -> None:
@@ -87,3 +90,31 @@ def expire_mail_account_requests() -> None:
 		"is_expired",
 		1,
 	)
+
+
+def has_permission(doc: "Document", ptype: str, user: str) -> bool:
+	if doc.doctype != "Mail Account Request":
+		return False
+
+	if is_system_manager(user):
+		return True
+
+	if is_mail_tenant_admin(doc.tenant, user):
+		if ptype in ("create", "read", "write"):
+			return True
+
+	return False
+
+
+def get_permission_query_condition(user: str | None = None) -> str:
+	if not user:
+		user = frappe.session.user
+
+	if is_system_manager(user):
+		return ""
+
+	if has_role(user, "Mail Admin"):
+		if tenant := get_tenant_for_user(user):
+			return f'(`tabMail Account Request`.`tenant` = "{tenant}")'
+
+	return "1=0"
