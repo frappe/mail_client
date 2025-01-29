@@ -259,7 +259,7 @@ def create_domain_on_agents(domain_name: str, agents: list[str] | None = None) -
 	principal = Principal(name=domain_name, type="domain").__dict__
 	for agent in primary_agents:
 		create_mail_agent_request_log(
-			agent=agent, method="POST", endpoint="/api/principal", request_json=principal
+			agent=agent, method="POST", endpoint="/api/principal", request_data=principal
 		)
 
 
@@ -295,7 +295,7 @@ def create_account_on_agents(
 	).__dict__
 	for agent in primary_agents:
 		create_mail_agent_request_log(
-			agent=agent, method="POST", endpoint="/api/principal", request_json=principal
+			agent=agent, method="POST", endpoint="/api/principal", request_data=principal
 		)
 
 
@@ -369,7 +369,7 @@ def create_group_on_agents(email: str, display_name: str, agents: list[str] | No
 	).__dict__
 	for agent in primary_agents:
 		create_mail_agent_request_log(
-			agent=agent, method="POST", endpoint="/api/principal", request_json=principal
+			agent=agent, method="POST", endpoint="/api/principal", request_data=principal
 		)
 
 
