@@ -163,12 +163,18 @@
    "label": "Tenant",
    "no_copy": 1,
    "options": "Mail Tenant",
+   "permlevel": 1,
    "reqd": 1,
    "search_index": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [
+  {
+   "group": "Reference",
+   "link_doctype": "Mail Domain Request",
+   "link_fieldname": "domain_name"
+  },
   {
    "group": "Reference",
    "link_doctype": "Mail Account",
@@ -205,7 +211,7 @@
    "link_fieldname": "domain_name"
   }
  ],
- "modified": "2025-01-28 11:55:45.686944",
+ "modified": "2025-01-29 11:32:31.994852",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Domain",
@@ -223,7 +229,6 @@
    "write": 1
   },
   {
-   "delete": 1,
    "email": 1,
    "export": 1,
    "print": 1,

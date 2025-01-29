@@ -11,8 +11,9 @@ from mail.agent import create_domain_on_agents, delete_domain_from_agents
 from mail.mail.doctype.dkim_key.dkim_key import create_dkim_key
 from mail.mail.doctype.mail_account.mail_account import create_dmarc_account
 from mail.utils import get_dkim_host, get_dkim_selector, get_dmarc_address
-from mail.utils.cache import get_root_domain_name
+from mail.utils.cache import get_root_domain_name, get_user_mail_tenant
 from mail.utils.dns import verify_dns_record
+from mail.utils.user import has_role, is_mail_tenant_admin, is_system_manager
 
 
 class MailDomain(Document):
@@ -21,11 +22,14 @@ class MailDomain(Document):
 		self.name = self.domain_name
 
 	def validate(self) -> None:
+		if self.is_new():
+			self.validate_tenant_max_domains()
+			self.validate_is_subdomain()
+			self.validate_is_root_domain()
+
 		self.validate_dkim_rsa_key_size()
 		self.validate_newsletter_retention()
 		self.validate_is_verified()
-		self.validate_is_subdomain()
-		self.validate_is_root_domain()
 
 		if self.is_new() or self.has_value_changed("dkim_rsa_key_size"):
 			create_dkim_key(self.domain_name, cint(self.dkim_rsa_key_size))
@@ -42,6 +46,32 @@ class MailDomain(Document):
 			frappe.throw(_("Only Administrator can delete Mail Domain."))
 
 		delete_domain_from_agents(domain_name=self.domain_name)
+
+	def validate_tenant_max_domains(self) -> None:
+		"""Validates the Tenant Max Domains."""
+
+		if is_system_manager(frappe.session.user):
+			return
+
+		total_domains = frappe.db.count("Mail Domain", filters={"tenant": self.tenant})
+		max_domains = frappe.db.get_value("Mail Tenant", self.tenant, "max_domains")
+		if total_domains >= max_domains:
+			frappe.throw(
+				_("You have reached the maximum limit of {0} domains for this tenant.").format(
+					frappe.bold(max_domains)
+				)
+			)
+
+	def validate_is_subdomain(self) -> None:
+		"""Validates the Is Subdomain field."""
+
+		if len(self.domain_name.split(".")) > 2:
+			self.is_subdomain = 1
+
+	def validate_is_root_domain(self) -> None:
+		"""Validates the Is Root Domain field."""
+
+		self.is_root_domain = 1 if self.domain_name == get_root_domain_name() else 0
 
 	def validate_dkim_rsa_key_size(self) -> None:
 		"""Validates the DKIM Key Size."""
@@ -78,20 +108,12 @@ class MailDomain(Document):
 		if not self.enabled:
 			self.is_verified = 0
 
-	def validate_is_subdomain(self) -> None:
-		"""Validates the Is Subdomain field."""
-
-		if len(self.domain_name.split(".")) > 2:
-			self.is_subdomain = 1
-
-	def validate_is_root_domain(self) -> None:
-		"""Validates the Is Root Domain field."""
-
-		self.is_root_domain = 1 if self.domain_name == get_root_domain_name() else 0
-
 	@frappe.whitelist()
 	def refresh_dns_records(self, do_not_save: bool = False) -> None:
 		"""Refreshes the DNS Records."""
+
+		if not has_permission(self, "write"):
+			frappe.throw(_("You do not have permission to refresh DNS Records."))
 
 		self.is_verified = 0
 		self.dns_records.clear()
@@ -100,11 +122,15 @@ class MailDomain(Document):
 			self.append("dns_records", record)
 
 		if not do_not_save:
-			self.save()
+			self.save(ignore_permissions=True)
+			frappe.msgprint(_("DNS Records refreshed successfully."), indicator="green", alert=True)
 
 	@frappe.whitelist()
 	def verify_dns_records(self, do_not_save: bool = False) -> None:
 		"""Verifies the DNS Records."""
+
+		if not has_permission(self, "write"):
+			frappe.throw(_("You do not have permission to verify DNS Records."))
 
 		errors = []
 		for record in self.dns_records:
@@ -123,11 +149,14 @@ class MailDomain(Document):
 			frappe.msgprint(errors, title="DNS Verification Failed", indicator="red", as_list=True)
 
 		if not do_not_save:
-			self.save()
+			self.save(ignore_permissions=True)
 
 	@frappe.whitelist()
 	def rotate_dkim_keys(self) -> None:
 		"""Rotates the DKIM Keys."""
+
+		if not has_permission(self, "write"):
+			frappe.throw(_("You do not have permission to rotate DKIM Keys."))
 
 		create_dkim_key(self.domain_name, cint(self.dkim_rsa_key_size))
 		frappe.msgprint(_("DKIM Keys rotated successfully."), indicator="green", alert=True)
@@ -204,3 +233,33 @@ def get_dns_records(domain_name: str) -> list[dict]:
 			)
 
 	return records
+
+
+def has_permission(doc: "Document", ptype: str, user: str | None = None) -> bool:
+	if doc.doctype != "Mail Domain":
+		return False
+
+	user = user or frappe.session.user
+
+	if is_system_manager(user):
+		return True
+
+	if is_mail_tenant_admin(doc.tenant, user):
+		if ptype in ("read", "write"):
+			return True
+
+	return False
+
+
+def get_permission_query_condition(user: str | None = None) -> str:
+	if not user:
+		user = frappe.session.user
+
+	if is_system_manager(user):
+		return ""
+
+	if has_role(user, "Mail Admin"):
+		if tenant := get_user_mail_tenant(user):
+			return f'(`tabMail Domain`.`tenant` = "{tenant}")'
+
+	return "1=0"
