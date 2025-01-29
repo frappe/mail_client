@@ -1,7 +1,5 @@
 import frappe
 
-from mail.utils.dns import verify_dns_record
-
 
 @frappe.whitelist()
 def create_tenant(tenant_name: str) -> None:
@@ -23,11 +21,11 @@ def create_domain_request(domain_name, mail_tenant) -> str:
 	domain_request.user = frappe.session.user
 	domain_request.insert()
 
-	return domain_request.name
+	return domain_request
 
 
 @frappe.whitelist()
-def verify_domain_key(domain_request: str) -> bool:
+def verify_dns_record(domain_request: str) -> bool:
 	"""Verify the domain request key"""
 
 	doc = frappe.get_doc("Mail Domain Request", domain_request)
