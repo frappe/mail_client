@@ -5,8 +5,10 @@
   "scripts": {
     "dev": "vite",
     "serve": "vite preview",
-    "build": "vite build --base=/assets/mail/frontend/ && yarn copy-html-entry",
-    "copy-html-entry": "cp ../mail/public/frontend/index.html ../mail/www/mail.html"
+    "build": "yarn build-app && yarn build-email-css",
+    "build-app": "vite build --base=/assets/mail/frontend/ && yarn copy-html-entry",
+    "copy-html-entry": "cp ../mail/public/frontend/index.html ../mail/www/mail.html",
+		"build-email-css": "npx tailwindcss -i ../mail/public/email/style.css -o ../mail/public/css/email.css --config ../mail/public/email/tailwind.config.js"
   },
   "dependencies": {
     "@vueuse/core": "^10.4.1",
