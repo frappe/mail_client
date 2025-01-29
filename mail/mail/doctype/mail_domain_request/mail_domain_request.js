@@ -12,20 +12,7 @@ frappe.ui.form.on("Mail Domain Request", {
 		if (frm.doc.__islocal) return;
 
 		frm.add_custom_button(__("Verify and Create Domain"), () => {
-			frm.call({
-				doc: frm.doc,
-				method: "verify_and_create_domain",
-				args: {
-					save: true,
-				},
-				freeze: true,
-				freeze_message: __("Verifying and creating Domain..."),
-				callback: (r) => {
-					if (!r.exc) {
-						frm.refresh();
-					}
-				},
-			});
+			frm.trigger("verify_and_create_domain");
 		});
 	},
 
@@ -46,5 +33,22 @@ frappe.ui.form.on("Mail Domain Request", {
 				},
 			});
 		}
+	},
+
+	verify_and_create_domain(frm) {
+		frm.call({
+			doc: frm.doc,
+			method: "verify_and_create_domain",
+			args: {
+				save: true,
+			},
+			freeze: true,
+			freeze_message: __("Creating Domain..."),
+			callback: (r) => {
+				if (!r.exc) {
+					frm.refresh();
+				}
+			},
+		});
 	},
 });

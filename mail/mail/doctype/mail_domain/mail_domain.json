@@ -5,13 +5,13 @@
  "engine": "InnoDB",
  "field_order": [
   "section_break_ceuu",
-  "tenant",
-  "domain_name",
   "enabled",
   "is_verified",
   "is_subdomain",
   "is_root_domain",
   "column_break_lr3y",
+  "tenant",
+  "domain_name",
   "dkim_rsa_key_size",
   "newsletter_retention",
   "dns_records_section",
@@ -172,6 +172,11 @@
  "links": [
   {
    "group": "Reference",
+   "link_doctype": "Mail Account Request",
+   "link_fieldname": "domain_name"
+  },
+  {
+   "group": "Reference",
    "link_doctype": "Mail Domain Request",
    "link_fieldname": "domain_name"
   },
@@ -211,7 +216,7 @@
    "link_fieldname": "domain_name"
   }
  ],
- "modified": "2025-01-29 11:32:31.994852",
+ "modified": "2025-01-29 19:26:13.013330",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Domain",

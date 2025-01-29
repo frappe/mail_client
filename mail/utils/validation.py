@@ -68,7 +68,7 @@ def is_valid_email_for_domain(email: str, domain_name: str, raise_exception: boo
 
 	email_domain = email.split("@")[1]
 
-	if not email_domain == domain_name:
+	if email_domain != domain_name:
 		if raise_exception:
 			frappe.throw(
 				_("Email domain {0} does not match with domain {1}.").format(
@@ -101,6 +101,14 @@ def validate_domain_is_enabled_and_verified(domain_name: str) -> None:
 		frappe.throw(_("Domain {0} is disabled.").format(frappe.bold(domain_name)))
 	if not is_verified:
 		frappe.throw(_("Domain {0} is not verified.").format(frappe.bold(domain_name)))
+
+
+@request_cache
+def validate_domain_owned_by_tenant(domain_name: str, tenant: str) -> None:
+	"""Validates if the domain is owned by the tenant."""
+
+	if tenant != frappe.db.get_value("Mail Domain", domain_name, "tenant"):
+		frappe.throw(_("Domain {0} is not owned by the selected tenant.").format(frappe.bold(domain_name)))
 
 
 def validate_user_has_mail_admin_role(user: str) -> None:
