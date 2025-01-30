@@ -32,34 +32,41 @@
 						:disabled="true"
 					/>
 				</div>
-				<div class="p-4 grid grid-cols-2">
-					<div></div>
+				<div class="p-4">
 					<div class="my-1.5 space-y-3">
-						<FormControl v-model="domain.doc.tenant_name" :disabled="true" />
-						<FormControl
-							type="select"
-							:options="[
-								{ label: '2048', value: 2048 },
-								{ label: '4096', value: 4096 },
-							]"
-							v-model="domain.doc.dkim_rsa_key_size"
-							@update:modelValue="
-								domain.setValue.submit({
-									dkim_rsa_key_size: domain.doc.dkim_rsa_key_size,
-								})
-							"
-						/>
-						<FormControl
-							type="number"
-							min="1"
-							max="7"
-							v-model="domain.doc.newsletter_retention"
-							@update:modelValue="
-								domain.setValueDebounced.submit({
-									newsletter_retention: Number(domain.doc.newsletter_retention),
-								})
-							"
-						/>
+						<HorizontalFormControl :label="__('Mail Tenant')" :disabled="true">
+							<FormControl v-model="domain.doc.tenant_name" :disabled="true" />
+						</HorizontalFormControl>
+						<HorizontalFormControl :label="__('DKIM RSA Key Size')">
+							<FormControl
+								type="select"
+								:options="[
+									{ label: '2048', value: 2048 },
+									{ label: '4096', value: 4096 },
+								]"
+								v-model="domain.doc.dkim_rsa_key_size"
+								@update:modelValue="
+									domain.setValue.submit({
+										dkim_rsa_key_size: domain.doc.dkim_rsa_key_size,
+									})
+								"
+							/>
+						</HorizontalFormControl>
+						<HorizontalFormControl :label="__('Newsletter Retention (Days)')">
+							<FormControl
+								type="number"
+								min="1"
+								max="7"
+								v-model="domain.doc.newsletter_retention"
+								@update:modelValue="
+									domain.setValueDebounced.submit({
+										newsletter_retention: Number(
+											domain.doc.newsletter_retention
+										),
+									})
+								"
+							/>
+						</HorizontalFormControl>
 					</div>
 				</div>
 			</div>
@@ -86,6 +93,7 @@ import {
 	createDocumentResource,
 } from 'frappe-ui'
 import { raiseToast } from '@/utils'
+import HorizontalFormControl from '@/components/Controls/HorizontalFormControl.vue'
 
 const router = useRouter()
 
