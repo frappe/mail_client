@@ -4,18 +4,21 @@
 			class="sticky top-0 z-10 flex items-center justify-between border-b bg-white px-3 py-2.5 sm:px-5"
 		>
 			<Breadcrumbs :items="BREADCRUMBS" />
-			<Dropdown :options="DROPDOWN_OPTIONS" :button="{ icon: 'more-horizontal' }" />
+			<div class="flex space-x-2">
+				<Dropdown :options="DROPDOWN_OPTIONS" :button="{ icon: 'more-horizontal' }" />
+				<Button
+					variant="solid"
+					:loading="domain.save.loading"
+					:disabled="!domain.isDirty"
+					:label="__('Save')"
+					@click="domain.save.submit()"
+				/>
+			</div>
 		</header>
 		<div class="m-6 space-y-6">
 			<div class="grid grid-cols-1 sm:grid-cols-2 border rounded-md">
 				<div class="p-4 border-r">
-					<Switch
-						:label="__('Enabled')"
-						v-model="domain.doc.enabled"
-						@update:modelValue="
-							domain.setValue.submit({ enabled: domain.doc.enabled })
-						"
-					/>
+					<Switch :label="__('Enabled')" v-model="domain.doc.enabled" />
 					<Switch
 						:label="__('Verified')"
 						v-model="domain.doc.is_verified"
@@ -45,11 +48,6 @@
 									{ label: '4096', value: 4096 },
 								]"
 								v-model="domain.doc.dkim_rsa_key_size"
-								@update:modelValue="
-									domain.setValue.submit({
-										dkim_rsa_key_size: domain.doc.dkim_rsa_key_size,
-									})
-								"
 							/>
 						</HorizontalFormControl>
 						<HorizontalFormControl :label="__('Newsletter Retention (Days)')">
@@ -59,11 +57,8 @@
 								max="7"
 								v-model="domain.doc.newsletter_retention"
 								@update:modelValue="
-									domain.setValueDebounced.submit({
-										newsletter_retention: Number(
-											domain.doc.newsletter_retention
-										),
-									})
+									domain.doc.newsletter_retention =
+										+domain.doc.newsletter_retention
 								"
 							/>
 						</HorizontalFormControl>
@@ -85,6 +80,7 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import {
+	Button,
 	Switch,
 	FormControl,
 	Dropdown,
@@ -117,8 +113,12 @@ const domain = createDocumentResource({
 		})
 	},
 	setValue: {
+		onSuccess() {
+			raiseToast('Domain settings saved successfully')
+		},
 		onError(error) {
 			raiseToast(error.messages[0], 'error')
+			domain.reload()
 		},
 	},
 	// whitelistedMethods: {
