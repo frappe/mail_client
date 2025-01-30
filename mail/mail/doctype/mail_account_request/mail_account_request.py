@@ -11,7 +11,7 @@ from frappe.utils import add_days, get_url, nowdate, random_string
 
 from mail.mail.doctype.mail_account.mail_account import create_mail_account
 from mail.utils.cache import get_tenant_for_user
-from mail.utils.user import has_role, is_mail_tenant_admin, is_system_manager
+from mail.utils.user import has_role, is_system_manager, is_tenant_admin
 from mail.utils.validation import (
 	is_valid_email_for_domain,
 	validate_domain_is_enabled_and_verified,
@@ -71,7 +71,7 @@ class MailAccountRequest(Document):
 			self.invited_by = user
 			self.tenant = get_tenant_for_user(user)
 
-		if not is_mail_tenant_admin(self.tenant, self.invited_by):
+		if not is_tenant_admin(self.tenant, self.invited_by):
 			frappe.throw(
 				_("User {0} is not authorized to invite users to the selected tenant.").format(
 					frappe.bold(self.invited_by)
@@ -144,7 +144,7 @@ class MailAccountRequest(Document):
 			frappe.throw(_("Account is already verified and created."))
 
 		user = frappe.session.user
-		if not is_system_manager(user) and not is_mail_tenant_admin(self.tenant, user):
+		if not is_system_manager(user) and not is_tenant_admin(self.tenant, user):
 			frappe.throw(_("You are not authorized to perform this action."))
 
 		self.db_set("is_verified", 1)
@@ -181,7 +181,7 @@ def has_permission(doc: "Document", ptype: str, user: str) -> bool:
 	if is_system_manager(user):
 		return True
 
-	if is_mail_tenant_admin(doc.tenant, user):
+	if is_tenant_admin(doc.tenant, user):
 		if ptype in ("create", "read", "write"):
 			return True
 

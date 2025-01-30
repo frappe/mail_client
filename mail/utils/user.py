@@ -25,30 +25,37 @@ def get_user_email_addresses(user: str) -> list:
 
 @frappe.whitelist()
 def get_user_tenant() -> str | None:
-	"""Returns the mail tenant of the user."""
+	"""Returns the tenant of the user."""
 
 	return get_tenant_for_user(frappe.session.user)
 
 
 @request_cache
-def is_mail_tenant_owner(tenant: str, user: str) -> bool:
-	"""Returns True if the user is the owner of the mail tenant else False."""
+def is_tenant_owner(tenant: str, user: str) -> bool:
+	"""Returns True if the user is the owner of the tenant else False."""
 
 	return frappe.db.get_value("Mail Tenant", tenant, "user") == user
 
 
 @request_cache
-def is_mail_tenant_admin(tenant: str, user: str) -> bool:
-	"""Returns True if the user is an admin of the mail tenant else False."""
+def is_tenant_admin(tenant: str, user: str) -> bool:
+	"""Returns True if the user is an admin of the tenant else False."""
 
 	return has_role(user, "Mail Admin") and frappe.db.exists(
-		"Mail Tenant Member", {"tenant": tenant, "user": user}
+		"Mail Tenant Member", {"tenant": tenant, "user": user, "is_admin": 1}
 	)
 
 
 @request_cache
-def is_mail_account_owner(account: str, user: str) -> bool:
-	"""Returns True if the mail account is associated with the user else False."""
+def is_tenant_member(tenant: str, user: str) -> bool:
+	"""Returns True if the user is a member of the tenant else False."""
+
+	return frappe.db.exists("Mail Tenant Member", {"tenant": tenant, "user": user})
+
+
+@request_cache
+def is_account_owner(account: str, user: str) -> bool:
+	"""Returns True if the account is associated with the user else False."""
 
 	return frappe.db.get_value("Mail Account", account, "user") == user
 

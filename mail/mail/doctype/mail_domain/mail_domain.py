@@ -13,7 +13,7 @@ from mail.mail.doctype.mail_account.mail_account import create_dmarc_account
 from mail.utils import get_dkim_host, get_dkim_selector, get_dmarc_address
 from mail.utils.cache import get_root_domain_name, get_tenant_for_user
 from mail.utils.dns import verify_dns_record
-from mail.utils.user import has_role, is_mail_tenant_admin, is_system_manager
+from mail.utils.user import has_role, is_system_manager, is_tenant_admin
 
 
 class MailDomain(Document):
@@ -244,7 +244,7 @@ def has_permission(doc: "Document", ptype: str, user: str | None = None) -> bool
 	if is_system_manager(user):
 		return True
 
-	if is_mail_tenant_admin(doc.tenant, user):
+	if is_tenant_admin(doc.tenant, user):
 		if ptype in ("read", "write"):
 			return True
 

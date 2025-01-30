@@ -7,7 +7,7 @@ from frappe import _
 from frappe.model.document import Document
 
 from mail.utils.cache import get_tenant_for_user
-from mail.utils.user import has_role, is_mail_tenant_admin, is_system_manager
+from mail.utils.user import has_role, is_system_manager, is_tenant_admin
 
 
 class MailTenant(Document):
@@ -53,7 +53,7 @@ def has_permission(doc: "Document", ptype: str, user: str) -> bool:
 	if is_system_manager(user):
 		return True
 
-	if is_mail_tenant_admin(doc.name, user):
+	if is_tenant_admin(doc.name, user):
 		if ptype in ("read", "write"):
 			return True
 

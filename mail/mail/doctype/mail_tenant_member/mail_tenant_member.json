@@ -6,7 +6,9 @@
  "engine": "InnoDB",
  "field_order": [
   "tenant",
-  "user"
+  "user",
+  "column_break_prdy",
+  "is_admin"
  ],
  "fields": [
   {
@@ -33,11 +35,24 @@
    "reqd": 1,
    "search_index": 1,
    "set_only_once": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "is_admin",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Is Admin",
+   "no_copy": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "column_break_prdy",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-01-27 22:09:54.305800",
+ "modified": "2025-01-30 11:32:32.856103",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Tenant Member",
@@ -71,5 +86,6 @@
  ],
  "sort_field": "creation",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "track_changes": 1
 }
