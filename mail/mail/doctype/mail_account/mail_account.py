@@ -154,7 +154,7 @@ def create_mail_account(
 			account_user.email = email
 			account_user.owner = email
 			account_user.send_welcome_email = 0
-			account_user.append_roles(roles)
+			account_user.append_roles(*roles)
 			if password:
 				account_user.new_password = password
 			account_user.insert(ignore_permissions=True)

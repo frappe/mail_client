@@ -5,6 +5,7 @@
 import frappe
 from frappe import _
 from frappe.model.document import Document
+from frappe.utils import cint
 
 from mail.utils.cache import get_tenant_for_user
 from mail.utils.user import has_role, is_system_manager, is_tenant_admin
@@ -25,12 +26,13 @@ class MailTenant(Document):
 
 		self.add_member(self.user)
 
-	def add_member(self, user: str) -> str:
+	def add_member(self, user: str, is_admin: bool = False) -> str:
 		"""Add a member to the tenant."""
 
 		member = frappe.new_doc("Mail Tenant Member")
 		member.tenant = self.name
 		member.user = user
+		member.is_admin = cint(is_admin)
 		member.insert(ignore_permissions=True)
 
 		return member.name

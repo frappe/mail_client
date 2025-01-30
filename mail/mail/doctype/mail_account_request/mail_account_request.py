@@ -160,7 +160,7 @@ class MailAccountRequest(Document):
 			email=self.account, first_name=first_name, last_name=last_name, password=password, role=self.role
 		)
 		tenant = frappe.get_doc("Mail Tenant", self.tenant)
-		tenant.add_member(account.user)
+		tenant.add_member(account.user, self.role == "Mail Admin")
 
 
 def expire_mail_account_requests() -> None:
