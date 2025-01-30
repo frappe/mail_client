@@ -13,7 +13,36 @@
 				:rows="domains?.data || []"
 				:options="LIST_OPTIONS"
 				row-key="name"
-			/>
+			>
+				<ListHeader>
+					<ListHeaderItem
+						v-for="column in LIST_COLUMNS"
+						:key="column.key"
+						:item="column"
+					/>
+				</ListHeader>
+				<ListRows>
+					<ListRow
+						v-for="row in domains?.data || []"
+						:key="row.name"
+						v-slot="{ column, item }"
+						:row="row"
+					>
+						<ListRowItem :item="item">
+							<Badge
+								v-if="column.key == 'status'"
+								:theme="item === 'Enabled' ? 'green' : 'red'"
+								:label="item"
+							/>
+							<FeatherIcon
+								v-if="column.key == 'is_verified'"
+								:name="item ? 'check' : 'x'"
+								class="h-4 w-4"
+							/>
+						</ListRowItem>
+					</ListRow>
+				</ListRows>
+			</ListView>
 		</div>
 	</div>
 	<AddDomain v-model="showAddDomain" @reloadDomains="domains.reload()" />
@@ -21,7 +50,19 @@
 <script setup>
 import { ref, inject } from 'vue'
 import { useRouter } from 'vue-router'
-import { Button, Breadcrumbs, ListView, createListResource } from 'frappe-ui'
+import {
+	Button,
+	Breadcrumbs,
+	ListView,
+	ListHeader,
+	ListHeaderItem,
+	ListRows,
+	ListRow,
+	ListRowItem,
+	Badge,
+	FeatherIcon,
+	createListResource,
+} from 'frappe-ui'
 import AddDomain from '@/components/Modals/AddDomain.vue'
 
 const user = inject('$user')
