@@ -49,7 +49,7 @@ class MailDomainRequest(Document):
 			frappe.throw(_("Invalid domain name"))
 
 		if frappe.db.exists("Mail Domain", {"domain_name": self.domain_name}):
-			frappe.throw(_("Domain {0} already registered").format(self.domain_name))
+			frappe.throw(_("Domain {0} already registered.").format(frappe.bold(self.domain_name)))
 
 	def validate_user_and_tenant(self) -> None:
 		"""Validates the user and tenant"""
@@ -65,6 +65,9 @@ class MailDomainRequest(Document):
 	@frappe.whitelist()
 	def verify_and_create_domain(self, save: bool = False) -> bool:
 		"""Verifies the domain and creates the mail domain"""
+
+		if self.is_verified:
+			frappe.throw(_("Domain is already verified and created."))
 
 		self.is_verified = 0
 		if verify_dns_record(self.domain_name, "TXT", self.verification_key):

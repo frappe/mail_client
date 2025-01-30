@@ -9,7 +9,7 @@ frappe.ui.form.on("Mail Domain Request", {
 	},
 
 	add_actions(frm) {
-		if (frm.doc.__islocal) return;
+		if (frm.doc.__islocal || frm.doc.is_verified) return;
 
 		frm.add_custom_button(__("Verify and Create Domain"), () => {
 			frm.trigger("verify_and_create_domain");
