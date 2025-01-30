@@ -106,7 +106,7 @@ const signUp = createResource({
 	},
 	onSuccess(data) {
 		errorMessage.value = ''
-		accountRequest.value = data.name
+		accountRequest.value = data
 		isVerificationStep.value = true
 		raiseToast('A verification code has been sent to your registered email address.')
 	},
