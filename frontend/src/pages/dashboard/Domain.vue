@@ -70,7 +70,7 @@
 					class="flex-1"
 					:columns="LIST_COLUMNS"
 					:rows="domain.doc.dns_records"
-					:options="LIST_OPTIONS"
+					:options="{ selectable: false }"
 					row-key="name"
 				/>
 			</div>
@@ -121,9 +121,50 @@ const domain = createDocumentResource({
 			domain.reload()
 		},
 	},
-	// whitelistedMethods: {
-	// 	verifyDnsRecords: 'verify_dns_records',
-	// },
+	whitelistedMethods: {
+		verifyDnsRecords: {
+			method: 'verify_dns_records',
+			makeParams() {
+				return { do_not_save: false }
+			},
+			onSuccess(data) {
+				raiseToast(
+					data ? 'DNS records verified successfully.' : 'DNS verification failed.',
+					data ? 'success' : 'error'
+				)
+				domain.reload()
+			},
+			onError(error) {
+				raiseToast(error.messages[0], 'error')
+				domain.reload()
+			},
+		},
+		refreshDnsRecords: {
+			method: 'refresh_dns_records',
+			makeParams() {
+				return { do_not_save: false }
+			},
+			onSuccess(data) {
+				raiseToast('DNS Records refreshed successfully.')
+				domain.reload()
+			},
+			onError(error) {
+				raiseToast(error.messages[0], 'error')
+				domain.reload()
+			},
+		},
+		rotateDkimKeys: {
+			method: 'rotate_dkim_keys',
+			onSuccess(data) {
+				raiseToast('DKIM Keys rotated successfully.')
+				domain.reload()
+			},
+			onError(error) {
+				raiseToast(error.messages[0], 'error')
+				domain.reload()
+			},
+		},
+	},
 	onError(error) {
 		if (error.exc_type === 'DoesNotExistError') router.replace({ name: 'Domains' })
 	},
@@ -145,19 +186,17 @@ const DROPDOWN_OPTIONS = [
 	{
 		label: 'Verify DNS Records',
 		icon: 'check-square',
-		onClick: () => {
-			// domain.verifyDnsRecords.submit()
-		},
+		onClick: domain.verifyDnsRecords.submit,
 	},
 	{
 		label: 'Refresh DNS Records',
 		icon: 'refresh-cw',
-		onClick: () => {},
+		onClick: domain.refreshDnsRecords.submit,
 	},
 	{
 		label: 'Rotate DKIM Keys',
 		icon: 'rotate-cw',
-		onClick: () => {},
+		onClick: domain.rotateDkimKeys.submit,
 	},
 ]
 
@@ -187,8 +226,4 @@ const LIST_COLUMNS = [
 		width: 0.2,
 	},
 ]
-
-const LIST_OPTIONS = {
-	selectable: false,
-}
 </script>

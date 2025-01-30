@@ -126,7 +126,7 @@ class MailDomain(Document):
 			frappe.msgprint(_("DNS Records refreshed successfully."), indicator="green", alert=True)
 
 	@frappe.whitelist()
-	def verify_dns_records(self, do_not_save: bool = False) -> None:
+	def verify_dns_records(self, do_not_save: bool = False) -> 1 | 0:
 		"""Verifies the DNS Records."""
 
 		if not has_permission(self, "write"):
@@ -150,6 +150,8 @@ class MailDomain(Document):
 
 		if not do_not_save:
 			self.save(ignore_permissions=True)
+
+		return self.is_verified
 
 	@frappe.whitelist()
 	def rotate_dkim_keys(self) -> None:
