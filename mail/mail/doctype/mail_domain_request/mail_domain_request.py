@@ -10,7 +10,7 @@ from frappe.utils import random_string
 
 from mail.utils.cache import get_tenant_for_user
 from mail.utils.dns import verify_dns_record
-from mail.utils.user import has_role, is_mail_tenant_admin, is_system_manager
+from mail.utils.user import has_role, is_system_manager, is_tenant_admin
 
 
 class MailDomainRequest(Document):
@@ -54,7 +54,7 @@ class MailDomainRequest(Document):
 	def validate_user_and_tenant(self) -> None:
 		"""Validates the user and tenant"""
 
-		if not is_mail_tenant_admin(self.tenant, self.user):
+		if not is_tenant_admin(self.tenant, self.user):
 			frappe.throw(_("User must be an admin of the tenant"))
 
 	def set_verification_key(self) -> None:
@@ -97,7 +97,7 @@ def has_permission(doc: "Document", ptype: str, user: str) -> bool:
 	if is_system_manager(user):
 		return True
 
-	if is_mail_tenant_admin(doc.tenant, user):
+	if is_tenant_admin(doc.tenant, user):
 		if ptype in ("create", "read", "write"):
 			return True
 

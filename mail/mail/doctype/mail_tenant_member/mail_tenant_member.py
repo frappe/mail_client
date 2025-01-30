@@ -6,7 +6,7 @@ from frappe import _
 from frappe.model.document import Document
 
 from mail.utils.cache import get_tenant_for_user
-from mail.utils.user import has_role, is_mail_tenant_admin, is_mail_tenant_owner, is_system_manager
+from mail.utils.user import has_role, is_system_manager, is_tenant_admin, is_tenant_owner
 
 
 class MailTenantMember(Document):
@@ -21,7 +21,7 @@ class MailTenantMember(Document):
 		self.clear_cache()
 
 	def on_trash(self) -> None:
-		if is_mail_tenant_owner(self.tenant, self.user):
+		if is_tenant_owner(self.tenant, self.user):
 			frappe.throw(_("Cannot remove the owner of the Mail Tenant."))
 
 		self.clear_cache()
@@ -44,7 +44,7 @@ class MailTenantMember(Document):
 
 		# Tenant Owner must have Mail Admin role.
 		# Tenant Member must have Mail User role and can have Mail Admin role.
-		required_role = "Mail Admin" if is_mail_tenant_owner(self.tenant, self.user) else "Mail User"
+		required_role = "Mail Admin" if is_tenant_owner(self.tenant, self.user) else "Mail User"
 		if not has_role(self.user, required_role):
 			frappe.throw(
 				_("User {0} does not have {1} role.").format(
@@ -55,7 +55,7 @@ class MailTenantMember(Document):
 	def validate_is_admin(self) -> None:
 		"""Validates if the user is an admin of the Mail Tenant."""
 
-		if is_mail_tenant_owner(self.tenant, self.user):
+		if is_tenant_owner(self.tenant, self.user):
 			self.is_admin = 1
 			return
 
@@ -95,7 +95,7 @@ def has_permission(doc: "Document", ptype: str, user: str) -> bool:
 	if is_system_manager(user):
 		return True
 
-	if is_mail_tenant_admin(doc.tenant, user):
+	if is_tenant_admin(doc.tenant, user):
 		return True
 
 	return False

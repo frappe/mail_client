@@ -51,7 +51,7 @@ from mail.utils.cache import get_account_for_email, get_account_for_user, get_de
 from mail.utils.dns import get_host_by_ip
 from mail.utils.dt import parsedate_to_datetime
 from mail.utils.email_parser import EmailParser
-from mail.utils.user import get_user_email_addresses, is_mail_account_owner, is_system_manager
+from mail.utils.user import get_user_email_addresses, is_account_owner, is_system_manager
 
 MAX_FAILED_COUNT = 5
 
@@ -1219,7 +1219,7 @@ def has_permission(doc: "Document", ptype: str, user: str) -> bool:
 		return False
 
 	user_is_system_manager = is_system_manager(user)
-	user_is_account_owner = is_mail_account_owner(doc.sender, user)
+	user_is_account_owner = is_account_owner(doc.sender, user)
 
 	if ptype == "create":
 		return True

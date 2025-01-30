@@ -1,7 +1,7 @@
 import frappe
 from frappe import _
 
-from mail.utils.user import has_role, is_mail_account_owner
+from mail.utils.user import has_role, is_account_owner
 
 
 @frappe.whitelist(methods=["POST"])
@@ -27,7 +27,7 @@ def validate_account(account: str) -> None:
 
 	user = frappe.session.user
 
-	if not is_mail_account_owner(account, user):
+	if not is_account_owner(account, user):
 		frappe.throw(
 			_("Mail Account {0} is not associated with user {1}").format(
 				frappe.bold(account), frappe.bold(user)
