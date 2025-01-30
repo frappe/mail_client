@@ -1,5 +1,5 @@
 <template>
-	<div class="h-full flex flex-col">
+	<div v-if="domain?.doc" class="h-full flex flex-col">
 		<header
 			class="sticky top-0 z-10 flex items-center justify-between border-b bg-white px-3 py-2.5 sm:px-5"
 		>
@@ -49,7 +49,17 @@
 								})
 							"
 						/>
-						<FormControl type="number" v-model="domain.doc.newsletter_retention" />
+						<FormControl
+							type="number"
+							min="1"
+							max="7"
+							v-model="domain.doc.newsletter_retention"
+							@update:modelValue="
+								domain.setValueDebounced.submit({
+									newsletter_retention: Number(domain.doc.newsletter_retention),
+								})
+							"
+						/>
 					</div>
 				</div>
 			</div>
@@ -75,6 +85,7 @@ import {
 	ListView,
 	createDocumentResource,
 } from 'frappe-ui'
+import { raiseToast } from '@/utils'
 
 const router = useRouter()
 
@@ -96,6 +107,11 @@ const domain = createDocumentResource({
 			d.priority = d.priority.toString()
 			d.ttl = d.ttl.toString()
 		})
+	},
+	setValue: {
+		onError(error) {
+			raiseToast(error.messages[0], 'error')
+		},
 	},
 	// whitelistedMethods: {
 	// 	verifyDnsRecords: 'verify_dns_records',
