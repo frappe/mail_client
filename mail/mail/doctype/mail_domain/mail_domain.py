@@ -41,10 +41,14 @@ class MailDomain(Document):
 		if self.is_root_domain:
 			create_dmarc_account()
 
+	def on_update(self) -> None:
+		self.clear_cache()
+
 	def on_trash(self) -> None:
 		if frappe.session.user != "Administrator":
 			frappe.throw(_("Only Administrator can delete Mail Domain."))
 
+		self.clear_cache()
 		delete_domain_from_agents(domain_name=self.domain_name)
 
 	def validate_tenant_max_domains(self) -> None:
@@ -160,6 +164,16 @@ class MailDomain(Document):
 
 		create_dkim_key(self.domain_name, cint(self.dkim_rsa_key_size))
 		frappe.msgprint(_("DKIM Keys rotated successfully."), indicator="green", alert=True)
+
+	def clear_cache(self) -> None:
+		"""Clears the Cache."""
+
+		frappe.cache.delete_value(f"tenant|{self.tenant}")
+
+		if self.has_value_changed("tenant"):
+			if previous_doc := self.get_doc_before_save():
+				if previous_doc.tenant:
+					frappe.cache.delete_value(f"tenant|{previous_doc.tenant}")
 
 
 def get_dns_records(domain_name: str) -> list[dict]:

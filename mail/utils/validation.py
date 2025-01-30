@@ -7,6 +7,7 @@ from frappe import _
 from frappe.utils.caching import request_cache
 from validate_email_address import validate_email
 
+from mail.utils.cache import get_tenant_for_user
 from mail.utils.user import has_role
 
 
@@ -109,6 +110,20 @@ def validate_domain_owned_by_tenant(domain_name: str, tenant: str) -> None:
 
 	if tenant != frappe.db.get_value("Mail Domain", domain_name, "tenant"):
 		frappe.throw(_("Domain {0} is not owned by the selected tenant.").format(frappe.bold(domain_name)))
+
+
+def validate_domain_and_user_tenant(domain_name: str, user: str) -> None:
+	"""Validates if the domain and user belong to the same tenant."""
+
+	domain_tenant = frappe.db.get_value("Mail Domain", domain_name, "tenant")
+	user_tenant = get_tenant_for_user(user)
+
+	if domain_tenant != user_tenant:
+		frappe.throw(
+			_("Domain {0} and User {1} do not belong to the same tenant.").format(
+				frappe.bold(domain_name), frappe.bold(user)
+			)
+		)
 
 
 def validate_user_has_mail_admin_role(user: str) -> None:

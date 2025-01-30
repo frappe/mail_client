@@ -11,11 +11,12 @@ from frappe.utils import random_string
 
 from mail.agent import create_account_on_agents, delete_account_from_agents, patch_account_on_agents
 from mail.utils import get_dmarc_address
-from mail.utils.cache import get_aliases_for_user
+from mail.utils.cache import get_aliases_for_user, get_domains_owned_by_tenant, get_tenant_for_user
 from mail.utils.user import has_role, is_system_manager
 from mail.utils.validation import (
 	is_email_assigned,
 	is_valid_email_for_domain,
+	validate_domain_and_user_tenant,
 	validate_domain_is_enabled_and_verified,
 )
 
@@ -77,6 +78,8 @@ class MailAccount(Document):
 
 		if not has_role(self.user, "Mail User"):
 			frappe.throw(_("User {0} does not have Mail User role.").format(frappe.bold(self.user)))
+
+		validate_domain_and_user_tenant(self.domain_name, self.user)
 
 	def validate_email(self) -> None:
 		"""Validates the email address."""
@@ -178,6 +181,20 @@ def create_dmarc_account() -> None:
 	create_mail_account(email=get_dmarc_address(), first_name="DMARC")
 
 
+def has_permission(doc: "Document", ptype: str, user: str) -> bool:
+	if doc.doctype != "Mail Account":
+		return False
+
+	if is_system_manager(user):
+		return True
+
+	if has_role(user, "Mail Admin"):
+		if user_tenant := get_tenant_for_user(user):
+			return doc.domain_name in get_domains_owned_by_tenant(user_tenant)
+
+	return user == doc.user
+
+
 def get_permission_query_condition(user: str | None = None) -> str:
 	if not user:
 		user = frappe.session.user
@@ -185,11 +202,9 @@ def get_permission_query_condition(user: str | None = None) -> str:
 	if is_system_manager(user):
 		return ""
 
+	if has_role(user, "Mail Admin"):
+		if user_tenant := get_tenant_for_user(user):
+			if tenant_domains := get_domains_owned_by_tenant(user_tenant):
+				return f"(`tabMail Account`.`domain_name` IN ({', '.join(map(frappe.db.escape, tenant_domains))}))"
+
 	return f"(`tabMail Account`.`user` = {frappe.db.escape(user)})"
-
-
-def has_permission(doc: "Document", ptype: str, user: str) -> bool:
-	if doc.doctype != "Mail Account":
-		return False
-
-	return (user == doc.user) or is_system_manager(user)
