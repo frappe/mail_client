@@ -11,7 +11,11 @@ from mail.utils.user import has_role, is_mail_tenant_admin, is_mail_tenant_owner
 
 class MailTenantMember(Document):
 	def validate(self) -> None:
-		self.validate_user()
+		if self.is_new():
+			self.validate_user()
+
+		self.validate_user_roles()
+		self.validate_is_admin()
 
 	def on_update(self) -> None:
 		self.clear_cache()
@@ -35,10 +39,48 @@ class MailTenantMember(Document):
 					)
 				)
 
-		if not has_role(self.user, ["Mail Admin", "Mail User"]):
+	def validate_user_roles(self) -> None:
+		"""Validates if the user has the required roles to be a member of the Mail Tenant."""
+
+		# Tenant Owner must have Mail Admin role.
+		# Tenant Member must have Mail User role and can have Mail Admin role.
+		required_role = "Mail Admin" if is_mail_tenant_owner(self.tenant, self.user) else "Mail User"
+		if not has_role(self.user, required_role):
 			frappe.throw(
-				_("User {0} does not have Mail Admin or Mail User role.").format(frappe.bold(self.user))
+				_("User {0} does not have {1} role.").format(
+					frappe.bold(self.user), frappe.bold(required_role)
+				)
 			)
+
+	def validate_is_admin(self) -> None:
+		"""Validates if the user is an admin of the Mail Tenant."""
+
+		if is_mail_tenant_owner(self.tenant, self.user):
+			self.is_admin = 1
+			return
+
+		has_admin_role = has_role(self.user, "Mail Admin")
+
+		if self.is_admin and not has_admin_role:
+			user = frappe.get_doc("User", self.user)
+			user.append("roles", {"role": "Mail Admin"})
+			user.save(ignore_permissions=True)
+			frappe.msgprint(
+				_("Mail Admin role has been assigned to the user {0}.").format(frappe.bold(self.user))
+			)
+
+		elif not self.is_admin and has_admin_role:
+			user = frappe.get_doc("User", self.user)
+			for role in user.get("roles")[:]:
+				if role.role == "Mail Admin":
+					user.get("roles").remove(role)
+					user.save(ignore_permissions=True)
+					frappe.msgprint(
+						_("Mail Admin role has been removed from the user {0}.").format(
+							frappe.bold(self.user)
+						)
+					)
+					break
 
 	def clear_cache(self) -> None:
 		"""Clears the Cache."""

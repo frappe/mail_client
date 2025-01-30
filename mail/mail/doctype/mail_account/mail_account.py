@@ -154,10 +154,9 @@ def create_mail_account(
 			account_user.email = email
 			account_user.owner = email
 			account_user.send_welcome_email = 0
+			account_user.append_roles(roles)
 			if password:
 				account_user.new_password = password
-			for role in roles:
-				account_user.append_roles(role)
 			account_user.insert(ignore_permissions=True)
 		else:
 			frappe.throw(_("User with email {0} already exists.").format(frappe.bold(email)))

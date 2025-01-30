@@ -38,11 +38,18 @@ def is_mail_tenant_owner(tenant: str, user: str) -> bool:
 
 
 @request_cache
+def is_mail_tenant_member(tenant: str, user: str) -> bool:
+	"""Returns True if the user is a member of the mail tenant else False."""
+
+	return frappe.db.exists("Mail Tenant Member", {"tenant": tenant, "user": user})
+
+
+@request_cache
 def is_mail_tenant_admin(tenant: str, user: str) -> bool:
 	"""Returns True if the user is an admin of the mail tenant else False."""
 
 	return has_role(user, "Mail Admin") and frappe.db.exists(
-		"Mail Tenant Member", {"tenant": tenant, "user": user}
+		"Mail Tenant Member", {"tenant": tenant, "user": user, "is_admin": 1}
 	)
 
 
