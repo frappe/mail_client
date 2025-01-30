@@ -76,8 +76,10 @@
 			</div>
 		</div>
 	</div>
+	<Dialog :options="confirmDialogOptions" v-model="showConfirmDialog" />
 </template>
 <script setup>
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import {
 	Button,
@@ -86,12 +88,11 @@ import {
 	Dropdown,
 	Breadcrumbs,
 	ListView,
+	Dialog,
 	createDocumentResource,
 } from 'frappe-ui'
 import { raiseToast } from '@/utils'
 import HorizontalFormControl from '@/components/Controls/HorizontalFormControl.vue'
-
-const router = useRouter()
 
 const props = defineProps({
 	domainName: {
@@ -99,6 +100,35 @@ const props = defineProps({
 		required: true,
 	},
 })
+
+const router = useRouter()
+
+const showConfirmDialog = ref(false)
+const confirmDialogAction = ref('')
+
+const confirmDialogOptions = computed(() => ({
+	title: __('Confirm'),
+	message: __(
+		confirmDialogAction.value === 'refreshDnsRecords'
+			? `Are you sure you want to refresh the DNS records? If there are any changes, you'll need to update the DNS settings with your DNS provider accordingly.`
+			: `Are you sure you want to rotate the DKIM keys? This will generate new keys for email signing and may take up to 10 minutes to propagate across DNS servers. Emails sent during this period may fail DKIM verification.`
+	),
+	size: 'xl',
+	icon: {
+		name: 'alert-triangle',
+		appearance: 'warning',
+	},
+	actions: [
+		{
+			label: __('Confirm'),
+			variant: 'solid',
+			onClick:
+				confirmDialogAction.value === 'refreshDnsRecords'
+					? domain.refreshDnsRecords.submit
+					: domain.rotateDkimKeys.submit,
+		},
+	],
+}))
 
 const domain = createDocumentResource({
 	doctype: 'Mail Domain',
@@ -145,6 +175,7 @@ const domain = createDocumentResource({
 				return { do_not_save: false }
 			},
 			onSuccess(data) {
+				showConfirmDialog.value = false
 				raiseToast('DNS Records refreshed successfully.')
 				domain.reload()
 			},
@@ -156,6 +187,7 @@ const domain = createDocumentResource({
 		rotateDkimKeys: {
 			method: 'rotate_dkim_keys',
 			onSuccess(data) {
+				showConfirmDialog.value = false
 				raiseToast('DKIM Keys rotated successfully.')
 				domain.reload()
 			},
@@ -191,12 +223,18 @@ const DROPDOWN_OPTIONS = [
 	{
 		label: 'Refresh DNS Records',
 		icon: 'refresh-cw',
-		onClick: domain.refreshDnsRecords.submit,
+		onClick: () => {
+			confirmDialogAction.value = 'refreshDnsRecords'
+			showConfirmDialog.value = true
+		},
 	},
 	{
 		label: 'Rotate DKIM Keys',
 		icon: 'rotate-cw',
-		onClick: domain.rotateDkimKeys.submit,
+		onClick: () => {
+			confirmDialogAction.value = 'rotateDkimKeys'
+			showConfirmDialog.value = true
+		},
 	},
 ]
 

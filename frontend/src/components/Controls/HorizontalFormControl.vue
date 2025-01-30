@@ -1,5 +1,5 @@
 <template>
-	<div class="grid grid-cols-1 sm:grid-cols-2" :class="{ 'text-ink-gray-4': disabled }">
+	<div class="grid grid-cols-1 sm:grid-cols-2 px-2.5" :class="{ 'text-ink-gray-4': disabled }">
 		<label class="font-medium leading-normal my-auto">
 			{{ label }}
 		</label>
