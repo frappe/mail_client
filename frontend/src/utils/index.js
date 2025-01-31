@@ -42,6 +42,13 @@ export function getSidebarLinks() {
 			activeFor: ['Domains', 'Domain'],
 			forDashboard: true,
 		},
+		{
+			label: 'Members',
+			icon: 'Users',
+			to: 'Members',
+			activeFor: ['Members'],
+			forDashboard: true,
+		},
 	]
 }
 

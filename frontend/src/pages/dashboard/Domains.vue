@@ -3,21 +3,22 @@
 		<header
 			class="sticky top-0 z-10 flex items-center justify-between border-b bg-white px-3 py-2.5 sm:px-5"
 		>
-			<Breadcrumbs :items="[{ label: 'Domains' }]" />
+			<Breadcrumbs :items="[{ label: __('Domains') }]" />
 			<Button :label="__('Add Domain')" iconLeft="plus" @click="showAddDomain = true" />
 		</header>
 		<div class="m-6 flex-1 flex flex-col">
 			<ListView
+				v-if="domains?.data"
 				class="flex-1"
 				:columns="LIST_COLUMNS"
-				:rows="domains?.data || []"
+				:rows="domains.data"
 				:options="LIST_OPTIONS"
 				row-key="name"
 			>
 				<ListHeader />
 				<ListRows>
 					<ListRow
-						v-for="row in domains?.data || []"
+						v-for="row in domains.data"
 						:key="row.name"
 						v-slot="{ column, item }"
 						:row="row"
@@ -100,7 +101,7 @@ const domains = createListResource({
 	filters: { tenant: user.data?.tenant },
 	auto: true,
 	pageLength: 50,
-	cache: ['mailDomains', user.data?.tenant],
+	cache: ['mailTenantDomains', user.data?.tenant],
 	transform(data) {
 		return data.map((domain) => ({
 			...domain,

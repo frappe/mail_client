@@ -65,6 +65,12 @@ const routes = [
 		props: true,
 		meta: { isDashboard: true },
 	},
+	{
+		path: '/dashboard/members',
+		name: 'Members',
+		component: () => import('@/pages/dashboard/Members.vue'),
+		meta: { isDashboard: true },
+	},
 ]
 
 const router = createRouter({
