@@ -9,7 +9,7 @@
 				<Button
 					variant="solid"
 					:loading="domain.save.loading"
-					:disabled="!domain.isDirty"
+					:disabled="JSON.stringify(domain.doc) === JSON.stringify(domain.originalDoc)"
 					:label="__('Save')"
 					@click="domain.save.submit()"
 				/>
@@ -151,8 +151,6 @@ const domain = createDocumentResource({
 	transform(data) {
 		for (const d of ['enabled', 'is_verified', 'is_subdomain', 'is_root_domain'])
 			data[d] = !!data[d]
-
-		// todo: fix isDirty save randomly not working
 	},
 	setValue: {
 		onSuccess() {
