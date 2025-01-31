@@ -43,7 +43,6 @@
 </template>
 <script setup>
 import { ref, inject } from 'vue'
-import { useRouter } from 'vue-router'
 import {
 	Button,
 	Breadcrumbs,
@@ -59,7 +58,6 @@ import {
 import AddDomain from '@/components/Modals/AddDomain.vue'
 
 const user = inject('$user')
-const router = useRouter()
 
 const showAddDomain = ref(false)
 
@@ -93,7 +91,7 @@ const LIST_OPTIONS = {
 			},
 		},
 	},
-	onRowClick: (row) => router.push({ name: 'Domain', params: { domainName: row.name } }),
+	getRowRoute: (row) => ({ name: 'Domain', params: { domainName: row.name } }),
 }
 
 const domains = createListResource({

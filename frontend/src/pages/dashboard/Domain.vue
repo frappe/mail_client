@@ -153,7 +153,6 @@ const domain = createDocumentResource({
 			data[d] = !!data[d]
 
 		// todo: fix isDirty save randomly not working
-		// todo: fix column width (truncate?)
 	},
 	setValue: {
 		onSuccess() {
@@ -255,26 +254,27 @@ const LIST_COLUMNS = [
 	{
 		label: 'Type',
 		key: 'type',
-		width: 0.2,
+		width: '10%',
 	},
 	{
 		label: 'Host',
 		key: 'host',
-		width: 0.5,
+		width: '20%',
 	},
 	{
 		label: 'Priority',
 		key: 'priority',
-		width: 0.2,
+		width: '10%',
 	},
 	{
 		label: 'Value',
 		key: 'value',
+		width: '50%',
 	},
 	{
 		label: 'TTL (Recommended)',
 		key: 'ttl',
-		width: 0.2,
+		width: '10%',
 	},
 ]
 </script>
