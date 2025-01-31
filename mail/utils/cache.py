@@ -43,6 +43,15 @@ def get_imap_limits() -> dict:
 	return frappe.cache.get_value("imap_limits", generator)
 
 
+def get_domains_owned_by_tenant(tenant: str) -> list:
+	"""Returns the domains owned by the tenant."""
+
+	def generator() -> list:
+		return frappe.get_all("Mail Domain", filters={"tenant": tenant}, pluck="name")
+
+	return frappe.cache.hget(f"tenant|{tenant}", "domains", generator)
+
+
 def get_tenant_for_user(user: str) -> str | None:
 	"""Returns the tenant of the user."""
 

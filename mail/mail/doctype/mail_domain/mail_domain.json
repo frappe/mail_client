@@ -165,16 +165,12 @@
    "options": "Mail Tenant",
    "permlevel": 1,
    "reqd": 1,
-   "search_index": 1
+   "search_index": 1,
+   "set_only_once": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [
-  {
-   "group": "Reference",
-   "link_doctype": "Mail Account Request",
-   "link_fieldname": "domain_name"
-  },
   {
    "group": "Reference",
    "link_doctype": "Mail Domain Request",
@@ -182,22 +178,27 @@
   },
   {
    "group": "Reference",
+   "link_doctype": "DKIM Key",
+   "link_fieldname": "domain_name"
+  },
+  {
+   "group": "Account",
+   "link_doctype": "Mail Account Request",
+   "link_fieldname": "domain_name"
+  },
+  {
+   "group": "Account",
    "link_doctype": "Mail Account",
    "link_fieldname": "domain_name"
   },
   {
-   "group": "Reference",
-   "link_doctype": "Mail Group",
-   "link_fieldname": "domain_name"
-  },
-  {
-   "group": "Reference",
+   "group": "Alias & Group",
    "link_doctype": "Mail Alias",
    "link_fieldname": "domain_name"
   },
   {
-   "group": "Reference",
-   "link_doctype": "DKIM Key",
+   "group": "Alias & Group",
+   "link_doctype": "Mail Group",
    "link_fieldname": "domain_name"
   },
   {
@@ -216,7 +217,7 @@
    "link_fieldname": "domain_name"
   }
  ],
- "modified": "2025-01-29 19:26:13.013330",
+ "modified": "2025-01-31 14:58:43.018293",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Domain",

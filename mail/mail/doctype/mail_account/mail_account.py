@@ -11,7 +11,7 @@ from frappe.utils import random_string
 
 from mail.agent import create_account_on_agents, delete_account_from_agents, patch_account_on_agents
 from mail.utils import get_dmarc_address
-from mail.utils.cache import get_aliases_for_user
+from mail.utils.cache import get_aliases_for_user, get_tenant_for_user
 from mail.utils.user import has_role, is_system_manager
 from mail.utils.validation import (
 	is_email_assigned,
@@ -25,10 +25,15 @@ class MailAccount(Document):
 		self.email = self.email.strip().lower()
 		self.name = self.email
 
+	def before_validate(self) -> None:
+		self.set_tenant()
+
 	def validate(self) -> None:
 		self.validate_enabled()
 		self.validate_domain()
 		self.validate_user()
+		self.validate_user_tenant()
+		self.validate_tenant_max_accounts()
 		self.validate_email()
 		self.validate_password()
 		self.validate_default_outgoing_email()
@@ -52,6 +57,12 @@ class MailAccount(Document):
 
 		if self.enabled:
 			delete_account_from_agents(self.email)
+
+	def set_tenant(self) -> None:
+		"""Sets the tenant based on the domain."""
+
+		if not self.tenant:
+			self.tenant = frappe.db.get_value("Mail Domain", self.domain_name, "tenant")
 
 	def validate_enabled(self) -> None:
 		"""Validates the enabled field."""
@@ -77,6 +88,32 @@ class MailAccount(Document):
 
 		if not has_role(self.user, "Mail User"):
 			frappe.throw(_("User {0} does not have Mail User role.").format(frappe.bold(self.user)))
+
+	def validate_user_tenant(self) -> None:
+		"""Validates the user tenant."""
+
+		if self.is_new() or self.enabled:
+			if self.tenant != get_tenant_for_user(self.user):
+				frappe.throw(
+					_("Domain {0} and User {1} do not belong to the same tenant.").format(
+						frappe.bold(self.domain_name), frappe.bold(self.user)
+					)
+				)
+
+	def validate_tenant_max_accounts(self) -> None:
+		"""Validates the Tenant Max Accounts."""
+
+		if is_system_manager(frappe.session.user):
+			return
+
+		total_accounts = frappe.db.count("Mail Account", filters={"tenant": self.tenant, "enabled": 1})
+		max_accounts = frappe.db.get_value("Mail Tenant", self.tenant, "max_accounts")
+		if total_accounts >= max_accounts:
+			frappe.throw(
+				_("You have reached the maximum limit of {0} accounts for the tenant.").format(
+					frappe.bold(max_accounts)
+				)
+			)
 
 	def validate_email(self) -> None:
 		"""Validates the email address."""
@@ -178,6 +215,19 @@ def create_dmarc_account() -> None:
 	create_mail_account(email=get_dmarc_address(), first_name="DMARC")
 
 
+def has_permission(doc: "Document", ptype: str, user: str) -> bool:
+	if doc.doctype != "Mail Account":
+		return False
+
+	if is_system_manager(user):
+		return True
+
+	if has_role(user, "Mail Admin"):
+		return doc.tenant == get_tenant_for_user(user)
+
+	return user == doc.user
+
+
 def get_permission_query_condition(user: str | None = None) -> str:
 	if not user:
 		user = frappe.session.user
@@ -185,11 +235,7 @@ def get_permission_query_condition(user: str | None = None) -> str:
 	if is_system_manager(user):
 		return ""
 
+	if has_role(user, "Mail Admin"):
+		return f"(`tabMail Account`.`tenant` = {frappe.db.escape(get_tenant_for_user(user))})"
+
 	return f"(`tabMail Account`.`user` = {frappe.db.escape(user)})"
-
-
-def has_permission(doc: "Document", ptype: str, user: str) -> bool:
-	if doc.doctype != "Mail Account":
-		return False
-
-	return (user == doc.user) or is_system_manager(user)

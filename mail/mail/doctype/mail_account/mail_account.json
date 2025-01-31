@@ -10,6 +10,7 @@
   "create_mail_contact",
   "column_break_47zs",
   "domain_name",
+  "tenant",
   "user",
   "email",
   "password",
@@ -147,24 +148,42 @@
    "no_copy": 1,
    "options": "Email",
    "unique": 1
+  },
+  {
+   "depends_on": "eval: !doc.__islocal",
+   "fetch_from": "domain_name.tenant",
+   "fieldname": "tenant",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Tenant",
+   "no_copy": 1,
+   "options": "Mail Tenant",
+   "read_only": 1,
+   "search_index": 1,
+   "set_only_once": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [
   {
    "group": "Reference",
-   "link_doctype": "Mail Alias",
-   "link_fieldname": "alias_for_name"
-  },
-  {
-   "group": "Reference",
-   "link_doctype": "Mail Group Member",
-   "link_fieldname": "member_name"
+   "link_doctype": "Mail Account Request",
+   "link_fieldname": "account"
   },
   {
    "group": "Reference",
    "link_doctype": "Mail Sync History",
    "link_fieldname": "account"
+  },
+  {
+   "group": "Alias & Group",
+   "link_doctype": "Mail Alias",
+   "link_fieldname": "alias_for_name"
+  },
+  {
+   "group": "Alias & Group",
+   "link_doctype": "Mail Group Member",
+   "link_fieldname": "member_name"
   },
   {
    "group": "Mail",
@@ -177,7 +196,7 @@
    "link_fieldname": "sender"
   }
  ],
- "modified": "2025-01-29 12:44:05.165383",
+ "modified": "2025-01-31 15:13:48.054282",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Account",
