@@ -72,7 +72,19 @@
 					:rows="domain.doc.dns_records"
 					:options="{ selectable: false }"
 					row-key="name"
-				/>
+				>
+					<ListHeader />
+					<ListRows>
+						<ListRow
+							v-for="row in domain.doc.dns_records"
+							:key="row.name"
+							v-slot="{ column, item }"
+							:row="row"
+						>
+							{{ item }}
+						</ListRow>
+					</ListRows>
+				</ListView>
 			</div>
 		</div>
 	</div>
@@ -88,6 +100,9 @@ import {
 	Dropdown,
 	Breadcrumbs,
 	ListView,
+	ListHeader,
+	ListRows,
+	ListRow,
 	Dialog,
 	createDocumentResource,
 } from 'frappe-ui'
@@ -137,10 +152,8 @@ const domain = createDocumentResource({
 		for (const d of ['enabled', 'is_verified', 'is_subdomain', 'is_root_domain'])
 			data[d] = !!data[d]
 
-		data.dns_records.forEach((d) => {
-			d.priority = d.priority.toString()
-			d.ttl = d.ttl.toString()
-		})
+		// todo: fix isDirty save randomly not working
+		// todo: fix column width (truncate?)
 	},
 	setValue: {
 		onSuccess() {

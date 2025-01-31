@@ -14,13 +14,7 @@
 				:options="LIST_OPTIONS"
 				row-key="name"
 			>
-				<ListHeader>
-					<ListHeaderItem
-						v-for="column in LIST_COLUMNS"
-						:key="column.key"
-						:item="column"
-					/>
-				</ListHeader>
+				<ListHeader />
 				<ListRows>
 					<ListRow
 						v-for="row in domains?.data || []"
@@ -55,7 +49,6 @@ import {
 	Breadcrumbs,
 	ListView,
 	ListHeader,
-	ListHeaderItem,
 	ListRows,
 	ListRow,
 	ListRowItem,
