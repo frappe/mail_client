@@ -1,5 +1,7 @@
 import frappe
 
+from mail.mail.doctype.mail_domain_request.mail_domain_request import MailDomainRequest
+
 
 @frappe.whitelist()
 def create_tenant(tenant_name: str) -> None:
@@ -12,7 +14,7 @@ def create_tenant(tenant_name: str) -> None:
 
 
 @frappe.whitelist()
-def create_domain_request(domain_name, mail_tenant) -> str:
+def create_domain_request(domain_name, mail_tenant) -> MailDomainRequest:
 	"""Create a new Mail Domain Request"""
 
 	domain_request = frappe.new_doc("Mail Domain Request")
