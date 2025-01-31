@@ -16,7 +16,6 @@ from mail.utils.user import has_role, is_system_manager
 from mail.utils.validation import (
 	is_email_assigned,
 	is_valid_email_for_domain,
-	validate_domain_and_user_tenant,
 	validate_domain_is_enabled_and_verified,
 )
 
@@ -26,10 +25,14 @@ class MailAccount(Document):
 		self.email = self.email.strip().lower()
 		self.name = self.email
 
+	def before_validate(self) -> None:
+		self.set_tenant()
+
 	def validate(self) -> None:
 		self.validate_enabled()
 		self.validate_domain()
 		self.validate_user()
+		self.validate_user_tenant()
 		self.validate_email()
 		self.validate_password()
 		self.validate_default_outgoing_email()
@@ -53,6 +56,12 @@ class MailAccount(Document):
 
 		if self.enabled:
 			delete_account_from_agents(self.email)
+
+	def set_tenant(self) -> None:
+		"""Sets the tenant based on the domain."""
+
+		if not self.tenant:
+			self.tenant = frappe.db.get_value("Mail Domain", self.domain_name, "tenant")
 
 	def validate_enabled(self) -> None:
 		"""Validates the enabled field."""
@@ -79,7 +88,15 @@ class MailAccount(Document):
 		if not has_role(self.user, "Mail User"):
 			frappe.throw(_("User {0} does not have Mail User role.").format(frappe.bold(self.user)))
 
-		validate_domain_and_user_tenant(self.domain_name, self.user)
+	def validate_user_tenant(self) -> None:
+		"""Validates the user tenant."""
+
+		if self.tenant != get_tenant_for_user(self.user):
+			frappe.throw(
+				_("Domain {0} and User {1} do not belong to the same tenant.").format(
+					frappe.bold(self.domain_name), frappe.bold(self.user)
+				)
+			)
 
 	def validate_email(self) -> None:
 		"""Validates the email address."""
