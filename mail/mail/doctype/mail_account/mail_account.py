@@ -33,6 +33,7 @@ class MailAccount(Document):
 		self.validate_domain()
 		self.validate_user()
 		self.validate_user_tenant()
+		self.validate_tenant_max_accounts()
 		self.validate_email()
 		self.validate_password()
 		self.validate_default_outgoing_email()
@@ -98,6 +99,21 @@ class MailAccount(Document):
 						frappe.bold(self.domain_name), frappe.bold(self.user)
 					)
 				)
+
+	def validate_tenant_max_accounts(self) -> None:
+		"""Validates the Tenant Max Accounts."""
+
+		if is_system_manager(frappe.session.user):
+			return
+
+		total_accounts = frappe.db.count("Mail Account", filters={"tenant": self.tenant, "enabled": 1})
+		max_accounts = frappe.db.get_value("Mail Tenant", self.tenant, "max_accounts")
+		if total_accounts >= max_accounts:
+			frappe.throw(
+				_("You have reached the maximum limit of {0} accounts for the tenant.").format(
+					frappe.bold(max_accounts)
+				)
+			)
 
 	def validate_email(self) -> None:
 		"""Validates the email address."""
