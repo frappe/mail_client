@@ -3,7 +3,7 @@ from frappe import _
 
 
 @frappe.whitelist(allow_guest=True)
-def signup(email) -> str:
+def create_account_request(email) -> str:
 	"""Create a new Mail Account Request"""
 
 	email = email.strip().lower()

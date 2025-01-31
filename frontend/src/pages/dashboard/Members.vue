@@ -33,7 +33,7 @@
 			</ListView>
 		</div>
 	</div>
-	<AddDomain v-model="showInviteUser" />
+	<InviteUser v-model="showInviteUser" />
 </template>
 <script setup>
 import { ref, inject } from 'vue'
@@ -47,7 +47,7 @@ import {
 	ListRowItem,
 	createListResource,
 } from 'frappe-ui'
-import AddDomain from '@/components/Modals/AddDomain.vue'
+import InviteUser from '@/components/Modals/InviteUser.vue'
 
 const user = inject('$user')
 
@@ -56,13 +56,13 @@ const showInviteUser = ref(false)
 const LIST_COLUMNS = [
 	{
 		label: 'User',
-		key: 'user',
+		key: 'name',
 	},
 ]
 
 const members = createListResource({
 	doctype: 'Mail Tenant Member',
-	fields: ['name', 'user', 'is_admin'],
+	fields: ['name', 'is_admin'],
 	filters: { tenant: user.data?.tenant },
 	auto: true,
 	pageLength: 9999,

@@ -100,7 +100,7 @@ const buttonLabel = computed(() => {
 })
 
 const signUp = createResource({
-	url: 'mail.api.account.signup',
+	url: 'mail.api.account.create_account_request',
 	makeParams() {
 		return { email: email.value }
 	},
