@@ -173,12 +173,12 @@
  "links": [
   {
    "group": "Reference",
-   "link_doctype": "Mail Account Request",
+   "link_doctype": "Mail Domain Request",
    "link_fieldname": "domain_name"
   },
   {
    "group": "Reference",
-   "link_doctype": "Mail Domain Request",
+   "link_doctype": "Mail Account Request",
    "link_fieldname": "domain_name"
   },
   {
@@ -217,7 +217,7 @@
    "link_fieldname": "domain_name"
   }
  ],
- "modified": "2025-01-31 11:42:45.906460",
+ "modified": "2025-01-31 12:36:31.647997",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Domain",

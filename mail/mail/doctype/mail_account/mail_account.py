@@ -91,12 +91,13 @@ class MailAccount(Document):
 	def validate_user_tenant(self) -> None:
 		"""Validates the user tenant."""
 
-		if self.tenant != get_tenant_for_user(self.user):
-			frappe.throw(
-				_("Domain {0} and User {1} do not belong to the same tenant.").format(
-					frappe.bold(self.domain_name), frappe.bold(self.user)
+		if self.is_new() or self.enabled:
+			if self.tenant != get_tenant_for_user(self.user):
+				frappe.throw(
+					_("Domain {0} and User {1} do not belong to the same tenant.").format(
+						frappe.bold(self.domain_name), frappe.bold(self.user)
+					)
 				)
-			)
 
 	def validate_email(self) -> None:
 		"""Validates the email address."""
