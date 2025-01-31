@@ -5,7 +5,6 @@
  "engine": "InnoDB",
  "field_order": [
   "section_break_ceuu",
-  "domain_name",
   "enabled",
   "is_verified",
   "is_subdomain",
@@ -13,6 +12,7 @@
   "column_break_lr3y",
   "tenant",
   "tenant_name",
+  "domain_name",
   "dkim_rsa_key_size",
   "newsletter_retention",
   "dns_records_section",
@@ -186,22 +186,27 @@
   },
   {
    "group": "Reference",
+   "link_doctype": "DKIM Key",
+   "link_fieldname": "domain_name"
+  },
+  {
+   "group": "Account",
+   "link_doctype": "Mail Account Request",
+   "link_fieldname": "domain_name"
+  },
+  {
+   "group": "Account",
    "link_doctype": "Mail Account",
    "link_fieldname": "domain_name"
   },
   {
-   "group": "Reference",
-   "link_doctype": "Mail Group",
-   "link_fieldname": "domain_name"
-  },
-  {
-   "group": "Reference",
+   "group": "Alias & Group",
    "link_doctype": "Mail Alias",
    "link_fieldname": "domain_name"
   },
   {
-   "group": "Reference",
-   "link_doctype": "DKIM Key",
+   "group": "Alias & Group",
+   "link_doctype": "Mail Group",
    "link_fieldname": "domain_name"
   },
   {
@@ -220,7 +225,7 @@
    "link_fieldname": "domain_name"
   }
  ],
- "modified": "2025-01-29 16:21:13.816735",
+ "modified": "2025-02-01 16:21:13.816735",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Domain",

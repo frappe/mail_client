@@ -8,9 +8,9 @@ from frappe import _
 from frappe.model.document import Document
 from frappe.utils import random_string
 
-from mail.utils.cache import get_user_mail_tenant
+from mail.utils.cache import get_tenant_for_user
 from mail.utils.dns import verify_dns_record
-from mail.utils.user import has_role, is_mail_tenant_admin, is_system_manager
+from mail.utils.user import has_role, is_system_manager, is_tenant_admin
 
 
 class MailDomainRequest(Document):
@@ -39,7 +39,7 @@ class MailDomainRequest(Document):
 				frappe.throw(_("Tenant is required"))
 		else:
 			self.user = user
-			self.tenant = get_user_mail_tenant(user)
+			self.tenant = get_tenant_for_user(user)
 
 	def validate_domain_name(self) -> None:
 		"""Validates the domain name"""
@@ -49,12 +49,12 @@ class MailDomainRequest(Document):
 			frappe.throw(_("Invalid domain name"))
 
 		if frappe.db.exists("Mail Domain", {"domain_name": self.domain_name}):
-			frappe.throw(_("Domain {0} already registered").format(self.domain_name))
+			frappe.throw(_("Domain {0} already registered.").format(frappe.bold(self.domain_name)))
 
 	def validate_user_and_tenant(self) -> None:
 		"""Validates the user and tenant"""
 
-		if not is_mail_tenant_admin(self.tenant, self.user):
+		if not is_tenant_admin(self.tenant, self.user):
 			frappe.throw(_("User must be an admin of the tenant"))
 
 	def set_verification_key(self) -> None:
@@ -65,6 +65,9 @@ class MailDomainRequest(Document):
 	@frappe.whitelist()
 	def verify_and_create_domain(self, save: bool = False) -> bool:
 		"""Verifies the domain and creates the mail domain"""
+
+		if self.is_verified:
+			frappe.throw(_("Domain is already verified and created."))
 
 		self.is_verified = 0
 		if verify_dns_record(self.domain_name, "TXT", self.verification_key):
@@ -97,7 +100,7 @@ def has_permission(doc: "Document", ptype: str, user: str) -> bool:
 	if is_system_manager(user):
 		return True
 
-	if is_mail_tenant_admin(doc.tenant, user):
+	if is_tenant_admin(doc.tenant, user):
 		if ptype in ("create", "read", "write"):
 			return True
 
@@ -112,7 +115,7 @@ def get_permission_query_condition(user: str | None = None) -> str:
 		return ""
 
 	if has_role(user, "Mail Admin"):
-		if tenant := get_user_mail_tenant(user):
+		if tenant := get_tenant_for_user(user):
 			return f'(`tabMail Domain Request`.`tenant` = "{tenant}")'
 
 	return "1=0"

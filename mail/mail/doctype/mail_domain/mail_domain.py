@@ -11,9 +11,9 @@ from mail.agent import create_domain_on_agents, delete_domain_from_agents
 from mail.mail.doctype.dkim_key.dkim_key import create_dkim_key
 from mail.mail.doctype.mail_account.mail_account import create_dmarc_account
 from mail.utils import get_dkim_host, get_dkim_selector, get_dmarc_address
-from mail.utils.cache import get_root_domain_name, get_user_mail_tenant
+from mail.utils.cache import get_root_domain_name, get_tenant_for_user
 from mail.utils.dns import verify_dns_record
-from mail.utils.user import has_role, is_mail_tenant_admin, is_system_manager
+from mail.utils.user import has_role, is_system_manager, is_tenant_admin
 
 
 class MailDomain(Document):
@@ -23,10 +23,10 @@ class MailDomain(Document):
 
 	def validate(self) -> None:
 		if self.is_new():
-			self.validate_tenant_max_domains()
 			self.validate_is_subdomain()
 			self.validate_is_root_domain()
 
+		self.validate_tenant_max_domains()
 		self.validate_dkim_rsa_key_size()
 		self.validate_newsletter_retention()
 		self.validate_is_verified()
@@ -41,26 +41,15 @@ class MailDomain(Document):
 		if self.is_root_domain:
 			create_dmarc_account()
 
+	def on_update(self) -> None:
+		self.clear_cache()
+
 	def on_trash(self) -> None:
 		if frappe.session.user != "Administrator":
 			frappe.throw(_("Only Administrator can delete Mail Domain."))
 
+		self.clear_cache()
 		delete_domain_from_agents(domain_name=self.domain_name)
-
-	def validate_tenant_max_domains(self) -> None:
-		"""Validates the Tenant Max Domains."""
-
-		if is_system_manager(frappe.session.user):
-			return
-
-		total_domains = frappe.db.count("Mail Domain", filters={"tenant": self.tenant})
-		max_domains = frappe.db.get_value("Mail Tenant", self.tenant, "max_domains")
-		if total_domains >= max_domains:
-			frappe.throw(
-				_("You have reached the maximum limit of {0} domains for this tenant.").format(
-					frappe.bold(max_domains)
-				)
-			)
 
 	def validate_is_subdomain(self) -> None:
 		"""Validates the Is Subdomain field."""
@@ -72,6 +61,21 @@ class MailDomain(Document):
 		"""Validates the Is Root Domain field."""
 
 		self.is_root_domain = 1 if self.domain_name == get_root_domain_name() else 0
+
+	def validate_tenant_max_domains(self) -> None:
+		"""Validates the Tenant Max Domains."""
+
+		if is_system_manager(frappe.session.user):
+			return
+
+		total_domains = frappe.db.count("Mail Domain", filters={"tenant": self.tenant, "enabled": 1})
+		max_domains = frappe.db.get_value("Mail Tenant", self.tenant, "max_domains")
+		if total_domains >= max_domains:
+			frappe.throw(
+				_("You have reached the maximum limit of {0} domains for the tenant.").format(
+					frappe.bold(max_domains)
+				)
+			)
 
 	def validate_dkim_rsa_key_size(self) -> None:
 		"""Validates the DKIM Key Size."""
@@ -163,6 +167,16 @@ class MailDomain(Document):
 		create_dkim_key(self.domain_name, cint(self.dkim_rsa_key_size))
 		frappe.msgprint(_("DKIM Keys rotated successfully."), indicator="green", alert=True)
 
+	def clear_cache(self) -> None:
+		"""Clears the Cache."""
+
+		frappe.cache.delete_value(f"tenant|{self.tenant}")
+
+		if self.has_value_changed("tenant"):
+			if previous_doc := self.get_doc_before_save():
+				if previous_doc.tenant:
+					frappe.cache.delete_value(f"tenant|{previous_doc.tenant}")
+
 
 def get_dns_records(domain_name: str) -> list[dict]:
 	"""Returns the DNS Records for the given domain."""
@@ -246,7 +260,7 @@ def has_permission(doc: "Document", ptype: str, user: str | None = None) -> bool
 	if is_system_manager(user):
 		return True
 
-	if is_mail_tenant_admin(doc.tenant, user):
+	if is_tenant_admin(doc.tenant, user):
 		if ptype in ("read", "write"):
 			return True
 
@@ -261,7 +275,7 @@ def get_permission_query_condition(user: str | None = None) -> str:
 		return ""
 
 	if has_role(user, "Mail Admin"):
-		if tenant := get_user_mail_tenant(user):
+		if tenant := get_tenant_for_user(user):
 			return f'(`tabMail Domain`.`tenant` = "{tenant}")'
 
 	return "1=0"

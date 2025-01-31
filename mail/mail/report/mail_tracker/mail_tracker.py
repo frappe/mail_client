@@ -6,7 +6,7 @@ from frappe import _
 from frappe.query_builder import Criterion, Order
 from frappe.query_builder.functions import Date
 
-from mail.utils.cache import get_user_mail_account
+from mail.utils.cache import get_account_for_user
 from mail.utils.user import has_role, is_system_manager
 
 
@@ -148,7 +148,7 @@ def get_data(filters: dict | None = None) -> list[dict]:
 	user = frappe.session.user
 	if not is_system_manager(user):
 		conditions = []
-		account = get_user_mail_account(user)
+		account = get_account_for_user(user)
 
 		if has_role(user, "Mail User") and account:
 			conditions.append(OM.sender == account)

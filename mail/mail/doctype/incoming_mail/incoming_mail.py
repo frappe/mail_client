@@ -22,9 +22,9 @@ from mail.mail.doctype.mime_message.mime_message import (
 	update_mime_message,
 )
 from mail.utils import get_dmarc_address, get_in_reply_to_mail, load_compressed_file
-from mail.utils.cache import get_user_mail_account
+from mail.utils.cache import get_account_for_user
 from mail.utils.email_parser import EmailParser, extract_ip_and_host, extract_spam_status
-from mail.utils.user import is_mail_account_owner, is_system_manager
+from mail.utils.user import is_account_owner, is_system_manager
 
 if TYPE_CHECKING:
 	from mail.mail.doctype.outgoing_mail.outgoing_mail import OutgoingMail
@@ -273,7 +273,7 @@ def has_permission(doc: "Document", ptype: str, user: str) -> bool:
 		return False
 
 	user_is_system_manager = is_system_manager(user)
-	user_is_account_owner = is_mail_account_owner(doc.receiver, user)
+	user_is_account_owner = is_account_owner(doc.receiver, user)
 
 	if ptype in ["create", "submit"]:
 		return user_is_system_manager
@@ -290,7 +290,7 @@ def get_permission_query_condition(user: str | None = None) -> str:
 	if is_system_manager(user):
 		return ""
 
-	if account := get_user_mail_account(user):
+	if account := get_account_for_user(user):
 		return f'(`tabIncoming Mail`.`receiver` = "{account}") AND (`tabIncoming Mail`.`docstatus` = 1)'
 	else:
 		return "1=0"

@@ -43,26 +43,35 @@ def get_imap_limits() -> dict:
 	return frappe.cache.get_value("imap_limits", generator)
 
 
-def get_user_mail_tenant(user: str) -> str | None:
-	"""Returns the mail tenant of the user."""
+def get_domains_owned_by_tenant(tenant: str) -> list:
+	"""Returns the domains owned by the tenant."""
+
+	def generator() -> list:
+		return frappe.get_all("Mail Domain", filters={"tenant": tenant}, pluck="name")
+
+	return frappe.cache.hget(f"tenant|{tenant}", "domains", generator)
+
+
+def get_tenant_for_user(user: str) -> str | None:
+	"""Returns the tenant of the user."""
 
 	def generator() -> str | None:
 		return frappe.db.get_value("Mail Tenant Member", {"user": user}, "tenant")
 
-	return frappe.cache.hget(f"user|{user}", "mail_tenant", generator)
+	return frappe.cache.hget(f"user|{user}", "tenant", generator)
 
 
-def get_user_mail_account(user: str) -> str | None:
-	"""Returns the mail account of the user."""
+def get_account_for_user(user: str) -> str | None:
+	"""Returns the account of the user."""
 
 	def generator() -> str | None:
 		return frappe.db.get_value("Mail Account", {"user": user, "enabled": 1}, "name")
 
-	return frappe.cache.hget(f"user|{user}", "mail_account", generator)
+	return frappe.cache.hget(f"user|{user}", "account", generator)
 
 
 def get_account_for_email(email: str) -> str | None:
-	"""Returns the mail account for the email."""
+	"""Returns the account for the email."""
 
 	def generator() -> str | None:
 		if account := frappe.db.exists("Mail Account", {"email": email}):
@@ -70,14 +79,14 @@ def get_account_for_email(email: str) -> str | None:
 		elif alias := frappe.db.exists("Mail Alias", {"email": email, "alias_for_type": "Mail Account"}):
 			return frappe.db.get_value("Mail Alias", alias, "alias_for_name")
 
-	return frappe.cache.hget(f"email|{email}", "mail_account", generator)
+	return frappe.cache.hget(f"email|{email}", "account", generator)
 
 
-def get_user_mail_aliases(user: str) -> list:
-	"""Returns the mail aliases of the user."""
+def get_aliases_for_user(user: str) -> list:
+	"""Returns the aliases of the user."""
 
 	def generator() -> list:
-		account = get_user_mail_account(user)
+		account = get_account_for_user(user)
 
 		if not account:
 			return []
@@ -93,10 +102,10 @@ def get_user_mail_aliases(user: str) -> list:
 			)
 		).run(pluck="name")
 
-	return frappe.cache.hget(f"user|{user}", "mail_aliases", generator)
+	return frappe.cache.hget(f"user|{user}", "aliases", generator)
 
 
-def get_user_default_outgoing_email(user: str) -> str | None:
+def get_default_outgoing_email_for_user(user: str) -> str | None:
 	"""Returns the default outgoing email of the user."""
 
 	def generator() -> str | None:
