@@ -1,6 +1,6 @@
 {
  "actions": [],
- "autoname": "hash",
+ "autoname": "field:user",
  "creation": "2025-01-27 22:04:12.395351",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -52,11 +52,11 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-01-30 11:32:32.856103",
+ "modified": "2025-01-31 15:53:10.550269",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Tenant Member",
- "naming_rule": "Random",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {
