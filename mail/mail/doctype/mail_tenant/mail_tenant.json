@@ -74,27 +74,32 @@
  "index_web_pages_for_search": 1,
  "links": [
   {
-   "group": "Reference",
-   "link_doctype": "Mail Account Request",
-   "link_fieldname": "tenant"
-  },
-  {
-   "group": "Reference",
-   "link_doctype": "Mail Domain Request",
-   "link_fieldname": "tenant"
-  },
-  {
-   "group": "Reference",
+   "group": "Member",
    "link_doctype": "Mail Tenant Member",
    "link_fieldname": "tenant"
   },
   {
-   "group": "Reference",
+   "group": "Domain",
+   "link_doctype": "Mail Domain Request",
+   "link_fieldname": "tenant"
+  },
+  {
+   "group": "Domain",
    "link_doctype": "Mail Domain",
+   "link_fieldname": "tenant"
+  },
+  {
+   "group": "Account",
+   "link_doctype": "Mail Account Request",
+   "link_fieldname": "tenant"
+  },
+  {
+   "group": "Account",
+   "link_doctype": "Mail Account",
    "link_fieldname": "tenant"
   }
  ],
- "modified": "2025-01-28 12:02:08.663645",
+ "modified": "2025-01-31 12:17:35.027162",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Tenant",
