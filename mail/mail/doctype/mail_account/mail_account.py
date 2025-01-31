@@ -11,7 +11,7 @@ from frappe.utils import random_string
 
 from mail.agent import create_account_on_agents, delete_account_from_agents, patch_account_on_agents
 from mail.utils import get_dmarc_address
-from mail.utils.cache import get_aliases_for_user, get_domains_owned_by_tenant, get_tenant_for_user
+from mail.utils.cache import get_aliases_for_user, get_tenant_for_user
 from mail.utils.user import has_role, is_system_manager
 from mail.utils.validation import (
 	is_email_assigned,
@@ -206,8 +206,7 @@ def has_permission(doc: "Document", ptype: str, user: str) -> bool:
 		return True
 
 	if has_role(user, "Mail Admin"):
-		if user_tenant := get_tenant_for_user(user):
-			return doc.domain_name in get_domains_owned_by_tenant(user_tenant)
+		return doc.tenant == get_tenant_for_user(user)
 
 	return user == doc.user
 
@@ -220,8 +219,6 @@ def get_permission_query_condition(user: str | None = None) -> str:
 		return ""
 
 	if has_role(user, "Mail Admin"):
-		if user_tenant := get_tenant_for_user(user):
-			if tenant_domains := get_domains_owned_by_tenant(user_tenant):
-				return f"(`tabMail Account`.`domain_name` IN ({', '.join(map(frappe.db.escape, tenant_domains))}))"
+		return f"(`tabMail Account`.`tenant` = {frappe.db.escape(get_tenant_for_user(user))})"
 
 	return f"(`tabMail Account`.`user` = {frappe.db.escape(user)})"
