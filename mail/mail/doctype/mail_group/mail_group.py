@@ -6,10 +6,13 @@ from frappe import _
 from frappe.model.document import Document
 
 from mail.agent import create_group_on_agents, delete_group_from_agents, patch_group_on_agents
+from mail.utils.cache import get_tenant_for_user
+from mail.utils.user import has_role, is_system_manager, is_tenant_admin
 from mail.utils.validation import (
 	is_email_assigned,
 	is_valid_email_for_domain,
 	validate_domain_is_enabled_and_verified,
+	validate_domain_owned_by_tenant,
 )
 
 
@@ -62,6 +65,7 @@ class MailGroup(Document):
 	def validate_domain(self) -> None:
 		"""Validates the domain."""
 
+		validate_domain_owned_by_tenant(self.domain_name, self.tenant)
 		validate_domain_is_enabled_and_verified(self.domain_name)
 
 	def validate_email(self) -> None:
@@ -69,3 +73,31 @@ class MailGroup(Document):
 
 		is_email_assigned(self.email, self.doctype, raise_exception=True)
 		is_valid_email_for_domain(self.email, self.domain_name, raise_exception=True)
+
+
+def has_permission(doc: "Document", ptype: str, user: str | None = None) -> bool:
+	if doc.doctype != "Mail Group":
+		return False
+
+	user = user or frappe.session.user
+
+	if is_system_manager(user):
+		return True
+
+	if is_tenant_admin(doc.tenant, user):
+		return True
+
+	return False
+
+
+def get_permission_query_condition(user: str | None = None) -> str:
+	user = user or frappe.session.user
+
+	if is_system_manager(user):
+		return ""
+
+	if has_role(user, "Mail Admin"):
+		if tenant := get_tenant_for_user(user):
+			return f"(`tabMail Group`.`tenant` = {frappe.db.escape(tenant)})"
+
+	return "1=0"

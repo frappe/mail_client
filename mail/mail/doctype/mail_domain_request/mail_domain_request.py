@@ -93,9 +93,11 @@ class MailDomainRequest(Document):
 		return domain.name
 
 
-def has_permission(doc: "Document", ptype: str, user: str) -> bool:
+def has_permission(doc: "Document", ptype: str, user: str | None = None) -> bool:
 	if doc.doctype != "Mail Domain Request":
 		return False
+
+	user = user or frappe.session.user
 
 	if is_system_manager(user):
 		return True
@@ -108,14 +110,13 @@ def has_permission(doc: "Document", ptype: str, user: str) -> bool:
 
 
 def get_permission_query_condition(user: str | None = None) -> str:
-	if not user:
-		user = frappe.session.user
+	user = user or frappe.session.user
 
 	if is_system_manager(user):
 		return ""
 
 	if has_role(user, "Mail Admin"):
 		if tenant := get_tenant_for_user(user):
-			return f'(`tabMail Domain Request`.`tenant` = "{tenant}")'
+			return f"(`tabMail Domain Request`.`tenant` = {frappe.db.escape(tenant)})"
 
 	return "1=0"
