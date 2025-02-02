@@ -28,6 +28,7 @@ class MailGroup(Document):
 		self.validate_enabled()
 		self.validate_domain()
 		self.validate_email()
+		self.validate_tenant_max_groups()
 
 	def on_update(self) -> None:
 		if self.enabled:
@@ -73,6 +74,21 @@ class MailGroup(Document):
 
 		is_email_assigned(self.email, self.doctype, raise_exception=True)
 		is_valid_email_for_domain(self.email, self.domain_name, raise_exception=True)
+
+	def validate_tenant_max_groups(self) -> None:
+		"""Validates the Tenant Max Groups."""
+
+		if is_system_manager(frappe.session.user):
+			return
+
+		total_groups = frappe.db.count("Mail Groups", filters={"tenant": self.tenant, "enabled": 1})
+		max_groups = frappe.db.get_value("Mail Tenant", self.tenant, "max_groups")
+		if total_groups >= max_groups:
+			frappe.throw(
+				_("You have reached the maximum limit of {0} groups for the tenant.").format(
+					frappe.bold(max_groups)
+				)
+			)
 
 
 def has_permission(doc: "Document", ptype: str, user: str | None = None) -> bool:
