@@ -17,6 +17,7 @@ from mail.utils.validation import (
 	is_email_assigned,
 	is_valid_email_for_domain,
 	validate_domain_is_enabled_and_verified,
+	validate_domain_owned_by_tenant,
 )
 
 
@@ -81,6 +82,7 @@ class MailAccount(Document):
 	def validate_domain(self) -> None:
 		"""Validates the domain."""
 
+		validate_domain_owned_by_tenant(self.domain_name, self.tenant)
 		validate_domain_is_enabled_and_verified(self.domain_name)
 
 	def validate_user(self) -> None:

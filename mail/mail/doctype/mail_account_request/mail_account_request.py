@@ -2,7 +2,6 @@
 # For license information, please see license.txt
 
 import random
-from typing import TYPE_CHECKING
 
 import frappe
 from frappe import _
@@ -73,7 +72,7 @@ class MailAccountRequest(Document):
 
 		if not is_tenant_admin(self.tenant, self.invited_by):
 			frappe.throw(
-				_("User {0} is not authorized to invite users to the selected tenant.").format(
+				_("User {0} is not authorized to invite users to the tenant.").format(
 					frappe.bold(self.invited_by)
 				)
 			)
