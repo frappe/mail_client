@@ -8,6 +8,7 @@
   "enabled",
   "column_break_zfbl",
   "domain_name",
+  "tenant",
   "email",
   "display_name"
  ],
@@ -57,6 +58,19 @@
    "fieldname": "display_name",
    "fieldtype": "Data",
    "label": "Display Name"
+  },
+  {
+   "depends_on": "eval: !doc.__islocal",
+   "fetch_from": "domain_name.tenant",
+   "fieldname": "tenant",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Tenant",
+   "no_copy": 1,
+   "options": "Mail Tenant",
+   "read_only": 1,
+   "search_index": 1,
+   "set_only_once": 1
   }
  ],
  "index_web_pages_for_search": 1,
@@ -72,7 +86,7 @@
    "link_fieldname": "mail_group"
   }
  ],
- "modified": "2025-01-16 16:33:40.513321",
+ "modified": "2025-02-02 20:22:21.214509",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Group",
@@ -88,6 +102,18 @@
    "read": 1,
    "report": 1,
    "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Mail Admin",
    "share": 1,
    "write": 1
   }

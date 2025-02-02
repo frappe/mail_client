@@ -18,6 +18,9 @@ class MailGroup(Document):
 		self.email = self.email.strip().lower()
 		self.name = self.email
 
+	def before_validate(self) -> None:
+		self.set_tenant()
+
 	def validate(self) -> None:
 		self.validate_enabled()
 		self.validate_domain()
@@ -35,6 +38,12 @@ class MailGroup(Document):
 	def on_trash(self) -> None:
 		if self.enabled:
 			delete_group_from_agents(self.email)
+
+	def set_tenant(self) -> None:
+		"""Sets the tenant based on the domain."""
+
+		if not self.tenant:
+			self.tenant = frappe.db.get_value("Mail Domain", self.domain_name, "tenant")
 
 	def validate_enabled(self) -> None:
 		"""Validates the enabled field."""
