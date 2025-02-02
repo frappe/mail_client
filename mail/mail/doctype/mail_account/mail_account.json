@@ -176,14 +176,14 @@
    "link_fieldname": "account"
   },
   {
-   "group": "Alias & Group",
-   "link_doctype": "Mail Alias",
-   "link_fieldname": "alias_for_name"
-  },
-  {
-   "group": "Alias & Group",
+   "group": "Group & Alias",
    "link_doctype": "Mail Group Member",
    "link_fieldname": "member_name"
+  },
+  {
+   "group": "Group & Alias",
+   "link_doctype": "Mail Alias",
+   "link_fieldname": "alias_for_name"
   },
   {
    "group": "Mail",
@@ -196,7 +196,7 @@
    "link_fieldname": "sender"
   }
  ],
- "modified": "2025-01-31 15:13:48.054282",
+ "modified": "2025-02-02 22:12:12.548606",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Account",

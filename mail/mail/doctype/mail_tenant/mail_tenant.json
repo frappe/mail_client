@@ -97,9 +97,14 @@
    "group": "Account",
    "link_doctype": "Mail Account",
    "link_fieldname": "tenant"
+  },
+  {
+   "group": "Group & Alias",
+   "link_doctype": "Mail Group",
+   "link_fieldname": "tenant"
   }
  ],
- "modified": "2025-01-31 12:17:35.027162",
+ "modified": "2025-02-02 22:11:53.092567",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Tenant",
