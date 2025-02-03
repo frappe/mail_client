@@ -31,6 +31,8 @@ class MailGroup(Document):
 		self.validate_tenant_max_groups()
 
 	def on_update(self) -> None:
+		self.clear_cache()
+
 		if self.enabled:
 			if self.has_value_changed("enabled") or self.has_value_changed("email"):
 				create_group_on_agents(self.email, self.display_name)
@@ -40,6 +42,8 @@ class MailGroup(Document):
 			delete_group_from_agents(self.email)
 
 	def on_trash(self) -> None:
+		self.clear_cache()
+
 		if self.enabled:
 			delete_group_from_agents(self.email)
 
@@ -89,6 +93,16 @@ class MailGroup(Document):
 					frappe.bold(max_groups)
 				)
 			)
+
+	def clear_cache(self) -> None:
+		"""Clears the Cache."""
+
+		frappe.cache.delete_value(f"tenant|{self.tenant}")
+
+		if self.has_value_changed("tenant"):
+			if previous_doc := self.get_doc_before_save():
+				if previous_doc.tenant:
+					frappe.cache.delete_value(f"tenant|{previous_doc.tenant}")
 
 
 def has_permission(doc: "Document", ptype: str, user: str | None = None) -> bool:
