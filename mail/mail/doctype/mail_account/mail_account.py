@@ -12,11 +12,12 @@ from frappe.utils import random_string
 from mail.agent import create_account_on_agents, delete_account_from_agents, patch_account_on_agents
 from mail.utils import get_dmarc_address
 from mail.utils.cache import get_aliases_for_user, get_tenant_for_user
-from mail.utils.user import has_role, is_system_manager
+from mail.utils.user import has_role, is_system_manager, is_tenant_admin
 from mail.utils.validation import (
 	is_email_assigned,
 	is_valid_email_for_domain,
 	validate_domain_is_enabled_and_verified,
+	validate_domain_owned_by_tenant,
 )
 
 
@@ -81,6 +82,7 @@ class MailAccount(Document):
 	def validate_domain(self) -> None:
 		"""Validates the domain."""
 
+		validate_domain_owned_by_tenant(self.domain_name, self.tenant)
 		validate_domain_is_enabled_and_verified(self.domain_name)
 
 	def validate_user(self) -> None:
@@ -215,27 +217,29 @@ def create_dmarc_account() -> None:
 	create_mail_account(email=get_dmarc_address(), first_name="DMARC")
 
 
-def has_permission(doc: "Document", ptype: str, user: str) -> bool:
+def has_permission(doc: "Document", ptype: str, user: str | None = None) -> bool:
 	if doc.doctype != "Mail Account":
 		return False
+
+	user = user or frappe.session.user
 
 	if is_system_manager(user):
 		return True
 
-	if has_role(user, "Mail Admin"):
-		return doc.tenant == get_tenant_for_user(user)
+	if is_tenant_admin(doc.tenant, user):
+		return True
 
 	return user == doc.user
 
 
 def get_permission_query_condition(user: str | None = None) -> str:
-	if not user:
-		user = frappe.session.user
+	user = user or frappe.session.user
 
 	if is_system_manager(user):
 		return ""
 
 	if has_role(user, "Mail Admin"):
-		return f"(`tabMail Account`.`tenant` = {frappe.db.escape(get_tenant_for_user(user))})"
+		if tenant := get_tenant_for_user(user):
+			return f"(`tabMail Account`.`tenant` = {frappe.db.escape(tenant)})"
 
 	return f"(`tabMail Account`.`user` = {frappe.db.escape(user)})"

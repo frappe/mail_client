@@ -2,7 +2,6 @@
 # For license information, please see license.txt
 
 import random
-from typing import TYPE_CHECKING
 
 import frappe
 from frappe import _
@@ -73,7 +72,7 @@ class MailAccountRequest(Document):
 
 		if not is_tenant_admin(self.tenant, self.invited_by):
 			frappe.throw(
-				_("User {0} is not authorized to invite users to the selected tenant.").format(
+				_("User {0} is not authorized to invite users to the tenant.").format(
 					frappe.bold(self.invited_by)
 				)
 			)
@@ -174,9 +173,11 @@ def expire_mail_account_requests() -> None:
 	)
 
 
-def has_permission(doc: "Document", ptype: str, user: str) -> bool:
+def has_permission(doc: "Document", ptype: str, user: str | None = None) -> bool:
 	if doc.doctype != "Mail Account Request":
 		return False
+
+	user = user or frappe.session.user
 
 	if is_system_manager(user):
 		return True
@@ -189,14 +190,13 @@ def has_permission(doc: "Document", ptype: str, user: str) -> bool:
 
 
 def get_permission_query_condition(user: str | None = None) -> str:
-	if not user:
-		user = frappe.session.user
+	user = user or frappe.session.user
 
 	if is_system_manager(user):
 		return ""
 
 	if has_role(user, "Mail Admin"):
 		if tenant := get_tenant_for_user(user):
-			return f'(`tabMail Account Request`.`tenant` = "{tenant}")'
+			return f"(`tabMail Account Request`.`tenant` = {frappe.db.escape(tenant)})"
 
 	return "1=0"

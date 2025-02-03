@@ -192,13 +192,13 @@
    "link_fieldname": "domain_name"
   },
   {
-   "group": "Alias & Group",
-   "link_doctype": "Mail Alias",
+   "group": "Group & Alias",
+   "link_doctype": "Mail Group",
    "link_fieldname": "domain_name"
   },
   {
-   "group": "Alias & Group",
-   "link_doctype": "Mail Group",
+   "group": "Group & Alias",
+   "link_doctype": "Mail Alias",
    "link_fieldname": "domain_name"
   },
   {
@@ -217,7 +217,7 @@
    "link_fieldname": "domain_name"
   }
  ],
- "modified": "2025-01-31 14:58:43.018293",
+ "modified": "2025-02-02 22:12:32.794504",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Domain",

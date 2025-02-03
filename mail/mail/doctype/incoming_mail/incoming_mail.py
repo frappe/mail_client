@@ -268,10 +268,11 @@ def reply_to_mail(source_name, target_doc=None) -> "OutgoingMail":
 	return target_doc
 
 
-def has_permission(doc: "Document", ptype: str, user: str) -> bool:
+def has_permission(doc: "Document", ptype: str, user: str | None = None) -> bool:
 	if doc.doctype != "Incoming Mail":
 		return False
 
+	user = user or frappe.session.user
 	user_is_system_manager = is_system_manager(user)
 	user_is_account_owner = is_account_owner(doc.receiver, user)
 
@@ -284,14 +285,13 @@ def has_permission(doc: "Document", ptype: str, user: str) -> bool:
 
 
 def get_permission_query_condition(user: str | None = None) -> str:
-	if not user:
-		user = frappe.session.user
+	user = user or frappe.session.user
 
 	if is_system_manager(user):
 		return ""
 
 	if account := get_account_for_user(user):
-		return f'(`tabIncoming Mail`.`receiver` = "{account}") AND (`tabIncoming Mail`.`docstatus` = 1)'
+		return f"(`tabIncoming Mail`.`receiver` = {frappe.db.escape(account)}) AND (`tabIncoming Mail`.`docstatus` = 1)"
 	else:
 		return "1=0"
 

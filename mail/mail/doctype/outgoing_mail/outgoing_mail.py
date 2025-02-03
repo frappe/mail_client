@@ -1214,10 +1214,11 @@ def delete_newsletters() -> None:
 		).run()
 
 
-def has_permission(doc: "Document", ptype: str, user: str) -> bool:
+def has_permission(doc: "Document", ptype: str, user: str | None = None) -> bool:
 	if doc.doctype != "Outgoing Mail":
 		return False
 
+	user = user or frappe.session.user
 	user_is_system_manager = is_system_manager(user)
 	user_is_account_owner = is_account_owner(doc.sender, user)
 
@@ -1230,13 +1231,12 @@ def has_permission(doc: "Document", ptype: str, user: str) -> bool:
 
 
 def get_permission_query_condition(user: str | None = None) -> str:
-	if not user:
-		user = frappe.session.user
+	user = user or frappe.session.user
 
 	if is_system_manager(user):
 		return ""
 
 	if account := get_account_for_user(user):
-		return f'(`tabOutgoing Mail`.`sender` = "{account}") AND (`tabOutgoing Mail`.`docstatus` != 2)'
+		return f"(`tabOutgoing Mail`.`sender` = {frappe.db.escape(account)}) AND (`tabOutgoing Mail`.`docstatus` != 2)"
 	else:
 		return "1=0"
