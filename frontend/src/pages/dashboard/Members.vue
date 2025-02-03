@@ -14,20 +14,22 @@
 			<ListView
 				v-if="members?.data"
 				class="flex-1"
-				:columns="LIST_COLUMNS"
+				:columns="[{ label: __('User') }]"
 				:rows="members.data"
 				:options="{ selectable: false, showTooltip: false }"
 				row-key="name"
 			>
 				<ListHeader />
 				<ListRows>
-					<ListRow
-						v-for="row in members.data"
-						:key="row.name"
-						v-slot="{ column, item }"
-						:row="row"
-					>
-						<ListRowItem :item="item"> </ListRowItem>
+					<ListRow v-for="row in members.data" :key="row.name" :row="row">
+						<!-- todo: fix vertical spacing -->
+						<div class="flex items-center space-x-2">
+							<Avatar :image="row.user_image" :label="row.full_name" size="lg" />
+							<div class="text-sm">
+								<p class="font-medium text-gray-900">{{ row.full_name }}</p>
+								<p class="text-gray-600 mt-0.5">{{ row.name }}</p>
+							</div>
+						</div>
 					</ListRow>
 				</ListRows>
 			</ListView>
@@ -38,14 +40,14 @@
 <script setup>
 import { ref, inject } from 'vue'
 import {
+	Avatar,
 	Button,
 	Breadcrumbs,
 	ListView,
 	ListHeader,
 	ListRows,
 	ListRow,
-	ListRowItem,
-	createListResource,
+	createResource,
 } from 'frappe-ui'
 import InviteUser from '@/components/Modals/InviteUser.vue'
 
@@ -53,19 +55,10 @@ const user = inject('$user')
 
 const showInviteUser = ref(false)
 
-const LIST_COLUMNS = [
-	{
-		label: 'User',
-		key: 'name',
-	},
-]
-
-const members = createListResource({
-	doctype: 'Mail Tenant Member',
-	fields: ['name', 'is_admin'],
-	filters: { tenant: user.data?.tenant },
+const members = createResource({
+	url: 'mail.api.admin.get_tenant_members',
+	makeParams: () => ({ tenant: user.data?.tenant }),
 	auto: true,
-	pageLength: 9999,
 	cache: ['mailTenantMembers', user.data?.tenant],
 })
 </script>

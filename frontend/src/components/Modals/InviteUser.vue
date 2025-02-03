@@ -65,12 +65,14 @@ import { raiseToast } from '@/utils'
 const show = defineModel()
 const user = inject('$user')
 
-const accountRequest = reactive({
+const emptyAccountRequest = {
 	username: '',
 	domain: '',
 	role: 'Mail User',
 	invite_on_email: '',
-})
+}
+
+const accountRequest = reactive({ ...emptyAccountRequest })
 
 const inviteUser = createResource({
 	url: 'mail.api.account.create_account_request',
@@ -83,6 +85,7 @@ const inviteUser = createResource({
 	},
 	onSuccess() {
 		show.value = false
+		Object.assign(accountRequest, emptyAccountRequest)
 		raiseToast('User invited successfully!')
 	},
 })
