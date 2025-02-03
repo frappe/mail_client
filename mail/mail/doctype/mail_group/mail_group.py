@@ -81,7 +81,7 @@ class MailGroup(Document):
 		if is_system_manager(frappe.session.user):
 			return
 
-		total_groups = frappe.db.count("Mail Groups", filters={"tenant": self.tenant, "enabled": 1})
+		total_groups = frappe.db.count("Mail Group", filters={"tenant": self.tenant, "enabled": 1})
 		max_groups = frappe.db.get_value("Mail Tenant", self.tenant, "max_groups")
 		if total_groups >= max_groups:
 			frappe.throw(
