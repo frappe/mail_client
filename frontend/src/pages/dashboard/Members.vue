@@ -4,11 +4,7 @@
 			class="sticky top-0 z-10 flex items-center justify-between border-b bg-white px-3 py-2.5 sm:px-5"
 		>
 			<Breadcrumbs :items="[{ label: __('Members') }]" />
-			<Button
-				:label="__('Invite User')"
-				iconLeft="user-plus"
-				@click="showInviteUser = true"
-			/>
+			<Button :label="__('Add Member')" iconLeft="user-plus" @click="showAddMember = true" />
 		</header>
 		<div class="m-6 flex-1 flex flex-col">
 			<ListView
@@ -35,7 +31,7 @@
 			</ListView>
 		</div>
 	</div>
-	<InviteUser v-model="showInviteUser" />
+	<AddMember v-model="showAddMember" />
 </template>
 <script setup>
 import { ref, inject } from 'vue'
@@ -49,11 +45,11 @@ import {
 	ListRow,
 	createResource,
 } from 'frappe-ui'
-import InviteUser from '@/components/Modals/InviteUser.vue'
+import AddMember from '@/components/Modals/AddMember.vue'
 
 const user = inject('$user')
 
-const showInviteUser = ref(false)
+const showAddMember = ref(false)
 
 const members = createResource({
 	url: 'mail.api.admin.get_tenant_members',

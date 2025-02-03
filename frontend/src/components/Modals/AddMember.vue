@@ -2,12 +2,12 @@
 	<Dialog
 		v-model="show"
 		:options="{
-			title: __('Invite User'),
+			title: __('Add Member'),
 			actions: [
 				{
-					label: __('Invite User'),
+					label: __('Add Member'),
 					variant: 'solid',
-					onClick: inviteUser.submit,
+					onClick: addMember.submit,
 				},
 			],
 		}"
@@ -37,7 +37,7 @@
 				</div>
 				<FormControl
 					type="select"
-					:label="__('User Role')"
+					:label="__('Member Role')"
 					:options="[
 						{ label: __('Mail User'), value: 'Mail User' },
 						{ label: __('Mail Admin'), value: 'Mail Admin' },
@@ -50,7 +50,7 @@
 					placeholder="johndoe@personal.com"
 					v-model="accountRequest.invite_on_email"
 				/>
-				<ErrorMessage :message="inviteUser.error?.messages[0]" />
+				<ErrorMessage :message="addMember.error?.messages[0]" />
 			</div>
 		</template>
 	</Dialog>
@@ -74,7 +74,7 @@ const emptyAccountRequest = {
 
 const accountRequest = reactive({ ...emptyAccountRequest })
 
-const inviteUser = createResource({
+const addMember = createResource({
 	url: 'mail.api.account.create_account_request',
 	makeParams() {
 		return {
