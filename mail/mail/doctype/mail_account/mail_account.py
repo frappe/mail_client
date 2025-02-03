@@ -168,14 +168,17 @@ class MailAccount(Document):
 		self.secret = bcrypt.hashpw(password, salt).decode()
 
 
-def create_mail_account(
+def _create_user_for_mail_account(
 	email: str,
 	first_name: str,
 	last_name: str | None = None,
 	password: str | None = None,
 	role: Literal["Mail User", "Mail Admin"] = "Mail User",
-) -> "MailAccount":
-	"""Creates a Mail Account"""
+) -> str:
+	"""Creates a User for Mail Account"""
+
+	if frappe.db.exists("User", {"email": email}):
+		frappe.throw(_("User with email {0} already exists.").format(frappe.bold(email)))
 
 	if role not in ["Mail User", "Mail Admin"]:
 		frappe.throw(_("Invalid role. Please select a valid role."))
@@ -184,37 +187,56 @@ def create_mail_account(
 	if role == "Mail Admin":
 		roles.append("Mail Admin")
 
-	if not frappe.db.exists("Mail Account", email):
-		if not frappe.db.exists("User", {"email": email}):
-			account_user = frappe.new_doc("User")
-			account_user.first_name = first_name
-			account_user.last_name = last_name
-			account_user.username = email
-			account_user.email = email
-			account_user.owner = email
-			account_user.send_welcome_email = 0
-			account_user.append_roles(*roles)
-			if password:
-				account_user.new_password = password
-			account_user.insert(ignore_permissions=True)
-		else:
-			frappe.throw(_("User with email {0} already exists.").format(frappe.bold(email)))
+	user = frappe.new_doc("User")
+	user.first_name = first_name
+	user.last_name = last_name
+	user.username = email
+	user.email = email
+	user.owner = email
+	user.send_welcome_email = 0
+	user.append_roles(*roles)
+	if password:
+		user.new_password = password
+	user.insert(ignore_permissions=True)
 
-		account = frappe.new_doc("Mail Account")
-		account.domain_name = email.split("@")[1]
-		account.user = email
-		account.insert(ignore_permissions=True)
+	return user.name
 
-		return account
-	else:
+
+def _add_user_to_tenant(tenant: str, user: str, role: str) -> None:
+	"""Adds a User to a Tenant"""
+
+	tenant = frappe.get_doc("Mail Tenant", tenant)
+	tenant.add_member(user, is_admin=role == "Mail Admin")
+
+
+def create_mail_account(
+	tenant: str,
+	email: str,
+	first_name: str,
+	last_name: str | None = None,
+	password: str | None = None,
+	role: Literal["Mail User", "Mail Admin"] = "Mail User",
+) -> "MailAccount":
+	"""Creates a Mail Account"""
+
+	if frappe.db.exists("Mail Account", email):
 		frappe.throw(_("Mail Account {0} already exists.").format(frappe.bold(email)))
 
+	user = _create_user_for_mail_account(email, first_name, last_name, password, role)
+	_add_user_to_tenant(tenant, user, role)
+	account = frappe.new_doc("Mail Account")
+	account.domain_name = email.split("@")[1]
+	account.user = user
+	account.insert(ignore_permissions=True)
 
-def create_dmarc_account() -> None:
+	return account
+
+
+def create_dmarc_account(tenant: str) -> None:
 	"""Creates a DMARC account"""
 
 	frappe.flags.ignore_domain_validation = True
-	create_mail_account(email=get_dmarc_address(), first_name="DMARC")
+	create_mail_account(tenant=tenant, email=get_dmarc_address(), first_name="DMARC")
 
 
 def has_permission(doc: "Document", ptype: str, user: str | None = None) -> bool:

@@ -155,11 +155,14 @@ class MailAccountRequest(Document):
 		if not self.is_verified:
 			frappe.throw(_("Please verify the email address first."))
 
-		account = create_mail_account(
-			email=self.account, first_name=first_name, last_name=last_name, password=password, role=self.role
+		create_mail_account(
+			tenant=self.tenant,
+			email=self.account,
+			first_name=first_name,
+			last_name=last_name,
+			password=password,
+			role=self.role,
 		)
-		tenant = frappe.get_doc("Mail Tenant", self.tenant)
-		tenant.add_member(account.user, self.role == "Mail Admin")
 
 
 def expire_mail_account_requests() -> None:

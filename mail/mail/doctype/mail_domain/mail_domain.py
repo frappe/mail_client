@@ -39,7 +39,7 @@ class MailDomain(Document):
 		create_domain_on_agents(domain_name=self.domain_name)
 
 		if self.is_root_domain:
-			create_dmarc_account()
+			create_dmarc_account(self.tenant)
 
 	def on_update(self) -> None:
 		self.clear_cache()
