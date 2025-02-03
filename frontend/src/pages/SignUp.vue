@@ -102,7 +102,7 @@ const buttonLabel = computed(() => {
 const signUp = createResource({
 	url: 'mail.api.account.create_account_request',
 	makeParams() {
-		return { email: email.value }
+		return { invite_on_email: email.value }
 	},
 	onSuccess(data) {
 		errorMessage.value = ''

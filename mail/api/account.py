@@ -1,21 +1,37 @@
 import frappe
 from frappe import _
+from frappe.utils import validate_email_address
 
 
 @frappe.whitelist(allow_guest=True)
-def create_account_request(email) -> str:
+def create_account_request(
+	invite_on_email: str,
+	username: str | None = None,
+	domain: str | None = None,
+	tenant: str | None = None,
+	role: str = "Mail Admin",
+	is_invite: 0 | 1 = 0,
+) -> str:
 	"""Create a new Mail Account Request"""
 
-	email = email.strip().lower()
-	frappe.utils.validate_email_address(email, True)
-
-	if frappe.db.exists("User", email):
-		frappe.throw(_("User {0} is already registered.").format(email))
+	invite_on_email = invite_on_email.strip().lower()
+	validate_email_address(invite_on_email, True)
 
 	account_request = frappe.new_doc("Mail Account Request")
-	account_request.email = email
-	account_request.role = "Mail Admin"
+	account_request.email = invite_on_email
+	account_request.role = role
 	account_request.send_email = True
+	account_request.is_invite = is_invite
+
+	if is_invite:
+		if not username:
+			frappe.throw(_("Username is mandatory."))
+
+		account_request.tenant = tenant
+		account_request.domain_name = domain
+		account_request.account = f"{username}@{domain}"
+		account_request.invited_by = frappe.session.user
+
 	account_request.insert(ignore_permissions=True)
 
 	return account_request.name

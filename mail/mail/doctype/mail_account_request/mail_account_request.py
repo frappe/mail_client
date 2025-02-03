@@ -24,12 +24,13 @@ class MailAccountRequest(Document):
 		self.validate_role()
 
 		if self.is_new():
-			self.validate_is_invite()
-
 			if self.is_invite:
 				self.validate_invited_by_and_tenant()
 				self.validate_domain()
 				self.validate_account()
+
+			else:
+				self.validate_non_invite()
 
 	def before_insert(self) -> None:
 		self.set_request_key()
@@ -48,15 +49,17 @@ class MailAccountRequest(Document):
 		if self.role not in ["Mail User", "Mail Admin"]:
 			frappe.throw(_("Invalid role. Please select a valid role."))
 
-	def validate_is_invite(self) -> None:
-		"""Validates the is_invite field."""
+	def validate_non_invite(self) -> None:
+		"""Validates self sign up."""
 
-		if not self.is_invite:
-			self.role = "Mail Admin"
-			self.invited_by = None
-			self.tenant = None
-			self.domain_name = None
-			self.account = None
+		if frappe.db.exists("User", self.email):
+			frappe.throw(_("User {0} is already registered.").format(self.email))
+
+		self.role = "Mail Admin"
+		self.invited_by = None
+		self.tenant = None
+		self.domain_name = None
+		self.account = None
 
 	def validate_invited_by_and_tenant(self) -> None:
 		"""Validates the invited_by and tenant fields."""
@@ -80,6 +83,9 @@ class MailAccountRequest(Document):
 
 	def validate_domain(self) -> None:
 		"""Validates the domain."""
+
+		if not self.domain_name:
+			frappe.throw(_("Domain is mandatory."))
 
 		validate_domain_owned_by_tenant(self.domain_name, self.tenant)
 		validate_domain_is_enabled_and_verified(self.domain_name)

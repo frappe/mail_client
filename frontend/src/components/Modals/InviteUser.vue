@@ -23,12 +23,12 @@
 						class="w-full"
 					/>
 					<FeatherIcon
-						class="text-gray-400 h-4.5 w-4.5 mt-auto mb-1 mx-2.5"
+						class="text-gray-400 h-4 w-4 mt-auto mb-1.5 mx-2.5"
 						name="at-sign"
 					/>
 					<Link
 						:label="__('Domain')"
-						placeholder="example.com"
+						placeholder="yourdomain.com"
 						v-model="accountRequest.domain"
 						doctype="Mail Domain"
 						:filters="{ tenant: user.data.tenant }"
@@ -46,9 +46,9 @@
 				/>
 				<FormControl
 					type="email"
-					:label="__('User Email')"
+					:label="__('Invite On Email')"
 					placeholder="johndoe@personal.com"
-					v-model="accountRequest.email"
+					v-model="accountRequest.invite_on_email"
 				/>
 				<ErrorMessage :message="inviteUser.error?.messages[0]" />
 			</div>
@@ -69,22 +69,19 @@ const accountRequest = reactive({
 	username: '',
 	domain: '',
 	role: 'Mail User',
-	email: '',
+	invite_on_email: '',
 })
 
 const inviteUser = createResource({
 	url: 'mail.api.account.create_account_request',
 	makeParams() {
 		return {
-			account: `${accountRequest.username}@${accountRequest.domain}`,
-			domain_name: accountRequest.domain,
-			invited_by: user.data.name,
 			tenant: user.data.tenant,
-			email: accountRequest.email,
-			role: accountRequest.role,
+			is_invite: 1,
+			...accountRequest,
 		}
 	},
-	onSuccess(data) {
+	onSuccess() {
 		show.value = false
 		raiseToast('User invited successfully!')
 	},
