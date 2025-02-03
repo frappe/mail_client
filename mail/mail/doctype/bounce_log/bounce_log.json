@@ -1,6 +1,6 @@
 {
  "actions": [],
- "autoname": "hash",
+ "autoname": "UUID",
  "creation": "2024-12-02 13:52:51.732799",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -77,11 +77,11 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-12-18 19:03:45.577274",
+ "modified": "2025-02-03 17:14:30.366139",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Bounce Log",
- "naming_rule": "Random",
+ "naming_rule": "UUID",
  "owner": "Administrator",
  "permissions": [
   {

@@ -1,6 +1,5 @@
 {
  "actions": [],
- "allow_rename": 1,
  "autoname": "field:ip_address",
  "creation": "2024-08-14 18:22:35.949979",
  "doctype": "DocType",
@@ -122,7 +121,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-01-16 16:37:24.422041",
+ "modified": "2025-02-03 17:11:10.455897",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "IP Blacklist",
