@@ -1,6 +1,6 @@
 {
  "actions": [],
- "autoname": "hash",
+ "autoname": "UUID",
  "creation": "2024-12-30 12:45:53.179423",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -179,11 +179,11 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-01-27 16:11:30.131659",
+ "modified": "2025-02-03 17:13:53.154996",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Agent Request Log",
- "naming_rule": "Random",
+ "naming_rule": "UUID",
  "owner": "Administrator",
  "permissions": [
   {
