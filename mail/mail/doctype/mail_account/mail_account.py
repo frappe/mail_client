@@ -255,7 +255,10 @@ def has_permission(doc: "Document", ptype: str, user: str | None = None) -> bool
 	if is_tenant_admin(doc.tenant, user):
 		return True
 
-	return user == doc.user
+	if has_role(user, "Mail User"):
+		return user == doc.user
+
+	return False
 
 
 def get_permission_query_condition(user: str | None = None) -> str:
@@ -268,4 +271,7 @@ def get_permission_query_condition(user: str | None = None) -> str:
 		if tenant := get_tenant_for_user(user):
 			return f"(`tabMail Account`.`tenant` = {frappe.db.escape(tenant)})"
 
-	return f"(`tabMail Account`.`user` = {frappe.db.escape(user)})"
+	if has_role(user, "Mail User"):
+		return f"(`tabMail Account`.`user` = {frappe.db.escape(user)})"
+
+	return "1=0"

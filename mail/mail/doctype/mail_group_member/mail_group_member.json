@@ -59,7 +59,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-02-03 17:10:11.925424",
+ "modified": "2025-02-04 13:50:24.993867",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Group Member",
@@ -89,6 +89,10 @@
    "role": "Mail Admin",
    "share": 1,
    "write": 1
+  },
+  {
+   "read": 1,
+   "role": "Mail User"
   }
  ],
  "sort_field": "creation",
