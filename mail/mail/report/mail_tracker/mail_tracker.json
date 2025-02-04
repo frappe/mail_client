@@ -9,7 +9,7 @@
  "idx": 0,
  "is_standard": "Yes",
  "letterhead": null,
- "modified": "2025-01-14 09:35:48.299286",
+ "modified": "2025-02-04 19:48:07.545384",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Tracker",
@@ -21,6 +21,9 @@
  "roles": [
   {
    "role": "System Manager"
+  },
+  {
+   "role": "Mail Admin"
   },
   {
    "role": "Mail User"

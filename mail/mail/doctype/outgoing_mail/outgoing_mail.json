@@ -631,7 +631,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-02-04 10:47:22.754393",
+ "modified": "2025-02-04 19:46:51.775392",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Outgoing Mail",
@@ -648,6 +648,11 @@
    "role": "System Manager",
    "submit": 1,
    "write": 1
+  },
+  {
+   "report": 1,
+   "role": "Mail Admin",
+   "select": 1
   },
   {
    "cancel": 1,

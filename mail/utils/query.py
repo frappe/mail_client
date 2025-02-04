@@ -1,7 +1,7 @@
 import frappe
 from frappe.query_builder import Criterion, Order
 
-from mail.utils.cache import get_account_for_user
+from mail.utils.cache import get_account_for_user, get_domains_owned_by_tenant, get_tenant_for_user
 from mail.utils.user import has_role, is_system_manager
 
 
@@ -22,7 +22,7 @@ def get_outgoing_mails(
 	OM = frappe.qb.DocType("Outgoing Mail")
 	query = (
 		frappe.qb.from_(OM)
-		.select(OM.name)
+		.select(OM.name, OM.subject)
 		.where((OM.docstatus == 1) & (OM[searchfield].like(f"%{txt}%")))
 		.orderby(OM.creation, OM.created_at, order=Order.desc)
 		.offset(start)
@@ -31,10 +31,14 @@ def get_outgoing_mails(
 
 	if not is_system_manager(user):
 		conditions = []
-		account = get_account_for_user(user)
 
-		if has_role(user, "Mail User") and account:
-			conditions.append(OM.sender == account)
+		if has_role(user, "Mail Admin"):
+			if tenant := get_tenant_for_user(user):
+				if domains := get_domains_owned_by_tenant(tenant):
+					conditions.append(OM.domain_name.isin(domains))
+		elif has_role(user, "Mail User"):
+			if account := get_account_for_user(user):
+				conditions.append(OM.sender == account)
 
 		if not conditions:
 			return []

@@ -217,7 +217,7 @@
    "link_fieldname": "domain_name"
   }
  ],
- "modified": "2025-02-02 22:12:32.794504",
+ "modified": "2025-02-04 18:26:03.115949",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Domain",
@@ -242,6 +242,10 @@
    "report": 1,
    "role": "Mail Admin",
    "write": 1
+  },
+  {
+   "role": "Mail User",
+   "select": 1
   },
   {
    "delete": 1,

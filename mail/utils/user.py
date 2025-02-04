@@ -23,6 +23,17 @@ def get_user_email_addresses(user: str) -> list:
 	return email_addresses
 
 
+def get_user_linked_domains(user: str) -> list:
+	"""Returns the list of linked domains associated with the user."""
+
+	linked_domains = set()
+	if email_addresses := get_user_email_addresses(user):
+		for email_address in email_addresses:
+			linked_domains.add(email_address.split("@")[1])
+
+	return list(linked_domains)
+
+
 @frappe.whitelist()
 def get_user_tenant() -> str | None:
 	"""Returns the tenant of the user."""
