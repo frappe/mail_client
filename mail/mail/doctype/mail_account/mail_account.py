@@ -74,10 +74,14 @@ class MailAccount(Document):
 		if alias := frappe.db.exists(
 			"Mail Alias", {"enabled": 1, "alias_for_type": self.doctype, "alias_for_name": self.name}
 		):
-			frappe.throw(_("Mail Alias {0} is enabled. Please disable it first.").format(frappe.bold(alias)))
+			frappe.throw(
+				_("The account is linked to Mail Alias {0}. Please disable it first.").format(
+					frappe.bold(alias)
+				)
+			)
 
 		if frappe.db.exists("Mail Group Member", {"member_type": self.doctype, "member_name": self.name}):
-			frappe.throw(_("This account is linked to a mail group. Please remove it first."))
+			frappe.throw(_("The account is linked to a Mail Group as a member. Please remove it first."))
 
 	def validate_domain(self) -> None:
 		"""Validates the domain."""
