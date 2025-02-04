@@ -18,8 +18,15 @@ class MailGroupMember(Document):
 		return self.member_type == "Mail Group"
 
 	def validate(self) -> None:
+		self.validate_mail_group()
 		self.validate_member_tenant()
 		self.validate_member_name()
+
+	def validate_mail_group(self) -> None:
+		"""Validate if the mail group is enabled."""
+
+		if not frappe.db.get_value("Mail Group", self.mail_group, "enabled"):
+			frappe.throw(_("The Mail Group {0} is disabled.").format(frappe.bold(self.mail_group)))
 
 	def validate_member_tenant(self) -> None:
 		"""Validate if the mail group and the member belong to the same tenant."""
