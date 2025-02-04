@@ -6,7 +6,7 @@ import random
 import frappe
 from frappe import _
 from frappe.model.document import Document
-from frappe.utils import add_days, get_url, nowdate, random_string
+from frappe.utils import add_days, get_url, nowdate, random_string, validate_email_address
 
 from mail.mail.doctype.mail_account.mail_account import create_mail_account
 from mail.utils.cache import get_tenant_for_user
@@ -17,10 +17,19 @@ from mail.utils.validation import (
 	validate_domain_owned_by_tenant,
 )
 
+# todo:
+# clean up form
+# clean up create_account
+# make role => is_admin
+# fix email styles
+# fix email frappe logo
+# create mail account after sign up
+
 
 class MailAccountRequest(Document):
 	def validate(self) -> None:
 		self.validate_role()
+		self.validate_email()
 
 		if self.is_new():
 			if self.is_invite:
@@ -47,6 +56,15 @@ class MailAccountRequest(Document):
 
 		if self.role not in ["Mail User", "Mail Admin"]:
 			frappe.throw(_("Invalid role. Please select a valid role."))
+
+	def validate_email(self) -> None:
+		"""Validates email if needed."""
+
+		if self.send_email and not self.email:
+			frappe.throw(_("Email is required to send invite"))
+
+		self.email = self.email.strip().lower()
+		validate_email_address(self.email, True)
 
 	def validate_non_invite(self) -> None:
 		"""Validates self sign up."""

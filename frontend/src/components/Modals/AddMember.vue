@@ -108,7 +108,10 @@ const accountRequest = reactive({ ...defaultAccountRequest })
 const emit = defineEmits(['reloadMembers'])
 
 watch(show, () => {
-	if (show.value) Object.assign(accountRequest, defaultAccountRequest)
+	if (show.value) {
+		Object.assign(accountRequest, defaultAccountRequest)
+		addMember.reset()
+	}
 })
 
 const addMember = createResource({

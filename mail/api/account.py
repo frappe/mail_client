@@ -1,14 +1,10 @@
 import frappe
 from frappe import _
-from frappe.utils import validate_email_address
 
 
 @frappe.whitelist(allow_guest=True)
 def self_signup(email: str) -> str:
 	"""Create a new Mail Account Request for self signup"""
-
-	email = email.strip().lower()
-	validate_email_address(email, True)
 
 	account_request = frappe.new_doc("Mail Account Request")
 	account_request.email = email

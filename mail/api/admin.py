@@ -76,13 +76,8 @@ def add_member(
 	account_request.account = f"{username}@{domain}"
 	account_request.role = role
 	account_request.invited_by = frappe.session.user
-
-	if send_invite:
-		email = email.strip().lower()
-		validate_email_address(email, True)
-		account_request.email = email
-		account_request.send_email = True
-
+	account_request.email = email
+	account_request.send_email = send_invite
 	account_request.insert()
 
 	if not send_invite:

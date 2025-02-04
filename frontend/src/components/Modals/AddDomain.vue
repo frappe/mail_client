@@ -68,6 +68,7 @@ watch(show, () => {
 		domainName.value = ''
 		verificationError.value = ''
 		domainRequest.reset()
+		verifyDNS.reset()
 	}
 })
 
