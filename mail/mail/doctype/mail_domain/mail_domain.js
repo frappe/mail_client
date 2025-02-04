@@ -30,6 +30,19 @@ frappe.ui.form.on("Mail Domain", {
 				__("Reports")
 			);
 
+			if (frappe.user_roles.includes("System Manager")) {
+				frm.add_custom_button(
+					__("DMARC Report Viewer"),
+					() => {
+						frappe.route_options = {
+							domain_name: frm.doc.name,
+						};
+						frappe.set_route("query-report", "DMARC Report Viewer");
+					},
+					__("Reports")
+				);
+			}
+
 			frm.add_custom_button(
 				__("Outgoing Mail Summary"),
 				() => {
