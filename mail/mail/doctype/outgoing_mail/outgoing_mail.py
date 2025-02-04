@@ -81,6 +81,9 @@ class OutgoingMail(Document):
 		else:
 			self._message = create_mime_message(value)
 
+	def autoname(self) -> None:
+		self.name = str(uuid7())
+
 	def validate(self) -> None:
 		self.validate_amended_doc()
 		self.set_folder()

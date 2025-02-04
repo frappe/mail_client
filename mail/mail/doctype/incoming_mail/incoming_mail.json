@@ -1,6 +1,5 @@
 {
  "actions": [],
- "autoname": "UUID",
  "creation": "2024-03-13 11:35:29.489049",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -440,11 +439,10 @@
    "link_fieldname": "incoming_mail"
   }
  ],
- "modified": "2025-02-03 12:22:27.905748",
+ "modified": "2025-02-04 10:45:06.278146",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Incoming Mail",
- "naming_rule": "UUID",
  "owner": "Administrator",
  "permissions": [
   {

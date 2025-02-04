@@ -4,9 +4,13 @@
 import frappe
 from frappe.model.document import Document
 from frappe.utils import add_days, now, now_datetime
+from uuid_utils import uuid7
 
 
 class BounceLog(Document):
+	def autoname(self) -> None:
+		self.name = str(uuid7())
+
 	def validate(self) -> None:
 		if self.has_value_changed("bounce_count"):
 			self.set_last_bounce_at()

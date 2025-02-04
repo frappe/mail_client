@@ -9,9 +9,13 @@ import frappe
 from frappe import _
 from frappe.model.document import Document
 from frappe.utils import now, time_diff_in_seconds
+from uuid_utils import uuid7
 
 
 class MailAgentRequestLog(Document):
+	def autoname(self) -> None:
+		self.name = str(uuid7())
+
 	def validate(self) -> None:
 		self.validate_agent()
 		self.validate_endpoint()
