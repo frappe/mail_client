@@ -101,7 +101,7 @@ class MailAccount(Document):
 		if self.is_new() or self.enabled:
 			if self.tenant != get_tenant_for_user(self.user):
 				frappe.throw(
-					_("Domain {0} and User {1} do not belong to the same tenant.").format(
+					_("Domain {0} and User {1} must belong to the same tenant.").format(
 						frappe.bold(self.domain_name), frappe.bold(self.user)
 					)
 				)
@@ -255,7 +255,10 @@ def has_permission(doc: "Document", ptype: str, user: str | None = None) -> bool
 	if is_tenant_admin(doc.tenant, user):
 		return True
 
-	return user == doc.user
+	if has_role(user, "Mail User"):
+		return user == doc.user
+
+	return False
 
 
 def get_permission_query_condition(user: str | None = None) -> str:
@@ -268,4 +271,7 @@ def get_permission_query_condition(user: str | None = None) -> str:
 		if tenant := get_tenant_for_user(user):
 			return f"(`tabMail Account`.`tenant` = {frappe.db.escape(tenant)})"
 
-	return f"(`tabMail Account`.`user` = {frappe.db.escape(user)})"
+	if has_role(user, "Mail User"):
+		return f"(`tabMail Account`.`user` = {frappe.db.escape(user)})"
+
+	return "1=0"

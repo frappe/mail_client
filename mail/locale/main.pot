@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Mail VERSION\n"
 "Report-Msgid-Bugs-To: developers@frappe.io\n"
-"POT-Creation-Date: 2025-01-30 14:34+0553\n"
-"PO-Revision-Date: 2025-01-30 14:34+0553\n"
+"POT-Creation-Date: 2025-02-04 13:20+0553\n"
+"PO-Revision-Date: 2025-02-04 13:20+0553\n"
 "Last-Translator: developers@frappe.io\n"
 "Language-Team: developers@frappe.io\n"
 "MIME-Version: 1.0\n"
@@ -16,15 +16,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.13.1\n"
 
-#: mail/mail/doctype/spam_check_log/spam_check_log.py:167
+#: mail/mail/doctype/spam_check_log/spam_check_log.py:171
 msgid "1. Ensure the correct IP address is allowed to connect to SpamAssassin."
 msgstr ""
 
-#: mail/mail/doctype/spam_check_log/spam_check_log.py:168
+#: mail/mail/doctype/spam_check_log/spam_check_log.py:172
 msgid "2. Verify that the SpamAssassin service is running and accepting connections on port {0}."
 msgstr ""
 
-#: mail/mail/doctype/spam_check_log/spam_check_log.py:171
+#: mail/mail/doctype/spam_check_log/spam_check_log.py:175
 msgid "3. Review SpamAssassin logs for any unauthorized connection attempts or permission errors."
 msgstr ""
 
@@ -68,17 +68,21 @@ msgid "Accepted"
 msgstr ""
 
 #. Label of the account (Data) field in DocType 'Mail Account Request'
+#. Group in Mail Domain's connections
 #. Label of the account (Link) field in DocType 'Mail Sync History'
+#. Group in Mail Tenant's connections
 #: mail/mail/doctype/mail_account_request/mail_account_request.json
+#: mail/mail/doctype/mail_domain/mail_domain.json
 #: mail/mail/doctype/mail_sync_history/mail_sync_history.json
+#: mail/mail/doctype/mail_tenant/mail_tenant.json
 msgid "Account"
 msgstr ""
 
-#: mail/mail/doctype/mail_account_request/mail_account_request.py:92
+#: mail/mail/doctype/mail_account_request/mail_account_request.py:91
 msgid "Account domain {0} does not match with domain {1}."
 msgstr ""
 
-#: mail/mail/doctype/mail_account_request/mail_account_request.py:144
+#: mail/mail/doctype/mail_account_request/mail_account_request.py:143
 msgid "Account is already verified and created."
 msgstr ""
 
@@ -131,7 +135,7 @@ msgstr ""
 msgid "Agent Groups"
 msgstr ""
 
-#: mail/mail/doctype/mail_agent_request_log/mail_agent_request_log.py:98
+#: mail/mail/doctype/mail_agent_request_log/mail_agent_request_log.py:102
 msgid "Agent Request Failed"
 msgstr ""
 
@@ -415,7 +419,7 @@ msgstr ""
 msgid "Compose an email"
 msgstr ""
 
-#: mail/mail/doctype/spam_check_log/spam_check_log.py:159
+#: mail/mail/doctype/spam_check_log/spam_check_log.py:163
 msgid "Could not connect to SpamAssassin (spamd). Please ensure it's running on {0}:{1}"
 msgstr ""
 
@@ -499,7 +503,7 @@ msgstr ""
 msgid "DKIM Key not found for the domain {0}"
 msgstr ""
 
-#: mail/mail/doctype/mail_domain/mail_domain.py:162
+#: mail/mail/doctype/mail_domain/mail_domain.py:166
 msgid "DKIM Keys rotated successfully."
 msgstr ""
 
@@ -579,11 +583,11 @@ msgstr ""
 msgid "DNS Records"
 msgstr ""
 
-#: mail/mail/doctype/mail_domain/mail_domain.py:126
+#: mail/mail/doctype/mail_domain/mail_domain.py:130
 msgid "DNS Records refreshed successfully."
 msgstr ""
 
-#: mail/mail/doctype/mail_domain/mail_domain.py:146
+#: mail/mail/doctype/mail_domain/mail_domain.py:150
 msgid "DNS Records verified successfully."
 msgstr ""
 
@@ -601,7 +605,7 @@ msgstr ""
 msgid "Default Email"
 msgstr ""
 
-#: mail/mail/doctype/mail_account/mail_account.py:110
+#: mail/mail/doctype/mail_account/mail_account.py:153
 msgid "Default Email must be one of the email addresses assigned to the user."
 msgstr ""
 
@@ -659,7 +663,9 @@ msgid "Disposition"
 msgstr ""
 
 #. Label of the domain_name (Link) field in DocType 'Mail Account Request'
+#. Group in Mail Tenant's connections
 #: mail/mail/doctype/mail_account_request/mail_account_request.json
+#: mail/mail/doctype/mail_tenant/mail_tenant.json
 #: mail/mail/report/dmarc_report_viewer/dmarc_report_viewer.py:48
 msgid "Domain"
 msgstr ""
@@ -709,23 +715,31 @@ msgstr ""
 msgid "Domain {0} already registered."
 msgstr ""
 
-#: mail/utils/validation.py:134
+#: mail/utils/validation.py:130
+msgid "Domain {0} and User {1} do not belong to the same tenant."
+msgstr ""
+
+#: mail/mail/doctype/mail_account/mail_account.py:104
+msgid "Domain {0} and User {1} must belong to the same tenant."
+msgstr ""
+
+#: mail/utils/validation.py:156
 msgid "Domain {0} does not exist or may be disabled in the Mail Domain."
 msgstr ""
 
-#: mail/utils/validation.py:101
+#: mail/utils/validation.py:102
 msgid "Domain {0} is disabled."
 msgstr ""
 
-#: mail/utils/validation.py:111
-msgid "Domain {0} is not owned by the selected tenant."
+#: mail/utils/validation.py:112
+msgid "Domain {0} is not owned by the tenant."
 msgstr ""
 
-#: mail/utils/validation.py:103
+#: mail/utils/validation.py:104
 msgid "Domain {0} is not verified."
 msgstr ""
 
-#: mail/utils/validation.py:141
+#: mail/utils/validation.py:163
 msgid "Domain {0} not found in Mail Domain."
 msgstr ""
 
@@ -795,11 +809,11 @@ msgstr ""
 msgid "Email Verification"
 msgstr ""
 
-#: mail/utils/validation.py:74
+#: mail/utils/validation.py:75
 msgid "Email domain {0} does not match with domain {1}."
 msgstr ""
 
-#: mail/mail/doctype/mail_account/mail_account.py:85
+#: mail/mail/doctype/mail_account/mail_account.py:128
 msgid "Email is mandatory."
 msgstr ""
 
@@ -1040,7 +1054,16 @@ msgstr ""
 msgid "GET"
 msgstr ""
 
-#: mail/mail/doctype/mail_group/mail_group.py:51
+#. Group in Mail Account's connections
+#. Group in Mail Domain's connections
+#. Group in Mail Tenant's connections
+#: mail/mail/doctype/mail_account/mail_account.json
+#: mail/mail/doctype/mail_domain/mail_domain.json
+#: mail/mail/doctype/mail_tenant/mail_tenant.json
+msgid "Group & Alias"
+msgstr ""
+
+#: mail/mail/doctype/mail_group/mail_group.py:68
 msgid "Group has members. Please remove them first."
 msgstr ""
 
@@ -1265,8 +1288,8 @@ msgstr ""
 msgid "Invalid format for recipient {0}."
 msgstr ""
 
-#: mail/mail/doctype/mail_account/mail_account.py:142
-#: mail/mail/doctype/mail_account_request/mail_account_request.py:49
+#: mail/mail/doctype/mail_account/mail_account.py:188
+#: mail/mail/doctype/mail_account_request/mail_account_request.py:48
 msgid "Invalid role. Please select a valid role."
 msgstr ""
 
@@ -1275,7 +1298,7 @@ msgstr ""
 msgid "Invited By"
 msgstr ""
 
-#: mail/mail/doctype/mail_account_request/mail_account_request.py:67
+#: mail/mail/doctype/mail_account_request/mail_account_request.py:66
 msgid "Invited By is required"
 msgstr ""
 
@@ -1414,7 +1437,7 @@ msgstr ""
 msgid "Mail Account Request"
 msgstr ""
 
-#: mail/mail/doctype/mail_account/mail_account.py:171
+#: mail/mail/doctype/mail_account/mail_account.py:227
 msgid "Mail Account {0} already exists."
 msgstr ""
 
@@ -1436,16 +1459,18 @@ msgstr ""
 #: mail/mail/doctype/mail_account_request/mail_account_request.json
 #: mail/mail/doctype/mail_domain/mail_domain.json
 #: mail/mail/doctype/mail_domain_request/mail_domain_request.json
+#: mail/mail/doctype/mail_group/mail_group.json
+#: mail/mail/doctype/mail_group_member/mail_group_member.json
 #: mail/mail/doctype/mail_tenant/mail_tenant.json
 #: mail/mail/doctype/mail_tenant_member/mail_tenant_member.json
 msgid "Mail Admin"
 msgstr ""
 
-#: mail/mail/doctype/mail_tenant_member/mail_tenant_member.py:69
+#: mail/mail/doctype/mail_tenant_member/mail_tenant_member.py:70
 msgid "Mail Admin role has been assigned to the user {0}."
 msgstr ""
 
-#: mail/mail/doctype/mail_tenant_member/mail_tenant_member.py:79
+#: mail/mail/doctype/mail_tenant_member/mail_tenant_member.py:80
 msgid "Mail Admin role has been removed from the user {0}."
 msgstr ""
 
@@ -1480,8 +1505,8 @@ msgstr ""
 msgid "Mail Agent {0} already exists."
 msgstr ""
 
-#: mail/mail/doctype/mail_agent_request_log/mail_agent_request_log.py:34
-#: mail/mail/doctype/mail_agent_request_log/mail_agent_request_log.py:75
+#: mail/mail/doctype/mail_agent_request_log/mail_agent_request_log.py:38
+#: mail/mail/doctype/mail_agent_request_log/mail_agent_request_log.py:79
 msgid "Mail Agent {0} is disabled."
 msgstr ""
 
@@ -1494,8 +1519,7 @@ msgstr ""
 msgid "Mail Alias"
 msgstr ""
 
-#: mail/mail/doctype/mail_account/mail_account.py:65
-#: mail/mail/doctype/mail_group/mail_group.py:48
+#: mail/mail/doctype/mail_group/mail_group.py:65
 msgid "Mail Alias {0} is enabled. Please disable it first."
 msgstr ""
 
@@ -1546,7 +1570,7 @@ msgstr ""
 msgid "Mail Group Member"
 msgstr ""
 
-#: mail/mail/doctype/mail_group_member/mail_group_member.py:26
+#: mail/mail/doctype/mail_group_member/mail_group_member.py:42
 msgid "Mail Group cannot be a member of itself"
 msgstr ""
 
@@ -1728,6 +1752,11 @@ msgstr ""
 msgid "Maximum size for an email message, including attachments."
 msgstr ""
 
+#. Group in Mail Tenant's connections
+#: mail/mail/doctype/mail_tenant/mail_tenant.json
+msgid "Member"
+msgstr ""
+
 #. Label of the member_name (Dynamic Link) field in DocType 'Mail Group Member'
 #: mail/mail/doctype/mail_group_member/mail_group_member.json
 msgid "Member (Name)"
@@ -1738,7 +1767,7 @@ msgstr ""
 msgid "Member (Type)"
 msgstr ""
 
-#: mail/mail/doctype/mail_group_member/mail_group_member.py:28
+#: mail/mail/doctype/mail_group_member/mail_group_member.py:44
 msgid "Member cannot be the same as the Mail Group"
 msgstr ""
 
@@ -1823,11 +1852,11 @@ msgstr ""
 msgid "Newsletter Retention (Days)"
 msgstr ""
 
-#: mail/mail/doctype/mail_domain/mail_domain.py:89
+#: mail/mail/doctype/mail_domain/mail_domain.py:93
 msgid "Newsletter Retention must be greater than 0."
 msgstr ""
 
-#: mail/mail/doctype/mail_domain/mail_domain.py:96
+#: mail/mail/doctype/mail_domain/mail_domain.py:100
 msgid "Newsletter Retention must be less than or equal to {0}."
 msgstr ""
 
@@ -1868,7 +1897,7 @@ msgstr ""
 msgid "Only Administrator can delete Mail Agent."
 msgstr ""
 
-#: mail/mail/doctype/mail_domain/mail_domain.py:46
+#: mail/mail/doctype/mail_domain/mail_domain.py:49
 msgid "Only Administrator can delete Mail Domain."
 msgstr ""
 
@@ -1986,7 +2015,7 @@ msgstr ""
 msgid "Please set the {0} in the Mail Settings."
 msgstr ""
 
-#: mail/mail/doctype/mail_account_request/mail_account_request.py:157
+#: mail/mail/doctype/mail_account_request/mail_account_request.py:156
 msgid "Please verify the email address first."
 msgstr ""
 
@@ -2136,7 +2165,6 @@ msgstr ""
 #. Group in Mail Agent Group's connections
 #. Group in Mail Domain's connections
 #. Group in Mail Group's connections
-#. Group in Mail Tenant's connections
 #. Group in MIME Message's connections
 #: mail/mail/doctype/dkim_key/dkim_key.json
 #: mail/mail/doctype/mail_account/mail_account.json
@@ -2144,7 +2172,6 @@ msgstr ""
 #: mail/mail/doctype/mail_agent_group/mail_agent_group.json
 #: mail/mail/doctype/mail_domain/mail_domain.json
 #: mail/mail/doctype/mail_group/mail_group.json
-#: mail/mail/doctype/mail_tenant/mail_tenant.json
 #: mail/mail/doctype/mime_message/mime_message.json
 msgid "Reference"
 msgstr ""
@@ -2270,7 +2297,7 @@ msgstr ""
 msgid "Role"
 msgstr ""
 
-#: mail/mail/doctype/mail_account_request/mail_account_request.py:46
+#: mail/mail/doctype/mail_account_request/mail_account_request.py:45
 msgid "Role is mandatory."
 msgstr ""
 
@@ -2300,7 +2327,7 @@ msgstr ""
 msgid "Row #{0}: Duplicate recipient {1} of type {2}."
 msgstr ""
 
-#: mail/mail/doctype/mail_domain/mail_domain.py:139
+#: mail/mail/doctype/mail_domain/mail_domain.py:143
 msgid "Row #{0}: Failed to verify {1} : {2}."
 msgstr ""
 
@@ -2472,14 +2499,14 @@ msgstr ""
 msgid "Spam Check Log"
 msgstr ""
 
-#: mail/mail/doctype/spam_check_log/spam_check_log.py:154
-#: mail/mail/doctype/spam_check_log/spam_check_log.py:162
-#: mail/mail/doctype/spam_check_log/spam_check_log.py:178
-#: mail/mail/doctype/spam_check_log/spam_check_log.py:191
+#: mail/mail/doctype/spam_check_log/spam_check_log.py:158
+#: mail/mail/doctype/spam_check_log/spam_check_log.py:166
+#: mail/mail/doctype/spam_check_log/spam_check_log.py:182
+#: mail/mail/doctype/spam_check_log/spam_check_log.py:195
 msgid "Spam Detection Failed"
 msgstr ""
 
-#: mail/mail/doctype/spam_check_log/spam_check_log.py:65
+#: mail/mail/doctype/spam_check_log/spam_check_log.py:69
 msgid "Spam Detection is disabled"
 msgstr ""
 
@@ -2497,7 +2524,7 @@ msgstr ""
 msgid "Spam score exceeded the permitted threshold."
 msgstr ""
 
-#: mail/mail/doctype/spam_check_log/spam_check_log.py:191
+#: mail/mail/doctype/spam_check_log/spam_check_log.py:195
 msgid "Spam score not found in output."
 msgstr ""
 
@@ -2511,7 +2538,7 @@ msgstr ""
 msgid "SpamAssassin"
 msgstr ""
 
-#: mail/mail/doctype/spam_check_log/spam_check_log.py:175
+#: mail/mail/doctype/spam_check_log/spam_check_log.py:179
 msgid "SpamAssassin did not return the expected response. This may indicate a permission issue or an unauthorized connection. Please check the following: {0}"
 msgstr ""
 
@@ -2633,13 +2660,17 @@ msgstr ""
 msgid "TXT"
 msgstr ""
 
+#. Label of the tenant (Link) field in DocType 'Mail Account'
 #. Label of the tenant (Link) field in DocType 'Mail Account Request'
 #. Label of the tenant (Link) field in DocType 'Mail Domain'
 #. Label of the tenant (Link) field in DocType 'Mail Domain Request'
+#. Label of the tenant (Link) field in DocType 'Mail Group'
 #. Label of the tenant (Link) field in DocType 'Mail Tenant Member'
+#: mail/mail/doctype/mail_account/mail_account.json
 #: mail/mail/doctype/mail_account_request/mail_account_request.json
 #: mail/mail/doctype/mail_domain/mail_domain.json
 #: mail/mail/doctype/mail_domain_request/mail_domain_request.json
+#: mail/mail/doctype/mail_group/mail_group.json
 #: mail/mail/doctype/mail_tenant_member/mail_tenant_member.json
 msgid "Tenant"
 msgstr ""
@@ -2649,9 +2680,21 @@ msgstr ""
 msgid "Tenant Name"
 msgstr ""
 
-#: mail/mail/doctype/mail_account_request/mail_account_request.py:69
+#: mail/mail/doctype/mail_account_request/mail_account_request.py:68
 #: mail/mail/doctype/mail_domain_request/mail_domain_request.py:39
 msgid "Tenant is required"
+msgstr ""
+
+#: mail/mail/doctype/mail_group_member/mail_group_member.py:32
+msgid "The Mail Group {0} and the member {1} {2} must belong to the same tenant."
+msgstr ""
+
+#: mail/mail/doctype/mail_account/mail_account.py:78
+msgid "The account is linked to Mail Alias {0}. Please disable it first."
+msgstr ""
+
+#: mail/mail/doctype/mail_account/mail_account.py:84
+msgid "The account is linked to a Mail Group as a member. Please remove it first."
 msgstr ""
 
 #. Description of the 'TTL' (Int) field in DocType 'Mail Settings'
@@ -2682,8 +2725,8 @@ msgstr ""
 msgid "The email address {0} appears to be invalid."
 msgstr ""
 
-#: mail/utils/validation.py:57
-msgid "The email address {0} is already in use and assigned to {1}."
+#: mail/utils/validation.py:58
+msgid "The email address {0} is already assigned as a {1}."
 msgstr ""
 
 #: mail/mail/doctype/bounce_log/bounce_log.js:21
@@ -2730,19 +2773,16 @@ msgstr ""
 msgid "The token used to authenticate with your DNS provider."
 msgstr ""
 
-#: mail/mail/doctype/mail_alias/mail_alias.py:51
+#: mail/mail/doctype/mail_alias/mail_alias.py:52
+#: mail/mail/doctype/mail_group_member/mail_group_member.py:48
 msgid "The {0} {1} is disabled."
-msgstr ""
-
-#: mail/mail/doctype/mail_account/mail_account.py:68
-msgid "This account is linked to a mail group. Please remove it first."
 msgstr ""
 
 #: mail/mail/doctype/outgoing_mail/outgoing_mail.py:845
 msgid "This email has been blocked because our system flagged it as spam. The spam score exceeded the permitted threshold. To resolve this, review your email content, remove any potentially suspicious links or attachments, and try sending it again. If the issue persists, please contact our support team for assistance."
 msgstr ""
 
-#: mail/mail/doctype/mail_account_request/mail_account_request.py:141
+#: mail/mail/doctype/mail_account_request/mail_account_request.py:140
 msgid "This method can only be called for invited users."
 msgstr ""
 
@@ -2776,7 +2816,7 @@ msgstr ""
 msgid "Time an unauthenticated session can remain inactive before termination."
 msgstr ""
 
-#: mail/mail/doctype/spam_check_log/spam_check_log.py:153
+#: mail/mail/doctype/spam_check_log/spam_check_log.py:157
 msgid "Timed out waiting for response from SpamAssassin."
 msgstr ""
 
@@ -2953,27 +2993,31 @@ msgstr ""
 msgid "User must be an admin of the tenant"
 msgstr ""
 
-#: mail/mail/doctype/mail_account/mail_account.py:162
+#: mail/mail/doctype/mail_account/mail_account.py:185
 msgid "User with email {0} already exists."
 msgstr ""
 
-#: mail/mail/doctype/mail_tenant/mail_tenant.py:21
+#: mail/mail/doctype/mail_tenant/mail_tenant.py:22
 msgid "User {0} does not have Mail Admin role."
 msgstr ""
 
-#: mail/mail/doctype/mail_account/mail_account.py:79
+#: mail/mail/doctype/mail_account/mail_account.py:96
 msgid "User {0} does not have Mail User role."
 msgstr ""
 
-#: mail/mail/doctype/mail_tenant_member/mail_tenant_member.py:50
+#: mail/mail/doctype/mail_tenant_member/mail_tenant_member.py:51
 msgid "User {0} does not have {1} role."
 msgstr ""
 
-#: mail/mail/doctype/mail_tenant_member/mail_tenant_member.py:37
+#: mail/mail/doctype/mail_tenant_member/mail_tenant_member.py:91
+msgid "User {0} has an active Mail Account {1}. Please disable it first."
+msgstr ""
+
+#: mail/mail/doctype/mail_tenant_member/mail_tenant_member.py:38
 msgid "User {0} is already a member of another Mail Tenant."
 msgstr ""
 
-#: mail/mail/doctype/mail_tenant_member/mail_tenant_member.py:34
+#: mail/mail/doctype/mail_tenant_member/mail_tenant_member.py:35
 msgid "User {0} is already a member."
 msgstr ""
 
@@ -2985,8 +3029,8 @@ msgstr ""
 msgid "User {0} is not allowed to access mail accounts."
 msgstr ""
 
-#: mail/mail/doctype/mail_account_request/mail_account_request.py:76
-msgid "User {0} is not authorized to invite users to the selected tenant."
+#: mail/mail/doctype/mail_account_request/mail_account_request.py:75
+msgid "User {0} is not authorized to invite users to the tenant."
 msgstr ""
 
 #. Label of the username (Data) field in DocType 'Mail Agent'
@@ -3008,7 +3052,7 @@ msgstr ""
 msgid "Verification Key"
 msgstr ""
 
-#: mail/mail/doctype/mail_account_request/mail_account_request.py:134
+#: mail/mail/doctype/mail_account_request/mail_account_request.py:133
 msgid "Verification email sent successfully."
 msgstr ""
 
@@ -3047,32 +3091,40 @@ msgstr ""
 msgid "You are not allowed to send from address {0}."
 msgstr ""
 
-#: mail/mail/doctype/mail_account_request/mail_account_request.py:148
-#: mail/utils/validation.py:118
+#: mail/mail/doctype/mail_account_request/mail_account_request.py:147
+#: mail/utils/validation.py:140
 msgid "You are not authorized to perform this action."
 msgstr ""
 
-#: mail/mail/doctype/mail_domain/mail_domain.py:116
+#: mail/mail/doctype/mail_domain/mail_domain.py:120
 msgid "You do not have permission to refresh DNS Records."
 msgstr ""
 
-#: mail/mail/doctype/mail_domain/mail_domain.py:159
+#: mail/mail/doctype/mail_domain/mail_domain.py:163
 msgid "You do not have permission to rotate DKIM Keys."
 msgstr ""
 
-#: mail/mail/doctype/mail_domain/mail_domain.py:133
+#: mail/mail/doctype/mail_domain/mail_domain.py:137
 msgid "You do not have permission to verify DNS Records."
 msgstr ""
 
-#: mail/mail/doctype/mail_account_request/mail_account_request.py:119
+#: mail/mail/doctype/mail_account_request/mail_account_request.py:118
 msgid "You have been invited by {0} to join Frappe Mail"
 msgstr ""
 
-#: mail/mail/doctype/mail_domain/mail_domain.py:60
-msgid "You have reached the maximum limit of {0} domains for this tenant."
+#: mail/mail/doctype/mail_account/mail_account.py:119
+msgid "You have reached the maximum limit of {0} accounts for the tenant."
 msgstr ""
 
-#: mail/mail/doctype/mail_account_request/mail_account_request.py:124
+#: mail/mail/doctype/mail_domain/mail_domain.py:75
+msgid "You have reached the maximum limit of {0} domains for the tenant."
+msgstr ""
+
+#: mail/mail/doctype/mail_group/mail_group.py:92
+msgid "You have reached the maximum limit of {0} groups for the tenant."
+msgstr ""
+
+#: mail/mail/doctype/mail_account_request/mail_account_request.py:123
 msgid "{0} - OTP for Frappe Mail Account Verification"
 msgstr ""
 
