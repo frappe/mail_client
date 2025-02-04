@@ -55,7 +55,7 @@ def is_email_assigned(email: str, ignore_doctype: str | None = None, raise_excep
 		if frappe.db.exists(doctype, {"email": email}):
 			if raise_exception:
 				frappe.throw(
-					_("The email address {0} is already in use and assigned to {1}.").format(
+					_("The email address {0} is already assigned as a {1}.").format(
 						frappe.bold(email), frappe.bold(doctype)
 					)
 				)
