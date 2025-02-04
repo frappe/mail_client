@@ -219,19 +219,19 @@ const BREADCRUMBS = [
 
 const DROPDOWN_OPTIONS = [
 	{
-		label: 'View in Desk',
+		label: __('View in Desk'),
 		icon: 'external-link',
 		onClick: () => {
 			window.open(`/app/mail-domain/${props.domainName}`, '_blank').focus()
 		},
 	},
 	{
-		label: 'Verify DNS Records',
+		label: __('Verify DNS Records'),
 		icon: 'check-square',
 		onClick: domain.verifyDnsRecords.submit,
 	},
 	{
-		label: 'Refresh DNS Records',
+		label: __('Refresh DNS Records'),
 		icon: 'refresh-cw',
 		onClick: () => {
 			confirmDialogAction.value = 'refreshDnsRecords'
@@ -239,7 +239,7 @@ const DROPDOWN_OPTIONS = [
 		},
 	},
 	{
-		label: 'Rotate DKIM Keys',
+		label: __('Rotate DKIM Keys'),
 		icon: 'rotate-cw',
 		onClick: () => {
 			confirmDialogAction.value = 'rotateDkimKeys'

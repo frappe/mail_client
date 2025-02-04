@@ -10,20 +10,33 @@
 			<ListView
 				v-if="members?.data"
 				class="flex-1"
-				:columns="[{ label: __('User') }]"
+				:columns="[{ label: __('User'), key: 'user' }]"
 				:rows="members.data"
-				:options="{ selectable: false, showTooltip: false }"
+				:options="{ selectable: false, showTooltip: false, rowHeight: 50 }"
 				row-key="name"
 			>
 				<ListHeader />
 				<ListRows>
 					<ListRow v-for="row in members.data" :key="row.name" :row="row">
-						<!-- todo: fix vertical spacing -->
-						<div class="flex items-center space-x-2">
-							<Avatar :image="row.user_image" :label="row.full_name" size="lg" />
-							<div class="text-sm">
-								<p class="font-medium text-gray-900">{{ row.full_name }}</p>
-								<p class="text-gray-600 mt-0.5">{{ row.name }}</p>
+						<div class="grid grid-cols-3">
+							<div class="flex items-center space-x-2">
+								<Avatar :image="row.user_image" :label="row.full_name" size="lg" />
+								<div class="text-sm">
+									<p class="font-medium text-gray-900">{{ row.full_name }}</p>
+									<p class="text-gray-600 mt-0.5">{{ row.name }}</p>
+								</div>
+							</div>
+							<div class="flex items-center mx-auto">
+								<Badge
+									:theme="row.is_admin ? 'orange' : 'gray'"
+									:label="__(row.is_admin ? 'Admin' : 'User')"
+								/>
+							</div>
+							<div class="flex items-center ml-auto">
+								<Dropdown
+									:options="dropdownOptions(row.is_admin)"
+									:button="{ icon: 'more-horizontal', variant: 'ghost' }"
+								/>
 							</div>
 						</div>
 					</ListRow>
@@ -34,15 +47,17 @@
 	<AddMember v-model="showAddMember" />
 </template>
 <script setup>
-import { ref, inject } from 'vue'
+import { ref, computed, inject } from 'vue'
 import {
 	Avatar,
+	Badge,
 	Button,
 	Breadcrumbs,
 	ListView,
 	ListHeader,
 	ListRows,
 	ListRow,
+	Dropdown,
 	createResource,
 } from 'frappe-ui'
 import AddMember from '@/components/Modals/AddMember.vue'
@@ -57,4 +72,19 @@ const members = createResource({
 	auto: true,
 	cache: ['mailTenantMembers', user.data?.tenant],
 })
+
+const dropdownOptions = (isAdmin) => {
+	return [
+		{
+			label: isAdmin ? __('Remove Admin') : __('Make Admin'),
+			icon: isAdmin ? 'shield-off' : 'shield',
+			onClick: () => {},
+		},
+		{
+			label: __('Remove Member'),
+			icon: 'user-x',
+			onClick: () => {},
+		},
+	]
+}
 </script>

@@ -30,7 +30,7 @@
 								:label="item"
 							/>
 							<FeatherIcon
-								v-if="column.key == 'is_verified'"
+								v-else-if="column.key == 'is_verified'"
 								:name="item ? 'check' : 'x'"
 								class="h-4 w-4"
 							/>
