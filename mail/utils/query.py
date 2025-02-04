@@ -22,7 +22,7 @@ def get_outgoing_mails(
 	OM = frappe.qb.DocType("Outgoing Mail")
 	query = (
 		frappe.qb.from_(OM)
-		.select(OM.name)
+		.select(OM.name, OM.subject)
 		.where((OM.docstatus == 1) & (OM[searchfield].like(f"%{txt}%")))
 		.orderby(OM.creation, OM.created_at, order=Order.desc)
 		.offset(start)
