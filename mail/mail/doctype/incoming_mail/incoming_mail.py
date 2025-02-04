@@ -10,6 +10,7 @@ import frappe
 from frappe import _
 from frappe.model.document import Document
 from frappe.utils import now, time_diff_in_seconds
+from uuid_utils import uuid7
 
 from mail.imap import IMAPContext
 from mail.mail.doctype.bounce_log.bounce_log import create_or_update_bounce_log
@@ -41,6 +42,9 @@ class IncomingMail(Document):
 			update_mime_message(self._message, value)
 		else:
 			self._message = create_mime_message(value)
+
+	def autoname(self) -> None:
+		self.name = str(uuid7())
 
 	def validate(self) -> None:
 		self.validate_fetched_at()

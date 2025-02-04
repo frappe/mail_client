@@ -1,6 +1,5 @@
 {
  "actions": [],
- "autoname": "UUID",
  "creation": "2025-01-07 12:01:20.450855",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -43,11 +42,10 @@
    "link_fieldname": "_message"
   }
  ],
- "modified": "2025-02-03 12:24:51.060101",
+ "modified": "2025-02-04 10:46:51.381127",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "MIME Message",
- "naming_rule": "UUID",
  "owner": "Administrator",
  "permissions": [
   {

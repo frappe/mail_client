@@ -1,6 +1,5 @@
 {
  "actions": [],
- "autoname": "UUID",
  "creation": "2024-10-11 14:41:45.624692",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -146,11 +145,10 @@
    "link_fieldname": "spam_check_log"
   }
  ],
- "modified": "2025-02-03 17:14:55.123722",
+ "modified": "2025-02-04 10:49:42.767067",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Spam Check Log",
- "naming_rule": "UUID",
  "owner": "Administrator",
  "permissions": [
   {

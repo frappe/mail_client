@@ -4,10 +4,12 @@
 import frappe
 from frappe import _
 from frappe.model.document import Document
+from uuid_utils import uuid7
 
 
 class MIMEMessage(Document):
-	pass
+	def autoname(self) -> None:
+		self.name = str(uuid7())
 
 
 def create_mime_message(message: str | bytes | None = None) -> str | None:
