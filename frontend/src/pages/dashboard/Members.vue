@@ -44,7 +44,7 @@
 			</ListView>
 		</div>
 	</div>
-	<AddMember v-model="showAddMember" />
+	<AddMember v-model="showAddMember" @reloadMembers="members.reload()" />
 	<Dialog :options="removeMemberOptions" v-model="showRemoveMember" />
 </template>
 <script setup>

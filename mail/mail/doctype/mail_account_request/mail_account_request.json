@@ -43,8 +43,8 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Email",
+   "mandatory_depends_on": "eval: !doc.is_invite",
    "options": "Email",
-   "reqd": 1,
    "search_index": 1,
    "set_only_once": 1
   },
@@ -165,7 +165,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-01-29 16:22:46.334378",
+ "modified": "2025-02-04 14:15:46.852902",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Account Request",

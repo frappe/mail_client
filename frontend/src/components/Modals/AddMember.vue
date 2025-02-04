@@ -5,7 +5,7 @@
 			title: __('Add Member'),
 			actions: [
 				{
-					label: __('Add Member'),
+					label: __(accountRequest.send_invite ? 'Invite Member' : 'Add Member'),
 					variant: 'solid',
 					onClick: addMember.submit,
 				},
@@ -44,12 +44,39 @@
 					]"
 					v-model="accountRequest.role"
 				/>
+				<hr />
 				<FormControl
-					type="email"
-					:label="__('Invite On Email')"
-					placeholder="johndoe@personal.com"
-					v-model="accountRequest.invite_on_email"
+					type="checkbox"
+					:label="__('Send Invite')"
+					v-model="accountRequest.send_invite"
 				/>
+				<FormControl
+					v-if="accountRequest.send_invite"
+					type="email"
+					:label="__('Email')"
+					placeholder="johndoe@personal.com"
+					v-model="accountRequest.email"
+				/>
+				<div v-else class="space-y-4">
+					<FormControl
+						type="text"
+						:label="__('First Name')"
+						placeholder="John"
+						v-model="accountRequest.first_name"
+					/>
+					<FormControl
+						type="text"
+						:label="__('Last Name')"
+						placeholder="Doe"
+						v-model="accountRequest.last_name"
+					/>
+					<FormControl
+						type="password"
+						:label="__('Password')"
+						placeholder="••••••••"
+						v-model="accountRequest.password"
+					/>
+				</div>
 				<ErrorMessage :message="addMember.error?.messages[0]" />
 			</div>
 		</template>
@@ -65,28 +92,40 @@ import { raiseToast } from '@/utils'
 const show = defineModel()
 const user = inject('$user')
 
-const emptyAccountRequest = {
+const defaultAccountRequest = {
 	username: '',
 	domain: '',
 	role: 'Mail User',
-	invite_on_email: '',
+	send_invite: true,
+	email: '',
+	first_name: '',
+	last_name: '',
+	password: '',
 }
 
-const accountRequest = reactive({ ...emptyAccountRequest })
+const accountRequest = reactive({ ...defaultAccountRequest })
+
+const emit = defineEmits(['reloadMembers'])
 
 const addMember = createResource({
-	url: 'mail.api.account.create_account_request',
+	url: 'mail.api.account.add_member',
 	makeParams() {
 		return {
 			tenant: user.data.tenant,
-			is_invite: 1,
 			...accountRequest,
 		}
 	},
 	onSuccess() {
 		show.value = false
-		Object.assign(accountRequest, emptyAccountRequest)
-		raiseToast('User invited successfully!')
+		raiseToast(
+			__(
+				accountRequest.send_invite
+					? 'Member invited successfully'
+					: 'Member added successfully'
+			)
+		)
+		if (!accountRequest.send_invite) emit('reloadMembers')
+		Object.assign(accountRequest, defaultAccountRequest)
 	},
 })
 </script>

@@ -4,37 +4,53 @@ from frappe.utils import validate_email_address
 
 
 @frappe.whitelist(allow_guest=True)
-def create_account_request(
-	invite_on_email: str,
-	username: str | None = None,
-	domain: str | None = None,
-	tenant: str | None = None,
-	role: str = "Mail Admin",
-	is_invite: 0 | 1 = 0,
-) -> str:
-	"""Create a new Mail Account Request"""
+def self_signup(email: str) -> str:
+	"""Create a new Mail Account Request for self signup"""
 
-	invite_on_email = invite_on_email.strip().lower()
-	validate_email_address(invite_on_email, True)
+	email = email.strip().lower()
+	validate_email_address(email, True)
 
 	account_request = frappe.new_doc("Mail Account Request")
-	account_request.email = invite_on_email
-	account_request.role = role
+	account_request.email = email
+	account_request.role = "Mail Admin"
 	account_request.send_email = True
-	account_request.is_invite = is_invite
-
-	if is_invite:
-		if not username:
-			frappe.throw(_("Username is mandatory."))
-
-		account_request.tenant = tenant
-		account_request.domain_name = domain
-		account_request.account = f"{username}@{domain}"
-		account_request.invited_by = frappe.session.user
-
 	account_request.insert(ignore_permissions=True)
 
 	return account_request.name
+
+
+@frappe.whitelist()
+def add_member(
+	tenant: str,
+	username: str,
+	domain: str,
+	role: str,
+	send_invite: bool,
+	email: str | None = None,
+	first_name: str | None = None,
+	last_name: str | None = None,
+	password: str | None = None,
+) -> None:
+	"""Create a new Mail Account Request for adding a member"""
+
+	account_request = frappe.new_doc("Mail Account Request")
+	account_request.is_invite = 1
+	account_request.tenant = tenant
+	account_request.domain_name = domain
+	account_request.account = f"{username}@{domain}"
+	account_request.role = role
+	account_request.invited_by = frappe.session.user
+
+	if send_invite:
+		email = email.strip().lower()
+		validate_email_address(email, True)
+		account_request.email = email
+		account_request.send_email = True
+
+	account_request.insert()
+
+	if not send_invite:
+		account_request.force_verify_and_create_account(first_name, last_name, password)
 
 
 @frappe.whitelist(allow_guest=True)
