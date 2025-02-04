@@ -50,7 +50,7 @@
 </template>
 
 <script setup>
-import { ref, inject } from 'vue'
+import { ref, inject, watch } from 'vue'
 import { Dialog, FormControl, ErrorMessage, createResource } from 'frappe-ui'
 import Copy from '@/components/Controls/Copy.vue'
 import { raiseToast } from '@/utils'
@@ -62,6 +62,14 @@ const domainName = ref('')
 const verificationError = ref('')
 
 const emit = defineEmits(['reloadDomains'])
+
+watch(show, () => {
+	if (show.value) {
+		domainName.value = ''
+		verificationError.value = ''
+		domainRequest.reset()
+	}
+})
 
 const domainRequest = createResource({
 	url: 'mail.api.admin.create_domain_request',

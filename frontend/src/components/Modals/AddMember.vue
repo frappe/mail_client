@@ -84,7 +84,7 @@
 </template>
 
 <script setup>
-import { reactive, inject } from 'vue'
+import { reactive, inject, watch } from 'vue'
 import { Dialog, FeatherIcon, FormControl, ErrorMessage, createResource } from 'frappe-ui'
 import Link from '@/components/Controls/Link.vue'
 import { raiseToast } from '@/utils'
@@ -107,6 +107,10 @@ const accountRequest = reactive({ ...defaultAccountRequest })
 
 const emit = defineEmits(['reloadMembers'])
 
+watch(show, () => {
+	if (show.value) Object.assign(accountRequest, defaultAccountRequest)
+})
+
 const addMember = createResource({
 	url: 'mail.api.account.add_member',
 	makeParams() {
@@ -116,7 +120,6 @@ const addMember = createResource({
 		}
 	},
 	onSuccess() {
-		show.value = false
 		raiseToast(
 			__(
 				accountRequest.send_invite
@@ -125,7 +128,7 @@ const addMember = createResource({
 			)
 		)
 		if (!accountRequest.send_invite) emit('reloadMembers')
-		Object.assign(accountRequest, defaultAccountRequest)
+		show.value = false
 	},
 })
 </script>
