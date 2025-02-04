@@ -116,9 +116,11 @@ def reload_configuration(agents: list[str] | None = None) -> None:
 
 
 def reload_configuration_on_request_log_agent(request_log: MailAgentRequestLog):
-	"""Reloads the configuration on the agent of the request log."""
+	"""Reloads the configuration on agents."""
 
-	reload_configuration([request_log.agent])
+	agent_group = frappe.get_cached_value("Mail Agent", request_log.agent, "agent_group")
+	agents = frappe.db.get_all("Mail Agent", {"enabled": 1, "agent_group": agent_group}, pluck="name")
+	reload_configuration(agents)
 
 
 def block_ip_on_agents(ip_address: str, agents: list[str] | None = None) -> None:
