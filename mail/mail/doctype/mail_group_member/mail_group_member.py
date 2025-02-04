@@ -29,6 +29,11 @@ class MailGroupMember(Document):
 			else:
 				frappe.throw(_("Member cannot be the same as the Mail Group"))
 
+		if not frappe.db.get_value(self.member_type, self.member_name, "enabled"):
+			frappe.throw(
+				_("The {0} {1} is disabled.").format(self.member_type, frappe.bold(self.member_name))
+			)
+
 	def after_insert(self) -> None:
 		create_member_on_agents(self.mail_group, self.member_name, self.member_is_group)
 

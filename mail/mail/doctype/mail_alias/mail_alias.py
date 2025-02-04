@@ -2,6 +2,7 @@
 # For license information, please see license.txt
 
 import frappe
+from frappe import _
 from frappe.model.document import Document
 
 from mail.agent import create_alias_on_agents, delete_alias_from_agents, patch_alias_on_agents
@@ -48,9 +49,7 @@ class MailAlias(Document):
 
 		if not frappe.db.get_value(self.alias_for_type, self.alias_for_name, "enabled"):
 			frappe.throw(
-				frappe._("The {0} {1} is disabled.").format(
-					self.alias_for_type, frappe.bold(self.alias_for_name)
-				)
+				_("The {0} {1} is disabled.").format(self.alias_for_type, frappe.bold(self.alias_for_name))
 			)
 
 	def validate_domain(self) -> None:
