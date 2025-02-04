@@ -17,25 +17,28 @@
 			>
 				<ListHeader />
 				<ListRows>
-					<ListRow
-						v-for="row in domains.data"
-						:key="row.name"
-						v-slot="{ column, item }"
-						:row="row"
-					>
-						<ListRowItem :item="item">
-							<Badge
-								v-if="column.key == 'status'"
-								:theme="item === 'Enabled' ? 'green' : 'red'"
-								:label="item"
-							/>
-							<FeatherIcon
-								v-else-if="column.key == 'is_verified'"
-								:name="item ? 'check' : 'x'"
-								class="h-4 w-4"
-							/>
-						</ListRowItem>
-					</ListRow>
+					<template v-if="domains.data.length">
+						<ListRow
+							v-for="row in domains.data"
+							:key="row.name"
+							v-slot="{ column, item }"
+							:row="row"
+						>
+							<ListRowItem :item="item">
+								<Badge
+									v-if="column.key == 'status'"
+									:theme="item === 'Enabled' ? 'green' : 'red'"
+									:label="item"
+								/>
+								<FeatherIcon
+									v-else-if="column.key == 'is_verified'"
+									:name="item ? 'check' : 'x'"
+									class="h-4 w-4"
+								/>
+							</ListRowItem>
+						</ListRow>
+					</template>
+					<ListEmptyState v-else />
 				</ListRows>
 			</ListView>
 		</div>
@@ -48,6 +51,7 @@ import {
 	Button,
 	Breadcrumbs,
 	ListView,
+	ListEmptyState,
 	ListHeader,
 	ListRows,
 	ListRow,

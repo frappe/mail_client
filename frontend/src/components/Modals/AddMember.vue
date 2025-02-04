@@ -57,7 +57,7 @@
 					placeholder="johndoe@personal.com"
 					v-model="accountRequest.email"
 				/>
-				<div v-else class="space-y-4">
+				<template v-else>
 					<FormControl
 						type="text"
 						:label="__('First Name')"
@@ -76,7 +76,7 @@
 						placeholder="••••••••"
 						v-model="accountRequest.password"
 					/>
-				</div>
+				</template>
 				<ErrorMessage :message="addMember.error?.messages[0]" />
 			</div>
 		</template>
