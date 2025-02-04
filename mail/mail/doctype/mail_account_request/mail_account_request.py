@@ -113,7 +113,7 @@ class MailAccountRequest(Document):
 	def send_verification_email(self) -> None:
 		"""Send verification email to the user."""
 
-		link = get_url() + "/signup/" + self.request_key
+		link = get_url() + "/mail/signup/" + self.request_key
 		args = {
 			"link": link,
 			"otp": self.otp,

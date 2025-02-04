@@ -19,40 +19,6 @@ def self_signup(email: str) -> str:
 	return account_request.name
 
 
-@frappe.whitelist()
-def add_member(
-	tenant: str,
-	username: str,
-	domain: str,
-	role: str,
-	send_invite: bool,
-	email: str | None = None,
-	first_name: str | None = None,
-	last_name: str | None = None,
-	password: str | None = None,
-) -> None:
-	"""Create a new Mail Account Request for adding a member"""
-
-	account_request = frappe.new_doc("Mail Account Request")
-	account_request.is_invite = 1
-	account_request.tenant = tenant
-	account_request.domain_name = domain
-	account_request.account = f"{username}@{domain}"
-	account_request.role = role
-	account_request.invited_by = frappe.session.user
-
-	if send_invite:
-		email = email.strip().lower()
-		validate_email_address(email, True)
-		account_request.email = email
-		account_request.send_email = True
-
-	account_request.insert()
-
-	if not send_invite:
-		account_request.force_verify_and_create_account(first_name, last_name, password)
-
-
 @frappe.whitelist(allow_guest=True)
 def resend_otp(account_request: str) -> None:
 	"""Resend OTP to the user"""
@@ -83,7 +49,7 @@ def get_account_request(request_key: str) -> dict:
 	return frappe.db.get_value(
 		"Mail Account Request",
 		{"request_key": request_key},
-		["email", "is_verified", "is_expired"],
+		["email", "is_verified", "is_expired", "account"],
 		as_dict=True,
 	)
 

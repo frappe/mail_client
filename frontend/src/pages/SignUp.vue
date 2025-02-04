@@ -151,7 +151,8 @@ const getAccountRequest = createResource({
 		return { request_key: props.requestKey }
 	},
 	onSuccess(data) {
-		if (data?.email && !data?.is_verified && !data?.is_expired) email.value = data.email
+		if ((data?.email || data?.account) && !data?.is_verified && !data?.is_expired)
+			email.value = data.account ? data.account : data.email
 		else router.replace({ name: 'SignUp' })
 	},
 })

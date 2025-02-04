@@ -112,7 +112,7 @@ watch(show, () => {
 })
 
 const addMember = createResource({
-	url: 'mail.api.account.add_member',
+	url: 'mail.api.admin.add_member',
 	makeParams() {
 		return {
 			tenant: user.data.tenant,

@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING
 
 import frappe
+from frappe.utils import validate_email_address
 
 if TYPE_CHECKING:
 	from mail.mail.doctype.mail_domain_request.mail_domain_request import MailDomainRequest
@@ -52,3 +53,37 @@ def get_tenant_members(tenant: str) -> list[dict[str, str]]:
 		.where(MTM.tenant == tenant)
 		.orderby(MTM.creation)
 	).run(as_dict=True)
+
+
+@frappe.whitelist()
+def add_member(
+	tenant: str,
+	username: str,
+	domain: str,
+	role: str,
+	send_invite: bool,
+	email: str | None = None,
+	first_name: str | None = None,
+	last_name: str | None = None,
+	password: str | None = None,
+) -> None:
+	"""Create a new Mail Account Request for adding a member"""
+
+	account_request = frappe.new_doc("Mail Account Request")
+	account_request.is_invite = 1
+	account_request.tenant = tenant
+	account_request.domain_name = domain
+	account_request.account = f"{username}@{domain}"
+	account_request.role = role
+	account_request.invited_by = frappe.session.user
+
+	if send_invite:
+		email = email.strip().lower()
+		validate_email_address(email, True)
+		account_request.email = email
+		account_request.send_email = True
+
+	account_request.insert()
+
+	if not send_invite:
+		account_request.force_verify_and_create_account(first_name, last_name, password)
