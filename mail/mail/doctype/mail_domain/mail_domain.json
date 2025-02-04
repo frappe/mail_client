@@ -201,13 +201,13 @@
    "link_fieldname": "domain_name"
   },
   {
-   "group": "Alias & Group",
-   "link_doctype": "Mail Alias",
+   "group": "Group & Alias",
+   "link_doctype": "Mail Group",
    "link_fieldname": "domain_name"
   },
   {
-   "group": "Alias & Group",
-   "link_doctype": "Mail Group",
+   "group": "Group & Alias",
+   "link_doctype": "Mail Alias",
    "link_fieldname": "domain_name"
   },
   {
@@ -226,7 +226,7 @@
    "link_fieldname": "domain_name"
   }
  ],
- "modified": "2025-02-01 16:21:13.816735",
+ "modified": "2025-02-03 16:21:13.816735",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Domain",

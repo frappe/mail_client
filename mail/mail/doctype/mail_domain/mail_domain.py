@@ -39,7 +39,7 @@ class MailDomain(Document):
 		create_domain_on_agents(domain_name=self.domain_name)
 
 		if self.is_root_domain:
-			create_dmarc_account()
+			create_dmarc_account(self.tenant)
 
 	def on_update(self) -> None:
 		self.clear_cache()
@@ -268,14 +268,13 @@ def has_permission(doc: "Document", ptype: str, user: str | None = None) -> bool
 
 
 def get_permission_query_condition(user: str | None = None) -> str:
-	if not user:
-		user = frappe.session.user
+	user = user or frappe.session.user
 
 	if is_system_manager(user):
 		return ""
 
 	if has_role(user, "Mail Admin"):
 		if tenant := get_tenant_for_user(user):
-			return f'(`tabMail Domain`.`tenant` = "{tenant}")'
+			return f"(`tabMail Domain`.`tenant` = {frappe.db.escape(tenant)})"
 
 	return "1=0"

@@ -42,11 +42,10 @@
    "link_fieldname": "_message"
   }
  ],
- "modified": "2025-01-10 15:55:04.117842",
+ "modified": "2025-02-04 10:46:51.381127",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "MIME Message",
- "naming_rule": "Set by user",
  "owner": "Administrator",
  "permissions": [
   {

@@ -1,7 +1,5 @@
 {
  "actions": [],
- "allow_rename": 1,
- "autoname": "hash",
  "creation": "2024-10-11 14:41:45.624692",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -147,11 +145,10 @@
    "link_fieldname": "spam_check_log"
   }
  ],
- "modified": "2025-01-16 16:29:06.227105",
+ "modified": "2025-02-04 10:49:42.767067",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Spam Check Log",
- "naming_rule": "Random",
  "owner": "Administrator",
  "permissions": [
   {

@@ -6,6 +6,8 @@ from frappe import _
 from frappe.model.document import Document
 
 from mail.agent import create_member_on_agents, delete_member_from_agents
+from mail.utils.cache import get_groups_owned_by_tenant, get_tenant_for_user
+from mail.utils.user import has_role, is_system_manager
 
 
 class MailGroupMember(Document):
@@ -27,11 +29,46 @@ class MailGroupMember(Document):
 			else:
 				frappe.throw(_("Member cannot be the same as the Mail Group"))
 
+		if not frappe.db.get_value(self.member_type, self.member_name, "enabled"):
+			frappe.throw(
+				_("The {0} {1} is disabled.").format(self.member_type, frappe.bold(self.member_name))
+			)
+
 	def after_insert(self) -> None:
 		create_member_on_agents(self.mail_group, self.member_name, self.member_is_group)
 
 	def on_trash(self) -> None:
 		delete_member_from_agents(self.mail_group, self.member_name, self.member_is_group)
+
+
+def has_permission(doc: "Document", ptype: str, user: str | None = None) -> bool:
+	if doc.doctype != "Mail Group Member":
+		return False
+
+	user = user or frappe.session.user
+
+	if is_system_manager(user):
+		return True
+
+	if has_role(user, "Mail Admin"):
+		if tenant := get_tenant_for_user(user):
+			return doc.mail_group in get_groups_owned_by_tenant(tenant)
+
+	return False
+
+
+def get_permission_query_condition(user: str | None = None) -> str:
+	user = user or frappe.session.user
+
+	if is_system_manager(user):
+		return ""
+
+	if has_role(user, "Mail Admin"):
+		if tenant := get_tenant_for_user(user):
+			if groups := get_groups_owned_by_tenant(tenant):
+				return f'(`tabMail Group Member`.`mail_group` IN ({", ".join([frappe.db.escape(group) for group in groups])}))'
+
+	return "1=0"
 
 
 def on_doctype_update() -> None:

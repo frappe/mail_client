@@ -13,6 +13,7 @@ from frappe.model.document import Document
 from frappe.query_builder import Interval
 from frappe.query_builder.functions import Now
 from frappe.utils import now, time_diff_in_seconds
+from uuid_utils import uuid7
 
 from mail.mail.doctype.mime_message.mime_message import (
 	create_mime_message,
@@ -39,6 +40,9 @@ class SpamCheckLog(Document):
 			update_mime_message(self._message, value)
 		else:
 			self._message = create_mime_message(value)
+
+	def autoname(self) -> None:
+		self.name = str(uuid7())
 
 	def validate(self) -> None:
 		if self.is_new():
