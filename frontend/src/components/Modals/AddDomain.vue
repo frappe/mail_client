@@ -50,7 +50,7 @@
 </template>
 
 <script setup>
-import { ref, computed, inject } from 'vue'
+import { ref, inject } from 'vue'
 import { Dialog, FormControl, ErrorMessage, createResource } from 'frappe-ui'
 import Copy from '@/components/Controls/Copy.vue'
 import { raiseToast } from '@/utils'

@@ -34,7 +34,7 @@
 							</div>
 							<div class="flex items-center ml-auto">
 								<Dropdown
-									:options="dropdownOptions(row.is_admin)"
+									:options="dropdownOptions(row.name, row.is_admin)"
 									:button="{ icon: 'more-horizontal', variant: 'ghost' }"
 								/>
 							</div>
@@ -45,6 +45,7 @@
 		</div>
 	</div>
 	<AddMember v-model="showAddMember" />
+	<Dialog :options="removeMemberOptions" v-model="showRemoveMember" />
 </template>
 <script setup>
 import { ref, computed, inject } from 'vue'
@@ -57,14 +58,18 @@ import {
 	ListHeader,
 	ListRows,
 	ListRow,
+	Dialog,
 	Dropdown,
 	createResource,
 } from 'frappe-ui'
 import AddMember from '@/components/Modals/AddMember.vue'
+import { raiseToast } from '@/utils'
 
 const user = inject('$user')
 
 const showAddMember = ref(false)
+const showRemoveMember = ref(false)
+const memberToBeRemoved = ref('')
 
 const members = createResource({
 	url: 'mail.api.admin.get_tenant_members',
@@ -73,18 +78,67 @@ const members = createResource({
 	cache: ['mailTenantMembers', user.data?.tenant],
 })
 
-const dropdownOptions = (isAdmin) => {
+const editAdminRole = createResource({
+	url: 'frappe.client.set_value',
+	makeParams: (values) => ({
+		doctype: 'Mail Tenant Member',
+		name: values.name,
+		fieldname: 'is_admin',
+		value: values.is_admin,
+	}),
+	onSuccess: () => {
+		raiseToast(__('Role updated successfully'))
+		members.reload()
+	},
+	onError: (error) => raiseToast(error.messages[0], 'error'),
+})
+
+const removeMember = createResource({
+	url: 'frappe.client.delete',
+	makeParams: () => ({
+		doctype: 'Mail Tenant Member',
+		name: memberToBeRemoved.value,
+	}),
+	onSuccess: () => {
+		raiseToast(__('Member removed successfully'))
+		showRemoveMember.value = false
+		members.reload()
+	},
+	onError: (error) => raiseToast(error.messages[0], 'error'),
+})
+
+const dropdownOptions = (name, isAdmin) => {
 	return [
 		{
 			label: isAdmin ? __('Remove Admin') : __('Make Admin'),
 			icon: isAdmin ? 'shield-off' : 'shield',
-			onClick: () => {},
+			onClick: () => editAdminRole.submit({ name, is_admin: !isAdmin }),
 		},
 		{
 			label: __('Remove Member'),
 			icon: 'user-x',
-			onClick: () => {},
+			onClick: () => {
+				memberToBeRemoved.value = name
+				showRemoveMember.value = true
+			},
 		},
 	]
 }
+
+const removeMemberOptions = computed(() => ({
+	title: __('Remove Member'),
+	message: __(`Are you sure you want to remove member ${memberToBeRemoved.value}?`),
+	size: 'xl',
+	icon: {
+		name: 'alert-triangle',
+		appearance: 'warning',
+	},
+	actions: [
+		{
+			label: __('Confirm'),
+			variant: 'solid',
+			onClick: removeMember.submit,
+		},
+	],
+}))
 </script>

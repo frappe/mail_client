@@ -122,7 +122,11 @@ const showConfirmDialog = ref(false)
 const confirmDialogAction = ref('')
 
 const confirmDialogOptions = computed(() => ({
-	title: __('Confirm'),
+	title: __(
+		confirmDialogAction.value === 'refreshDnsRecords'
+			? 'Refresh DNS Records'
+			: 'Rotate DKIM Keys'
+	),
 	message: __(
 		confirmDialogAction.value === 'refreshDnsRecords'
 			? `Are you sure you want to refresh the DNS records? If there are any changes, you'll need to update the DNS settings with your DNS provider accordingly.`
@@ -184,7 +188,7 @@ const domain = createDocumentResource({
 			makeParams() {
 				return { do_not_save: false }
 			},
-			onSuccess(data) {
+			onSuccess() {
 				showConfirmDialog.value = false
 				raiseToast('DNS Records refreshed successfully.')
 				domain.reload()
@@ -196,7 +200,7 @@ const domain = createDocumentResource({
 		},
 		rotateDkimKeys: {
 			method: 'rotate_dkim_keys',
-			onSuccess(data) {
+			onSuccess() {
 				showConfirmDialog.value = false
 				raiseToast('DKIM Keys rotated successfully.')
 				domain.reload()

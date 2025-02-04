@@ -50,4 +50,5 @@ def get_tenant_members(tenant: str) -> list[dict[str, str]]:
 		.on(MTM.user == User.name)
 		.select(User.name, User.full_name, User.user_image, MTM.is_admin)
 		.where(MTM.tenant == tenant)
+		.orderby(MTM.creation)
 	).run(as_dict=True)
