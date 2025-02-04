@@ -101,7 +101,7 @@ class MailAccount(Document):
 		if self.is_new() or self.enabled:
 			if self.tenant != get_tenant_for_user(self.user):
 				frappe.throw(
-					_("Domain {0} and User {1} do not belong to the same tenant.").format(
+					_("Domain {0} and User {1} must belong to the same tenant.").format(
 						frappe.bold(self.domain_name), frappe.bold(self.user)
 					)
 				)
