@@ -9,7 +9,7 @@ from frappe import _
 from frappe.query_builder import Criterion, Order
 from frappe.query_builder.functions import Date, IfNull
 
-from mail.utils.cache import get_account_for_user
+from mail.utils.cache import get_account_for_user, get_domains_owned_by_tenant, get_tenant_for_user
 from mail.utils.user import has_role, is_system_manager
 
 
@@ -219,7 +219,11 @@ def get_data(filters: dict | None = None) -> list[dict]:
 		conditions = []
 		account = get_account_for_user(user)
 
-		if has_role(user, "Mail User") and account:
+		if has_role(user, "Mail Admin"):
+			if tenant := get_tenant_for_user(user):
+				if domains := get_domains_owned_by_tenant(tenant):
+					conditions.append(OM.domain_name.isin(domains))
+		elif has_role(user, "Mail User") and account:
 			conditions.append(OM.sender == account)
 
 		if not conditions:

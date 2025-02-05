@@ -13,7 +13,7 @@ from mail.mail.doctype.mail_account.mail_account import create_dmarc_account
 from mail.utils import get_dkim_host, get_dkim_selector, get_dmarc_address
 from mail.utils.cache import get_root_domain_name, get_tenant_for_user
 from mail.utils.dns import verify_dns_record
-from mail.utils.user import has_role, is_system_manager, is_tenant_admin
+from mail.utils.user import get_user_linked_domains, has_role, is_system_manager, is_tenant_admin
 
 
 class MailDomain(Document):
@@ -276,5 +276,9 @@ def get_permission_query_condition(user: str | None = None) -> str:
 	if has_role(user, "Mail Admin"):
 		if tenant := get_tenant_for_user(user):
 			return f"(`tabMail Domain`.`tenant` = {frappe.db.escape(tenant)})"
+
+	if has_role(user, "Mail User"):
+		if linked_domains := get_user_linked_domains(user):
+			return f'(`tabMail Domain`.`domain_name` IN ({", ".join([frappe.db.escape(domain) for domain in linked_domains])}))'
 
 	return "1=0"

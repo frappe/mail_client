@@ -67,7 +67,7 @@
    "options": "User",
    "permlevel": 1,
    "reqd": 1,
-   "search_index": 1
+   "unique": 1
   }
  ],
  "image_field": "logo",
@@ -102,9 +102,14 @@
    "group": "Group & Alias",
    "link_doctype": "Mail Group",
    "link_fieldname": "tenant"
+  },
+  {
+   "group": "Group & Alias",
+   "link_doctype": "Mail Alias",
+   "link_fieldname": "tenant"
   }
  ],
- "modified": "2025-02-02 22:11:53.092567",
+ "modified": "2025-02-05 10:27:16.023689",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Tenant",

@@ -9,7 +9,7 @@
  "idx": 0,
  "is_standard": "Yes",
  "letterhead": null,
- "modified": "2025-01-14 09:35:26.586768",
+ "modified": "2025-02-04 21:05:41.074549",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Outgoing Mail Summary",
@@ -21,6 +21,9 @@
  "roles": [
   {
    "role": "System Manager"
+  },
+  {
+   "role": "Mail Admin"
   },
   {
    "role": "Mail User"

@@ -21,7 +21,6 @@ from mail.utils.validation import (
 # todo:
 # clean up form
 # make role => is_admin
-# mail domain: tenant_name
 # fix invite mail frappe logo
 
 
