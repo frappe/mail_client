@@ -27,10 +27,7 @@
 								</div>
 							</div>
 							<div class="flex items-center mx-auto">
-								<Badge
-									:theme="row.is_admin ? 'orange' : 'gray'"
-									:label="__(row.is_admin ? 'Admin' : 'User')"
-								/>
+								<Badge v-if="row.is_admin" theme="orange" :label="__('Admin')" />
 							</div>
 							<div class="flex items-center ml-auto">
 								<Dropdown
