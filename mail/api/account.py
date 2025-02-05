@@ -57,6 +57,7 @@ def create_account(request_key: str, first_name: str, last_name: str, password: 
 	"""Create a new user account"""
 
 	account_request = frappe.get_last_doc("Mail Account Request", {"request_key": request_key})
+	account_request.validate_expired()
 	account_request.is_verified = 1
 	account_request.save(ignore_permissions=True)
 

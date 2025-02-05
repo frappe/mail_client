@@ -21,8 +21,6 @@ from mail.utils.validation import (
 # clean up form
 # make role => is_admin
 # mail domain: tenant_name
-# validate is_expired
-# validate mail invite duplicate user
 
 
 class MailAccountRequest(Document):
@@ -116,6 +114,15 @@ class MailAccountRequest(Document):
 				)
 			)
 
+		if frappe.db.exists("User", {"email": self.account}):
+			frappe.throw(_("User {0} is already registered.").format(self.account))
+
+	def validate_expired(self) -> None:
+		"""Forbids action if the request has expired."""
+
+		if self.is_expired:
+			frappe.throw(_("This request has expired. Please create a new request."))
+
 	def set_request_key(self) -> None:
 		"""Sets a random key for the request."""
 
@@ -129,6 +136,8 @@ class MailAccountRequest(Document):
 	@frappe.whitelist()
 	def send_verification_email(self) -> None:
 		"""Send verification email to the user."""
+
+		self.validate_expired()
 
 		link = get_url() + "/mail/signup/" + self.request_key
 		args = {"link": link, "otp": self.otp}
@@ -154,6 +163,8 @@ class MailAccountRequest(Document):
 	@frappe.whitelist()
 	def force_verify_and_create_account(self, first_name: str, last_name: str, password: str) -> None:
 		"""Force verify and create account for invited user."""
+
+		self.validate_expired()
 
 		if not self.is_invite:
 			frappe.throw(_("This method can only be called for invited users."))
