@@ -11,7 +11,6 @@
   "is_root_domain",
   "column_break_lr3y",
   "tenant",
-  "tenant_name",
   "domain_name",
   "dkim_rsa_key_size",
   "newsletter_retention",
@@ -168,14 +167,6 @@
    "reqd": 1,
    "search_index": 1,
    "set_only_once": 1
-  },
-  {
-   "fetch_from": "tenant.tenant_name",
-   "fieldname": "tenant_name",
-   "fieldtype": "Data",
-   "hidden": 1,
-   "label": "Tenant Name",
-   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
@@ -226,7 +217,7 @@
    "link_fieldname": "domain_name"
   }
  ],
- "modified": "2025-02-03 16:21:13.816735",
+ "modified": "2025-02-05 16:13:38.704496",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Domain",

@@ -38,7 +38,7 @@
 				<div class="p-4">
 					<div class="my-1.5 space-y-3">
 						<HorizontalFormControl :label="__('Mail Tenant')" :disabled="true">
-							<FormControl v-model="domain.doc.tenant_name" :disabled="true" />
+							<FormControl v-model="user.data.tenant_name" :disabled="true" />
 						</HorizontalFormControl>
 						<HorizontalFormControl :label="__('DKIM RSA Key Size')">
 							<FormControl
@@ -91,7 +91,7 @@
 	<Dialog :options="confirmDialogOptions" v-model="showConfirmDialog" />
 </template>
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, inject } from 'vue'
 import { useRouter } from 'vue-router'
 import {
 	Button,
@@ -116,6 +116,7 @@ const props = defineProps({
 	},
 })
 
+const user = inject('$user')
 const router = useRouter()
 
 const showConfirmDialog = ref(false)
@@ -168,50 +169,46 @@ const domain = createDocumentResource({
 	whitelistedMethods: {
 		verifyDnsRecords: {
 			method: 'verify_dns_records',
-			makeParams() {
-				return { do_not_save: false }
-			},
-			onSuccess(data) {
+			makeParams: () => ({ do_not_save: false }),
+			onSuccess: (data) => {
 				raiseToast(
 					data ? 'DNS records verified successfully.' : 'DNS verification failed.',
 					data ? 'success' : 'error'
 				)
 				domain.reload()
 			},
-			onError(error) {
+			onError: (error) => {
 				raiseToast(error.messages[0], 'error')
 				domain.reload()
 			},
 		},
 		refreshDnsRecords: {
 			method: 'refresh_dns_records',
-			makeParams() {
-				return { do_not_save: false }
-			},
-			onSuccess() {
+			makeParams: () => ({ do_not_save: false }),
+			onSuccess: () => {
 				showConfirmDialog.value = false
 				raiseToast('DNS Records refreshed successfully.')
 				domain.reload()
 			},
-			onError(error) {
+			onError: (error) => {
 				raiseToast(error.messages[0], 'error')
 				domain.reload()
 			},
 		},
 		rotateDkimKeys: {
 			method: 'rotate_dkim_keys',
-			onSuccess() {
+			onSuccess: () => {
 				showConfirmDialog.value = false
 				raiseToast('DKIM Keys rotated successfully.')
 				domain.reload()
 			},
-			onError(error) {
+			onError: (error) => {
 				raiseToast(error.messages[0], 'error')
 				domain.reload()
 			},
 		},
 	},
-	onError(error) {
+	onError: (error) => {
 		if (error.exc_type === 'DoesNotExistError') router.replace({ name: 'Domains' })
 	},
 })
