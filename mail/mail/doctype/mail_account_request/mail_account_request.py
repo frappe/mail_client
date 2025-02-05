@@ -19,12 +19,10 @@ from mail.utils.validation import (
 
 # todo:
 # clean up form
-# clean up create_account
 # make role => is_admin
-# fix email styles
-# fix email frappe logo
-# create mail account after sign up
 # mail domain: tenant_name
+# validate is_expired
+# validate mail invite duplicate user
 
 
 class MailAccountRequest(Document):
@@ -133,11 +131,7 @@ class MailAccountRequest(Document):
 		"""Send verification email to the user."""
 
 		link = get_url() + "/mail/signup/" + self.request_key
-		args = {
-			"link": link,
-			"otp": self.otp,
-			"image_path": "https://frappe.io/files/Frappe-black.png",
-		}
+		args = {"link": link, "otp": self.otp}
 
 		if self.is_invite and self.invited_by:
 			subject = _("You have been invited by {0} to join Frappe Mail").format(self.invited_by)
@@ -191,11 +185,11 @@ class MailAccountRequest(Document):
 
 
 def expire_mail_account_requests() -> None:
-	"""Called by scheduler to expire mail account requests older than 7 days."""
+	"""Called by scheduler to expire mail account requests older than 2 days."""
 
 	frappe.db.set_value(
 		"Mail Account Request",
-		{"is_expired": 0, "creation": ["<", add_days(nowdate(), -7)]},
+		{"is_expired": 0, "creation": ["<", add_days(nowdate(), -2)]},
 		"is_expired",
 		1,
 	)
