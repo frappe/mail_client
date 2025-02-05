@@ -67,7 +67,7 @@
    "options": "User",
    "permlevel": 1,
    "reqd": 1,
-   "search_index": 1
+   "unique": 1
   }
  ],
  "image_field": "logo",
@@ -109,7 +109,7 @@
    "link_fieldname": "tenant"
   }
  ],
- "modified": "2025-02-04 16:54:43.415462",
+ "modified": "2025-02-05 10:27:16.023689",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Tenant",
