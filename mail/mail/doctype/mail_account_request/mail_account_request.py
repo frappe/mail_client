@@ -24,6 +24,7 @@ from mail.utils.validation import (
 # fix email styles
 # fix email frappe logo
 # create mail account after sign up
+# mail domain: tenant_name
 
 
 class MailAccountRequest(Document):
@@ -69,7 +70,7 @@ class MailAccountRequest(Document):
 	def validate_non_invite(self) -> None:
 		"""Validates self sign up."""
 
-		if frappe.db.exists("User", self.email):
+		if frappe.db.exists("User", {"email": self.email}):
 			frappe.throw(_("User {0} is already registered.").format(self.email))
 
 		self.role = "Mail Admin"

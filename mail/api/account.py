@@ -1,6 +1,8 @@
 import frappe
 from frappe import _
 
+from mail.mail.doctype.mail_account.mail_account import create_user
+
 
 @frappe.whitelist(allow_guest=True)
 def self_signup(email: str) -> str:
@@ -54,26 +56,12 @@ def get_account_request(request_key: str) -> dict:
 def create_account(request_key: str, first_name: str, last_name: str, password: str) -> None:
 	"""Create a new user account"""
 
-	account_request, email, tenant, role, account = frappe.db.get_value(
-		"Mail Account Request", {"request_key": request_key}, ["name", "email", "tenant", "role", "account"]
-	)
+	account_request = frappe.get_last_doc("Mail Account Request", {"request_key": request_key})
+	account_request.is_verified = 1
+	account_request.save(ignore_permissions=True)
 
-	user_email = account if account else email
+	if account_request.account:
+		account_request.create_account(first_name, last_name, password)
 
-	user = frappe.new_doc("User")
-	user.first_name = first_name
-	user.last_name = last_name
-	user.email = user_email
-	user.owner = user_email
-	user.new_password = password
-	user.append_roles("Mail User")
-	if role == "Mail Admin":
-		user.append_roles("Mail Admin")
-	user.flags.no_welcome_mail = True
-	user.insert(ignore_permissions=True)
-
-	frappe.db.set_value("Mail Account Request", account_request, "is_verified", 1)
-
-	if tenant:
-		mail_tenant = frappe.get_cached_doc("Mail Tenant", tenant)
-		mail_tenant.add_member(user_email)
+	else:
+		create_user(account_request.email, first_name, last_name, password, ["Mail Admin"])

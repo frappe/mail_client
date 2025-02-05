@@ -191,6 +191,18 @@ def _create_user_for_mail_account(
 	if role == "Mail Admin":
 		roles.append("Mail Admin")
 
+	return create_user(email, first_name, last_name, password, roles)
+
+
+def create_user(
+	email: str,
+	first_name: str,
+	last_name: str | None = None,
+	password: str | None = None,
+	roles: list[str] | None = None,
+) -> str:
+	"""Creates a User document"""
+
 	user = frappe.new_doc("User")
 	user.first_name = first_name
 	user.last_name = last_name
@@ -198,7 +210,8 @@ def _create_user_for_mail_account(
 	user.email = email
 	user.owner = email
 	user.send_welcome_email = 0
-	user.append_roles(*roles)
+	if roles:
+		user.append_roles(*roles)
 	if password:
 		user.new_password = password
 	user.insert(ignore_permissions=True)
