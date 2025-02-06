@@ -42,7 +42,7 @@ def verify_dns_record(domain_request: str) -> bool:
 
 
 @frappe.whitelist()
-def get_tenant_members(tenant: str) -> list]:
+def get_tenant_members(tenant: str) -> list:
 	"""Returns list of members for the given tenant"""
 
 	user = frappe.session.user
