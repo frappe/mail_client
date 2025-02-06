@@ -1,7 +1,10 @@
 from typing import TYPE_CHECKING
 
 import frappe
+from frappe import _
 from frappe.utils import validate_email_address
+
+from mail.utils.user import is_tenant_admin
 
 if TYPE_CHECKING:
 	from mail.mail.doctype.mail_domain_request.mail_domain_request import MailDomainRequest
@@ -39,8 +42,12 @@ def verify_dns_record(domain_request: str) -> bool:
 
 
 @frappe.whitelist()
-def get_tenant_members(tenant: str) -> list[dict[str, str]]:
+def get_tenant_members(tenant: str) -> list]:
 	"""Returns list of members for the given tenant"""
+
+	user = frappe.session.user
+	if not is_tenant_admin(tenant, user):
+		frappe.throw(_("User {0} is not a Mail Admin of Tenant {1}.").format(user, tenant))
 
 	MTM = frappe.qb.DocType("Mail Tenant Member")
 	User = frappe.qb.DocType("User")

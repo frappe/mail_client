@@ -6,7 +6,7 @@ import random
 import frappe
 from frappe import _
 from frappe.model.document import Document
-from frappe.utils import add_days, get_url, nowdate, random_string
+from frappe.utils import add_days, get_url, nowdate, random_string, validate_email_address
 
 from mail.mail.doctype.mail_account.mail_account import create_mail_account
 from mail.utils.cache import get_tenant_for_user
@@ -15,7 +15,6 @@ from mail.utils.validation import (
 	is_valid_email_for_domain,
 	validate_domain_is_enabled_and_verified,
 	validate_domain_owned_by_tenant,
-	validate_email_address,
 )
 
 # todo:
@@ -62,9 +61,6 @@ class MailAccountRequest(Document):
 		if self.email:
 			self.email = self.email.strip().lower()
 			validate_email_address(self.email, True)
-
-		elif self.send_email:
-			frappe.throw(_("Email is required to send invite"))
 
 	def validate_non_invite(self) -> None:
 		"""Validates self sign up."""
@@ -148,6 +144,9 @@ class MailAccountRequest(Document):
 	@frappe.whitelist()
 	def send_verification_email(self) -> None:
 		"""Send verification email to the user."""
+
+		if not self.email:
+			frappe.throw(_("Email is required to send invite"))
 
 		self.validate_expired()
 
