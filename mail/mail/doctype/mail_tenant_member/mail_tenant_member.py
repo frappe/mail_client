@@ -21,7 +21,7 @@ class MailTenantMember(Document):
 		self.clear_cache()
 
 	def on_trash(self) -> None:
-		if is_tenant_owner(self.tenant, self.user):
+		if not is_system_manager(frappe.session.user) and is_tenant_owner(self.tenant, self.user):
 			frappe.throw(_("Cannot remove the owner of the Mail Tenant."))
 
 		self.validate_active_account()
