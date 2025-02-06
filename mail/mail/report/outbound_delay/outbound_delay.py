@@ -78,8 +78,20 @@ def get_columns() -> list[dict]:
 			"width": 120,
 		},
 		{
-			"label": _("Transfer Delay"),
-			"fieldname": "transfer_delay",
+			"label": _("Processing Delay"),
+			"fieldname": "processing_delay",
+			"fieldtype": "Float",
+			"width": 120,
+		},
+		{
+			"label": _("Transfer Started After"),
+			"fieldname": "transfer_started_after",
+			"fieldtype": "Float",
+			"width": 120,
+		},
+		{
+			"label": _("Transfer Duration"),
+			"fieldname": "transfer_duration",
 			"fieldtype": "Float",
 			"width": 120,
 		},
@@ -157,8 +169,15 @@ def get_data(filters: dict | None = None) -> list[dict]:
 			OM.priority,
 			OM.is_newsletter,
 			OM.submitted_after.as_("submission_delay"),
-			(OM.transfer_started_after + OM.transfer_completed_after).as_("transfer_delay"),
-			(OM.submitted_after + OM.transfer_started_after + OM.transfer_completed_after).as_("total_delay"),
+			OM.processed_after.as_("processing_delay"),
+			OM.transfer_started_after,
+			OM.transfer_completed_after.as_("transfer_duration"),
+			(
+				OM.submitted_after
+				+ OM.processed_after
+				+ OM.transfer_started_after
+				+ OM.transfer_completed_after
+			).as_("total_delay"),
 			OM.domain_name,
 			OM.agent,
 			OM.ip_address,
@@ -236,7 +255,7 @@ def get_summary(data: list) -> list[dict]:
 	average_data = {}
 
 	for row in data:
-		for field in ["message_size", "submission_delay", "transfer_delay"]:
+		for field in ["message_size", "submission_delay", "processing_delay", "transfer_duration"]:
 			key = f"total_{field}"
 			summary_data.setdefault(key, 0)
 			summary_data[key] += row[field]
@@ -247,21 +266,27 @@ def get_summary(data: list) -> list[dict]:
 
 	return [
 		{
-			"label": _("Average Message Size"),
+			"label": _("Avg. Message Size"),
 			"datatype": "Int",
 			"value": average_data["message_size"],
 			"indicator": "green",
 		},
 		{
-			"label": _("Average Submission Delay"),
+			"label": _("Avg. Submission Delay"),
 			"datatype": "Data",
 			"value": f"{average_data['submission_delay']}s",
 			"indicator": "yellow",
 		},
 		{
-			"label": _("Average Transfer Delay"),
+			"label": _("Avg. Processing Delay"),
 			"datatype": "Data",
-			"value": f"{average_data['transfer_delay']}s",
+			"value": f"{average_data['processing_delay']}s",
+			"indicator": "orange",
+		},
+		{
+			"label": _("Avg. Transfer Duration"),
+			"datatype": "Data",
+			"value": f"{average_data['transfer_duration']}s",
 			"indicator": "blue",
 		},
 	]
