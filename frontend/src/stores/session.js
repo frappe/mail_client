@@ -21,15 +21,17 @@ export const sessionStore = defineStore('mail-session', () => {
 
 	const login = createResource({
 		url: 'login',
-		onError() {
+		onError: () => {
 			throw new Error('Invalid email or password')
 		},
-		onSuccess() {
+		onSuccess: async () => {
 			userResource.reload()
+			await userResource.promise
 			user.value = sessionUser()
 			login.reset()
-			router.replace({ name: 'Inbox' })
-			window.location.reload()
+
+			if (user.value === 'Administrator') window.location.href = '/app'
+			else router.replace({ name: userResource.data.is_mail_admin ? 'Domains' : 'Inbox' })
 		},
 	})
 

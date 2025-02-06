@@ -85,7 +85,8 @@ router.beforeEach(async (to, from, next) => {
 	const { userResource } = userStore()
 	await userResource.promise
 	const isAdmin = userResource.data.name === 'Administrator'
-	const isMailAdmin = userResource.data?.roles.includes('Mail Admin')
+	const isMailAdmin = userResource.data.is_mail_admin
+
 	if (!isAdmin && isMailAdmin && !userResource.data?.tenant)
 		return next(to.meta.isSetup ? undefined : { name: 'Setup' })
 
