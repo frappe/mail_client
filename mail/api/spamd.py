@@ -25,19 +25,6 @@ def scan(message: str | None = None) -> dict:
 
 
 @frappe.whitelist(methods=["POST"])
-def is_spam(message: str | None = None, message_type: Literal["Outbound"] = "Outbound") -> bool:
-	"""Returns True if the message is spam else False"""
-
-	message = message or get_message_from_files()
-	if not message:
-		frappe.throw(_("The message is required."), frappe.MandatoryError)
-
-	message = get_unescaped_message(message)
-	spam_log = create_spam_check_log(message)
-	return spam_log.is_spam(message_type)
-
-
-@frappe.whitelist(methods=["POST"])
 def get_spam_score(message: str | None = None) -> float:
 	"""Returns the spam score of the message"""
 

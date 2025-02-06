@@ -95,16 +95,6 @@ class SpamCheckLog(Document):
 		self.completed_at = now()
 		self.duration = time_diff_in_seconds(self.completed_at, self.started_at)
 
-	def is_spam(self, message_type: Literal["Outbound"]) -> bool:
-		"""Returns True if the message is spam else False"""
-
-		spamd_threshold_field = (
-			"spamd_outbound_threshold" if message_type == "Outbound" else "spamd_inbound_threshold"
-		)
-		spamd_threshold = frappe.db.get_single_value("Mail Settings", spamd_threshold_field, cache=True)
-
-		return self.spam_score > spamd_threshold
-
 
 def create_spam_check_log(message: str) -> SpamCheckLog:
 	"""Creates a Spam Check Log document"""
