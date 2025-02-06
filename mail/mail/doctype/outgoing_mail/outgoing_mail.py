@@ -934,7 +934,7 @@ class OutgoingMail(Document):
 		self._db_set(
 			status="Transferring",
 			transfer_started_at=transfer_started_at,
-			transfer_started_after=time_diff_in_seconds(transfer_started_at, self.submitted_at),
+			transfer_started_after=time_diff_in_seconds(transfer_started_at, self.processed_at),
 			notify_update=False,
 			commit=True,
 		)

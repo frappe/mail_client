@@ -413,7 +413,7 @@
   },
   {
    "depends_on": "eval: doc.transfer_started_at",
-   "description": "Transfer Started At - Submitted At",
+   "description": "Transfer Started At - Processed At",
    "fieldname": "transfer_started_after",
    "fieldtype": "Float",
    "label": "Transfer Started After (Seconds)",
@@ -631,7 +631,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-02-04 19:46:51.775392",
+ "modified": "2025-02-06 10:47:04.026208",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Outgoing Mail",
