@@ -39,6 +39,7 @@ class MailAccountRequest(Document):
 				self.validate_non_invite()
 
 	def before_insert(self) -> None:
+		self.make_email_lowercase()
 		self.set_request_key()
 		self.set_otp()
 
@@ -134,6 +135,15 @@ class MailAccountRequest(Document):
 		"""Sets a random 5-digit OTP for the request."""
 
 		self.otp = random.randint(10000, 99999)
+
+	def make_email_lowercase(self) -> None:
+		"""Makes email lowercase."""
+
+		if self.email:
+			self.email = self.email.lower()
+
+		if self.account:
+			self.account = self.account.lower()
 
 	@frappe.whitelist()
 	def send_verification_email(self) -> None:

@@ -107,6 +107,11 @@ const accountRequest = reactive({ ...defaultAccountRequest })
 
 const emit = defineEmits(['reloadMembers'])
 
+watch(
+	() => accountRequest.send_invite,
+	() => addMember.reset()
+)
+
 watch(show, () => {
 	if (show.value) {
 		Object.assign(accountRequest, defaultAccountRequest)

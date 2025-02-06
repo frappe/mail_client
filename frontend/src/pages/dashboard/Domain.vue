@@ -25,11 +25,13 @@
 						:disabled="true"
 					/>
 					<Switch
+						v-if="domain.doc.is_subdomain"
 						:label="__('Subdomain')"
 						v-model="domain.doc.is_subdomain"
 						:disabled="true"
 					/>
 					<Switch
+						v-if="domain.doc.is_root_domain"
 						:label="__('Root Domain')"
 						v-model="domain.doc.is_root_domain"
 						:disabled="true"
