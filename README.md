@@ -1,6 +1,6 @@
 <div align="center" markdown="1">
 
-<img src=".github/frappe-mail-logo.svg" alt="Frappe Mail logo" width="80" />
+<img src="/mail/public/images/logo.svg" alt="Frappe Mail logo" width="80" />
 <h1>Frappe Mail</h1>
 
 **End-to-End Email Management Platform**
