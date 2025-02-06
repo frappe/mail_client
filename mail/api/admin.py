@@ -21,14 +21,20 @@ def create_tenant(tenant_name: str) -> None:
 
 
 @frappe.whitelist()
-def create_domain_request(domain_name: str, mail_tenant: str) -> "MailDomainRequest":
-	"""Create a new Mail Domain Request"""
+def get_domain_request(domain_name: str, mail_tenant: str) -> "MailDomainRequest":
+	"""Fetches Mail Domain Request for a given domain name if it exists, and creates a new one if not"""
 
-	domain_request = frappe.new_doc("Mail Domain Request")
-	domain_request.domain_name = domain_name
-	domain_request.tenant = mail_tenant
-	domain_request.user = frappe.session.user
-	domain_request.insert()
+	if name := frappe.db.exists("Mail Domain Request", {"domain_name": domain_name, "tenant": mail_tenant}):
+		domain_request = frappe.get_doc("Mail Domain Request", name)
+		if domain_request.is_verified:
+			frappe.throw(_("Domain {0} is already verified and added.").format(name))
+
+	else:
+		domain_request = frappe.new_doc("Mail Domain Request")
+		domain_request.domain_name = domain_name
+		domain_request.tenant = mail_tenant
+		domain_request.user = frappe.session.user
+		domain_request.insert()
 
 	return domain_request
 

@@ -73,7 +73,7 @@ watch(show, () => {
 })
 
 const domainRequest = createResource({
-	url: 'mail.api.admin.create_domain_request',
+	url: 'mail.api.admin.get_domain_request',
 	makeParams() {
 		return { domain_name: domainName.value, mail_tenant: user.data.tenant }
 	},
