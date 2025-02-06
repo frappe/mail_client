@@ -1,4 +1,6 @@
+import base64
 import gzip
+import os
 import re
 import secrets
 import string
@@ -15,6 +17,26 @@ from frappe.utils.caching import redis_cache, request_cache
 
 from mail.utils.cache import get_root_domain_name
 from mail.utils.validation import validate_email_address
+
+
+def encode_image_to_base64(image_path: str) -> str:
+	"""Encodes an image to a base64 string with line breaks every 76 characters."""
+
+	image_path = os.path.abspath(image_path)
+	with open(image_path, "rb") as image:
+		image_base64 = base64.b64encode(image.read()).decode("utf-8")
+
+	chunk_size = 76
+	parts = [image_base64[i : i + chunk_size] for i in range(0, len(image_base64), chunk_size)]
+	return "\n".join(parts)
+
+
+def get_base64_image_data_uri(image_path: str) -> str:
+	"""Generates a base64 data URI for an image."""
+
+	image_base64 = encode_image_to_base64(image_path)
+	image_format = image_path.split(".")[-1]
+	return f"data:image/{image_format};base64,{image_base64}"
 
 
 def generate_secret(length: int = 32):
