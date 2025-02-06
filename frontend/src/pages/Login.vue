@@ -21,7 +21,7 @@
 		<Button variant="solid" :loading="login.loading">{{ __('Log In ') }} </Button>
 	</form>
 	<div class="mt-6 text-center">
-		<router-link class="text-center text-base font-medium hover:underline" to="signup">
+		<router-link class="text-center text-base font-medium hover:underline" to="/signup">
 			{{ __('New member? Create an account.') }}
 		</router-link>
 	</div>

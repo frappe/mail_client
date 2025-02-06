@@ -30,7 +30,7 @@ export const sessionStore = defineStore('mail-session', () => {
 			user.value = sessionUser()
 			login.reset()
 
-			if (user.value === 'Administrator') window.location.href = '/app'
+			if (user.value === 'Administrator') window.location.replace('/app')
 			else router.replace({ name: userResource.data.is_mail_admin ? 'Domains' : 'Inbox' })
 		},
 	})
