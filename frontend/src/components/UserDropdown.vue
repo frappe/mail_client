@@ -95,13 +95,13 @@ const userDropdownOptions = [
 		icon: Home,
 		label: 'Home',
 		onClick: () => router.push('/'),
-		condition: () => userResource.data.is_mail_admin,
+		condition: () => userResource.data.is_mail_admin && userResource.data.default_outgoing,
 	},
 	{
 		icon: LayoutDashboard,
 		label: 'Admin Dashboard',
 		onClick: () => router.push('/dashboard'),
-		condition: () => userResource.data.is_mail_admin,
+		condition: () => userResource.data.is_mail_admin && userResource.data.default_outgoing,
 	},
 	{
 		icon: ArrowRightLeft,
