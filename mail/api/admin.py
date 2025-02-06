@@ -25,7 +25,7 @@ def get_domain_request(domain_name: str, mail_tenant: str) -> "MailDomainRequest
 	"""Fetches Mail Domain Request for a given domain name if it exists, and creates a new one if not"""
 
 	if frappe.db.exists("Mail Domain", domain_name):
-		frappe.throw(_("Domain {0} has already been registered.").format(domain_name))
+		frappe.throw(_("Domain {0} has already been registered.").format(frappe.bold(domain_name)))
 
 	if name := frappe.db.exists("Mail Domain Request", {"domain_name": domain_name, "tenant": mail_tenant}):
 		return frappe.get_doc("Mail Domain Request", name)
