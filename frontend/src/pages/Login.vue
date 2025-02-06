@@ -2,7 +2,7 @@
 	<form class="flex flex-col space-y-4" @submit.prevent="login.submit({ usr, pwd })">
 		<FormControl
 			label="Email"
-			type="email"
+			type="text"
 			placeholder="johndoe@mail.com"
 			autocomplete="email"
 			v-model="usr"
