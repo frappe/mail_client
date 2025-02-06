@@ -79,6 +79,8 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
+	if (document.referrer.includes('/app/setup-wizard')) window.location.replace('/app')
+
 	const { isLoggedIn } = sessionStore()
 	if (!isLoggedIn) return next(to.meta.isLogin ? undefined : { name: 'Login' })
 
@@ -86,8 +88,7 @@ router.beforeEach(async (to, from, next) => {
 	await userResource.promise
 
 	if (userResource.data.is_mail_admin) {
-		if (!userResource.data?.tenant)
-			return next(to.meta.isSetup ? undefined : { name: 'Setup' })
+		if (!userResource.data.tenant) return next(to.meta.isSetup ? undefined : { name: 'Setup' })
 		if (!userResource.data.default_outgoing && !to.meta.isDashboard)
 			return next({ name: 'Domains' })
 	} else if (to.meta.isDashboard) return next({ name: 'Inbox' })
