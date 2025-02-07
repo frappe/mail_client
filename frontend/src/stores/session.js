@@ -24,9 +24,9 @@ export const sessionStore = defineStore('mail-session', () => {
 		onError: () => {
 			throw new Error('Invalid email or password')
 		},
-		onSuccess: async () => {
+		onSuccess: () => {
 			userResource.reload()
-			await userResource.promise
+			userResource.promise
 			user.value = sessionUser()
 			login.reset()
 
