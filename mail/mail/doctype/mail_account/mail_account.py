@@ -1,8 +1,6 @@
 # Copyright (c) 2025, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
-from typing import Literal
-
 import bcrypt
 import frappe
 from frappe import _
@@ -177,19 +175,28 @@ def _create_user_for_mail_account(
 	first_name: str,
 	last_name: str | None = None,
 	password: str | None = None,
-	role: Literal["Mail User", "Mail Admin"] = "Mail User",
+	is_admin: bool = False,
 ) -> str:
 	"""Creates a User for Mail Account"""
 
 	if frappe.db.exists("User", {"email": email}):
 		frappe.throw(_("User with email {0} already exists.").format(frappe.bold(email)))
 
-	if role not in ["Mail User", "Mail Admin"]:
-		frappe.throw(_("Invalid role. Please select a valid role."))
-
 	roles = ["Mail User"]
-	if role == "Mail Admin":
+	if is_admin:
 		roles.append("Mail Admin")
+
+	return create_user(email, first_name, last_name, password, roles)
+
+
+def create_user(
+	email: str,
+	first_name: str,
+	last_name: str | None = None,
+	password: str | None = None,
+	roles: list[str] | None = None,
+) -> str:
+	"""Creates a User document"""
 
 	user = frappe.new_doc("User")
 	user.first_name = first_name
@@ -198,7 +205,8 @@ def _create_user_for_mail_account(
 	user.email = email
 	user.owner = email
 	user.send_welcome_email = 0
-	user.append_roles(*roles)
+	if roles:
+		user.append_roles(*roles)
 	if password:
 		user.new_password = password
 	user.insert(ignore_permissions=True)
@@ -206,11 +214,11 @@ def _create_user_for_mail_account(
 	return user.name
 
 
-def _add_user_to_tenant(tenant: str, user: str, role: str) -> None:
+def _add_user_to_tenant(tenant: str, user: str, is_admin: bool) -> None:
 	"""Adds a User to a Tenant"""
 
 	tenant = frappe.get_doc("Mail Tenant", tenant)
-	tenant.add_member(user, is_admin=role == "Mail Admin")
+	tenant.add_member(user, is_admin)
 
 
 def create_mail_account(
@@ -219,15 +227,15 @@ def create_mail_account(
 	first_name: str,
 	last_name: str | None = None,
 	password: str | None = None,
-	role: Literal["Mail User", "Mail Admin"] = "Mail User",
+	is_admin: bool = False,
 ) -> "MailAccount":
 	"""Creates a Mail Account"""
 
 	if frappe.db.exists("Mail Account", email):
 		frappe.throw(_("Mail Account {0} already exists.").format(frappe.bold(email)))
 
-	user = _create_user_for_mail_account(email, first_name, last_name, password, role)
-	_add_user_to_tenant(tenant, user, role)
+	user = _create_user_for_mail_account(email, first_name, last_name, password, is_admin)
+	_add_user_to_tenant(tenant, user, is_admin)
 	account = frappe.new_doc("Mail Account")
 	account.domain_name = email.split("@")[1]
 	account.user = user

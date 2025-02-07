@@ -1,15 +1,15 @@
 <template>
 	<form class="flex flex-col space-y-4" @submit.prevent="login.submit({ usr, pwd })">
 		<FormControl
-			label="Email"
-			type="email"
+			:label="__('Username')"
+			type="text"
 			placeholder="johndoe@mail.com"
 			autocomplete="email"
 			v-model="usr"
 			required
 		/>
 		<FormControl
-			label="Password"
+			:label="__('Password')"
 			type="password"
 			placeholder="••••••••"
 			name="password"
@@ -18,11 +18,11 @@
 			required
 		/>
 		<ErrorMessage :message="login.error" />
-		<Button variant="solid" :loading="login.loading"> Log In </Button>
+		<Button variant="solid" :loading="login.loading">{{ __('Log In ') }} </Button>
 	</form>
 	<div class="mt-6 text-center">
-		<router-link class="text-center text-base font-medium hover:underline" to="signup">
-			New member? Create an account.
+		<router-link class="text-center text-base font-medium hover:underline" to="/signup">
+			{{ __('New member? Create an account.') }}
 		</router-link>
 	</div>
 </template>

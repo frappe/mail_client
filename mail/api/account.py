@@ -1,21 +1,17 @@
 import frappe
 from frappe import _
 
+from mail.mail.doctype.mail_account.mail_account import create_user
+
 
 @frappe.whitelist(allow_guest=True)
-def signup(email) -> str:
-	"""Create a new Mail Account Request"""
-
-	email = email.strip().lower()
-	frappe.utils.validate_email_address(email, True)
-
-	if frappe.db.exists("User", email):
-		frappe.throw(_("User {0} is already registered.").format(email))
+def self_signup(email: str) -> str:
+	"""Create a new Mail Account Request for self signup"""
 
 	account_request = frappe.new_doc("Mail Account Request")
 	account_request.email = email
-	account_request.role = "Mail Admin"
-	account_request.send_email = True
+	account_request.is_admin = 1
+	account_request.send_invite = 1
 	account_request.insert(ignore_permissions=True)
 
 	return account_request.name
@@ -51,7 +47,7 @@ def get_account_request(request_key: str) -> dict:
 	return frappe.db.get_value(
 		"Mail Account Request",
 		{"request_key": request_key},
-		["email", "is_verified", "is_expired"],
+		["email", "is_verified", "is_expired", "account"],
 		as_dict=True,
 	)
 
@@ -60,53 +56,13 @@ def get_account_request(request_key: str) -> dict:
 def create_account(request_key: str, first_name: str, last_name: str, password: str) -> None:
 	"""Create a new user account"""
 
-	account_request, email, tenant, role = frappe.db.get_value(
-		"Mail Account Request", {"request_key": request_key}, ["name", "email", "tenant", "role"]
-	)
+	account_request = frappe.get_last_doc("Mail Account Request", {"request_key": request_key})
+	account_request.validate_expired()
+	account_request.is_verified = 1
+	account_request.save(ignore_permissions=True)
 
-	user = frappe.new_doc("User")
-	user.first_name = first_name
-	user.last_name = last_name
-	user.email = email
-	user.owner = email
-	user.new_password = password
-	user.append_roles(role)
-	user.flags.no_welcome_mail = True
-	user.insert(ignore_permissions=True)
+	if account_request.account:
+		account_request.create_account(first_name, last_name, password)
 
-	frappe.db.set_value("Mail Account Request", account_request, "is_verified", 1)
-
-	if tenant:
-		mail_tenant = frappe.get_cached_doc("Mail Tenant", tenant)
-		mail_tenant.add_member(email)
-
-
-@frappe.whitelist()
-def create_tenant(tenant_name: str) -> None:
-	"""Create a new Mail Tenant"""
-
-	tenant = frappe.new_doc("Mail Tenant")
-	tenant.tenant_name = tenant_name
-	tenant.user = frappe.session.user
-	tenant.save(ignore_permissions=True)
-
-
-@frappe.whitelist()
-def create_domain_request(domain_name, mail_tenant) -> str:
-	"""Create a new Mail Domain Request"""
-
-	domain_request = frappe.new_doc("Mail Domain Request")
-	domain_request.domain_name = domain_name
-	domain_request.tenant = mail_tenant
-	domain_request.user = frappe.session.user
-	domain_request.insert()
-
-	return domain_request.name
-
-
-@frappe.whitelist()
-def verify_domain_key(domain_request: str) -> bool:
-	"""Verify the domain request key"""
-
-	doc = frappe.get_doc("Mail Domain Request", domain_request)
-	return doc.verify_and_create_domain(save=True)
+	else:
+		create_user(account_request.email, first_name, last_name, password, ["Mail Admin"])

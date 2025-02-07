@@ -6,7 +6,12 @@ import { reactive } from 'vue'
 export const userStore = defineStore('mail-users', () => {
 	const userResource = createResource({
 		url: 'mail.api.mail.get_user_info',
-		onError(error) {
+		transform: (data) => {
+			if (!data) return
+			data.is_mail_user = data.roles.includes('Mail User')
+			data.is_mail_admin = data.roles.includes('Mail Admin')
+		},
+		onError: (error) => {
 			if (error && error.exc_type === 'AuthenticationError') {
 				router.push('/login')
 			}

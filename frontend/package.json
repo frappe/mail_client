@@ -5,16 +5,14 @@
   "scripts": {
     "dev": "vite",
     "serve": "vite preview",
-    "build": "yarn build-app && yarn build-email-css",
-    "build-app": "vite build --base=/assets/mail/frontend/ && yarn copy-html-entry",
-    "copy-html-entry": "cp ../mail/public/frontend/index.html ../mail/www/mail.html",
-    "build-email-css": "npx tailwindcss -i ../mail/public/email/style.css -o ../mail/public/css/email.css --config ../mail/public/email/tailwind.config.js"
+    "build": "vite build --base=/assets/mail/frontend/ && yarn copy-html-entry",
+    "copy-html-entry": "cp ../mail/public/frontend/index.html ../mail/www/mail.html"
   },
   "dependencies": {
     "@vueuse/core": "^10.4.1",
     "dayjs": "^1.11.11",
     "feather-icons": "^4.28.0",
-    "frappe-ui": "^0.1.60",
+    "frappe-ui": "^0.1.108",
     "gemoji": "^8.1.0",
     "lucide-vue-next": "^0.383.0",
     "markdown-it": "^14.1.0",
@@ -27,6 +25,6 @@
     "autoprefixer": "^10.4.2",
     "postcss": "^8.4.5",
     "tailwindcss": "^3.0.15",
-    "vite": "^6.0.11"
+    "vite": "^5"
   }
 }

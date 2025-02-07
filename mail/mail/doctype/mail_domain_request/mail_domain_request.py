@@ -80,7 +80,7 @@ class MailDomainRequest(Document):
 		if save:
 			self.save()
 
-		return self.is_verified
+		return bool(self.is_verified)
 
 	def create_domain(self) -> str:
 		"""Create the mail domain"""

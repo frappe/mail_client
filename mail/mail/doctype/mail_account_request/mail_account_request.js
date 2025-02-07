@@ -10,6 +10,14 @@ frappe.ui.form.on("Mail Account Request", {
 		frm.trigger("make_fields_read_only");
 	},
 
+	is_invite(frm) {
+		frm.trigger("set_is_admin");
+	},
+
+	tenant(frm) {
+		frm.trigger("set_domain_query");
+	},
+
 	add_actions(frm) {
 		if (frm.doc.__islocal || frm.doc.is_verified) return;
 
@@ -30,6 +38,12 @@ frappe.ui.form.on("Mail Account Request", {
 			},
 			__("Actions")
 		);
+	},
+
+	set_is_admin(frm) {
+		if (!frm.doc.is_invite) {
+			frm.set_value("is_admin", 1);
+		}
 	},
 
 	set_is_invite(frm) {
@@ -55,6 +69,15 @@ frappe.ui.form.on("Mail Account Request", {
 				},
 			});
 		}
+	},
+
+	set_domain_query(frm) {
+		frm.set_query("domain_name", () => ({
+			filters: {
+				tenant: frm.doc.tenant,
+				is_verified: 1,
+			},
+		}));
 	},
 
 	make_fields_read_only(frm) {

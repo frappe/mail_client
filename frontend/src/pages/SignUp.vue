@@ -6,7 +6,7 @@
 			placeholder="johndoe@mail.com"
 			autocomplete="email"
 			v-model="email"
-			:disabled="!!props.requestKey || isVerificationStep"
+			:readonly="!!props.requestKey || isVerificationStep"
 			required
 		/>
 		<FormControl
@@ -100,7 +100,7 @@ const buttonLabel = computed(() => {
 })
 
 const signUp = createResource({
-	url: 'mail.api.account.signup',
+	url: 'mail.api.account.self_signup',
 	makeParams() {
 		return { email: email.value }
 	},
@@ -151,7 +151,8 @@ const getAccountRequest = createResource({
 		return { request_key: props.requestKey }
 	},
 	onSuccess(data) {
-		if (data?.email && !data?.is_verified && !data?.is_expired) email.value = data.email
+		if ((data?.email || data?.account) && !data?.is_verified && !data?.is_expired)
+			email.value = data.account ? data.account : data.email
 		else router.replace({ name: 'SignUp' })
 	},
 })

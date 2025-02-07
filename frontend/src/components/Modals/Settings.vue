@@ -42,6 +42,7 @@ import { Dialog, Button } from 'frappe-ui'
 import { User, Mailbox } from 'lucide-vue-next'
 
 const show = defineModel()
+
 const tabs = [
 	{
 		label: 'User',
