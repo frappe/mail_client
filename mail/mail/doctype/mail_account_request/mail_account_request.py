@@ -17,8 +17,6 @@ from mail.utils.validation import (
 	validate_domain_owned_by_tenant,
 )
 
-# todo: clean up form
-
 
 class MailAccountRequest(Document):
 	def validate(self) -> None:
@@ -35,10 +33,11 @@ class MailAccountRequest(Document):
 
 	def before_insert(self) -> None:
 		self.set_request_key()
-		self.set_otp()
+		if not self.is_invite:
+			self.set_otp()
 
 	def after_insert(self) -> None:
-		if self.send_email:
+		if self.send_invite:
 			self.send_verification_email()
 
 	def validate_email(self) -> None:
@@ -108,7 +107,7 @@ class MailAccountRequest(Document):
 		"""Forbids action if the request has expired."""
 
 		if self.is_expired:
-			frappe.throw(_("This request has expired. Please create a new request."))
+			frappe.throw(_("This request has expired. Please create a new one."))
 
 	def set_request_key(self) -> None:
 		"""Sets a random key for the request."""

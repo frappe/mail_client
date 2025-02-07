@@ -90,7 +90,7 @@ def add_member(
 	account_request.is_admin = cint(role == "Mail Admin")
 	account_request.invited_by = frappe.session.user
 	account_request.email = email
-	account_request.send_email = send_invite
+	account_request.send_invite = send_invite
 	account_request.insert()
 
 	if not send_invite:
