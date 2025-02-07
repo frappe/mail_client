@@ -5,7 +5,9 @@
 			class="border-2 rounded-lg bg-gray-100 p-2 w-full flex items-center"
 			@click="copyToClipBoard(props.value)"
 		>
-			<span class="text-gray-800 text-nowrap overflow-x-scroll">{{ props.value }}</span>
+			<span class="text-gray-800 text-nowrap overflow-x-scroll mr-1.5 scrollbar-none">
+				{{ props.value }}
+			</span>
 			<span class="border rounded bg-white p-1 text-gray-600 text-xs ml-auto">
 				{{ message }}
 			</span>
@@ -40,3 +42,14 @@ const copyToClipBoard = async (text) => {
 	}
 }
 </script>
+
+<style>
+.scrollbar-none::-webkit-scrollbar {
+	display: none;
+}
+
+.scrollbar-none {
+	-ms-overflow-style: none;
+	scrollbar-width: none;
+}
+</style>
