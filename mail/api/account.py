@@ -10,7 +10,7 @@ def self_signup(email: str) -> str:
 
 	account_request = frappe.new_doc("Mail Account Request")
 	account_request.email = email
-	account_request.role = "Mail Admin"
+	account_request.is_admin = 1
 	account_request.send_email = True
 	account_request.insert(ignore_permissions=True)
 

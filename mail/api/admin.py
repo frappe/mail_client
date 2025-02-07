@@ -1,8 +1,8 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal
 
 import frappe
 from frappe import _
-from frappe.utils import validate_email_address
+from frappe.utils import cint, validate_email_address
 
 from mail.utils.user import is_tenant_admin
 
@@ -73,7 +73,7 @@ def add_member(
 	tenant: str,
 	username: str,
 	domain: str,
-	role: str,
+	role: Literal["Mail User", "Mail Admin"],
 	send_invite: bool,
 	email: str | None = None,
 	first_name: str | None = None,
@@ -87,7 +87,7 @@ def add_member(
 	account_request.tenant = tenant
 	account_request.domain_name = domain
 	account_request.account = f"{username}@{domain}"
-	account_request.role = role
+	account_request.is_admin = cint(role == "Mail Admin")
 	account_request.invited_by = frappe.session.user
 	account_request.email = email
 	account_request.send_email = send_invite

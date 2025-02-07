@@ -17,15 +17,11 @@ from mail.utils.validation import (
 	validate_domain_owned_by_tenant,
 )
 
-# todo:
-# clean up form
-# make role => is_admin
-# fix invite mail frappe logo
+# todo: clean up form
 
 
 class MailAccountRequest(Document):
 	def validate(self) -> None:
-		self.validate_role()
 		self.validate_email()
 
 		if self.is_new():
@@ -45,15 +41,6 @@ class MailAccountRequest(Document):
 		if self.send_email:
 			self.send_verification_email()
 
-	def validate_role(self) -> None:
-		"""Validates the role."""
-
-		if not self.role:
-			frappe.throw(_("Role is mandatory."))
-
-		if self.role not in ["Mail User", "Mail Admin"]:
-			frappe.throw(_("Invalid role. Please select a valid role."))
-
 	def validate_email(self) -> None:
 		"""Validates email if needed."""
 
@@ -67,7 +54,7 @@ class MailAccountRequest(Document):
 		if frappe.db.exists("User", {"email": self.email}):
 			frappe.throw(_("User {0} is already registered.").format(self.email))
 
-		self.role = "Mail Admin"
+		self.is_admin = 1
 		self.invited_by = None
 		self.tenant = None
 		self.domain_name = None
@@ -194,7 +181,7 @@ class MailAccountRequest(Document):
 			first_name=first_name,
 			last_name=last_name,
 			password=password,
-			role=self.role,
+			is_admin=self.is_admin,
 		)
 
 

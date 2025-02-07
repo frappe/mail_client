@@ -9,7 +9,7 @@
   "is_invite",
   "section_break_lwpm",
   "email",
-  "role",
+  "is_admin",
   "column_break_hswp",
   "invited_by",
   "tenant",
@@ -58,16 +58,6 @@
    "no_copy": 1,
    "options": "Mail Tenant",
    "search_index": 1,
-   "set_only_once": 1
-  },
-  {
-   "fieldname": "role",
-   "fieldtype": "Select",
-   "in_list_view": 1,
-   "in_standard_filter": 1,
-   "label": "Role",
-   "options": "\nMail User\nMail Admin",
-   "reqd": 1,
    "set_only_once": 1
   },
   {
@@ -161,11 +151,21 @@
    "options": "Mail Domain",
    "search_index": 1,
    "set_only_once": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "is_admin",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Is Admin",
+   "reqd": 1,
+   "set_only_once": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-02-04 14:15:46.852902",
+ "modified": "2025-02-07 10:52:32.187012",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Account Request",
