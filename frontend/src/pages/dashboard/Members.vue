@@ -27,7 +27,11 @@
 								</div>
 							</div>
 							<div class="flex items-center mx-auto">
-								<Badge v-if="row.is_admin" theme="orange" :label="__('Admin')" />
+								<Badge
+									v-if="row.is_admin"
+									:theme="row.name === tenantOwner.data ? 'orange' : 'blue'"
+									:label="__(row.name === tenantOwner.data ? 'Owner' : 'Admin')"
+								/>
 							</div>
 							<div class="flex items-center ml-auto">
 								<Dropdown
@@ -67,6 +71,18 @@ const user = inject('$user')
 const showAddMember = ref(false)
 const showRemoveMember = ref(false)
 const memberToBeRemoved = ref('')
+
+const tenantOwner = createResource({
+	url: 'frappe.client.get_value',
+	makeParams: () => ({
+		doctype: 'Mail Tenant',
+		fieldname: 'user',
+		filters: user.data?.tenant,
+		as_dict: false,
+	}),
+	auto: true,
+	cache: ['mailTenantOwner', user.data?.tenant],
+})
 
 const members = createResource({
 	url: 'mail.api.admin.get_tenant_members',
