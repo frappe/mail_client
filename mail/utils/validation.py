@@ -4,7 +4,6 @@ import socket
 
 import frappe
 from frappe import _
-from frappe.utils import validate_email_address as _validate_email_address
 from frappe.utils.caching import request_cache
 from validate_email_address import validate_email
 
@@ -67,9 +66,6 @@ def is_email_assigned(email: str, ignore_doctype: str | None = None, raise_excep
 
 def is_valid_email_for_domain(email: str, domain_name: str, raise_exception: bool = False) -> bool:
 	"""Returns True if the email domain matches with the given domain else False."""
-
-	if not _validate_email_address(email):
-		frappe.throw(_("Invalid email: {0}").format(frappe.bold(email)))
 
 	email_domain = email.split("@")[1]
 
