@@ -1,8 +1,6 @@
 # Copyright (c) 2025, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
-from typing import Literal
-
 import bcrypt
 import frappe
 from frappe import _
@@ -177,7 +175,7 @@ def _create_user_for_mail_account(
 	first_name: str,
 	last_name: str | None = None,
 	password: str | None = None,
-	is_admin: Literal[0, 1] = 0,
+	is_admin: bool = False,
 ) -> str:
 	"""Creates a User for Mail Account"""
 
@@ -216,7 +214,7 @@ def create_user(
 	return user.name
 
 
-def _add_user_to_tenant(tenant: str, user: str, is_admin: Literal[0, 1]) -> None:
+def _add_user_to_tenant(tenant: str, user: str, is_admin: bool) -> None:
 	"""Adds a User to a Tenant"""
 
 	tenant = frappe.get_doc("Mail Tenant", tenant)
@@ -229,7 +227,7 @@ def create_mail_account(
 	first_name: str,
 	last_name: str | None = None,
 	password: str | None = None,
-	is_admin: Literal[0, 1] = 0,
+	is_admin: bool = False,
 ) -> "MailAccount":
 	"""Creates a Mail Account"""
 

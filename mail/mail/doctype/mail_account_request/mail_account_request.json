@@ -159,7 +159,6 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Is Admin",
-   "reqd": 1,
    "set_only_once": 1
   }
  ],
