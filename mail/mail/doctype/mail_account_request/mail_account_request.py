@@ -92,6 +92,7 @@ class MailAccountRequest(Document):
 		"""Validates the account."""
 
 		self.account = self.account.strip().lower()
+		validate_email_address(self.account, True)
 
 		if not is_valid_email_for_domain(self.account, self.domain_name):
 			frappe.throw(
