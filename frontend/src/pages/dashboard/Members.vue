@@ -35,6 +35,7 @@
 							</div>
 							<div class="flex items-center ml-auto">
 								<Dropdown
+									v-if="row.name !== tenantOwner.data"
 									:options="dropdownOptions(row.name, row.is_admin)"
 									:button="{ icon: 'more-horizontal', variant: 'ghost' }"
 								/>
