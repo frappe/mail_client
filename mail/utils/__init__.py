@@ -39,6 +39,14 @@ def get_base64_image_data_uri(image_path: str) -> str:
 	return f"data:image/{image_format};base64,{image_base64}"
 
 
+def generate_otp(length=5) -> int:
+	"""Generates a random OTP."""
+
+	lower_bound = 10 ** (length - 1)
+	upper_bound = 10**length
+	return int.from_bytes(os.urandom(length), byteorder="big") % (upper_bound - lower_bound) + lower_bound
+
+
 def generate_secret(length: int = 32):
 	"""Generates a random secret key."""
 
