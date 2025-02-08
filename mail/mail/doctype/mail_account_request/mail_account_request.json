@@ -148,7 +148,6 @@
    "fieldname": "is_admin",
    "fieldtype": "Check",
    "in_list_view": 1,
-   "in_standard_filter": 1,
    "label": "Is Admin",
    "read_only_depends_on": "eval: !doc.is_invite",
    "set_only_once": 1
@@ -185,7 +184,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-02-08 19:21:43.575533",
+ "modified": "2025-02-08 19:23:07.362319",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Account Request",
