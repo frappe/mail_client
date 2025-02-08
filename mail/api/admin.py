@@ -2,7 +2,8 @@ from typing import TYPE_CHECKING, Literal
 
 import frappe
 from frappe import _
-from frappe.utils import cint, validate_email_address
+from frappe.rate_limiter import rate_limit
+from frappe.utils import cint
 
 from mail.utils.user import is_tenant_admin
 
@@ -40,6 +41,7 @@ def get_domain_request(domain_name: str, mail_tenant: str) -> "MailDomainRequest
 
 
 @frappe.whitelist()
+@rate_limit(limit=5, seconds=60)
 def verify_dns_record(domain_request: str) -> bool:
 	"""Verify the domain request key"""
 
@@ -69,6 +71,7 @@ def get_tenant_members(tenant: str) -> list:
 
 
 @frappe.whitelist()
+@rate_limit(limit=20, seconds=60)
 def add_member(
 	tenant: str,
 	username: str,

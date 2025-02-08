@@ -1,9 +1,11 @@
 import frappe
 from frappe import _
 from frappe.query_builder import Case
+from frappe.rate_limiter import rate_limit
 
 
 @frappe.whitelist(methods=["GET"], allow_guest=True)
+@rate_limit(limit=10, seconds=60)
 def open() -> None:
 	"""Updates Outgoing Mail opened status."""
 
