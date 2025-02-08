@@ -35,13 +35,12 @@ def resend_otp(account_request: str) -> None:
 def verify_otp(account_request: str, otp: str) -> str:
 	"""Verify the OTP and return the request key"""
 
-	actual_otp, request_key = frappe.db.get_value(
-		"Mail Account Request", account_request, ["otp", "request_key"]
-	)
-	if otp != actual_otp:
+	otp_hash = frappe.cache.get_value(f"account_request_otp_hash:{account_request}", expires=True)
+	if not otp_hash or otp_hash != frappe.utils.sha256_hash(otp):
 		frappe.throw(_("Invalid OTP. Please try again."))
 
-	return request_key
+	frappe.cache.delete_value(f"account_request_otp_hash:{account_request}")
+	return frappe.db.get_value("Mail Account Request", account_request, "request_key")
 
 
 @frappe.whitelist(allow_guest=True)
