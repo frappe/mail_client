@@ -43,7 +43,7 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Email",
-   "mandatory_depends_on": "eval: !doc.is_invite",
+   "mandatory_depends_on": "eval: !doc.is_invite || doc.send_invite",
    "options": "Email",
    "search_index": 1,
    "set_only_once": 1
@@ -126,7 +126,7 @@
    "in_standard_filter": 1,
    "label": "Account",
    "mandatory_depends_on": "eval: doc.is_invite",
-   "options": "Email",
+   "options": "email",
    "search_index": 1,
    "set_only_once": 1
   },
@@ -171,7 +171,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-02-07 13:31:25.419160",
+ "modified": "2025-02-08 17:02:10.832394",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Account Request",
