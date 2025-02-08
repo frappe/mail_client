@@ -7,6 +7,8 @@
  "field_order": [
   "section_break_ikiq",
   "is_invite",
+  "column_break_0kvc",
+  "ip_address",
   "user_details_section",
   "email",
   "is_admin",
@@ -126,7 +128,7 @@
    "in_standard_filter": 1,
    "label": "Account",
    "mandatory_depends_on": "eval: doc.is_invite",
-   "options": "email",
+   "options": "Email",
    "search_index": 1,
    "set_only_once": 1
   },
@@ -167,11 +169,23 @@
    "fieldtype": "Check",
    "label": "Send Invite",
    "set_only_once": 1
+  },
+  {
+   "fieldname": "ip_address",
+   "fieldtype": "Data",
+   "label": "IP Address",
+   "no_copy": 1,
+   "read_only": 1,
+   "set_only_once": 1
+  },
+  {
+   "fieldname": "column_break_0kvc",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-02-08 17:02:10.832394",
+ "modified": "2025-02-08 19:21:43.575533",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Account Request",

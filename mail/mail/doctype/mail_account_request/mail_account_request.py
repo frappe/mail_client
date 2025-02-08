@@ -23,11 +23,12 @@ class MailAccountRequest(Document):
 		self.validate_email()
 
 		if self.is_new():
+			self.set_ip_address()
+
 			if self.is_invite:
 				self.validate_invited_by_and_tenant()
 				self.validate_domain()
 				self.validate_account()
-
 			else:
 				self.validate_non_invite()
 
@@ -46,6 +47,11 @@ class MailAccountRequest(Document):
 		if self.email:
 			self.email = self.email.strip().lower()
 			validate_email_address(self.email, True)
+
+	def set_ip_address(self) -> None:
+		"""Sets the IP address of the request."""
+
+		self.ip_address = frappe.local.request_ip
 
 	def validate_non_invite(self) -> None:
 		"""Validates self sign up."""
