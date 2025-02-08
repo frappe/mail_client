@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 
 import frappe
 from frappe import _
+from frappe.rate_limiter import rate_limit
 from frappe.utils import convert_utc_to_system_timezone, now
 
 from mail.api.auth import validate_account, validate_user
@@ -15,6 +16,7 @@ if TYPE_CHECKING:
 
 
 @frappe.whitelist(methods=["GET"])
+@rate_limit(limit=10, seconds=60)
 def pull(
 	account: str,
 	limit: int = 50,
@@ -38,6 +40,7 @@ def pull(
 
 
 @frappe.whitelist(methods=["GET"])
+@rate_limit(limit=10, seconds=60)
 def pull_raw(
 	account: str,
 	limit: int = 50,

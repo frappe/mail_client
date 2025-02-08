@@ -1,10 +1,12 @@
 import frappe
 from frappe import _
+from frappe.rate_limiter import rate_limit
 
 from mail.mail.doctype.mail_account.mail_account import create_user
 
 
 @frappe.whitelist(allow_guest=True)
+@rate_limit(limit=5, seconds=60)
 def self_signup(email: str) -> str:
 	"""Create a new Mail Account Request for self signup"""
 
@@ -18,6 +20,7 @@ def self_signup(email: str) -> str:
 
 
 @frappe.whitelist(allow_guest=True)
+@rate_limit(limit=5, seconds=60)
 def resend_otp(account_request: str) -> None:
 	"""Resend OTP to the user"""
 
@@ -28,6 +31,7 @@ def resend_otp(account_request: str) -> None:
 
 
 @frappe.whitelist(allow_guest=True)
+@rate_limit(limit=5, seconds=60)
 def verify_otp(account_request: str, otp: str) -> str:
 	"""Verify the OTP and return the request key"""
 
@@ -41,6 +45,7 @@ def verify_otp(account_request: str, otp: str) -> str:
 
 
 @frappe.whitelist(allow_guest=True)
+@rate_limit(limit=5, seconds=60)
 def get_account_request(request_key: str) -> dict:
 	"""Return the account request details"""
 
@@ -53,6 +58,7 @@ def get_account_request(request_key: str) -> dict:
 
 
 @frappe.whitelist(allow_guest=True)
+@rate_limit(limit=20, seconds=60)
 def create_account(request_key: str, first_name: str, last_name: str, password: str) -> None:
 	"""Create a new user account"""
 

@@ -2,12 +2,14 @@ from email.utils import parseaddr
 
 import frappe
 from frappe import _
+from frappe.rate_limiter import rate_limit
 from frappe.utils import cint
 
 from mail.mail.doctype.outgoing_mail.outgoing_mail import create_outgoing_mail
 
 
 @frappe.whitelist(methods=["POST"])
+@rate_limit(limit=300, seconds=60)
 def send(
 	from_: str,
 	subject: str,
@@ -48,6 +50,7 @@ def send(
 
 
 @frappe.whitelist(methods=["POST"])
+@rate_limit(limit=300, seconds=60)
 def send_raw(
 	from_: str,
 	to: str | list[str],
