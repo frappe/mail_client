@@ -6,7 +6,7 @@ from mail.mail.doctype.ip_blacklist.ip_blacklist import get_blacklist_for_ip_add
 
 
 @frappe.whitelist(methods=["GET"], allow_guest=True)
-@rate_limit(limit=10, seconds=60)
+@rate_limit(limit=180, seconds=60 * 60)
 def get(ip_address: str) -> dict:
 	"""Returns the blacklist for the given IP address."""
 

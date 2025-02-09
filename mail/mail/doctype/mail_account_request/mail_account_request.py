@@ -9,6 +9,7 @@ from frappe.model.document import Document
 from frappe.utils import add_days, get_url, nowdate, random_string, validate_email_address
 
 from mail.mail.doctype.mail_account.mail_account import create_mail_account
+from mail.utils import generate_otp
 from mail.utils.cache import get_tenant_for_user
 from mail.utils.user import has_role, is_system_manager, is_tenant_admin
 from mail.utils.validation import (
@@ -124,7 +125,15 @@ class MailAccountRequest(Document):
 	def set_otp(self) -> None:
 		"""Sets a random 5-digit OTP for the request."""
 
-		self.otp = random.randint(10000, 99999)
+		if not self.name:
+			self.set_new_name()
+
+		self.otp = "12345" if frappe.conf.developer_mode else str(generate_otp())
+		frappe.cache.set_value(
+			f"account_request_otp_hash:{self.name}",
+			frappe.utils.sha256_hash(str(self.otp)),
+			expires_in_sec=60 * 10,
+		)
 
 	@frappe.whitelist()
 	def send_verification_email(self) -> None:

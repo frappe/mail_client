@@ -6,7 +6,7 @@ from mail.mail.doctype.mail_account.mail_account import create_user
 
 
 @frappe.whitelist(allow_guest=True)
-@rate_limit(limit=5, seconds=60)
+@rate_limit(limit=5, seconds=60 * 60)
 def self_signup(email: str) -> str:
 	"""Create a new Mail Account Request for self signup"""
 
@@ -20,7 +20,7 @@ def self_signup(email: str) -> str:
 
 
 @frappe.whitelist(allow_guest=True)
-@rate_limit(limit=5, seconds=60)
+@rate_limit(limit=5, seconds=60 * 60)
 def resend_otp(account_request: str) -> None:
 	"""Resend OTP to the user"""
 
@@ -31,21 +31,20 @@ def resend_otp(account_request: str) -> None:
 
 
 @frappe.whitelist(allow_guest=True)
-@rate_limit(limit=5, seconds=60)
+@rate_limit(limit=5, seconds=60 * 60)
 def verify_otp(account_request: str, otp: str) -> str:
 	"""Verify the OTP and return the request key"""
 
-	actual_otp, request_key = frappe.db.get_value(
-		"Mail Account Request", account_request, ["otp", "request_key"]
-	)
-	if otp != actual_otp:
+	otp_hash = frappe.cache.get_value(f"account_request_otp_hash:{account_request}", expires=True)
+	if not otp_hash or otp_hash != frappe.utils.sha256_hash(otp):
 		frappe.throw(_("Invalid OTP. Please try again."))
 
-	return request_key
+	frappe.cache.delete_value(f"account_request_otp_hash:{account_request}")
+	return frappe.db.get_value("Mail Account Request", account_request, "request_key")
 
 
 @frappe.whitelist(allow_guest=True)
-@rate_limit(limit=5, seconds=60)
+@rate_limit(limit=5, seconds=60 * 60)
 def get_account_request(request_key: str) -> dict:
 	"""Return the account request details"""
 
@@ -58,7 +57,7 @@ def get_account_request(request_key: str) -> dict:
 
 
 @frappe.whitelist(allow_guest=True)
-@rate_limit(limit=20, seconds=60)
+@rate_limit(limit=10, seconds=60 * 60)
 def create_account(request_key: str, first_name: str, last_name: str, password: str) -> None:
 	"""Create a new user account"""
 

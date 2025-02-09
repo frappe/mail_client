@@ -41,7 +41,7 @@ def get_domain_request(domain_name: str, mail_tenant: str) -> "MailDomainRequest
 
 
 @frappe.whitelist()
-@rate_limit(limit=5, seconds=60)
+@rate_limit(limit=10, seconds=60 * 60)
 def verify_dns_record(domain_request: str) -> bool:
 	"""Verify the domain request key"""
 
@@ -71,7 +71,7 @@ def get_tenant_members(tenant: str) -> list:
 
 
 @frappe.whitelist()
-@rate_limit(limit=20, seconds=60)
+@rate_limit(limit=10, seconds=60 * 60)
 def add_member(
 	tenant: str,
 	username: str,
