@@ -25,9 +25,9 @@ class MailAlias(Document):
 		self.set_tenant()
 
 	def validate(self) -> None:
-		self.validate_alias_for_name()
 		self.validate_domain()
 		self.validate_email()
+		self.validate_alias_for_name()
 
 	def on_update(self) -> None:
 		self.clear_cache()
@@ -56,14 +56,6 @@ class MailAlias(Document):
 		if not self.tenant:
 			self.tenant = frappe.db.get_value("Mail Domain", self.domain_name, "tenant")
 
-	def validate_alias_for_name(self) -> None:
-		"""Validates the alias for name."""
-
-		if not frappe.db.get_value(self.alias_for_type, self.alias_for_name, "enabled"):
-			frappe.throw(
-				_("The {0} {1} is disabled.").format(self.alias_for_type, frappe.bold(self.alias_for_name))
-			)
-
 	def validate_domain(self) -> None:
 		"""Validates the domain."""
 
@@ -75,6 +67,23 @@ class MailAlias(Document):
 
 		is_email_assigned(self.email, self.doctype, raise_exception=True)
 		is_valid_email_for_domain(self.email, self.domain_name, raise_exception=True)
+
+	def validate_alias_for_name(self) -> None:
+		"""Validates the alias for name."""
+
+		tenant, enabled = frappe.db.get_value(self.alias_for_type, self.alias_for_name, ["tenant", "enabled"])
+
+		if self.tenant != tenant:
+			frappe.throw(
+				_("Domain {0} and {1} {2} must belong to the same tenant.").format(
+					frappe.bold(self.domain_name), self.alias_for_type, frappe.bold(self.alias_for_name)
+				)
+			)
+
+		if not enabled:
+			frappe.throw(
+				_("The {0} {1} is disabled.").format(self.alias_for_type, frappe.bold(self.alias_for_name))
+			)
 
 	def clear_cache(self) -> None:
 		"""Clears the Cache."""
