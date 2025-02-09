@@ -125,6 +125,9 @@ class MailAccountRequest(Document):
 	def set_otp(self) -> None:
 		"""Sets a random 5-digit OTP for the request."""
 
+		if not self.name:
+			self.set_new_name()
+
 		self.otp = "12345" if frappe.conf.developer_mode else str(generate_otp())
 		frappe.cache.set_value(
 			f"account_request_otp_hash:{self.name}",
