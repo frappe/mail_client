@@ -22,7 +22,7 @@ class MailTenantMember(Document):
 
 	def on_trash(self) -> None:
 		if not is_system_manager(frappe.session.user) and is_tenant_owner(self.tenant, self.user):
-			frappe.throw(_("Cannot remove the owner of the Mail Tenant."))
+			frappe.throw(_("Cannot remove the owner of the tenant."))
 
 		self.validate_active_account()
 		self.clear_cache()
@@ -35,7 +35,7 @@ class MailTenantMember(Document):
 				frappe.throw(_("User {0} is already a member.").format(frappe.bold(self.user)))
 			else:
 				frappe.throw(
-					_("User {0} is already a member of another Mail Tenant.").format(
+					_("User {0} is already a member of another tenant.").format(
 						frappe.bold(self.user), frappe.bold(tenant)
 					)
 				)
