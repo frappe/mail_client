@@ -82,9 +82,6 @@ class MailGroup(Document):
 	def validate_tenant_max_groups(self) -> None:
 		"""Validates the Tenant Max Groups."""
 
-		if is_system_manager(frappe.session.user):
-			return
-
 		total_groups = frappe.db.count("Mail Group", filters={"tenant": self.tenant, "enabled": 1})
 		max_groups = frappe.db.get_value("Mail Tenant", self.tenant, "max_groups")
 		if total_groups >= max_groups:

@@ -107,9 +107,6 @@ class MailAccount(Document):
 	def validate_tenant_max_accounts(self) -> None:
 		"""Validates the Tenant Max Accounts."""
 
-		if is_system_manager(frappe.session.user):
-			return
-
 		total_accounts = frappe.db.count("Mail Account", filters={"tenant": self.tenant, "enabled": 1})
 		max_accounts = frappe.db.get_value("Mail Tenant", self.tenant, "max_accounts")
 		if total_accounts >= max_accounts:

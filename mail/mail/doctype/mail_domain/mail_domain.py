@@ -65,9 +65,6 @@ class MailDomain(Document):
 	def validate_tenant_max_domains(self) -> None:
 		"""Validates the Tenant Max Domains."""
 
-		if is_system_manager(frappe.session.user):
-			return
-
 		total_domains = frappe.db.count("Mail Domain", filters={"tenant": self.tenant, "enabled": 1})
 		max_domains = frappe.db.get_value("Mail Tenant", self.tenant, "max_domains")
 		if total_domains >= max_domains:
