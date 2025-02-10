@@ -14,7 +14,6 @@
   "author": "Frappe",
   "license": "AGPL-3.0-or-later",
   "devDependencies": {
-    "@eslint/eslintrc": "^3.2.0",
     "@eslint/js": "^9.20.0",
     "eslint": "^9.20.0",
     "eslint-config-prettier": "^10.0.1",
