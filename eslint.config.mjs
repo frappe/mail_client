@@ -119,7 +119,8 @@ export default [
     rules: {
       'prettier/prettier': 'error',
       'space-unary-ops': ['error', { words: true }],
-      'no-console': ['warn'],
+      'prefer-const': 'error',
+      'no-console': 'warn',
     },
   },
 ]
