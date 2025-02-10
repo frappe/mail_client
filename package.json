@@ -1,6 +1,7 @@
 {
   "name": "mail",
   "version": "1.0.0",
+  "type": "module",
   "scripts": {
     "test-local": "cypress open --e2e --browser chrome",
     "postinstall": "cd frontend && yarn install --check-files",
@@ -13,6 +14,9 @@
   "author": "Frappe",
   "license": "AGPL-3.0-or-later",
   "devDependencies": {
+    "@eslint/eslintrc": "^3.2.0",
+    "@eslint/js": "^9.20.0",
+    "globals": "^15.14.0",
     "tailwindcss": "^3"
   }
 }
