@@ -167,12 +167,12 @@ class MailDomain(Document):
 	def clear_cache(self) -> None:
 		"""Clears the Cache."""
 
-		frappe.cache.delete_value(f"tenant|{self.tenant}")
+		frappe.cache.hdel(f"tenant|{self.tenant}", "domains")
 
 		if self.has_value_changed("tenant"):
 			if previous_doc := self.get_doc_before_save():
 				if previous_doc.tenant:
-					frappe.cache.delete_value(f"tenant|{previous_doc.tenant}")
+					frappe.cache.hdel(f"tenant|{previous_doc.tenant}", "domains")
 
 
 def get_dns_records(domain_name: str) -> list[dict]:

@@ -96,7 +96,7 @@ class MailTenantMember(Document):
 	def clear_cache(self) -> None:
 		"""Clears the Cache."""
 
-		frappe.cache.delete_value(f"user|{self.user}")
+		frappe.cache.hdel(f"user|{self.user}", "tenant")
 
 
 def has_permission(doc: "Document", ptype: str, user: str | None = None) -> bool:

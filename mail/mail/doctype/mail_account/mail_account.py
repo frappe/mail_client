@@ -156,8 +156,8 @@ class MailAccount(Document):
 	def clear_cache(self) -> None:
 		"""Clears the Cache."""
 
-		frappe.cache.delete_value(f"user|{self.user}")
-		frappe.cache.delete_value(f"email|{self.email}")
+		frappe.cache.hdel(f"user|{self.user}", ["account", "default_outgoing_email"])
+		frappe.cache.hdel(f"email|{self.email}", "account")
 
 	def generate_secret(self) -> None:
 		"""Generates secret from password"""
