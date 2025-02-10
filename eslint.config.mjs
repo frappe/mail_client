@@ -1,19 +1,22 @@
-import globals from "globals";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-import js from "@eslint/js";
-import { FlatCompat } from "@eslint/eslintrc";
+import globals from 'globals'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+import js from '@eslint/js'
+import { FlatCompat } from '@eslint/eslintrc'
+import pluginVue from 'eslint-plugin-vue'
+import prettier from 'eslint-config-prettier'
+import pluginPrettier from 'eslint-plugin-prettier'
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 const compat = new FlatCompat({
   baseDirectory: __dirname,
   recommendedConfig: js.configs.recommended,
   allConfig: js.configs.all,
-});
+})
 
 export default [
-  ...compat.extends("eslint:recommended"),
+  { files: ['**/*.{js,mjs,cjs,ts,vue}'] },
   {
     languageOptions: {
       globals: {
@@ -115,32 +118,34 @@ export default [
         localforage: true,
         extend_cscript: true,
       },
-
       ecmaVersion: 2022,
-      sourceType: "module",
-    },
-
-    rules: {
-      indent: "off",
-      "brace-style": "off",
-      "no-mixed-spaces-and-tabs": "off",
-      "no-useless-escape": "off",
-
-      "space-unary-ops": [
-        "error",
-        {
-          words: true,
-        },
-      ],
-
-      "linebreak-style": "off",
-      quotes: ["off"],
-      semi: "off",
-      camelcase: "off",
-      "no-unused-vars": "off",
-      "no-console": ["warn"],
-      "no-extra-boolean-cast": ["off"],
-      "no-control-regex": ["off"],
+      sourceType: 'module',
     },
   },
-];
+  ...compat.extends('eslint:recommended'),
+  js.configs.recommended,
+  ...pluginVue.configs['flat/recommended'],
+  {
+    files: ['**/*.vue'],
+  },
+  prettier,
+  {
+    plugins: { prettier: pluginPrettier },
+    rules: {
+      'prettier/prettier': 'error',
+      indent: 'off',
+      'brace-style': 'off',
+      'no-mixed-spaces-and-tabs': 'off',
+      'no-useless-escape': 'off',
+      'space-unary-ops': ['error', { words: true }],
+      'linebreak-style': 'off',
+      quotes: 'off',
+      semi: 'off',
+      camelcase: 'off',
+      'no-unused-vars': 'off',
+      'no-console': ['warn'],
+      'no-extra-boolean-cast': ['off'],
+      'no-control-regex': ['off'],
+    },
+  },
+]
