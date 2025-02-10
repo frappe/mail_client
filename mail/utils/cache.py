@@ -140,7 +140,7 @@ def get_blacklist_for_ip_group(ip_group: str) -> list:
 			.where(IP_BLACKLIST.ip_group == ip_group)
 		).run(as_dict=True)
 
-	return frappe.cache.get_value(f"blacklist|{ip_group}", generator)
+	return frappe.cache.hget("ip-blacklist", ip_group, generator)
 
 
 def get_primary_agents() -> list:

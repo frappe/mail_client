@@ -72,7 +72,7 @@ class IPBlacklist(Document):
 	def clear_cache(self) -> None:
 		"""Clears the Cache."""
 
-		frappe.cache.delete_value(f"blacklist|{self.ip_group}")
+		frappe.cache.hdel("ip-blacklist", self.ip_group)
 
 
 def get_ip_version(ip_address: str) -> Literal["IPv4", "IPv6"]:
