@@ -7,12 +7,12 @@
 			{{ __('Compose an email') }}
 		</Button>
 	</div>
-	<SendMail v-model="showSendModal" @reloadMails="emit('reloadMails')" />
+	<SendMailModal v-model="showSendModal" @reload-mails="emit('reloadMails')" />
 </template>
 <script setup>
 import { Button } from 'frappe-ui'
 import { SquarePen } from 'lucide-vue-next'
-import SendMail from '@/components/Modals/SendMail.vue'
+import SendMailModal from '@/components/Modals/SendMailModal.vue'
 import { ref } from 'vue'
 
 const emit = defineEmits(['reloadMails'])

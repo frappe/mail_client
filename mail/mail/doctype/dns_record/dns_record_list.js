@@ -9,7 +9,7 @@ frappe.listview_settings['DNS Record'] = {
 	},
 }
 
-function verify_all_dns_records(listview) {
+function verify_all_dns_records() {
 	frappe.call({
 		method: 'mail.tasks.enqueue_verify_all_dns_records',
 		freeze: true,

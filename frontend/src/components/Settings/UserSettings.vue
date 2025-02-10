@@ -33,14 +33,14 @@
 			<p class="text-base">
 				Please copy the API secret now. You won’t be able to see it again!
 			</p>
-			<Copy label="API Key" :value="user.data?.api_key" />
-			<Copy label="API Secret" :value="apiSecret" />
+			<CopyControl label="API Key" :value="user.data?.api_key" />
+			<CopyControl label="API Secret" :value="apiSecret" />
 		</template>
 	</Dialog>
 </template>
 <script setup>
 import { ref, inject } from 'vue'
-import Copy from '@/components/Controls/Copy.vue'
+import CopyControl from '@/components/Controls/CopyControl.vue'
 import { Avatar, Button, Dialog, createResource } from 'frappe-ui'
 
 const user = inject('$user')

@@ -37,7 +37,7 @@ const copyToClipBoard = async (text) => {
 		setTimeout(() => {
 			message.value = 'Copy'
 		}, 2000)
-	} catch (e) {
+	} catch {
 		alert('Failed to copy text. Please copy from here: ' + text)
 	}
 }

@@ -32,7 +32,7 @@ frappe.query_reports['Mail Tracker'] = {
 			fieldname: 'status',
 			label: __('Status'),
 			fieldtype: 'MultiSelectList',
-			get_data: (txt) => {
+			get_data: () => {
 				return [
 					'',
 					'In Progress',

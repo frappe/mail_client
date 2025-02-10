@@ -1,48 +1,48 @@
 <template>
 	<form class="flex flex-col space-y-4" @submit.prevent="submit">
 		<FormControl
+			v-model="email"
 			label="Email"
 			type="email"
 			placeholder="johndoe@mail.com"
 			autocomplete="email"
-			v-model="email"
 			:readonly="!!props.requestKey || isVerificationStep"
 			required
 		/>
 		<FormControl
 			v-if="isVerificationStep"
+			v-model="otp"
 			label="Verification Code"
 			type="text"
 			placeholder="5 digit verification code"
 			maxlength="5"
 			autocomplete="email"
-			v-model="otp"
 			required
 		/>
 		<template v-if="props.requestKey">
 			<FormControl
+				v-model="firstName"
 				label="First Name"
 				type="text"
 				placeholder="John"
 				autocomplete="given-name"
-				v-model="firstName"
 				required
 			/>
 			<FormControl
+				v-model="lastName"
 				label="Last Name"
 				type="text"
 				placeholder="Doe"
 				autocomplete="family-name"
-				v-model="lastName"
 				required
 			/>
 			<FormControl
+				v-model="password"
 				label="Password"
 				type="password"
 				placeholder="••••••••"
 				name="password"
 				autocomplete="current-password"
-				v-model="password"
 				required
 			/>
 		</template>

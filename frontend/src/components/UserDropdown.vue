@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<Dropdown :options="userDropdownOptions">
-			<template v-slot="{ open }">
+			<template #default="{ open }">
 				<button
 					class="flex h-12 items-center rounded-md py-2 duration-300 ease-in-out"
 					:class="
@@ -14,8 +14,8 @@
 				>
 					<span
 						v-if="branding.data?.brand_html"
-						v-html="branding.data?.brand_html"
 						class="h-8 w-8 flex-shrink-0 rounded"
+						v-html="branding.data?.brand_html"
 					></span>
 					<MailLogo v-else class="h-8 w-8 flex-shrink-0 rounded" />
 					<div
@@ -54,7 +54,7 @@
 				</button>
 			</template>
 		</Dropdown>
-		<Settings v-model="showSettings" />
+		<SettingsModal v-model="showSettings" />
 	</div>
 </template>
 
@@ -62,14 +62,13 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import MailLogo from '@/components/Icons/MailLogo.vue'
-import Settings from '@/components/Modals/Settings.vue'
+import SettingsModal from '@/components/Modals/SettingsModal.vue'
 import { sessionStore } from '@/stores/session'
 import { Dropdown } from 'frappe-ui'
 import {
 	Home,
 	LayoutDashboard,
 	ChevronDown,
-	LogIn,
 	LogOut,
 	ArrowRightLeft,
 	Settings as SettingsIcon,
@@ -77,13 +76,13 @@ import {
 import { convertToTitleCase } from '../utils'
 import { userStore } from '@/stores/user'
 
-const { isLoggedIn, logout, branding } = sessionStore()
+const { logout, branding } = sessionStore()
 const { userResource } = userStore()
 const router = useRouter()
 
 const showSettings = ref(false)
 
-const props = defineProps({
+defineProps({
 	isCollapsed: {
 		type: Boolean,
 		default: false,

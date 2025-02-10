@@ -19,15 +19,16 @@
 		</header>
 		<div v-if="incomingMails.data" class="flex h-[calc(100vh-3.2rem)]">
 			<div
-				@scroll="loadMoreEmails"
 				ref="mailSidebar"
 				class="mailSidebar sticky top-16 w-1/3 overflow-y-scroll overscroll-contain border-r p-3"
+				@scroll="loadMoreEmails"
 			>
 				<div
 					v-for="(mail, idx) in incomingMails.data"
-					@click="setCurrentMail('incoming', mail.name)"
+					:key="idx"
 					class="flex cursor-pointer flex-col space-y-1"
 					:class="{ 'rounded bg-gray-200': mail.name == currentMail.incoming }"
+					@click="setCurrentMail('incoming', mail.name)"
 				>
 					<SidebarDetail :mail="mail" />
 					<div
@@ -45,14 +46,14 @@
 				/>
 			</div>
 			<div class="w-2/3 flex-1 overflow-auto">
-				<MailDetails :mailID="currentMail.incoming" type="Incoming Mail" />
+				<MailDetails :mail-i-d="currentMail.incoming" type="Incoming Mail" />
 			</div>
 		</div>
 	</div>
 </template>
 <script setup>
 import { Breadcrumbs, createListResource, createResource } from 'frappe-ui'
-import { inject, ref, onMounted } from 'vue'
+import { inject, onMounted } from 'vue'
 import { formatNumber, startResizing, singularize } from '@/utils'
 import HeaderActions from '@/components/HeaderActions.vue'
 import MailDetails from '@/components/MailDetails.vue'
@@ -65,7 +66,7 @@ const user = inject('$user')
 const { currentMail, setCurrentMail } = userStore()
 
 onMounted(() => {
-	socket.on('incoming_mail_received', (data) => {
+	socket.on('incoming_mail_received', () => {
 		incomingMails.reload()
 		incomingMailCount.reload()
 	})
@@ -84,7 +85,7 @@ const incomingMails = createListResource({
 
 const incomingMailCount = createResource({
 	url: 'frappe.client.get_count',
-	makeParams(values) {
+	makeParams() {
 		return {
 			doctype: 'Incoming Mail',
 			filters: {

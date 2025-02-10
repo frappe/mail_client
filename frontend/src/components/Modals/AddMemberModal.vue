@@ -16,65 +16,65 @@
 			<div class="space-y-4">
 				<div class="flex items-center justify-between">
 					<FormControl
+						v-model="accountRequest.username"
 						type="text"
 						:label="__('Username')"
 						placeholder="johndoe"
-						v-model="accountRequest.username"
 						class="w-full"
 					/>
 					<FeatherIcon
 						class="mx-2.5 mb-1.5 mt-auto h-4 w-4 text-gray-400"
 						name="at-sign"
 					/>
-					<Link
+					<LinkControl
+						v-model="accountRequest.domain"
 						:label="__('Domain')"
 						placeholder="yourdomain.com"
-						v-model="accountRequest.domain"
 						doctype="Mail Domain"
-						:filters="{ tenant: user.data.tenant }"
+						:filters="{ tenant: user.data.tenant, is_verified: 1 }"
 						class="w-full"
 					/>
 				</div>
 				<FormControl
+					v-model="accountRequest.role"
 					type="select"
 					:label="__('Member Role')"
 					:options="[
 						{ label: __('Mail User'), value: 'Mail User' },
 						{ label: __('Mail Admin'), value: 'Mail Admin' },
 					]"
-					v-model="accountRequest.role"
 				/>
 				<hr />
 				<FormControl
+					v-model="accountRequest.send_invite"
 					type="checkbox"
 					:label="__('Send Invite')"
-					v-model="accountRequest.send_invite"
 				/>
 				<FormControl
 					v-if="accountRequest.send_invite"
+					v-model="accountRequest.email"
 					type="email"
 					:label="__('Email')"
 					placeholder="johndoe@personal.com"
-					v-model="accountRequest.email"
 				/>
 				<template v-else>
 					<FormControl
+						v-model="accountRequest.first_name"
 						type="text"
 						:label="__('First Name')"
 						placeholder="John"
-						v-model="accountRequest.first_name"
 					/>
 					<FormControl
+						v-model="accountRequest.last_name"
 						type="text"
 						:label="__('Last Name')"
 						placeholder="Doe"
-						v-model="accountRequest.last_name"
 					/>
 					<FormControl
+						v-model="accountRequest.password"
 						type="password"
 						:label="__('Password')"
 						placeholder="••••••••"
-						v-model="accountRequest.password"
 					/>
 				</template>
 				<ErrorMessage :message="addMember.error?.messages[0]" />
@@ -86,7 +86,7 @@
 <script setup>
 import { reactive, inject, watch } from 'vue'
 import { Dialog, FeatherIcon, FormControl, ErrorMessage, createResource } from 'frappe-ui'
-import Link from '@/components/Controls/Link.vue'
+import LinkControl from '@/components/Controls/LinkControl.vue'
 import { raiseToast } from '@/utils'
 
 const show = defineModel()

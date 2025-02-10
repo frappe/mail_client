@@ -56,7 +56,7 @@ export function useSwipe() {
 		swipe.absDiffY = Math.abs(swipe.diffY)
 	}
 
-	const onTouchEnd = (e) => {
+	const onTouchEnd = () => {
 		const { diffX, diffY, absDiffX, absDiffY } = swipe
 		if (absDiffX > absDiffY) {
 			if (diffX > 0) {

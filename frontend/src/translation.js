@@ -23,7 +23,7 @@ function translate(message) {
 	}
 }
 
-function fetchTranslations(lang) {
+function fetchTranslations() {
 	createResource({
 		url: 'mail.api.mail.get_translations',
 		cache: 'translations',

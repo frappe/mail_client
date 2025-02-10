@@ -7,12 +7,13 @@
 			class="flex flex-col overflow-hidden"
 			:class="isSidebarCollapsed ? 'items-center' : ''"
 		>
-			<UserDropdown class="p-2" :isCollapsed="isSidebarCollapsed" />
+			<UserDropdown class="p-2" :is-collapsed="isSidebarCollapsed" />
 			<div class="flex flex-col overflow-y-auto">
 				<SidebarLink
 					v-for="link in sidebarLinks"
+					:key="link.label"
 					:link="link"
-					:isCollapsed="isSidebarCollapsed"
+					:is-collapsed="isSidebarCollapsed"
 					class="mx-2 my-0.5"
 				/>
 			</div>
@@ -21,9 +22,9 @@
 			:link="{
 				label: isSidebarCollapsed ? 'Expand' : 'Collapse',
 			}"
-			:isCollapsed="isSidebarCollapsed"
-			@click="isSidebarCollapsed = !isSidebarCollapsed"
+			:is-collapsed="isSidebarCollapsed"
 			class="m-2"
+			@click="isSidebarCollapsed = !isSidebarCollapsed"
 		>
 			<template #icon>
 				<span class="grid h-5 w-6 flex-shrink-0 place-items-center">

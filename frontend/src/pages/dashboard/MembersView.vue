@@ -4,7 +4,11 @@
 			class="sticky top-0 z-10 flex items-center justify-between border-b bg-white px-3 py-2.5 sm:px-5"
 		>
 			<Breadcrumbs :items="[{ label: __('Members') }]" />
-			<Button :label="__('Add Member')" iconLeft="user-plus" @click="showAddMember = true" />
+			<Button
+				:label="__('Add Member')"
+				icon-left="user-plus"
+				@click="showAddMember = true"
+			/>
 		</header>
 		<div class="m-6 flex flex-1 flex-col">
 			<ListView
@@ -46,8 +50,8 @@
 			</ListView>
 		</div>
 	</div>
-	<AddMember v-model="showAddMember" @reloadMembers="members.reload()" />
-	<Dialog :options="removeMemberOptions" v-model="showRemoveMember" />
+	<AddMemberModal v-model="showAddMember" @reload-members="members.reload()" />
+	<Dialog v-model="showRemoveMember" :options="removeMemberOptions" />
 </template>
 <script setup>
 import { ref, computed, inject } from 'vue'
@@ -64,7 +68,7 @@ import {
 	Dropdown,
 	createResource,
 } from 'frappe-ui'
-import AddMember from '@/components/Modals/AddMember.vue'
+import AddMemberModal from '@/components/Modals/AddMemberModal.vue'
 import { raiseToast } from '@/utils'
 
 const user = inject('$user')

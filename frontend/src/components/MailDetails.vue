@@ -1,8 +1,9 @@
 <template>
 	<div v-if="props.mailID" class="p-3">
 		<div
-			class="mb-4 p-3"
 			v-for="mail in mailThread.data"
+			:key="mail.name"
+			class="mb-4 p-3"
 			:class="{ 'rounded-md shadow': mailThread.data.length > 1 }"
 		>
 			<div class="flex space-x-3 border-b pb-2">
@@ -23,19 +24,31 @@
 						<div class="space-x-2">
 							<span v-if="mail.to.length">
 								{{ __('To') }}:
-								<span v-for="recipient in mail.to" class="text-gray-700">
+								<span
+									v-for="(recipient, idx) in mail.to"
+									:key="idx"
+									class="text-gray-700"
+								>
 									{{ recipient.display_name || recipient.email }}
 								</span>
 							</span>
 							<span v-if="mail.cc.length">
 								{{ __('Cc') }}:
-								<span v-for="recipient in mail.cc" class="text-gray-700">
+								<span
+									v-for="(recipient, idx) in mail.cc"
+									:key="idx"
+									class="text-gray-700"
+								>
 									{{ recipient.display_name || recipient.email }}
 								</span>
 							</span>
 							<span v-if="mail.bcc.length">
 								{{ __('Bcc') }}:
-								<span v-for="recipient in mail.bcc" class="text-gray-700">
+								<span
+									v-for="(recipient, idx) in mail.bcc"
+									:key="idx"
+									class="text-gray-700"
+								>
 									{{ recipient.display_name || recipient.email }}
 								</span>
 							</span>
@@ -83,8 +96,8 @@
 			</div>
 			<div
 				v-if="mail.body_html"
-				v-html="mailBody(mail.body_html)"
 				class="ProseMirror prose prose-table:table-fixed prose-td:p-2 prose-th:p-2 prose-td:border prose-th:border prose-td:border-gray-300 prose-th:border-gray-300 prose-td:relative prose-th:relative prose-th:bg-gray-100 prose-sm max-w-none pt-4 text-sm leading-5"
+				v-html="mailBody(mail.body_html)"
 			></div>
 		</div>
 	</div>
@@ -96,18 +109,18 @@
 			{{ __('No emails to show') }}
 		</div>
 	</div>
-	<SendMail
+	<SendMailModal
 		v-model="showSendModal"
-		:mailID="draftMailID"
-		:replyDetails="replyDetails"
-		@reloadMails="emit('reloadMails')"
+		:mail-i-d="draftMailID"
+		:reply-details="replyDetails"
+		@reload-mails="emit('reloadMails')"
 	/>
 </template>
 <script setup>
 import { createResource, Avatar, Button, Tooltip } from 'frappe-ui'
 import { watch, ref, reactive, inject } from 'vue'
 import { Reply, ReplyAll, Forward } from 'lucide-vue-next'
-import SendMail from '@/components/Modals/SendMail.vue'
+import SendMailModal from '@/components/Modals/SendMailModal.vue'
 import MailDate from '@/components/MailDate.vue'
 
 const showSendModal = ref(false)

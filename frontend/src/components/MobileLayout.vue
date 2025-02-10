@@ -1,6 +1,6 @@
 <template>
 	<div class="flex h-full flex-col">
-		<div class="h-full pb-10" id="scrollContainer">
+		<div id="scrollContainer" class="h-full pb-10">
 			<slot />
 		</div>
 		<div

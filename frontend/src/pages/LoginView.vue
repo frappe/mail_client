@@ -1,20 +1,20 @@
 <template>
 	<form class="flex flex-col space-y-4" @submit.prevent="login.submit({ usr, pwd })">
 		<FormControl
+			v-model="usr"
 			:label="__('Username')"
 			type="text"
 			placeholder="johndoe@mail.com"
 			autocomplete="email"
-			v-model="usr"
 			required
 		/>
 		<FormControl
+			v-model="pwd"
 			:label="__('Password')"
 			type="password"
 			placeholder="••••••••"
 			name="password"
 			autocomplete="current-password"
-			v-model="pwd"
 			required
 		/>
 		<ErrorMessage :message="login.error" />

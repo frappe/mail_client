@@ -18,7 +18,7 @@ frappe.listview_settings['Incoming Mail'] = {
 	},
 }
 
-function fetch_emails_from_mail_agents(listview) {
+function fetch_emails_from_mail_agents() {
 	frappe.call({
 		method: 'mail.tasks.enqueue_fetch_emails_from_mail_agents',
 		freeze: true,
