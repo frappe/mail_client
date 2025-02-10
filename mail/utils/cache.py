@@ -8,7 +8,7 @@ def get_root_domain_name() -> str | None:
 	def generator() -> str | None:
 		return frappe.db.get_single_value("Mail Settings", "root_domain_name")
 
-	return frappe.cache.get_value("root_domain_name", generator)
+	return frappe.cache.hget("mail-settings", "root_domain_name", generator)
 
 
 def get_smtp_limits() -> dict:
@@ -24,7 +24,7 @@ def get_smtp_limits() -> dict:
 			"cleanup_interval": mail_settings.smtp_cleanup_interval,
 		}
 
-	return frappe.cache.get_value("smtp_limits", generator)
+	return frappe.cache.hget("mail-settings", "smtp_limits", generator)
 
 
 def get_imap_limits() -> dict:
@@ -40,7 +40,7 @@ def get_imap_limits() -> dict:
 			"cleanup_interval": mail_settings.imap_cleanup_interval,
 		}
 
-	return frappe.cache.get_value("imap_limits", generator)
+	return frappe.cache.hget("mail-settings", "imap_limits", generator)
 
 
 def get_domains_owned_by_tenant(tenant: str) -> list:

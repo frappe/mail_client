@@ -69,9 +69,7 @@ class MailSettings(Document):
 	def clear_cache(self) -> None:
 		"""Clears the Cache."""
 
-		frappe.cache.delete_value("root_domain_name")
-		frappe.cache.delete_value("smtp_limits")
-		frappe.cache.delete_value("imap_limits")
+		frappe.cache.delete_value("mail-settings")
 
 
 def create_dmarc_dns_record_for_external_domains() -> None:
