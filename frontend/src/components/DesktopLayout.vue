@@ -7,7 +7,7 @@
 				>
 					<AppSidebar />
 				</div>
-				<div class="w-full overflow-auto" id="scrollContainer">
+				<div id="scrollContainer" class="w-full overflow-auto">
 					<slot />
 				</div>
 			</div>

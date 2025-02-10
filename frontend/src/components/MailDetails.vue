@@ -1,9 +1,10 @@
 <template>
 	<div v-if="props.mailID" class="p-3">
 		<div
-			class="p-3 mb-4"
 			v-for="mail in mailThread.data"
-			:class="{ 'shadow rounded-md': mailThread.data.length > 1 }"
+			:key="mail.name"
+			class="mb-4 p-3"
+			:class="{ 'rounded-md shadow': mailThread.data.length > 1 }"
 		>
 			<div class="flex space-x-3 border-b pb-2">
 				<Avatar
@@ -12,7 +13,7 @@
 					:image="mail.user_image"
 					size="lg"
 				/>
-				<div class="flex justify-between text-xs flex-1">
+				<div class="flex flex-1 justify-between text-xs">
 					<div class="flex flex-col space-y-1">
 						<div class="text-base font-semibold">
 							{{ mail.display_name || mail.sender }}
@@ -23,19 +24,31 @@
 						<div class="space-x-2">
 							<span v-if="mail.to.length">
 								{{ __('To') }}:
-								<span v-for="recipient in mail.to" class="text-gray-700">
+								<span
+									v-for="(recipient, idx) in mail.to"
+									:key="idx"
+									class="text-gray-700"
+								>
 									{{ recipient.display_name || recipient.email }}
 								</span>
 							</span>
 							<span v-if="mail.cc.length">
 								{{ __('Cc') }}:
-								<span v-for="recipient in mail.cc" class="text-gray-700">
+								<span
+									v-for="(recipient, idx) in mail.cc"
+									:key="idx"
+									class="text-gray-700"
+								>
 									{{ recipient.display_name || recipient.email }}
 								</span>
 							</span>
 							<span v-if="mail.bcc.length">
 								{{ __('Bcc') }}:
-								<span v-for="recipient in mail.bcc" class="text-gray-700">
+								<span
+									v-for="(recipient, idx) in mail.bcc"
+									:key="idx"
+									class="text-gray-700"
+								>
 									{{ recipient.display_name || recipient.email }}
 								</span>
 							</span>
@@ -43,7 +56,7 @@
 					</div>
 					<div
 						v-if="mail.folder === 'Drafts'"
-						class="flex items-center self-start space-x-2"
+						class="flex items-center space-x-2 self-start"
 					>
 						<MailDate :datetime="mail.modified" />
 						<Tooltip :text="__('Edit')">
@@ -55,26 +68,26 @@
 							</Button>
 						</Tooltip>
 					</div>
-					<div v-else class="flex items-center self-start space-x-2">
+					<div v-else class="flex items-center space-x-2 self-start">
 						<MailDate :datetime="mail.creation" />
 						<Tooltip :text="__('Reply')">
 							<Button variant="ghost" @click="openModal('reply', mail)">
 								<template #icon>
-									<Reply class="w-4 h-4 text-gray-600" />
+									<Reply class="h-4 w-4 text-gray-600" />
 								</template>
 							</Button>
 						</Tooltip>
 						<Tooltip :text="__('Reply All')">
 							<Button variant="ghost" @click="openModal('replyAll', mail)">
 								<template #icon>
-									<ReplyAll class="w-4 h-4 text-gray-600" />
+									<ReplyAll class="h-4 w-4 text-gray-600" />
 								</template>
 							</Button>
 						</Tooltip>
 						<Tooltip :text="__('Forward')">
 							<Button variant="ghost" @click="openModal('forward', mail)">
 								<template #icon>
-									<Forward class="w-4 h-4 text-gray-600" />
+									<Forward class="h-4 w-4 text-gray-600" />
 								</template>
 							</Button>
 						</Tooltip>
@@ -83,31 +96,31 @@
 			</div>
 			<div
 				v-if="mail.body_html"
+				class="ProseMirror prose prose-table:table-fixed prose-td:p-2 prose-th:p-2 prose-td:border prose-th:border prose-td:border-gray-300 prose-th:border-gray-300 prose-td:relative prose-th:relative prose-th:bg-gray-100 prose-sm max-w-none pt-4 text-sm leading-5"
 				v-html="mailBody(mail.body_html)"
-				class="pt-4 text-sm leading-5 ProseMirror prose prose-table:table-fixed prose-td:p-2 prose-th:p-2 prose-td:border prose-th:border prose-td:border-gray-300 prose-th:border-gray-300 prose-td:relative prose-th:relative prose-th:bg-gray-100 prose-sm max-w-none"
 			></div>
 		</div>
 	</div>
 	<div
 		v-else
-		class="flex-1 flex flex-col space-y-2 items-center justify-center w-full h-full my-auto"
+		class="my-auto flex h-full w-full flex-1 flex-col items-center justify-center space-y-2"
 	>
-		<div class="text-gray-500 text-lg">
+		<div class="text-lg text-gray-500">
 			{{ __('No emails to show') }}
 		</div>
 	</div>
-	<SendMail
+	<SendMailModal
 		v-model="showSendModal"
-		:mailID="draftMailID"
-		:replyDetails="replyDetails"
-		@reloadMails="emit('reloadMails')"
+		:mail-i-d="draftMailID"
+		:reply-details="replyDetails"
+		@reload-mails="emit('reloadMails')"
 	/>
 </template>
 <script setup>
 import { createResource, Avatar, Button, Tooltip } from 'frappe-ui'
 import { watch, ref, reactive, inject } from 'vue'
 import { Reply, ReplyAll, Forward } from 'lucide-vue-next'
-import SendMail from '@/components/Modals/SendMail.vue'
+import SendMailModal from '@/components/Modals/SendMailModal.vue'
 import MailDate from '@/components/MailDate.vue'
 
 const showSendModal = ref(false)
@@ -156,7 +169,7 @@ const mailBody = (bodyHTML) => {
 	bodyHTML = bodyHTML.replace(/<br\s*\/?>/, '')
 	bodyHTML = bodyHTML.replace(
 		/<blockquote>/g,
-		'<div class="blockquote-container"><a href="#" class="font-medium text-gray-900 text-xs no-underline" onclick="this.nextElementSibling.style.display=\'block\'; this.style.display=\'none\'; return false;">Show more from this thread</a><blockquote style="display:none;">'
+		'<div class="blockquote-container"><a href="#" class="font-medium text-gray-900 text-xs no-underline" onclick="this.nextElementSibling.style.display=\'block\'; this.style.display=\'none\'; return false;">Show more from this thread</a><blockquote style="display:none;">',
 	)
 	bodyHTML = bodyHTML.replace(/<\/blockquote>/g, '</blockquote></div>')
 	return bodyHTML
@@ -194,8 +207,8 @@ const openModal = (type, mail) => {
 const getReplyHtml = (html, creation) => {
 	const replyHeader = `
         On ${dayjs(creation).format('DD MMM YYYY')} at ${dayjs(creation).format('h:mm A')}, ${
-		replyDetails.to
-	} wrote:
+			replyDetails.to
+		} wrote:
     `
 	return `<br><blockquote>${replyHeader} <br> ${html}</blockquote>`
 }
@@ -204,8 +217,9 @@ watch(() => props.mailID, reloadThread)
 </script>
 <style>
 .prose
-	:where(blockquote p:first-of-type):not(:where([class~='not-prose'], [class~='not-prose']
-			*))::before {
+	:where(blockquote p:first-of-type):not(
+		:where([class~='not-prose'], [class~='not-prose'] *)
+	)::before {
 	content: '';
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-	<div v-if="domain?.doc" class="h-full flex flex-col">
+	<div v-if="domain?.doc" class="flex h-full flex-col">
 		<header
 			class="sticky top-0 z-10 flex items-center justify-between border-b bg-white px-3 py-2.5 sm:px-5"
 		>
@@ -16,58 +16,58 @@
 			</div>
 		</header>
 		<div class="m-6 space-y-6">
-			<div class="grid grid-cols-1 sm:grid-cols-2 border rounded-md">
-				<div class="p-4 border-r">
-					<Switch :label="__('Enabled')" v-model="domain.doc.enabled" />
+			<div class="grid grid-cols-1 rounded-md border sm:grid-cols-2">
+				<div class="border-r p-4">
+					<Switch v-model="domain.doc.enabled" :label="__('Enabled')" />
 					<Switch
-						:label="__('Verified')"
 						v-model="domain.doc.is_verified"
+						:label="__('Verified')"
 						:disabled="true"
 					/>
 					<Switch
 						v-if="domain.doc.is_subdomain"
-						:label="__('Subdomain')"
 						v-model="domain.doc.is_subdomain"
+						:label="__('Subdomain')"
 						:disabled="true"
 					/>
 					<Switch
 						v-if="domain.doc.is_root_domain"
-						:label="__('Root Domain')"
 						v-model="domain.doc.is_root_domain"
+						:label="__('Root Domain')"
 						:disabled="true"
 					/>
 				</div>
 				<div class="p-4">
 					<div class="my-1.5 space-y-3">
-						<HorizontalFormControl :label="__('Mail Tenant')" :disabled="true">
+						<HorizontalControl :label="__('Mail Tenant')" :disabled="true">
 							<FormControl v-model="user.data.tenant_name" :disabled="true" />
-						</HorizontalFormControl>
-						<HorizontalFormControl :label="__('DKIM RSA Key Size')">
+						</HorizontalControl>
+						<HorizontalControl :label="__('DKIM RSA Key Size')">
 							<FormControl
+								v-model="domain.doc.dkim_rsa_key_size"
 								type="select"
 								:options="[
 									{ label: '2048', value: 2048 },
 									{ label: '4096', value: 4096 },
 								]"
-								v-model="domain.doc.dkim_rsa_key_size"
 							/>
-						</HorizontalFormControl>
-						<HorizontalFormControl :label="__('Newsletter Retention (Days)')">
+						</HorizontalControl>
+						<HorizontalControl :label="__('Newsletter Retention (Days)')">
 							<FormControl
+								v-model="domain.doc.newsletter_retention"
 								type="number"
 								min="1"
 								max="7"
-								v-model="domain.doc.newsletter_retention"
-								@update:modelValue="
+								@update:model-value="
 									domain.doc.newsletter_retention =
 										+domain.doc.newsletter_retention
 								"
 							/>
-						</HorizontalFormControl>
+						</HorizontalControl>
 					</div>
 				</div>
 			</div>
-			<div class="border rounded-md p-4">
+			<div class="rounded-md border p-4">
 				<ListView
 					class="flex-1"
 					:columns="LIST_COLUMNS"
@@ -80,7 +80,7 @@
 						<ListRow
 							v-for="row in domain.doc.dns_records"
 							:key="row.name"
-							v-slot="{ column, item }"
+							v-slot="{ item }"
 							:row="row"
 						>
 							{{ item }}
@@ -90,7 +90,7 @@
 			</div>
 		</div>
 	</div>
-	<Dialog :options="confirmDialogOptions" v-model="showConfirmDialog" />
+	<Dialog v-model="showConfirmDialog" :options="confirmDialogOptions" />
 </template>
 <script setup>
 import { ref, computed, inject } from 'vue'
@@ -109,7 +109,7 @@ import {
 	createDocumentResource,
 } from 'frappe-ui'
 import { raiseToast } from '@/utils'
-import HorizontalFormControl from '@/components/Controls/HorizontalFormControl.vue'
+import HorizontalControl from '@/components/Controls/HorizontalControl.vue'
 
 const props = defineProps({
 	domainName: {
@@ -128,12 +128,12 @@ const confirmDialogOptions = computed(() => ({
 	title: __(
 		confirmDialogAction.value === 'refreshDnsRecords'
 			? 'Refresh DNS Records'
-			: 'Rotate DKIM Keys'
+			: 'Rotate DKIM Keys',
 	),
 	message: __(
 		confirmDialogAction.value === 'refreshDnsRecords'
 			? `Are you sure you want to refresh the DNS records? If there are any changes, you'll need to update the DNS settings with your DNS provider accordingly.`
-			: `Are you sure you want to rotate the DKIM keys? This will generate new keys for email signing and may take up to 10 minutes to propagate across DNS servers. Emails sent during this period may fail DKIM verification.`
+			: `Are you sure you want to rotate the DKIM keys? This will generate new keys for email signing and may take up to 10 minutes to propagate across DNS servers. Emails sent during this period may fail DKIM verification.`,
 	),
 	size: 'xl',
 	icon: {
@@ -175,7 +175,7 @@ const domain = createDocumentResource({
 			onSuccess: (data) => {
 				raiseToast(
 					data ? 'DNS records verified successfully.' : 'DNS verification failed.',
-					data ? 'success' : 'error'
+					data ? 'success' : 'error',
 				)
 				domain.reload()
 			},

@@ -11,9 +11,9 @@
 				class="flex items-center justify-center gap-2 rounded-full bg-white px-2 py-1 shadow-sm"
 			>
 				<div
-					class="size-5 cursor-pointer rounded-full bg-white text-xl"
 					v-for="r in reactionEmojis"
 					:key="r"
+					class="size-5 cursor-pointer rounded-full bg-white text-xl"
 					@click="() => (emoji = r) && togglePopover()"
 				>
 					<button>
@@ -22,33 +22,33 @@
 				</div>
 				<Button class="rounded-full" icon="plus" @click.stop="() => (reaction = false)" />
 			</div>
-			<div v-else class="my-3 max-w-max transform bg-white px-4 sm:px-0 rounded-lg">
+			<div v-else class="my-3 max-w-max transform rounded-lg bg-white px-4 sm:px-0">
 				<div
 					class="relative max-h-96 overflow-y-auto rounded-lg pb-3 shadow-2xl ring-1 ring-black ring-opacity-5"
 				>
 					<div class="flex gap-2 px-3 pb-1 pt-3">
 						<div class="flex-1">
 							<FormControl
+								v-model="search"
 								type="text"
 								placeholder="Search by keyword"
-								v-model="search"
 								:debounce="300"
 							/>
 						</div>
 						<Button @click="setRandom">Random</Button>
 					</div>
 					<div class="w-96"></div>
-					<div class="px-3" v-for="(emojis, group) in emojiGroups" :key="group">
+					<div v-for="(emojis, group) in emojiGroups" :key="group" class="px-3">
 						<div class="sticky top-0 bg-white pb-2 pt-3 text-sm text-gray-700">
 							{{ group }}
 						</div>
 						<div class="grid w-96 grid-cols-12 place-items-center">
 							<button
-								class="h-8 w-8 rounded-md p-1 text-2xl hover:bg-gray-100 focus:outline-none focus:ring focus:ring-blue-200"
 								v-for="_emoji in emojis"
 								:key="_emoji.description"
-								@click="() => (emoji = _emoji.emoji) && togglePopover()"
+								class="h-8 w-8 rounded-md p-1 text-2xl hover:bg-gray-100 focus:outline-none focus:ring focus:ring-blue-200"
 								:title="_emoji.description"
+								@click="() => (emoji = _emoji.emoji) && togglePopover()"
 							>
 								{{ _emoji.emoji }}
 							</button>
@@ -72,10 +72,10 @@ const reaction = defineModel('reaction')
 const reactionEmojis = ref(['👍', '❤️', '😂', '😮', '😢', '🙏'])
 
 const emojiGroups = computed(() => {
-	let groups = {}
-	for (let _emoji of gemoji) {
+	const groups = {}
+	for (const _emoji of gemoji) {
 		if (search.value) {
-			let keywords = [_emoji.description, ..._emoji.names, ..._emoji.tags]
+			const keywords = [_emoji.description, ..._emoji.names, ..._emoji.tags]
 				.join(' ')
 				.toLowerCase()
 			if (!keywords.includes(search.value.toLowerCase())) {
@@ -97,8 +97,8 @@ const emojiGroups = computed(() => {
 })
 
 function setRandom() {
-	let total = gemoji.length
-	let index = randomInt(0, total - 1)
+	const total = gemoji.length
+	const index = randomInt(0, total - 1)
 	emoji.value = gemoji[index].emoji
 }
 

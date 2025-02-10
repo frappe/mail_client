@@ -30,28 +30,13 @@ repos:
       - id: ruff-format
         name: "Format Python code"
 
-  - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: v2.7.1
-    hooks:
-      - id: prettier
-        types_or: [javascript, vue, scss]
-        # Ignore any files that might contain jinja / bundles
-        exclude: |
-            (?x)^(
-                mail/public/dist/.*|
-                .*node_modules.*|
-                .*boilerplate.*|
-                mail/templates/includes/.*|
-                mail/public/js/lib/.*
-            )$
-
-
   - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: v8.44.0
+    rev: v9.20.0
     hooks:
       - id: eslint
-        types_or: [javascript]
-        args: ['--quiet']
+        types: [file]
+        types_or: [javascript, vue, scss]
+        args: ['--quiet', '--fix']
         # Ignore any files that might contain jinja / bundles
         exclude: |
             (?x)^(

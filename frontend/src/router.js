@@ -10,42 +10,42 @@ const routes = [
 	{
 		path: '/signup',
 		name: 'SignUp',
-		component: () => import('@/pages/SignUp.vue'),
+		component: () => import('@/pages/SignupView.vue'),
 		meta: { isLogin: true },
 	},
 	{
 		path: '/signup/:requestKey',
 		name: 'AccountSetup',
-		component: () => import('@/pages/SignUp.vue'),
+		component: () => import('@/pages/SignupView.vue'),
 		props: true,
 		meta: { isLogin: true },
 	},
 	{
 		path: '/login',
 		name: 'Login',
-		component: () => import('@/pages/Login.vue'),
+		component: () => import('@/pages/LoginView.vue'),
 		meta: { isLogin: true },
 	},
 	{
 		path: '/setup',
 		name: 'Setup',
-		component: () => import('@/pages/Setup.vue'),
+		component: () => import('@/pages/SetupView.vue'),
 		meta: { isSetup: true },
 	},
 	{
 		path: '/inbox',
 		name: 'Inbox',
-		component: () => import('@/pages/Inbox.vue'),
+		component: () => import('@/pages/InboxView.vue'),
 	},
 	{
 		path: '/sent',
 		name: 'Sent',
-		component: () => import('@/pages/Sent.vue'),
+		component: () => import('@/pages/SentView.vue'),
 	},
 	{
 		path: '/drafts',
 		name: 'Drafts',
-		component: () => import('@/pages/Drafts.vue'),
+		component: () => import('@/pages/DraftsView.vue'),
 	},
 	{
 		path: '/dashboard',
@@ -55,20 +55,20 @@ const routes = [
 	{
 		path: '/dashboard/domains',
 		name: 'Domains',
-		component: () => import('@/pages/dashboard/Domains.vue'),
+		component: () => import('@/pages/dashboard/DomainsView.vue'),
 		meta: { isDashboard: true },
 	},
 	{
 		path: '/dashboard/domains/:domainName',
 		name: 'Domain',
-		component: () => import('@/pages/dashboard/Domain.vue'),
+		component: () => import('@/pages/dashboard/DomainView.vue'),
 		props: true,
 		meta: { isDashboard: true },
 	},
 	{
 		path: '/dashboard/members',
 		name: 'Members',
-		component: () => import('@/pages/dashboard/Members.vue'),
+		component: () => import('@/pages/dashboard/MembersView.vue'),
 		meta: { isDashboard: true },
 	},
 ]

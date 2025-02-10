@@ -17,15 +17,15 @@
 				<p class="text-p-base">
 					{{
 						__(
-							`To add a domain, you must already own it. If you don't have one, purchase one and return here.`
+							`To add a domain, you must already own it. If you don't have one, purchase one and return here.`,
 						)
 					}}
 				</p>
 				<FormControl
+					v-model="domainName"
 					type="text"
 					:label="__('Domain Name')"
 					placeholder="example.com"
-					v-model="domainName"
 					:readonly="!!domainRequest?.data"
 					autocomplete="off"
 				/>
@@ -34,11 +34,11 @@
 					<p class="text-p-base">
 						{{
 							__(
-								`Add the following TXT record to your domain's DNS records to verify your ownership:`
+								`Add the following TXT record to your domain's DNS records to verify your ownership:`,
 							)
 						}}
 					</p>
-					<Copy
+					<CopyControl
 						:label="__('Verification Key')"
 						:value="domainRequest.data.verification_key"
 					/>
@@ -52,7 +52,7 @@
 <script setup>
 import { ref, inject, watch } from 'vue'
 import { Dialog, FormControl, ErrorMessage, createResource } from 'frappe-ui'
-import Copy from '@/components/Controls/Copy.vue'
+import CopyControl from '@/components/Controls/CopyControl.vue'
 import { raiseToast } from '@/utils'
 
 const show = defineModel()

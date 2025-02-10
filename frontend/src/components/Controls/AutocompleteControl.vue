@@ -1,6 +1,6 @@
 <template>
-	<Combobox v-model="selectedValue" nullable v-slot="{ open: isComboboxOpen }">
-		<Popover class="w-full" v-model:show="showOptions">
+	<Combobox v-model="selectedValue" nullable>
+		<Popover v-model:show="showOptions" class="w-full">
 			<template #target="{ open: openPopover, togglePopover }">
 				<slot name="target" v-bind="{ open: openPopover, togglePopover }">
 					<div class="w-full">
@@ -12,16 +12,16 @@
 							<div class="flex items-center">
 								<slot name="prefix" />
 								<span
-									class="overflow-hidden text-ellipsis whitespace-nowrap text-base leading-5"
 									v-if="selectedValue"
+									class="overflow-hidden text-ellipsis whitespace-nowrap text-base leading-5"
 								>
 									{{ displayValue(selectedValue) }}
 								</span>
-								<span class="text-base leading-5 text-gray-500" v-else>
+								<span v-else class="text-base leading-5 text-gray-500">
 									{{ placeholder || '' }}
 								</span>
 							</div>
-							<ChevronDown class="h-4 w-4 stroke-1.5" />
+							<ChevronDown class="stroke-1.5 h-4 w-4" />
 						</button>
 					</div>
 				</slot>
@@ -34,28 +34,28 @@
 								ref="search"
 								class="form-input w-full"
 								type="text"
+								:value="query"
+								autocomplete="off"
+								placeholder="Search"
 								@change="
 									(e) => {
 										query = e.target.value
 									}
 								"
-								:value="query"
-								autocomplete="off"
-								placeholder="Search"
 							/>
 							<button
 								class="absolute right-1.5 inline-flex h-7 w-7 items-center justify-center"
 								@click="selectedValue = null"
 							>
-								<X class="h-4 w-4 stroke-1.5" />
+								<X class="stroke-1.5 h-4 w-4" />
 							</button>
 						</div>
 						<ComboboxOptions class="my-1 max-h-[12rem] overflow-y-auto px-1.5" static>
 							<div
-								class="mt-1.5"
 								v-for="group in groups"
-								:key="group.key"
 								v-show="group.items.length > 0"
+								:key="group.key"
+								class="mt-1.5"
 							>
 								<div
 									v-if="group.group && !group.hideLabel"
@@ -64,11 +64,11 @@
 									{{ group.group }}
 								</div>
 								<ComboboxOption
-									as="template"
 									v-for="option in group.items"
 									:key="option.value"
-									:value="option"
 									v-slot="{ active, selected }"
+									as="template"
+									:value="option"
 								>
 									<li
 										:class="[
@@ -106,10 +106,7 @@
 							</li>
 						</ComboboxOptions>
 						<div v-if="slots.footer" class="border-t p-1.5 pb-0.5">
-							<slot
-								name="footer"
-								v-bind="{ value: search?.el._value, close }"
-							></slot>
+							<slot name="footer" v-bind="{ value: search?.el._value, close }" />
 						</div>
 					</div>
 				</div>
@@ -120,7 +117,7 @@
 
 <script setup>
 import { Combobox, ComboboxInput, ComboboxOptions, ComboboxOption } from '@headlessui/vue'
-import { Popover, Button } from 'frappe-ui'
+import { Popover } from 'frappe-ui'
 import { ChevronDown, X } from 'lucide-vue-next'
 import { ref, computed, useAttrs, useSlots, watch, nextTick } from 'vue'
 
@@ -185,7 +182,7 @@ function close() {
 const groups = computed(() => {
 	if (!props.options || props.options.length == 0) return []
 
-	let groups = props.options[0]?.group ? props.options : [{ group: '', items: props.options }]
+	const groups = props.options[0]?.group ? props.options : [{ group: '', items: props.options }]
 
 	return groups
 		.map((group, i) => {
@@ -204,17 +201,17 @@ function filterOptions(options) {
 		return options
 	}
 	return options.filter((option) => {
-		let searchTexts = [option.label, option.value]
+		const searchTexts = [option.label, option.value]
 		return searchTexts.some((text) =>
-			(text || '').toString().toLowerCase().includes(query.value.toLowerCase())
+			(text || '').toString().toLowerCase().includes(query.value.toLowerCase()),
 		)
 	})
 }
 
 function displayValue(option) {
 	if (typeof option === 'string') {
-		let allOptions = groups.value.flatMap((group) => group.items)
-		let selectedOption = allOptions.find((o) => o.value === option)
+		const allOptions = groups.value.flatMap((group) => group.items)
+		const selectedOption = allOptions.find((o) => o.value === option)
 		return selectedOption?.label || option
 	}
 	return option?.label
@@ -237,22 +234,22 @@ const textColor = computed(() => {
 })
 
 const inputClasses = computed(() => {
-	let sizeClasses = {
+	const sizeClasses = {
 		sm: 'text-base rounded h-7',
 		md: 'text-base rounded h-8',
 		lg: 'text-lg rounded-md h-10',
 		xl: 'text-xl rounded-md h-10',
 	}[props.size]
 
-	let paddingClasses = {
+	const paddingClasses = {
 		sm: 'py-1.5 px-2',
 		md: 'py-1.5 px-2.5',
 		lg: 'py-1.5 px-3',
 		xl: 'py-1.5 px-3',
 	}[props.size]
 
-	let variant = props.disabled ? 'disabled' : props.variant
-	let variantClasses = {
+	const variant = props.disabled ? 'disabled' : props.variant
+	const variantClasses = {
 		subtle: 'border border-gray-100 bg-gray-100 placeholder-gray-500 hover:border-gray-200 hover:bg-gray-200 focus:bg-white focus:border-gray-500 focus:shadow-sm focus:ring-0 focus-visible:ring-2 focus-visible:ring-gray-400',
 		outline:
 			'border border-gray-300 bg-white placeholder-gray-500 hover:border-gray-400 hover:shadow-sm focus:bg-white focus:border-gray-500 focus:shadow-sm focus:ring-0 focus-visible:ring-2 focus-visible:ring-gray-400',

@@ -10,8 +10,8 @@ import translationPlugin from './translation'
 import { initSocket } from './socket'
 import { setConfig, frappeRequest, pageMetaPlugin } from 'frappe-ui'
 
-let pinia = createPinia()
-let app = createApp(App)
+const pinia = createPinia()
+const app = createApp(App)
 setConfig('resourceFetcher', frappeRequest)
 
 app.use(pinia)

@@ -5,11 +5,11 @@
 		>
 			<Breadcrumbs :items="[{ label: 'Sent' }]">
 				<template #suffix>
-					<div v-if="sentMailsCount.data" class="self-end text-xs text-gray-600 ml-2">
+					<div v-if="sentMailsCount.data" class="ml-2 self-end text-xs text-gray-600">
 						{{
 							__('{0} {1}').format(
 								formatNumber(sentMailsCount.data),
-								sentMailsCount.data == 1 ? singularize('messages') : 'messages'
+								sentMailsCount.data == 1 ? singularize('messages') : 'messages',
 							)
 						}}
 					</div>
@@ -19,15 +19,16 @@
 		</header>
 		<div v-if="sentMails.data" class="flex h-[calc(100vh-3.2rem)]">
 			<div
-				@scroll="loadMoreEmails"
 				ref="mailSidebar"
-				class="mailSidebar border-r w-1/3 p-2 sticky top-16 overflow-y-scroll overscroll-contain"
+				class="mailSidebar sticky top-16 w-1/3 overflow-y-scroll overscroll-contain border-r p-2"
+				@scroll="loadMoreEmails"
 			>
 				<div
 					v-for="(mail, idx) in sentMails.data"
+					:key="idx"
+					class="flex cursor-pointer flex-col space-y-1"
+					:class="{ 'rounded bg-gray-200': mail.name == currentMail.sent }"
 					@click="setCurrentMail('sent', mail.name)"
-					class="flex flex-col space-y-1 cursor-pointer"
-					:class="{ 'bg-gray-200 rounded': mail.name == currentMail.sent }"
 				>
 					<SidebarDetail :mail="mail" />
 					<div
@@ -44,15 +45,15 @@
 					class="h-full w-[2px] rounded-full transition-all duration-300 ease-in-out group-hover:bg-gray-400"
 				/>
 			</div>
-			<div class="flex-1 overflow-auto w-2/3">
-				<MailDetails :mailID="currentMail.sent" type="Outgoing Mail" />
+			<div class="w-2/3 flex-1 overflow-auto">
+				<MailDetails :mail-i-d="currentMail.sent" type="Outgoing Mail" />
 			</div>
 		</div>
 	</div>
 </template>
 <script setup>
 import { Breadcrumbs, createResource, createListResource } from 'frappe-ui'
-import { inject, ref, onMounted } from 'vue'
+import { inject, onMounted } from 'vue'
 import HeaderActions from '@/components/HeaderActions.vue'
 import { formatNumber, startResizing, singularize } from '@/utils'
 import MailDetails from '@/components/MailDetails.vue'
@@ -65,7 +66,7 @@ const user = inject('$user')
 const { currentMail, setCurrentMail } = userStore()
 
 onMounted(() => {
-	socket.on('outgoing_mail_sent', (data) => {
+	socket.on('outgoing_mail_sent', () => {
 		sentMails.reload()
 		sentMailsCount.reload()
 	})
@@ -84,7 +85,7 @@ const sentMails = createListResource({
 
 const sentMailsCount = createResource({
 	url: 'frappe.client.get_count',
-	makeParams(values) {
+	makeParams() {
 		return {
 			doctype: 'Outgoing Mail',
 			filters: {

@@ -1,11 +1,11 @@
 <template>
-	<h1 class="font-semibold mb-8">User</h1>
-	<div class="flex justify-start w-full items-center gap-x-4">
+	<h1 class="mb-8 font-semibold">User</h1>
+	<div class="flex w-full items-center justify-start gap-x-4">
 		<Avatar
 			:image="user.data?.user_image"
 			:label="user.data?.full_name"
 			size="3xl"
-			class="w-20 h-20"
+			class="h-20 w-20"
 		/>
 		<div class="flex flex-col">
 			<span class="text-xl font-semibold">{{ user.data?.full_name }}</span>
@@ -13,7 +13,7 @@
 		</div>
 	</div>
 
-	<div class="mt-12 mb-4 flex items-center">
+	<div class="mb-4 mt-12 flex items-center">
 		<h1 class="font-semibold">API Access</h1>
 		<Button
 			:label="user.data?.api_key ? 'Regenerate Secret' : 'Generate Keys'"
@@ -33,14 +33,14 @@
 			<p class="text-base">
 				Please copy the API secret now. You won’t be able to see it again!
 			</p>
-			<Copy label="API Key" :value="user.data?.api_key" />
-			<Copy label="API Secret" :value="apiSecret" />
+			<CopyControl label="API Key" :value="user.data?.api_key" />
+			<CopyControl label="API Secret" :value="apiSecret" />
 		</template>
 	</Dialog>
 </template>
 <script setup>
 import { ref, inject } from 'vue'
-import Copy from '@/components/Controls/Copy.vue'
+import CopyControl from '@/components/Controls/CopyControl.vue'
 import { Avatar, Button, Dialog, createResource } from 'frappe-ui'
 
 const user = inject('$user')

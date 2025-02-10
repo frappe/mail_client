@@ -1,12 +1,12 @@
 <template>
-	<div class="h-full flex flex-col">
+	<div class="flex h-full flex-col">
 		<header
 			class="sticky top-0 z-10 flex items-center justify-between border-b bg-white px-3 py-2.5 sm:px-5"
 		>
 			<Breadcrumbs :items="[{ label: __('Domains') }]" />
-			<Button :label="__('Add Domain')" iconLeft="plus" @click="showAddDomain = true" />
+			<Button :label="__('Add Domain')" icon-left="plus" @click="showAddDomain = true" />
 		</header>
-		<div class="m-6 flex-1 flex flex-col">
+		<div class="m-6 flex flex-1 flex-col">
 			<ListView
 				v-if="domains?.data"
 				class="flex-1"
@@ -43,7 +43,7 @@
 			</ListView>
 		</div>
 	</div>
-	<AddDomain v-model="showAddDomain" @reloadDomains="domains.reload()" />
+	<AddDomainModal v-model="showAddDomain" @reload-domains="domains.reload()" />
 </template>
 <script setup>
 import { ref, inject } from 'vue'
@@ -60,7 +60,7 @@ import {
 	FeatherIcon,
 	createListResource,
 } from 'frappe-ui'
-import AddDomain from '@/components/Modals/AddDomain.vue'
+import AddDomainModal from '@/components/Modals/AddDomainModal.vue'
 
 const user = inject('$user')
 

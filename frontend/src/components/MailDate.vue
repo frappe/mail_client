@@ -1,6 +1,6 @@
 <template>
 	<Tooltip :text="tooltipText" :disabled="inList">
-		<div class="text-xs text-gray-600 cursor-pointer">
+		<div class="cursor-pointer text-xs text-gray-600">
 			{{ formattedDate }}
 		</div>
 	</Tooltip>
@@ -39,8 +39,8 @@ const formattedDate = computed(() => {
 const tooltipText = computed(() => {
 	return __(
 		`${dayjs(props.datetime).format('DD MMM YYYY')} at ${dayjs(props.datetime).format(
-			'h:mm A'
-		)}`
+			'h:mm A',
+		)}`,
 	)
 })
 </script>

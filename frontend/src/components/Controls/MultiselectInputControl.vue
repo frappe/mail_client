@@ -2,8 +2,8 @@
 	<div>
 		<div class="flex flex-wrap gap-1">
 			<Button
-				ref="emails"
 				v-for="value in values"
+				ref="emails"
 				:key="value"
 				:label="value"
 				theme="gray"
@@ -17,13 +17,14 @@
 			</Button>
 			<div class="flex-1">
 				<Combobox v-model="selectedValue" nullable>
-					<Popover class="w-full" v-model:show="showOptions">
+					<Popover v-model:show="showOptions" class="w-full">
 						<template #target="{ togglePopover }">
 							<ComboboxInput
 								ref="search"
 								class="search-input form-input w-full border-none bg-white hover:bg-white focus:border-none focus:!shadow-none focus-visible:!ring-0"
 								type="text"
 								:value="query"
+								autocomplete="off"
 								@change="
 									(e) => {
 										query = e.target.value
@@ -31,7 +32,6 @@
 									}
 								"
 								@keydown.enter="() => addValue(query)"
-								autocomplete="off"
 								@focus="() => togglePopover()"
 								@keydown.delete.capture.stop="removeLastValue"
 							/>
@@ -49,8 +49,8 @@
 										<ComboboxOption
 											v-for="option in options"
 											:key="option.value"
-											:value="option"
 											v-slot="{ active }"
+											:value="option"
 										>
 											<li
 												:class="[
@@ -82,7 +82,7 @@
 				</Combobox>
 			</div>
 		</div>
-		<ErrorMessage class="mt-2 pl-2" v-if="error" :message="error" />
+		<ErrorMessage v-if="error" class="mt-2 pl-2" :message="error" />
 	</div>
 </template>
 
@@ -133,7 +133,7 @@ watchDebounced(
 		text.value = val
 		reload(val)
 	},
-	{ debounce: 300, immediate: true }
+	{ debounce: 300, immediate: true },
 )
 
 const filterOptions = createResource({
@@ -144,10 +144,10 @@ const filterOptions = createResource({
 		}
 	},
 	transform: (data) => {
-		let allData = data.map((option) => {
-			let fullName = option['full_name']
-			let email = option['email']
-			let name = option['email']
+		const allData = data.map((option) => {
+			const fullName = option['full_name']
+			const email = option['email']
+			const name = option['email']
 			return {
 				label: fullName || name || email,
 				value: email,
@@ -159,7 +159,7 @@ const filterOptions = createResource({
 })
 
 const options = computed(() => {
-	let searchedContacts = filterOptions.data || []
+	const searchedContacts = filterOptions.data || []
 	if (!searchedContacts.length && query.value) {
 		searchedContacts.push({
 			label: query.value,

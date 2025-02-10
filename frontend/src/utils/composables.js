@@ -56,8 +56,8 @@ export function useSwipe() {
 		swipe.absDiffY = Math.abs(swipe.diffY)
 	}
 
-	const onTouchEnd = (e) => {
-		let { diffX, diffY, absDiffX, absDiffY } = swipe
+	const onTouchEnd = () => {
+		const { diffX, diffY, absDiffX, absDiffY } = swipe
 		if (absDiffX > absDiffY) {
 			if (diffX > 0) {
 				swipe.direction = 'left'
@@ -89,8 +89,8 @@ export function useSwipe() {
 }
 
 export function useLocalStorage(key, initialValue) {
-	let value = ref(null)
-	let storedValue = localStorage.getItem(key)
+	const value = ref(null)
+	const storedValue = localStorage.getItem(key)
 	value.value = storedValue ? JSON.parse(storedValue) : initialValue
 
 	watch(value, (newValue) => {

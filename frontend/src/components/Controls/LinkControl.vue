@@ -1,12 +1,12 @@
 <template>
 	<div class="space-y-1.5">
-		<label class="block" :class="labelClasses" v-if="attrs.label">
+		<label v-if="attrs.label" class="block" :class="labelClasses">
 			{{ attrs.label }}
 		</label>
-		<Autocomplete
+		<AutocompleteControl
 			ref="autocomplete"
-			:options="options.data"
 			v-model="value"
+			:options="options.data"
 			:size="attrs.size || 'sm'"
 			:variant="attrs.variant"
 			:placeholder="attrs.placeholder"
@@ -37,17 +37,17 @@
 						@click="attrs.onCreate(value, close)"
 					>
 						<template #prefix>
-							<Plus class="h-4 w-4 stroke-1.5" />
+							<Plus class="stroke-1.5 h-4 w-4" />
 						</template>
 					</Button>
 				</div>
 			</template>
-		</Autocomplete>
+		</AutocompleteControl>
 	</div>
 </template>
 
 <script setup>
-import Autocomplete from '@/components/Controls/Autocomplete.vue'
+import AutocompleteControl from '@/components/Controls/AutocompleteControl.vue'
 import { watchDebounced } from '@vueuse/core'
 import { createResource, Button } from 'frappe-ui'
 import { Plus } from 'lucide-vue-next'
@@ -94,13 +94,13 @@ watchDebounced(
 		text.value = val
 		reload(val)
 	},
-	{ debounce: 300, immediate: true }
+	{ debounce: 300, immediate: true },
 )
 
 watchDebounced(
 	() => props.doctype,
 	() => reload(''),
-	{ debounce: 300, immediate: true }
+	{ debounce: 300, immediate: true },
 )
 
 const options = createResource({

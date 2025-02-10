@@ -7,10 +7,10 @@
 		@submit.prevent="createTenant.submit()"
 	>
 		<FormControl
+			v-model="tenantName"
 			type="text"
 			:label="__('Organization Name')"
 			placeholder="Unico Plastics Inc."
-			v-model="tenantName"
 			required
 		/>
 		<ErrorMessage :message="createTenant.error?.messages[0]" />

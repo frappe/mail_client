@@ -1,11 +1,11 @@
 <template>
 	<div class="flex h-full flex-col">
-		<div class="h-full pb-10" id="scrollContainer">
+		<div id="scrollContainer" class="h-full pb-10">
 			<slot />
 		</div>
 		<div
 			v-if="tabs"
-			class="fixed flex justify-around border-t border-gray-300 bottom-0 z-10 w-full bg-white standalone:pb-4"
+			class="standalone:pb-4 fixed bottom-0 z-10 flex w-full justify-around border-t border-gray-300 bg-white"
 			:style="{
 				gridTemplateColumns: `repeat(${tabs.length}, minmax(0, 1fr))`,
 			}"
@@ -19,7 +19,7 @@
 			>
 				<component
 					:is="tab.icon"
-					class="h-6 w-6 stroke-1.5"
+					class="stroke-1.5 h-6 w-6"
 					:class="[isActive(tab) ? 'text-gray-900' : 'text-gray-600']"
 				/>
 			</button>
@@ -37,10 +37,10 @@ import { LogOut, LogIn, UserRound } from 'lucide-vue-next'
 const { logout, user } = sessionStore()
 let { isLoggedIn } = sessionStore()
 const router = useRouter()
-let { userResource } = userStore()
+const { userResource } = userStore()
 
 const tabs = computed(() => {
-	let links = getSidebarLinks()
+	const links = getSidebarLinks()
 
 	if (user) {
 		links.push({
@@ -67,7 +67,7 @@ const tabs = computed(() => {
 	return links
 })
 
-let isActive = (tab) => {
+const isActive = (tab) => {
 	return tab.activeFor?.includes(router.currentRoute.value.name)
 }
 

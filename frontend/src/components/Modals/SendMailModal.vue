@@ -21,7 +21,7 @@
 					<div class="flex flex-col gap-3">
 						<div class="flex items-center gap-2 border-t pt-2.5">
 							<span class="text-xs text-gray-500">{{ __('From') }}:</span>
-							<Link
+							<LinkControl
 								v-model="mail.from"
 								doctype="Mail Account"
 								:filters="{ user: user.data.name }"
@@ -29,9 +29,9 @@
 						</div>
 						<div class="flex items-center gap-2">
 							<span class="text-xs text-gray-500">{{ __('To') }}:</span>
-							<MultiselectInput
-								class="flex-1 text-sm"
+							<MultiselectInputControl
 								v-model="mail.to"
+								class="flex-1 text-sm"
 								:validate="validateEmail"
 								:error-message="
 									(value) => __('{0} is an invalid email address', [value])
@@ -41,27 +41,27 @@
 								<Button
 									:label="__('Cc')"
 									variant="ghost"
-									@click="toggleCC()"
 									:class="[
 										cc ? '!bg-gray-300 hover:bg-gray-200' : '!text-gray-500',
 									]"
+									@click="toggleCC()"
 								/>
 								<Button
 									:label="__('Bcc')"
 									variant="ghost"
-									@click="toggleBCC()"
 									:class="[
 										bcc ? '!bg-gray-300 hover:bg-gray-200' : '!text-gray-500',
 									]"
+									@click="toggleBCC()"
 								/>
 							</div>
 						</div>
 						<div v-if="cc" class="flex items-center gap-2">
 							<span class="text-xs text-gray-500">{{ __('Cc') }}:</span>
-							<MultiselectInput
+							<MultiselectInputControl
 								ref="ccInput"
-								class="flex-1 text-sm"
 								v-model="mail.cc"
+								class="flex-1 text-sm"
 								:validate="validateEmail"
 								:error-message="
 									(value) => __('{0} is an invalid email address', [value])
@@ -70,10 +70,10 @@
 						</div>
 						<div v-if="bcc" class="flex items-center gap-2">
 							<span class="text-xs text-gray-500">{{ __('Bcc') }}:</span>
-							<MultiselectInput
+							<MultiselectInputControl
 								ref="bccInput"
-								class="flex-1 text-sm"
 								v-model="mail.bcc"
+								class="flex-1 text-sm"
 								:validate="validateEmail"
 								:error-message="
 									(value) => __('{0} is an invalid email address', [value])
@@ -83,28 +83,28 @@
 						<div class="flex items-center gap-2 pb-2.5">
 							<span class="text-xs text-gray-500">{{ __('Subject') }}:</span>
 							<TextInput
-								class="flex-1 text-sm border-none bg-white hover:bg-white focus:border-none focus:!shadow-none focus-visible:!ring-0"
 								v-model="mail.subject"
+								class="flex-1 border-none bg-white text-sm hover:bg-white focus:border-none focus:!shadow-none focus-visible:!ring-0"
 							/>
 						</div>
 					</div>
 				</template>
-				<template v-slot:editor="{ editor }">
+				<template #editor="{ editor }">
 					<EditorContent
 						:class="['max-h-[35vh] overflow-y-auto border-t py-3 text-sm']"
 						:editor="editor"
 					/>
 				</template>
-				<template v-slot:bottom>
+				<template #bottom>
 					<FileUploader
 						:upload-args="{
 							doctype: 'Outgoing Mail',
-							docname: mailID,
+							docname: localMailID,
 							private: true,
 						}"
-						:validateFile="
+						:validate-file="
 							async () => {
-								if (!mailID) await createDraftMail.submit()
+								if (!localMailID) await createDraftMail.submit()
 							}
 						"
 						@success="attachments.fetch()"
@@ -112,12 +112,12 @@
 						<template #default="{ file, progress, uploading, openFileSelector }">
 							<!-- Attachments -->
 							<div
-								v-if="mailID"
-								class="flex flex-col gap-2 mb-2 text-gray-700 text-sm"
+								v-if="localMailID"
+								class="mb-2 flex flex-col gap-2 text-sm text-gray-700"
 							>
-								<div v-if="uploading" class="bg-gray-100 rounded p-2.5">
-									<div class="flex items-center mb-1.5">
-										<span class="font-medium mr-1">
+								<div v-if="uploading" class="rounded bg-gray-100 p-2.5">
+									<div class="mb-1.5 flex items-center">
+										<span class="mr-1 font-medium">
 											{{ file.name }}
 										</span>
 										<span class="font-extralight">
@@ -129,16 +129,16 @@
 								<div
 									v-for="(file, index) in attachments.data"
 									:key="index"
-									class="bg-gray-100 rounded p-2.5 flex items-center cursor-pointer"
+									class="flex cursor-pointer items-center rounded bg-gray-100 p-2.5"
 								>
-									<span class="font-medium mr-1">
+									<span class="mr-1 font-medium">
 										{{ file.file_name || file.name }}
 									</span>
 									<span class="font-extralight">
 										({{ formatBytes(file.file_size) }})
 									</span>
 									<FeatherIcon
-										class="h-3.5 w-3.5 ml-auto"
+										class="ml-auto h-3.5 w-3.5"
 										name="x"
 										@click="removeAttachment.submit({ name: file.name })"
 									/>
@@ -149,12 +149,12 @@
 								class="flex justify-between gap-2 overflow-hidden border-t py-2.5"
 							>
 								<!-- Text Editor Buttons -->
-								<div class="flex gap-1 items-center overflow-x-auto">
+								<div class="flex items-center gap-1 overflow-x-auto">
 									<TextEditorFixedMenu :buttons="textEditorMenuButtons" />
 									<EmojiPicker
-										v-model="emoji"
 										v-slot="{ togglePopover }"
-										@update:modelValue="() => appendEmoji()"
+										v-model="emoji"
+										@update:model-value="() => appendEmoji()"
 									>
 										<Button variant="ghost" @click="togglePopover()">
 											<template #icon>
@@ -172,7 +172,7 @@
 								<!-- Send & Discard -->
 								<div class="flex items-center justify-end space-x-2 sm:mt-0">
 									<Button :label="__('Discard')" @click="discardMail" />
-									<Button @click="send" variant="solid" :label="__('Send')" />
+									<Button variant="solid" :label="__('Send')" @click="send" />
 								</div>
 							</div>
 						</template>
@@ -198,16 +198,16 @@ import {
 import { reactive, watch, inject, ref, nextTick, computed } from 'vue'
 import { useDebounceFn } from '@vueuse/core'
 import { Paperclip, Laugh } from 'lucide-vue-next'
-import Link from '@/components/Controls/Link.vue'
+import LinkControl from '@/components/Controls/LinkControl.vue'
 import EmojiPicker from '@/components/EmojiPicker.vue'
-import MultiselectInput from '@/components/Controls/MultiselectInput.vue'
+import MultiselectInputControl from '@/components/Controls/MultiselectInputControl.vue'
 import { EditorContent } from '@tiptap/vue-3'
 import { validateEmail, formatBytes } from '@/utils'
 import { userStore } from '@/stores/user'
 
 const user = inject('$user')
 const show = defineModel()
-const mailID = ref(null)
+const localMailID = ref(null)
 const textEditor = ref(null)
 const ccInput = ref(null)
 const bccInput = ref(null)
@@ -252,14 +252,14 @@ const props = defineProps({
 const emit = defineEmits(['reloadMails'])
 
 const discardMail = async () => {
-	if (mailID.value) await deleteDraftMail.submit()
+	if (localMailID.value) await deleteDraftMail.submit()
 	else if (!isMailEmpty.value) Object.assign(mail, emptyMail)
 	show.value = false
 }
 
 const syncMail = useDebounceFn(() => {
 	if (!isMailWatcherActive.value) return
-	if (mailID.value) updateDraftMail.submit()
+	if (localMailID.value) updateDraftMail.submit()
 	else if (!isMailEmpty.value) createDraftMail.submit()
 }, SYNC_DEBOUNCE_TIME)
 
@@ -278,7 +278,7 @@ watch(show, () => {
 	if (!show.value) return
 	if (props.mailID) getDraftMail(props.mailID)
 	else {
-		mailID.value = null
+		localMailID.value = null
 		Object.assign(mail, emptyMail)
 	}
 
@@ -299,7 +299,7 @@ watch(
 	(val) => {
 		// TODO: use documentresource directly
 		if (val) getDraftMail(val)
-	}
+	},
 )
 
 watch(mail, syncMail)
@@ -318,7 +318,7 @@ const createDraftMail = createResource({
 	onSuccess(data) {
 		if (isSend.value) Object.assign(mail, emptyMail)
 		else {
-			mailID.value = data
+			localMailID.value = data
 			setCurrentMail('draft', data)
 			emit('reloadMails')
 		}
@@ -329,7 +329,7 @@ const updateDraftMail = createResource({
 	url: 'mail.api.mail.update_draft_mail',
 	makeParams() {
 		return {
-			mail_id: mailID.value,
+			mail_id: localMailID.value,
 			from_: `${user.data?.full_name} <${mail.from}>`,
 			do_submit: isSend.value,
 			...mail,
@@ -347,7 +347,7 @@ const deleteDraftMail = createResource({
 	makeParams() {
 		return {
 			doctype: 'Outgoing Mail',
-			name: mailID.value,
+			name: localMailID.value,
 		}
 	},
 	onSuccess() {
@@ -361,7 +361,7 @@ const attachments = createResource({
 	makeParams() {
 		return {
 			dt: 'Outgoing Mail',
-			dn: mailID.value,
+			dn: localMailID.value,
 		}
 	},
 })
@@ -395,7 +395,7 @@ const getDraftMail = (name) =>
 				if (recipientType in mailDetails) mailDetails[recipientType].push(recipient.email)
 				else mailDetails[recipientType] = [recipient.email]
 			}
-			mailID.value = name
+			localMailID.value = name
 			attachments.fetch()
 			Object.assign(mail, mailDetails)
 			if (mailDetails.cc) cc.value = true
@@ -408,7 +408,7 @@ const getDraftMail = (name) =>
 
 const send = async () => {
 	isSend.value = true
-	if (mailID.value) await updateDraftMail.submit()
+	if (localMailID.value) await updateDraftMail.submit()
 	else await createDraftMail.submit()
 	isSend.value = false
 	show.value = false

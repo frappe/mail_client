@@ -1,7 +1,8 @@
 {
-  "name": "frappe-ui-frontend",
+  "name": "mail-frontend",
   "private": true,
   "version": "0.0.0",
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "serve": "vite preview",
