@@ -94,12 +94,12 @@ class MailGroup(Document):
 	def clear_cache(self) -> None:
 		"""Clears the Cache."""
 
-		frappe.cache.delete_value(f"tenant|{self.tenant}")
+		frappe.cache.hdel(f"tenant|{self.tenant}", "groups")
 
 		if self.has_value_changed("tenant"):
 			if previous_doc := self.get_doc_before_save():
 				if previous_doc.tenant:
-					frappe.cache.delete_value(f"tenant|{previous_doc.tenant}")
+					frappe.cache.hdel(f"tenant|{previous_doc.tenant}", "groups")
 
 
 def has_permission(doc: "Document", ptype: str, user: str | None = None) -> bool:
