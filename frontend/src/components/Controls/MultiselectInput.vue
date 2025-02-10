@@ -133,7 +133,7 @@ watchDebounced(
 		text.value = val
 		reload(val)
 	},
-	{ debounce: 300, immediate: true }
+	{ debounce: 300, immediate: true },
 )
 
 const filterOptions = createResource({
@@ -144,10 +144,10 @@ const filterOptions = createResource({
 		}
 	},
 	transform: (data) => {
-		let allData = data.map((option) => {
-			let fullName = option['full_name']
-			let email = option['email']
-			let name = option['email']
+		const allData = data.map((option) => {
+			const fullName = option['full_name']
+			const email = option['email']
+			const name = option['email']
 			return {
 				label: fullName || name || email,
 				value: email,
@@ -159,7 +159,7 @@ const filterOptions = createResource({
 })
 
 const options = computed(() => {
-	let searchedContacts = filterOptions.data || []
+	const searchedContacts = filterOptions.data || []
 	if (!searchedContacts.length && query.value) {
 		searchedContacts.push({
 			label: query.value,

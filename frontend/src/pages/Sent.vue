@@ -5,11 +5,11 @@
 		>
 			<Breadcrumbs :items="[{ label: 'Sent' }]">
 				<template #suffix>
-					<div v-if="sentMailsCount.data" class="self-end text-xs text-gray-600 ml-2">
+					<div v-if="sentMailsCount.data" class="ml-2 self-end text-xs text-gray-600">
 						{{
 							__('{0} {1}').format(
 								formatNumber(sentMailsCount.data),
-								sentMailsCount.data == 1 ? singularize('messages') : 'messages'
+								sentMailsCount.data == 1 ? singularize('messages') : 'messages',
 							)
 						}}
 					</div>
@@ -21,13 +21,13 @@
 			<div
 				@scroll="loadMoreEmails"
 				ref="mailSidebar"
-				class="mailSidebar border-r w-1/3 p-2 sticky top-16 overflow-y-scroll overscroll-contain"
+				class="mailSidebar sticky top-16 w-1/3 overflow-y-scroll overscroll-contain border-r p-2"
 			>
 				<div
 					v-for="(mail, idx) in sentMails.data"
 					@click="setCurrentMail('sent', mail.name)"
-					class="flex flex-col space-y-1 cursor-pointer"
-					:class="{ 'bg-gray-200 rounded': mail.name == currentMail.sent }"
+					class="flex cursor-pointer flex-col space-y-1"
+					:class="{ 'rounded bg-gray-200': mail.name == currentMail.sent }"
 				>
 					<SidebarDetail :mail="mail" />
 					<div
@@ -44,7 +44,7 @@
 					class="h-full w-[2px] rounded-full transition-all duration-300 ease-in-out group-hover:bg-gray-400"
 				/>
 			</div>
-			<div class="flex-1 overflow-auto w-2/3">
+			<div class="w-2/3 flex-1 overflow-auto">
 				<MailDetails :mailID="currentMail.sent" type="Outgoing Mail" />
 			</div>
 		</div>

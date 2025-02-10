@@ -3,30 +3,30 @@
 		<Dropdown :options="userDropdownOptions">
 			<template v-slot="{ open }">
 				<button
-					class="flex h-12 py-2 items-center rounded-md duration-300 ease-in-out"
+					class="flex h-12 items-center rounded-md py-2 duration-300 ease-in-out"
 					:class="
 						isCollapsed
-							? 'px-0 w-auto'
+							? 'w-auto px-0'
 							: open
-							? 'bg-white shadow-sm px-2 w-52'
-							: 'hover:bg-gray-200 px-2 w-52'
+								? 'w-52 bg-white px-2 shadow-sm'
+								: 'w-52 px-2 hover:bg-gray-200'
 					"
 				>
 					<span
 						v-if="branding.data?.brand_html"
 						v-html="branding.data?.brand_html"
-						class="w-8 h-8 rounded flex-shrink-0"
+						class="h-8 w-8 flex-shrink-0 rounded"
 					></span>
-					<MailLogo v-else class="w-8 h-8 rounded flex-shrink-0" />
+					<MailLogo v-else class="h-8 w-8 flex-shrink-0 rounded" />
 					<div
 						class="flex flex-1 flex-col text-left duration-300 ease-in-out"
 						:class="
 							isCollapsed
-								? 'opacity-0 ml-0 w-0 overflow-hidden'
-								: 'opacity-100 ml-2 w-auto'
+								? 'ml-0 w-0 overflow-hidden opacity-0'
+								: 'ml-2 w-auto opacity-100'
 						"
 					>
-						<div class="text-base font-medium text-gray-900 leading-none">
+						<div class="text-base font-medium leading-none text-gray-900">
 							<span
 								v-if="
 									branding.data?.brand_name &&
@@ -37,7 +37,7 @@
 							</span>
 							<span v-else> Mail </span>
 						</div>
-						<div v-if="userResource" class="mt-1 text-sm text-gray-700 leading-none">
+						<div v-if="userResource" class="mt-1 text-sm leading-none text-gray-700">
 							{{ convertToTitleCase(userResource.data?.full_name) }}
 						</div>
 					</div>
@@ -45,8 +45,8 @@
 						class="duration-300 ease-in-out"
 						:class="
 							isCollapsed
-								? 'opacity-0 ml-0 w-0 overflow-hidden'
-								: 'opacity-100 ml-2 w-auto'
+								? 'ml-0 w-0 overflow-hidden opacity-0'
+								: 'ml-2 w-auto opacity-100'
 						"
 					>
 						<ChevronDown class="h-4 w-4 text-gray-700" />

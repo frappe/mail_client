@@ -1,11 +1,11 @@
 <template>
-	<h1 class="font-semibold mb-8">User</h1>
-	<div class="flex justify-start w-full items-center gap-x-4">
+	<h1 class="mb-8 font-semibold">User</h1>
+	<div class="flex w-full items-center justify-start gap-x-4">
 		<Avatar
 			:image="user.data?.user_image"
 			:label="user.data?.full_name"
 			size="3xl"
-			class="w-20 h-20"
+			class="h-20 w-20"
 		/>
 		<div class="flex flex-col">
 			<span class="text-xl font-semibold">{{ user.data?.full_name }}</span>
@@ -13,7 +13,7 @@
 		</div>
 	</div>
 
-	<div class="mt-12 mb-4 flex items-center">
+	<div class="mb-4 mt-12 flex items-center">
 		<h1 class="font-semibold">API Access</h1>
 		<Button
 			:label="user.data?.api_key ? 'Regenerate Secret' : 'Generate Keys'"

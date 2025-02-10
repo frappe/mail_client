@@ -1,6 +1,6 @@
 <template>
-	<div class="grid grid-cols-1 sm:grid-cols-2 px-2.5" :class="{ 'text-ink-gray-4': disabled }">
-		<label class="font-medium leading-normal my-auto">
+	<div class="grid grid-cols-1 px-2.5 sm:grid-cols-2" :class="{ 'text-ink-gray-4': disabled }">
+		<label class="my-auto font-medium leading-normal">
 			{{ label }}
 		</label>
 		<slot />

@@ -184,7 +184,7 @@ watch(
 		if (val.length === 32) getAccountRequest.submit()
 		else router.replace({ name: 'SignUp' })
 	},
-	{ immediate: true }
+	{ immediate: true },
 )
 
 const submit = () => {

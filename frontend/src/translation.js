@@ -7,8 +7,8 @@ export default function translationPlugin(app) {
 }
 
 function translate(message) {
-	let translatedMessages = window.translatedMessages || {}
-	let translatedMessage = translatedMessages[message] || message
+	const translatedMessages = window.translatedMessages || {}
+	const translatedMessage = translatedMessages[message] || message
 
 	const hasPlaceholders = /{\d+}/.test(message)
 	if (!hasPlaceholders) {

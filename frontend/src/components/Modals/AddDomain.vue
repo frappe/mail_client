@@ -17,7 +17,7 @@
 				<p class="text-p-base">
 					{{
 						__(
-							`To add a domain, you must already own it. If you don't have one, purchase one and return here.`
+							`To add a domain, you must already own it. If you don't have one, purchase one and return here.`,
 						)
 					}}
 				</p>
@@ -34,7 +34,7 @@
 					<p class="text-p-base">
 						{{
 							__(
-								`Add the following TXT record to your domain's DNS records to verify your ownership:`
+								`Add the following TXT record to your domain's DNS records to verify your ownership:`,
 							)
 						}}
 					</p>

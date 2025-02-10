@@ -21,7 +21,7 @@
 									{{ placeholder || '' }}
 								</span>
 							</div>
-							<ChevronDown class="h-4 w-4 stroke-1.5" />
+							<ChevronDown class="stroke-1.5 h-4 w-4" />
 						</button>
 					</div>
 				</slot>
@@ -47,7 +47,7 @@
 								class="absolute right-1.5 inline-flex h-7 w-7 items-center justify-center"
 								@click="selectedValue = null"
 							>
-								<X class="h-4 w-4 stroke-1.5" />
+								<X class="stroke-1.5 h-4 w-4" />
 							</button>
 						</div>
 						<ComboboxOptions class="my-1 max-h-[12rem] overflow-y-auto px-1.5" static>
@@ -185,7 +185,7 @@ function close() {
 const groups = computed(() => {
 	if (!props.options || props.options.length == 0) return []
 
-	let groups = props.options[0]?.group ? props.options : [{ group: '', items: props.options }]
+	const groups = props.options[0]?.group ? props.options : [{ group: '', items: props.options }]
 
 	return groups
 		.map((group, i) => {
@@ -204,17 +204,17 @@ function filterOptions(options) {
 		return options
 	}
 	return options.filter((option) => {
-		let searchTexts = [option.label, option.value]
+		const searchTexts = [option.label, option.value]
 		return searchTexts.some((text) =>
-			(text || '').toString().toLowerCase().includes(query.value.toLowerCase())
+			(text || '').toString().toLowerCase().includes(query.value.toLowerCase()),
 		)
 	})
 }
 
 function displayValue(option) {
 	if (typeof option === 'string') {
-		let allOptions = groups.value.flatMap((group) => group.items)
-		let selectedOption = allOptions.find((o) => o.value === option)
+		const allOptions = groups.value.flatMap((group) => group.items)
+		const selectedOption = allOptions.find((o) => o.value === option)
 		return selectedOption?.label || option
 	}
 	return option?.label
@@ -237,22 +237,22 @@ const textColor = computed(() => {
 })
 
 const inputClasses = computed(() => {
-	let sizeClasses = {
+	const sizeClasses = {
 		sm: 'text-base rounded h-7',
 		md: 'text-base rounded h-8',
 		lg: 'text-lg rounded-md h-10',
 		xl: 'text-xl rounded-md h-10',
 	}[props.size]
 
-	let paddingClasses = {
+	const paddingClasses = {
 		sm: 'py-1.5 px-2',
 		md: 'py-1.5 px-2.5',
 		lg: 'py-1.5 px-3',
 		xl: 'py-1.5 px-3',
 	}[props.size]
 
-	let variant = props.disabled ? 'disabled' : props.variant
-	let variantClasses = {
+	const variant = props.disabled ? 'disabled' : props.variant
+	const variantClasses = {
 		subtle: 'border border-gray-100 bg-gray-100 placeholder-gray-500 hover:border-gray-200 hover:bg-gray-200 focus:bg-white focus:border-gray-500 focus:shadow-sm focus:ring-0 focus-visible:ring-2 focus-visible:ring-gray-400',
 		outline:
 			'border border-gray-300 bg-white placeholder-gray-500 hover:border-gray-400 hover:shadow-sm focus:bg-white focus:border-gray-500 focus:shadow-sm focus:ring-0 focus-visible:ring-2 focus-visible:ring-gray-400',

@@ -1,12 +1,12 @@
 <template>
-	<div class="h-full flex flex-col">
+	<div class="flex h-full flex-col">
 		<header
 			class="sticky top-0 z-10 flex items-center justify-between border-b bg-white px-3 py-2.5 sm:px-5"
 		>
 			<Breadcrumbs :items="[{ label: __('Members') }]" />
 			<Button :label="__('Add Member')" iconLeft="user-plus" @click="showAddMember = true" />
 		</header>
-		<div class="m-6 flex-1 flex flex-col">
+		<div class="m-6 flex flex-1 flex-col">
 			<ListView
 				v-if="members?.data"
 				class="flex-1"
@@ -23,17 +23,17 @@
 								<Avatar :image="row.user_image" :label="row.full_name" size="lg" />
 								<div class="text-sm">
 									<p class="font-medium text-gray-900">{{ row.full_name }}</p>
-									<p class="text-gray-600 mt-0.5">{{ row.name }}</p>
+									<p class="mt-0.5 text-gray-600">{{ row.name }}</p>
 								</div>
 							</div>
-							<div class="flex items-center mx-auto">
+							<div class="mx-auto flex items-center">
 								<Badge
 									v-if="row.is_admin"
 									:theme="row.name === tenantOwner.data ? 'orange' : 'blue'"
 									:label="__(row.name === tenantOwner.data ? 'Owner' : 'Admin')"
 								/>
 							</div>
-							<div class="flex items-center ml-auto">
+							<div class="ml-auto flex items-center">
 								<Dropdown
 									v-if="row.name !== tenantOwner.data"
 									:options="dropdownOptions(row.name, row.is_admin)"

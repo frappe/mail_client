@@ -23,7 +23,7 @@
 						class="w-full"
 					/>
 					<FeatherIcon
-						class="text-gray-400 h-4 w-4 mt-auto mb-1.5 mx-2.5"
+						class="mx-2.5 mb-1.5 mt-auto h-4 w-4 text-gray-400"
 						name="at-sign"
 					/>
 					<Link
@@ -109,7 +109,7 @@ const emit = defineEmits(['reloadMembers'])
 
 watch(
 	() => accountRequest.send_invite,
-	() => addMember.reset()
+	() => addMember.reset(),
 )
 
 watch(show, () => {
@@ -132,8 +132,8 @@ const addMember = createResource({
 			__(
 				accountRequest.send_invite
 					? 'Member invited successfully'
-					: 'Member added successfully'
-			)
+					: 'Member added successfully',
+			),
 		)
 		if (!accountRequest.send_invite) emit('reloadMembers')
 		show.value = false

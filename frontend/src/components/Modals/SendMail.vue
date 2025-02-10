@@ -83,7 +83,7 @@
 						<div class="flex items-center gap-2 pb-2.5">
 							<span class="text-xs text-gray-500">{{ __('Subject') }}:</span>
 							<TextInput
-								class="flex-1 text-sm border-none bg-white hover:bg-white focus:border-none focus:!shadow-none focus-visible:!ring-0"
+								class="flex-1 border-none bg-white text-sm hover:bg-white focus:border-none focus:!shadow-none focus-visible:!ring-0"
 								v-model="mail.subject"
 							/>
 						</div>
@@ -113,11 +113,11 @@
 							<!-- Attachments -->
 							<div
 								v-if="mailID"
-								class="flex flex-col gap-2 mb-2 text-gray-700 text-sm"
+								class="mb-2 flex flex-col gap-2 text-sm text-gray-700"
 							>
-								<div v-if="uploading" class="bg-gray-100 rounded p-2.5">
-									<div class="flex items-center mb-1.5">
-										<span class="font-medium mr-1">
+								<div v-if="uploading" class="rounded bg-gray-100 p-2.5">
+									<div class="mb-1.5 flex items-center">
+										<span class="mr-1 font-medium">
 											{{ file.name }}
 										</span>
 										<span class="font-extralight">
@@ -129,16 +129,16 @@
 								<div
 									v-for="(file, index) in attachments.data"
 									:key="index"
-									class="bg-gray-100 rounded p-2.5 flex items-center cursor-pointer"
+									class="flex cursor-pointer items-center rounded bg-gray-100 p-2.5"
 								>
-									<span class="font-medium mr-1">
+									<span class="mr-1 font-medium">
 										{{ file.file_name || file.name }}
 									</span>
 									<span class="font-extralight">
 										({{ formatBytes(file.file_size) }})
 									</span>
 									<FeatherIcon
-										class="h-3.5 w-3.5 ml-auto"
+										class="ml-auto h-3.5 w-3.5"
 										name="x"
 										@click="removeAttachment.submit({ name: file.name })"
 									/>
@@ -149,7 +149,7 @@
 								class="flex justify-between gap-2 overflow-hidden border-t py-2.5"
 							>
 								<!-- Text Editor Buttons -->
-								<div class="flex gap-1 items-center overflow-x-auto">
+								<div class="flex items-center gap-1 overflow-x-auto">
 									<TextEditorFixedMenu :buttons="textEditorMenuButtons" />
 									<EmojiPicker
 										v-model="emoji"
@@ -299,7 +299,7 @@ watch(
 	(val) => {
 		// TODO: use documentresource directly
 		if (val) getDraftMail(val)
-	}
+	},
 )
 
 watch(mail, syncMail)

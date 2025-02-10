@@ -1,6 +1,6 @@
 <template>
 	<div
-		class="flex h-full flex-col justify-between transition-all duration-300 ease-in-out bg-gray-50 border-r"
+		class="flex h-full flex-col justify-between border-r bg-gray-50 transition-all duration-300 ease-in-out"
 		:class="isSidebarCollapsed ? 'w-14' : 'w-56'"
 	>
 		<div
@@ -52,13 +52,13 @@ const route = useRoute()
 
 const sidebarLinks = computed(() =>
 	getSidebarLinks().filter((link) =>
-		route.meta.isDashboard ? link.forDashboard : !link.forDashboard
-	)
+		route.meta.isDashboard ? link.forDashboard : !link.forDashboard,
+	),
 )
 
 const getSidebarFromStorage = () => {
 	return useStorage('sidebar_is_collapsed', false)
 }
 
-let isSidebarCollapsed = ref(getSidebarFromStorage())
+const isSidebarCollapsed = ref(getSidebarFromStorage())
 </script>

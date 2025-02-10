@@ -22,7 +22,7 @@
 				</div>
 				<Button class="rounded-full" icon="plus" @click.stop="() => (reaction = false)" />
 			</div>
-			<div v-else class="my-3 max-w-max transform bg-white px-4 sm:px-0 rounded-lg">
+			<div v-else class="my-3 max-w-max transform rounded-lg bg-white px-4 sm:px-0">
 				<div
 					class="relative max-h-96 overflow-y-auto rounded-lg pb-3 shadow-2xl ring-1 ring-black ring-opacity-5"
 				>
@@ -72,10 +72,10 @@ const reaction = defineModel('reaction')
 const reactionEmojis = ref(['👍', '❤️', '😂', '😮', '😢', '🙏'])
 
 const emojiGroups = computed(() => {
-	let groups = {}
-	for (let _emoji of gemoji) {
+	const groups = {}
+	for (const _emoji of gemoji) {
 		if (search.value) {
-			let keywords = [_emoji.description, ..._emoji.names, ..._emoji.tags]
+			const keywords = [_emoji.description, ..._emoji.names, ..._emoji.tags]
 				.join(' ')
 				.toLowerCase()
 			if (!keywords.includes(search.value.toLowerCase())) {
@@ -97,8 +97,8 @@ const emojiGroups = computed(() => {
 })
 
 function setRandom() {
-	let total = gemoji.length
-	let index = randomInt(0, total - 1)
+	const total = gemoji.length
+	const index = randomInt(0, total - 1)
 	emoji.value = gemoji[index].emoji
 }
 

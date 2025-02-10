@@ -1,7 +1,7 @@
 <template>
-	<h1 class="font-semibold mb-8">Account</h1>
-	<div class="flex items-center mb-3">
-		<span class="font-medium leading-normal text-gray-800 text-base">Email Address</span>
+	<h1 class="mb-8 font-semibold">Account</h1>
+	<div class="mb-3 flex items-center">
+		<span class="text-base font-medium leading-normal text-gray-800">Email Address</span>
 		<Link
 			v-model="email"
 			doctype="Mail Account"
@@ -31,7 +31,7 @@
 		/>
 		<div class="mx-2.5 space-y-2.5 pt-0.5">
 			<div class="flex items-center justify-between">
-				<span class="font-medium leading-normal text-gray-800 text-base">
+				<span class="text-base font-medium leading-normal text-gray-800">
 					Display Name
 				</span>
 				<TextInput
@@ -44,7 +44,7 @@
 				/>
 			</div>
 			<div class="flex items-center justify-between">
-				<span class="font-medium leading-normal text-gray-800 text-base">Reply To</span>
+				<span class="text-base font-medium leading-normal text-gray-800">Reply To</span>
 				<TextInput
 					v-model="account.doc.reply_to"
 					@input="account.setValueDebounced.submit({ reply_to: account.doc.reply_to })"

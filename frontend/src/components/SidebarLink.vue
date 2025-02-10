@@ -6,7 +6,7 @@
 		@click="handleClick"
 	>
 		<div
-			class="flex items-center w-full duration-300 ease-in-out group"
+			class="group flex w-full items-center duration-300 ease-in-out"
 			:class="isCollapsed ? 'p-1' : 'px-2 py-1'"
 		>
 			<Tooltip :text="link.label" placement="right">
@@ -14,7 +14,7 @@
 					<span class="grid h-5 w-6 flex-shrink-0 place-items-center">
 						<component
 							:is="icons[link.icon]"
-							class="h-4 w-4 stroke-1.5 text-gray-800"
+							class="stroke-1.5 h-4 w-4 text-gray-800"
 						/>
 					</span>
 				</slot>
@@ -32,16 +32,16 @@
 			</span>
 			<div
 				v-if="showControls"
-				class="flex items-center space-x-2 !ml-auto block text-xs text-gray-600 group-hover:visible invisible"
+				class="invisible !ml-auto block flex items-center space-x-2 text-xs text-gray-600 group-hover:visible"
 			>
 				<component
 					:is="icons['Edit']"
-					class="h-3 w-3 stroke-1.5 text-gray-800"
+					class="stroke-1.5 h-3 w-3 text-gray-800"
 					@click.stop="openModal(link)"
 				/>
 				<component
 					:is="icons['X']"
-					class="h-3 w-3 stroke-1.5 text-gray-800"
+					class="stroke-1.5 h-3 w-3 text-gray-800"
 					@click.stop="deletePage(link)"
 				/>
 			</div>

@@ -37,7 +37,7 @@
 						@click="attrs.onCreate(value, close)"
 					>
 						<template #prefix>
-							<Plus class="h-4 w-4 stroke-1.5" />
+							<Plus class="stroke-1.5 h-4 w-4" />
 						</template>
 					</Button>
 				</div>
@@ -94,13 +94,13 @@ watchDebounced(
 		text.value = val
 		reload(val)
 	},
-	{ debounce: 300, immediate: true }
+	{ debounce: 300, immediate: true },
 )
 
 watchDebounced(
 	() => props.doctype,
 	() => reload(''),
-	{ debounce: 300, immediate: true }
+	{ debounce: 300, immediate: true },
 )
 
 const options = createResource({
