@@ -92,13 +92,13 @@ class MailAlias(Document):
 
 		if self.alias_for_type == "Mail Account":
 			user = frappe.db.get_value("Mail Account", self.alias_for_name, "user")
-			frappe.cache.delete_value(f"user|{user}")
+			frappe.cache.hdel(f"user|{user}", "aliases")
 
 		if self.has_value_changed("alias_for_type") or self.has_value_changed("alias_for_name"):
 			if previous_doc := self.get_doc_before_save():
 				if previous_doc.alias_for_type == "Mail Account":
 					user = frappe.db.get_value("Mail Account", previous_doc.alias_for_name, "user")
-					frappe.cache.delete_value(f"user|{user}")
+					frappe.cache.hdel(f"user|{user}", "aliases")
 
 	def remove_alias_set_as_default_outgoing_email(self) -> None:
 		"""Removes the alias set as the default outgoing email."""
