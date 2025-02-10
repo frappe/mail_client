@@ -1,5 +1,5 @@
 import globals from 'globals'
-import js from '@eslint/js'
+import pluginJs from '@eslint/js'
 import pluginVue from 'eslint-plugin-vue'
 import prettier from 'eslint-config-prettier'
 import pluginPrettier from 'eslint-plugin-prettier'
@@ -111,11 +111,8 @@ export default [
       sourceType: 'module',
     },
   },
-  js.configs.recommended,
+  pluginJs.configs.recommended,
   ...pluginVue.configs['flat/recommended'],
-  {
-    files: ['**/*.vue'],
-  },
   prettier,
   {
     plugins: { prettier: pluginPrettier },
