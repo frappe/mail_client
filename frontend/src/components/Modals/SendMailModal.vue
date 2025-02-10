@@ -21,7 +21,7 @@
 					<div class="flex flex-col gap-3">
 						<div class="flex items-center gap-2 border-t pt-2.5">
 							<span class="text-xs text-gray-500">{{ __('From') }}:</span>
-							<Link
+							<LinkControl
 								v-model="mail.from"
 								doctype="Mail Account"
 								:filters="{ user: user.data.name }"
@@ -198,7 +198,7 @@ import {
 import { reactive, watch, inject, ref, nextTick, computed } from 'vue'
 import { useDebounceFn } from '@vueuse/core'
 import { Paperclip, Laugh } from 'lucide-vue-next'
-import Link from '@/components/Controls/Link.vue'
+import LinkControl from '@/components/Controls/LinkControl.vue'
 import EmojiPicker from '@/components/EmojiPicker.vue'
 import MultiselectInputControl from '@/components/Controls/MultiselectInputControl.vue'
 import { EditorContent } from '@tiptap/vue-3'
