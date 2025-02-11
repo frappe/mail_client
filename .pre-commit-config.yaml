@@ -35,7 +35,7 @@ repos:
     hooks:
       - id: eslint
         types: [file]
-        types_or: [javascript, vue, scss]
+        types_or: [javascript, ts, vue, scss]
         args: ['--quiet', '--fix']
         # Ignore any files that might contain jinja / bundles
         exclude: |
