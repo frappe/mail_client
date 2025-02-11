@@ -192,24 +192,13 @@ def get_dns_records(domain_name: str) -> list[dict]:
 		},
 	)
 
-	# DKIM Records
-	# RSA
+	# DKIM Record
 	records.append(
 		{
 			"category": "Sending Record",
 			"type": "CNAME",
 			"host": f"{get_dkim_selector('rsa')}._domainkey.{domain_name}",
 			"value": f"{get_dkim_host(domain_name, 'rsa')}._domainkey.{mail_settings.root_domain_name}.",
-			"ttl": mail_settings.default_ttl,
-		}
-	)
-	# Ed25519
-	records.append(
-		{
-			"category": "Sending Record",
-			"type": "CNAME",
-			"host": f"{get_dkim_selector('ed25519')}._domainkey.{domain_name}",
-			"value": f"{get_dkim_host(domain_name, 'ed25519')}._domainkey.{mail_settings.root_domain_name}.",
 			"ttl": mail_settings.default_ttl,
 		}
 	)

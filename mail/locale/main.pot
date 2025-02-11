@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Mail VERSION\n"
 "Report-Msgid-Bugs-To: developers@frappe.io\n"
-"POT-Creation-Date: 2025-02-04 13:20+0553\n"
-"PO-Revision-Date: 2025-02-04 13:20+0553\n"
+"POT-Creation-Date: 2025-02-11 18:40+0553\n"
+"PO-Revision-Date: 2025-02-11 18:40+0553\n"
 "Last-Translator: developers@frappe.io\n"
 "Language-Team: developers@frappe.io\n"
 "MIME-Version: 1.0\n"
@@ -16,15 +16,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.13.1\n"
 
-#: mail/mail/doctype/spam_check_log/spam_check_log.py:171
+#: mail/mail/doctype/spam_check_log/spam_check_log.py:161
 msgid "1. Ensure the correct IP address is allowed to connect to SpamAssassin."
 msgstr ""
 
-#: mail/mail/doctype/spam_check_log/spam_check_log.py:172
+#: mail/mail/doctype/spam_check_log/spam_check_log.py:162
 msgid "2. Verify that the SpamAssassin service is running and accepting connections on port {0}."
 msgstr ""
 
-#: mail/mail/doctype/spam_check_log/spam_check_log.py:175
+#: mail/mail/doctype/spam_check_log/spam_check_log.py:165
 msgid "3. Review SpamAssassin logs for any unauthorized connection attempts or permission errors."
 msgstr ""
 
@@ -78,22 +78,22 @@ msgstr ""
 msgid "Account"
 msgstr ""
 
-#: mail/mail/doctype/mail_account_request/mail_account_request.py:91
+#: mail/mail/doctype/mail_account_request/mail_account_request.py:106
 msgid "Account domain {0} does not match with domain {1}."
 msgstr ""
 
-#: mail/mail/doctype/mail_account_request/mail_account_request.py:143
+#: mail/mail/doctype/mail_account_request/mail_account_request.py:178
 msgid "Account is already verified and created."
 msgstr ""
 
 #: mail/mail/doctype/dns_record/dns_record.js:16
 #: mail/mail/doctype/incoming_mail/incoming_mail.js:16
 #: mail/mail/doctype/incoming_mail/incoming_mail.js:23
-#: mail/mail/doctype/mail_account_request/mail_account_request.js:21
-#: mail/mail/doctype/mail_account_request/mail_account_request.js:31
-#: mail/mail/doctype/mail_domain/mail_domain.js:49
+#: mail/mail/doctype/mail_account_request/mail_account_request.js:29
+#: mail/mail/doctype/mail_account_request/mail_account_request.js:39
 #: mail/mail/doctype/mail_domain/mail_domain.js:62
 #: mail/mail/doctype/mail_domain/mail_domain.js:75
+#: mail/mail/doctype/mail_domain/mail_domain.js:88
 #: mail/mail/doctype/outgoing_mail/outgoing_mail.js:29
 #: mail/mail/doctype/outgoing_mail/outgoing_mail.js:37
 #: mail/mail/doctype/outgoing_mail/outgoing_mail.js:45
@@ -104,6 +104,17 @@ msgstr ""
 msgid "Actions"
 msgstr ""
 
+#: frontend/src/components/Modals/AddDomainModal.vue:5
+#: frontend/src/pages/dashboard/DomainsView.vue:7
+#: frontend/src/pages/dashboard/DomainsView.vue:91
+msgid "Add Domain"
+msgstr ""
+
+#: frontend/src/components/Modals/AddMemberModal.vue:5
+#: frontend/src/pages/dashboard/MembersView.vue:8
+msgid "Add Member"
+msgstr ""
+
 #. Label of the agent (Data) field in DocType 'Mail Agent'
 #. Label of the agent (Link) field in DocType 'Mail Agent Request Log'
 #. Label of the agent (Link) field in DocType 'Outgoing Mail'
@@ -111,7 +122,7 @@ msgstr ""
 #: mail/mail/doctype/mail_agent_request_log/mail_agent_request_log.json
 #: mail/mail/doctype/outgoing_mail/outgoing_mail.json
 #: mail/mail/report/outbound_delay/outbound_delay.js:49
-#: mail/mail/report/outbound_delay/outbound_delay.py:100
+#: mail/mail/report/outbound_delay/outbound_delay.py:112
 #: mail/mail/report/outgoing_mail_summary/outgoing_mail_summary.js:49
 #: mail/mail/report/outgoing_mail_summary/outgoing_mail_summary.py:97
 msgid "Agent"
@@ -175,11 +186,11 @@ msgstr ""
 msgid "Are you sure you want to force transfer this email to the agent? It may cause duplicate emails to be sent."
 msgstr ""
 
-#: mail/mail/doctype/mail_domain/mail_domain.js:56
+#: mail/mail/doctype/mail_domain/mail_domain.js:69
 msgid "Are you sure you want to refresh the DNS records? If there are any changes, you'll need to update the DNS settings with your DNS provider accordingly."
 msgstr ""
 
-#: mail/mail/doctype/mail_domain/mail_domain.js:69
+#: mail/mail/doctype/mail_domain/mail_domain.js:82
 msgid "Are you sure you want to rotate the DKIM keys? This will generate new keys for email signing and may take up to 10 minutes to propagate across DNS servers. Emails sent during this period may fail DKIM verification."
 msgstr ""
 
@@ -227,16 +238,20 @@ msgstr ""
 msgid "Authenticated Session Timeout (Seconds)"
 msgstr ""
 
-#: mail/mail/report/outbound_delay/outbound_delay.py:246
-msgid "Average Message Size"
+#: mail/mail/report/outbound_delay/outbound_delay.py:269
+msgid "Avg. Message Size"
 msgstr ""
 
-#: mail/mail/report/outbound_delay/outbound_delay.py:252
-msgid "Average Submission Delay"
+#: mail/mail/report/outbound_delay/outbound_delay.py:281
+msgid "Avg. Processing Delay"
 msgstr ""
 
-#: mail/mail/report/outbound_delay/outbound_delay.py:258
-msgid "Average Transfer Delay"
+#: mail/mail/report/outbound_delay/outbound_delay.py:275
+msgid "Avg. Submission Delay"
+msgstr ""
+
+#: mail/mail/report/outbound_delay/outbound_delay.py:287
+msgid "Avg. Transfer Duration"
 msgstr ""
 
 #. Label of the base_url (Data) field in DocType 'Mail Agent'
@@ -245,9 +260,9 @@ msgid "Base URL"
 msgstr ""
 
 #. Option for the 'Type' (Select) field in DocType 'Mail Recipient'
-#: frontend/src/components/MailDetails.vue:37
-#: frontend/src/components/Modals/SendMail.vue:50
-#: frontend/src/components/Modals/SendMail.vue:72
+#: frontend/src/components/MailDetails.vue:46
+#: frontend/src/components/Modals/SendMailModal.vue:50
+#: frontend/src/components/Modals/SendMailModal.vue:72
 #: mail/mail/doctype/mail_recipient/mail_recipient.json
 msgid "Bcc"
 msgstr ""
@@ -276,7 +291,7 @@ msgstr ""
 #. Option for the 'Status' (Select) field in DocType 'Outgoing Mail'
 #: mail/mail/doctype/mail_recipient/mail_recipient.json
 #: mail/mail/doctype/outgoing_mail/outgoing_mail.json
-#: mail/mail/report/outgoing_mail_summary/outgoing_mail_summary.py:338
+#: mail/mail/report/outgoing_mail_summary/outgoing_mail_summary.py:342
 msgid "Blocked"
 msgstr ""
 
@@ -322,7 +337,7 @@ msgstr ""
 #. Option for the 'Status' (Select) field in DocType 'Outgoing Mail'
 #: mail/mail/doctype/mail_recipient/mail_recipient.json
 #: mail/mail/doctype/outgoing_mail/outgoing_mail.json
-#: mail/mail/report/outgoing_mail_summary/outgoing_mail_summary.py:332
+#: mail/mail/report/outgoing_mail_summary/outgoing_mail_summary.py:336
 msgid "Bounced"
 msgstr ""
 
@@ -348,12 +363,12 @@ msgstr ""
 msgid "Cannot delete attachment as it is linked with {0} {1}."
 msgstr ""
 
-#: mail/api/inbound.py:69
+#: mail/api/inbound.py:72
 msgid "Cannot fetch more than {0} emails at a time."
 msgstr ""
 
 #: mail/mail/doctype/mail_tenant_member/mail_tenant_member.py:25
-msgid "Cannot remove the owner of the Mail Tenant."
+msgid "Cannot remove the owner of the tenant."
 msgstr ""
 
 #: mail/overrides.py:39
@@ -368,9 +383,9 @@ msgid "Category"
 msgstr ""
 
 #. Option for the 'Type' (Select) field in DocType 'Mail Recipient'
-#: frontend/src/components/MailDetails.vue:31
-#: frontend/src/components/Modals/SendMail.vue:42
-#: frontend/src/components/Modals/SendMail.vue:60
+#: frontend/src/components/MailDetails.vue:36
+#: frontend/src/components/Modals/SendMailModal.vue:42
+#: frontend/src/components/Modals/SendMailModal.vue:60
 #: mail/mail/doctype/mail_recipient/mail_recipient.json
 msgid "Cc"
 msgstr ""
@@ -419,7 +434,12 @@ msgstr ""
 msgid "Compose an email"
 msgstr ""
 
-#: mail/mail/doctype/spam_check_log/spam_check_log.py:163
+#: frontend/src/pages/dashboard/DomainView.vue:145
+#: frontend/src/pages/dashboard/MembersView.vue:155
+msgid "Confirm"
+msgstr ""
+
+#: mail/mail/doctype/spam_check_log/spam_check_log.py:153
 msgid "Could not connect to SpamAssassin (spamd). Please ensure it's running on {0}:{1}"
 msgstr ""
 
@@ -449,7 +469,7 @@ msgstr ""
 msgid "Created At"
 msgstr ""
 
-#: mail/mail/doctype/mail_account_request/mail_account_request.js:107
+#: mail/mail/doctype/mail_account_request/mail_account_request.js:130
 msgid "Creating Account..."
 msgstr ""
 
@@ -499,17 +519,18 @@ msgstr ""
 msgid "DKIM Key"
 msgstr ""
 
-#: mail/mail/doctype/dkim_key/dkim_key.py:124
+#: mail/mail/doctype/dkim_key/dkim_key.py:100
 msgid "DKIM Key not found for the domain {0}"
 msgstr ""
 
-#: mail/mail/doctype/mail_domain/mail_domain.py:166
+#: mail/mail/doctype/mail_domain/mail_domain.py:165
 msgid "DKIM Keys rotated successfully."
 msgstr ""
 
 #. Label of the dkim_rsa_key_size (Select) field in DocType 'Mail Domain'
 #. Label of the default_dkim_rsa_key_size (Select) field in DocType 'Mail
 #. Settings'
+#: frontend/src/pages/dashboard/DomainView.vue:45
 #: mail/mail/doctype/mail_domain/mail_domain.json
 #: mail/mail/doctype/mail_settings/mail_settings.json
 msgid "DKIM RSA Key Size"
@@ -550,6 +571,7 @@ msgid "DMARC Report Detail"
 msgstr ""
 
 #. Name of a report
+#: mail/mail/doctype/mail_domain/mail_domain.js:35
 #: mail/mail/report/dmarc_report_viewer/dmarc_report_viewer.json
 msgid "DMARC Report Viewer"
 msgstr ""
@@ -583,11 +605,11 @@ msgstr ""
 msgid "DNS Records"
 msgstr ""
 
-#: mail/mail/doctype/mail_domain/mail_domain.py:130
+#: mail/mail/doctype/mail_domain/mail_domain.py:127
 msgid "DNS Records refreshed successfully."
 msgstr ""
 
-#: mail/mail/doctype/mail_domain/mail_domain.py:150
+#: mail/mail/doctype/mail_domain/mail_domain.py:147
 msgid "DNS Records verified successfully."
 msgstr ""
 
@@ -605,7 +627,7 @@ msgstr ""
 msgid "Default Email"
 msgstr ""
 
-#: mail/mail/doctype/mail_account/mail_account.py:153
+#: mail/mail/doctype/mail_account/mail_account.py:148
 msgid "Default Email must be one of the email addresses assigned to the user."
 msgstr ""
 
@@ -619,7 +641,7 @@ msgstr ""
 #. Option for the 'Status' (Select) field in DocType 'Outgoing Mail'
 #: mail/mail/doctype/mail_recipient/mail_recipient.json
 #: mail/mail/doctype/outgoing_mail/outgoing_mail.json
-#: mail/mail/report/outgoing_mail_summary/outgoing_mail_summary.py:326
+#: mail/mail/report/outgoing_mail_summary/outgoing_mail_summary.py:330
 msgid "Deferred"
 msgstr ""
 
@@ -636,7 +658,7 @@ msgstr ""
 msgid "DigitalOcean"
 msgstr ""
 
-#: frontend/src/components/Modals/SendMail.vue:174
+#: frontend/src/components/Modals/SendMailModal.vue:174
 msgid "Discard"
 msgstr ""
 
@@ -664,6 +686,7 @@ msgstr ""
 
 #. Label of the domain_name (Link) field in DocType 'Mail Account Request'
 #. Group in Mail Tenant's connections
+#: frontend/src/components/Modals/AddMemberModal.vue:31
 #: mail/mail/doctype/mail_account_request/mail_account_request.json
 #: mail/mail/doctype/mail_tenant/mail_tenant.json
 #: mail/mail/report/dmarc_report_viewer/dmarc_report_viewer.py:48
@@ -679,6 +702,7 @@ msgstr ""
 #. Label of the domain_name (Data) field in DocType 'Mail Domain Request'
 #. Label of the domain_name (Link) field in DocType 'Mail Group'
 #. Label of the domain_name (Link) field in DocType 'Outgoing Mail'
+#: frontend/src/components/Modals/AddDomainModal.vue:27
 #: mail/mail/doctype/dkim_key/dkim_key.json
 #: mail/mail/doctype/dmarc_report/dmarc_report.json
 #: mail/mail/doctype/incoming_mail/incoming_mail.json
@@ -693,7 +717,7 @@ msgstr ""
 #: mail/mail/report/mail_tracker/mail_tracker.js:51
 #: mail/mail/report/mail_tracker/mail_tracker.py:49
 #: mail/mail/report/outbound_delay/outbound_delay.js:41
-#: mail/mail/report/outbound_delay/outbound_delay.py:93
+#: mail/mail/report/outbound_delay/outbound_delay.py:105
 #: mail/mail/report/outgoing_mail_summary/outgoing_mail_summary.js:41
 #: mail/mail/report/outgoing_mail_summary/outgoing_mail_summary.py:90
 msgid "Domain Name"
@@ -711,6 +735,10 @@ msgstr ""
 msgid "Domain is already verified and created."
 msgstr ""
 
+#: mail/mail/doctype/mail_account_request/mail_account_request.py:93
+msgid "Domain is mandatory."
+msgstr ""
+
 #: mail/mail/doctype/mail_domain_request/mail_domain_request.py:52
 msgid "Domain {0} already registered."
 msgstr ""
@@ -719,12 +747,20 @@ msgstr ""
 msgid "Domain {0} and User {1} do not belong to the same tenant."
 msgstr ""
 
-#: mail/mail/doctype/mail_account/mail_account.py:104
+#: mail/mail/doctype/mail_account/mail_account.py:102
 msgid "Domain {0} and User {1} must belong to the same tenant."
+msgstr ""
+
+#: mail/mail/doctype/mail_alias/mail_alias.py:78
+msgid "Domain {0} and {1} {2} must belong to the same tenant."
 msgstr ""
 
 #: mail/utils/validation.py:156
 msgid "Domain {0} does not exist or may be disabled in the Mail Domain."
+msgstr ""
+
+#: mail/api/admin.py:29
+msgid "Domain {0} has already been registered."
 msgstr ""
 
 #: mail/utils/validation.py:102
@@ -741,6 +777,10 @@ msgstr ""
 
 #: mail/utils/validation.py:163
 msgid "Domain {0} not found in Mail Domain."
+msgstr ""
+
+#: frontend/src/pages/dashboard/DomainsView.vue:6
+msgid "Domains"
 msgstr ""
 
 #. Option for the 'Status' (Select) field in DocType 'Incoming Mail'
@@ -766,21 +806,11 @@ msgstr ""
 msgid "Duration (Seconds)"
 msgstr ""
 
-#. Label of the ed25519_private_key (Text) field in DocType 'DKIM Key'
-#: mail/mail/doctype/dkim_key/dkim_key.json
-msgid "Ed25519 Private Key"
-msgstr ""
-
-#. Label of the ed25519_public_key (Text) field in DocType 'DKIM Key'
-#: mail/mail/doctype/dkim_key/dkim_key.json
-msgid "Ed25519 Public Key"
-msgstr ""
-
-#: frontend/src/components/MailDetails.vue:49
+#: frontend/src/components/MailDetails.vue:62
 msgid "Edit"
 msgstr ""
 
-#: mail/utils/__init__.py:31
+#: mail/utils/__init__.py:61
 msgid "Either file path or file data is required."
 msgstr ""
 
@@ -792,6 +822,7 @@ msgstr ""
 #. Label of the email (Data) field in DocType 'Mail Contact'
 #. Label of the email (Data) field in DocType 'Mail Group'
 #. Label of the email (Data) field in DocType 'Mail Recipient'
+#: frontend/src/components/Modals/AddMemberModal.vue:57
 #: mail/mail/doctype/bounce_log/bounce_log.json
 #: mail/mail/doctype/dmarc_report/dmarc_report.json
 #: mail/mail/doctype/mail_account/mail_account.json
@@ -803,18 +834,16 @@ msgstr ""
 msgid "Email"
 msgstr ""
 
-#. Label of the email_verification_section (Section Break) field in DocType
-#. 'Mail Account Request'
-#: mail/mail/doctype/mail_account_request/mail_account_request.json
-msgid "Email Verification"
-msgstr ""
-
 #: mail/utils/validation.py:75
 msgid "Email domain {0} does not match with domain {1}."
 msgstr ""
 
-#: mail/mail/doctype/mail_account/mail_account.py:128
+#: mail/mail/doctype/mail_account/mail_account.py:123
 msgid "Email is mandatory."
+msgstr ""
+
+#: mail/mail/doctype/mail_account_request/mail_account_request.py:143
+msgid "Email is required to send invite"
 msgstr ""
 
 #. Label of the enable_spamd_for_outbound (Check) field in DocType 'Mail
@@ -840,6 +869,8 @@ msgstr ""
 #. Label of the enabled (Check) field in DocType 'Mail Alias'
 #. Label of the enabled (Check) field in DocType 'Mail Domain'
 #. Label of the enabled (Check) field in DocType 'Mail Group'
+#. Label of the enabled (Check) field in DocType 'Rate Limit'
+#: frontend/src/pages/dashboard/DomainView.vue:21
 #: mail/mail/doctype/dkim_key/dkim_key.json
 #: mail/mail/doctype/mail_account/mail_account.json
 #: mail/mail/doctype/mail_agent/mail_agent.json
@@ -847,6 +878,7 @@ msgstr ""
 #: mail/mail/doctype/mail_alias/mail_alias.json
 #: mail/mail/doctype/mail_domain/mail_domain.json
 #: mail/mail/doctype/mail_group/mail_group.json
+#: mail/mail/doctype/rate_limit/rate_limit.json
 msgid "Enabled"
 msgstr ""
 
@@ -952,8 +984,12 @@ msgstr ""
 msgid "Failed to create DMARC Report"
 msgstr ""
 
-#: mail/utils/__init__.py:59
+#: mail/utils/__init__.py:89
 msgid "Failed to load content from the compressed file."
+msgstr ""
+
+#: frontend/src/components/Modals/AddDomainModal.vue:92
+msgid "Failed to verify DNS record."
 msgstr ""
 
 #. Label of the fetched_after (Float) field in DocType 'Incoming Mail'
@@ -972,7 +1008,8 @@ msgstr ""
 msgid "Fetched At - Created At"
 msgstr ""
 
-#: mail/mail/doctype/mail_account_request/mail_account_request.js:77
+#: frontend/src/components/Modals/AddMemberModal.vue:64
+#: mail/mail/doctype/mail_account_request/mail_account_request.js:100
 msgid "First Name"
 msgstr ""
 
@@ -1005,21 +1042,21 @@ msgstr ""
 msgid "Force Transferring..."
 msgstr ""
 
-#: mail/mail/doctype/mail_account_request/mail_account_request.js:27
+#: mail/mail/doctype/mail_account_request/mail_account_request.js:35
 msgid "Force Verify and Create Account"
 msgstr ""
 
-#: frontend/src/components/MailDetails.vue:74
+#: frontend/src/components/MailDetails.vue:87
 msgid "Forward"
 msgstr ""
 
 #. Label of the from_ (Data) field in DocType 'Outgoing Mail'
-#: frontend/src/components/Modals/SendMail.vue:23
+#: frontend/src/components/Modals/SendMailModal.vue:23
 #: mail/mail/doctype/outgoing_mail/outgoing_mail.json
 #: mail/mail/report/mail_tracker/mail_tracker.js:67
 #: mail/mail/report/mail_tracker/mail_tracker.py:63
 #: mail/mail/report/outbound_delay/outbound_delay.js:78
-#: mail/mail/report/outbound_delay/outbound_delay.py:120
+#: mail/mail/report/outbound_delay/outbound_delay.py:132
 #: mail/mail/report/outgoing_mail_summary/outgoing_mail_summary.js:78
 #: mail/mail/report/outgoing_mail_summary/outgoing_mail_summary.py:117
 msgid "From"
@@ -1110,11 +1147,13 @@ msgid "IMAP"
 msgstr ""
 
 #. Label of the ip_address (Data) field in DocType 'IP Blacklist'
+#. Label of the ip_address (Data) field in DocType 'Mail Account Request'
 #. Label of the ip_address (Data) field in DocType 'Outgoing Mail'
 #: mail/mail/doctype/ip_blacklist/ip_blacklist.json
+#: mail/mail/doctype/mail_account_request/mail_account_request.json
 #: mail/mail/doctype/outgoing_mail/outgoing_mail.json
 #: mail/mail/report/outbound_delay/outbound_delay.js:65
-#: mail/mail/report/outbound_delay/outbound_delay.py:107
+#: mail/mail/report/outbound_delay/outbound_delay.py:119
 #: mail/mail/report/outgoing_mail_summary/outgoing_mail_summary.js:65
 #: mail/mail/report/outgoing_mail_summary/outgoing_mail_summary.py:104
 msgid "IP Address"
@@ -1123,6 +1162,11 @@ msgstr ""
 #. Label of the ip_address_expanded (Data) field in DocType 'IP Blacklist'
 #: mail/mail/doctype/ip_blacklist/ip_blacklist.json
 msgid "IP Address Expanded"
+msgstr ""
+
+#. Label of the ip_based (Check) field in DocType 'Rate Limit'
+#: mail/mail/doctype/rate_limit/rate_limit.json
+msgid "IP Based"
 msgstr ""
 
 #. Name of a DocType
@@ -1140,7 +1184,7 @@ msgstr ""
 msgid "IP Version"
 msgstr ""
 
-#: mail/api/blacklist.py:12
+#: mail/api/blacklist.py:14
 msgid "IP address is required."
 msgstr ""
 
@@ -1171,6 +1215,11 @@ msgstr ""
 #. Label of the imap_idle_timeout (Int) field in DocType 'Mail Settings'
 #: mail/mail/doctype/mail_settings/mail_settings.json
 msgid "Idle Session Timeout (Seconds)"
+msgstr ""
+
+#. Label of the ignore_in_developer_mode (Check) field in DocType 'Rate Limit'
+#: mail/mail/doctype/rate_limit/rate_limit.json
+msgid "Ignore in Developer Mode"
 msgstr ""
 
 #. Option for the 'Status' (Select) field in DocType 'Outgoing Mail'
@@ -1268,11 +1317,11 @@ msgstr ""
 msgid "Incoming Mail"
 msgstr ""
 
-#: mail/api/account.py:42
+#: mail/api/account.py:40
 msgid "Invalid OTP. Please try again."
 msgstr ""
 
-#: mail/mail/report/outgoing_mail_summary/outgoing_mail_summary.py:247
+#: mail/mail/report/outgoing_mail_summary/outgoing_mail_summary.py:251
 msgid "Invalid date format"
 msgstr ""
 
@@ -1288,21 +1337,18 @@ msgstr ""
 msgid "Invalid format for recipient {0}."
 msgstr ""
 
-#: mail/mail/doctype/mail_account/mail_account.py:188
-#: mail/mail/doctype/mail_account_request/mail_account_request.py:48
-msgid "Invalid role. Please select a valid role."
-msgstr ""
-
 #. Label of the invited_by (Link) field in DocType 'Mail Account Request'
 #: mail/mail/doctype/mail_account_request/mail_account_request.json
 msgid "Invited By"
 msgstr ""
 
-#: mail/mail/doctype/mail_account_request/mail_account_request.py:66
+#: mail/mail/doctype/mail_account_request/mail_account_request.py:75
 msgid "Invited By is required"
 msgstr ""
 
+#. Label of the is_admin (Check) field in DocType 'Mail Account Request'
 #. Label of the is_admin (Check) field in DocType 'Mail Tenant Member'
+#: mail/mail/doctype/mail_account_request/mail_account_request.json
 #: mail/mail/doctype/mail_tenant_member/mail_tenant_member.json
 msgid "Is Admin"
 msgstr ""
@@ -1336,8 +1382,15 @@ msgid "It seems that the DNS provider or token is not configured in the {0}. Ple
 msgstr ""
 
 #. Label of the key (Data) field in DocType 'Mail Header'
+#. Label of the key_ (Data) field in DocType 'Rate Limit'
 #: mail/mail/doctype/mail_header/mail_header.json
+#: mail/mail/doctype/rate_limit/rate_limit.json
 msgid "Key"
+msgstr ""
+
+#. Label of the rsa_key_size (Select) field in DocType 'DKIM Key'
+#: mail/mail/doctype/dkim_key/dkim_key.json
+msgid "Key Size"
 msgstr ""
 
 #. Label of the last_bounce_at (Datetime) field in DocType 'Bounce Log'
@@ -1350,7 +1403,8 @@ msgstr ""
 msgid "Last Checked At"
 msgstr ""
 
-#: mail/mail/doctype/mail_account_request/mail_account_request.js:83
+#: frontend/src/components/Modals/AddMemberModal.vue:70
+#: mail/mail/doctype/mail_account_request/mail_account_request.js:106
 msgid "Last Name"
 msgstr ""
 
@@ -1376,6 +1430,11 @@ msgstr ""
 msgid "Last Synced Mail"
 msgstr ""
 
+#. Label of the limit (Int) field in DocType 'Rate Limit'
+#: mail/mail/doctype/rate_limit/rate_limit.json
+msgid "Limit"
+msgstr ""
+
 #. Label of the limits_inbound_tab (Tab Break) field in DocType 'Mail Settings'
 #: mail/mail/doctype/mail_settings/mail_settings.json
 msgid "Limits (Inbound)"
@@ -1385,6 +1444,10 @@ msgstr ""
 #. Settings'
 #: mail/mail/doctype/mail_settings/mail_settings.json
 msgid "Limits (Outbound)"
+msgstr ""
+
+#: frontend/src/pages/LoginView.vue:21
+msgid "Log In "
 msgstr ""
 
 #. Label of the logo (Attach Image) field in DocType 'Mail Tenant'
@@ -1437,7 +1500,7 @@ msgstr ""
 msgid "Mail Account Request"
 msgstr ""
 
-#: mail/mail/doctype/mail_account/mail_account.py:227
+#: mail/mail/doctype/mail_account/mail_account.py:232
 msgid "Mail Account {0} already exists."
 msgstr ""
 
@@ -1454,15 +1517,17 @@ msgid "Mail Account {0} is not associated with user {1}"
 msgstr ""
 
 #. Name of a role
-#. Option for the 'Role' (Select) field in DocType 'Mail Account Request'
+#: frontend/src/components/Modals/AddMemberModal.vue:44
 #: mail/mail/doctype/mail_account/mail_account.json
 #: mail/mail/doctype/mail_account_request/mail_account_request.json
+#: mail/mail/doctype/mail_alias/mail_alias.json
 #: mail/mail/doctype/mail_domain/mail_domain.json
 #: mail/mail/doctype/mail_domain_request/mail_domain_request.json
 #: mail/mail/doctype/mail_group/mail_group.json
 #: mail/mail/doctype/mail_group_member/mail_group_member.json
 #: mail/mail/doctype/mail_tenant/mail_tenant.json
 #: mail/mail/doctype/mail_tenant_member/mail_tenant_member.json
+#: mail/mail/doctype/outgoing_mail/outgoing_mail.json
 msgid "Mail Admin"
 msgstr ""
 
@@ -1570,7 +1635,7 @@ msgstr ""
 msgid "Mail Group Member"
 msgstr ""
 
-#: mail/mail/doctype/mail_group_member/mail_group_member.py:42
+#: mail/mail/doctype/mail_group_member/mail_group_member.py:49
 msgid "Mail Group cannot be a member of itself"
 msgstr ""
 
@@ -1600,6 +1665,7 @@ msgid "Mail Sync History already exists for this source, user and account"
 msgstr ""
 
 #. Name of a DocType
+#: frontend/src/pages/dashboard/DomainView.vue:42
 #: mail/mail/doctype/mail_tenant/mail_tenant.json
 msgid "Mail Tenant"
 msgstr ""
@@ -1617,17 +1683,23 @@ msgid "Mail Tracker"
 msgstr ""
 
 #. Name of a role
-#. Option for the 'Role' (Select) field in DocType 'Mail Account Request'
+#: frontend/src/components/Modals/AddMemberModal.vue:43
 #: mail/mail/doctype/incoming_mail/incoming_mail.json
 #: mail/mail/doctype/mail_account/mail_account.json
-#: mail/mail/doctype/mail_account_request/mail_account_request.json
+#: mail/mail/doctype/mail_alias/mail_alias.json
 #: mail/mail/doctype/mail_contact/mail_contact.json
+#: mail/mail/doctype/mail_domain/mail_domain.json
+#: mail/mail/doctype/mail_group_member/mail_group_member.json
 #: mail/mail/doctype/outgoing_mail/outgoing_mail.json
 msgid "Mail User"
 msgstr ""
 
 #: mail/mail/doctype/outgoing_mail/outgoing_mail.py:887
 msgid "Mail accepted by System Manager {0}."
+msgstr ""
+
+#: frontend/src/pages/dashboard/MembersView.vue:131
+msgid "Make Admin"
 msgstr ""
 
 #. Description of the 'Maximum Number of Connections' (Int) field in DocType
@@ -1767,8 +1839,20 @@ msgstr ""
 msgid "Member (Type)"
 msgstr ""
 
-#: mail/mail/doctype/mail_group_member/mail_group_member.py:44
+#: frontend/src/components/Modals/AddMemberModal.vue:41
+msgid "Member Role"
+msgstr ""
+
+#: mail/mail/doctype/mail_group_member/mail_group_member.py:51
 msgid "Member cannot be the same as the Mail Group"
+msgstr ""
+
+#: frontend/src/pages/dashboard/MembersView.vue:121
+msgid "Member removed successfully"
+msgstr ""
+
+#: frontend/src/pages/dashboard/MembersView.vue:6
+msgid "Members"
 msgstr ""
 
 #. Label of the _message (Link) field in DocType 'Incoming Mail'
@@ -1792,7 +1876,7 @@ msgstr ""
 #: mail/mail/report/mail_tracker/mail_tracker.js:72
 #: mail/mail/report/mail_tracker/mail_tracker.py:69
 #: mail/mail/report/outbound_delay/outbound_delay.js:89
-#: mail/mail/report/outbound_delay/outbound_delay.py:132
+#: mail/mail/report/outbound_delay/outbound_delay.py:144
 #: mail/mail/report/outgoing_mail_summary/outgoing_mail_summary.js:94
 #: mail/mail/report/outgoing_mail_summary/outgoing_mail_summary.py:135
 msgid "Message ID"
@@ -1819,6 +1903,16 @@ msgstr ""
 msgid "Method"
 msgstr ""
 
+#. Label of the method_path (Data) field in DocType 'Rate Limit'
+#: mail/mail/doctype/rate_limit/rate_limit.json
+msgid "Method Path"
+msgstr ""
+
+#. Label of the methods (Small Text) field in DocType 'Rate Limit'
+#: mail/mail/doctype/rate_limit/rate_limit.json
+msgid "Methods"
+msgstr ""
+
 #. Label of the more_info_tab (Tab Break) field in DocType 'Incoming Mail'
 #. Label of the more_info_tab (Tab Break) field in DocType 'Outgoing Mail'
 #: mail/mail/doctype/incoming_mail/incoming_mail.json
@@ -1833,8 +1927,12 @@ msgstr ""
 msgid "Name"
 msgstr ""
 
-#: frontend/src/pages/Setup.vue:21
+#: frontend/src/pages/SetupView.vue:21
 msgid "Need to switch accounts? Log out."
+msgstr ""
+
+#: frontend/src/pages/LoginView.vue:25
+msgid "New member? Create an account."
 msgstr ""
 
 #. Label of the is_newsletter (Check) field in DocType 'Outgoing Mail'
@@ -1847,17 +1945,22 @@ msgstr ""
 #. Label of the newsletter_retention (Int) field in DocType 'Mail Domain'
 #. Label of the default_newsletter_retention (Int) field in DocType 'Mail
 #. Settings'
+#: frontend/src/pages/dashboard/DomainView.vue:55
 #: mail/mail/doctype/mail_domain/mail_domain.json
 #: mail/mail/doctype/mail_settings/mail_settings.json
 msgid "Newsletter Retention (Days)"
 msgstr ""
 
-#: mail/mail/doctype/mail_domain/mail_domain.py:93
+#: mail/mail/doctype/mail_domain/mail_domain.py:90
 msgid "Newsletter Retention must be greater than 0."
 msgstr ""
 
-#: mail/mail/doctype/mail_domain/mail_domain.py:100
+#: mail/mail/doctype/mail_domain/mail_domain.py:97
 msgid "Newsletter Retention must be less than or equal to {0}."
+msgstr ""
+
+#: frontend/src/pages/dashboard/DomainsView.vue:88
+msgid "No Domains Configured"
 msgstr ""
 
 #: mail/mail/doctype/outgoing_mail/outgoing_mail.py:191
@@ -1876,7 +1979,7 @@ msgstr ""
 msgid "No answer for {0}."
 msgstr ""
 
-#: frontend/src/components/MailDetails.vue:96
+#: frontend/src/components/MailDetails.vue:109
 msgid "No emails to show"
 msgstr ""
 
@@ -1918,7 +2021,7 @@ msgstr ""
 msgid "Organization"
 msgstr ""
 
-#: frontend/src/pages/Setup.vue:11
+#: frontend/src/pages/SetupView.vue:12
 msgid "Organization Name"
 msgstr ""
 
@@ -1958,7 +2061,7 @@ msgstr ""
 
 #. Name of a report
 #: mail/mail/doctype/mail_account/mail_account.js:55
-#: mail/mail/doctype/mail_domain/mail_domain.js:34
+#: mail/mail/doctype/mail_domain/mail_domain.js:47
 #: mail/mail/report/outgoing_mail_summary/outgoing_mail_summary.json
 msgid "Outgoing Mail Summary"
 msgstr ""
@@ -1997,10 +2100,16 @@ msgstr ""
 
 #. Label of the password (Password) field in DocType 'Mail Account'
 #. Label of the password (Password) field in DocType 'Mail Agent'
+#: frontend/src/components/Modals/AddMemberModal.vue:76
+#: frontend/src/pages/LoginView.vue:13
 #: mail/mail/doctype/mail_account/mail_account.json
-#: mail/mail/doctype/mail_account_request/mail_account_request.js:89
+#: mail/mail/doctype/mail_account_request/mail_account_request.js:112
 #: mail/mail/doctype/mail_agent/mail_agent.json
 msgid "Password"
+msgstr ""
+
+#: frontend/src/pages/dashboard/DomainsView.vue:89
+msgid "Please add a domain to proceed with sending and receiving emails."
 msgstr ""
 
 #: mail/mail/doctype/outgoing_mail/outgoing_mail.py:275
@@ -2011,11 +2120,11 @@ msgstr ""
 msgid "Please set the DNS Provider Token."
 msgstr ""
 
-#: mail/mail/doctype/mail_settings/mail_settings.py:103
+#: mail/mail/doctype/mail_settings/mail_settings.py:101
 msgid "Please set the {0} in the Mail Settings."
 msgstr ""
 
-#: mail/mail/doctype/mail_account_request/mail_account_request.py:156
+#: mail/mail/doctype/mail_account_request/mail_account_request.py:191
 msgid "Please verify the email address first."
 msgstr ""
 
@@ -2058,10 +2167,9 @@ msgstr ""
 msgid "Priority"
 msgstr ""
 
-#. Label of the private_keys_section (Section Break) field in DocType 'DKIM
-#. Key'
+#. Label of the rsa_private_key (Text) field in DocType 'DKIM Key'
 #: mail/mail/doctype/dkim_key/dkim_key.json
-msgid "Private Keys"
+msgid "Private Key"
 msgstr ""
 
 #: mail/mail/doctype/incoming_mail/incoming_mail.py:212
@@ -2094,9 +2202,13 @@ msgstr ""
 msgid "Processed At - Submitted At"
 msgstr ""
 
-#. Label of the public_keys_section (Section Break) field in DocType 'DKIM Key'
+#: mail/mail/report/outbound_delay/outbound_delay.py:81
+msgid "Processing Delay"
+msgstr ""
+
+#. Label of the rsa_public_key (Text) field in DocType 'DKIM Key'
 #: mail/mail/doctype/dkim_key/dkim_key.json
-msgid "Public Keys"
+msgid "Public Key"
 msgstr ""
 
 #. Option for the 'Status' (Select) field in DocType 'Mail Agent Request Log'
@@ -2104,19 +2216,9 @@ msgstr ""
 msgid "Queued"
 msgstr ""
 
-#. Label of the rsa_key_size (Select) field in DocType 'DKIM Key'
-#: mail/mail/doctype/dkim_key/dkim_key.json
-msgid "RSA Key Size"
-msgstr ""
-
-#. Label of the rsa_private_key (Text) field in DocType 'DKIM Key'
-#: mail/mail/doctype/dkim_key/dkim_key.json
-msgid "RSA Private Key"
-msgstr ""
-
-#. Label of the rsa_public_key (Text) field in DocType 'DKIM Key'
-#: mail/mail/doctype/dkim_key/dkim_key.json
-msgid "RSA Public Key"
+#. Name of a DocType
+#: mail/mail/doctype/rate_limit/rate_limit.json
+msgid "Rate Limit"
 msgstr ""
 
 #. Label of the _raw_message (Link) field in DocType 'Outgoing Mail'
@@ -2137,7 +2239,7 @@ msgid "Receiving Record"
 msgstr ""
 
 #: mail/mail/report/outbound_delay/outbound_delay.js:83
-#: mail/mail/report/outbound_delay/outbound_delay.py:126
+#: mail/mail/report/outbound_delay/outbound_delay.py:138
 #: mail/mail/report/outgoing_mail_summary/outgoing_mail_summary.js:83
 #: mail/mail/report/outgoing_mail_summary/outgoing_mail_summary.py:123
 msgid "Recipient"
@@ -2176,21 +2278,31 @@ msgstr ""
 msgid "Reference"
 msgstr ""
 
-#: mail/mail/doctype/mail_domain/mail_domain.js:53
+#: frontend/src/pages/dashboard/DomainView.vue:237
+#: mail/mail/doctype/mail_domain/mail_domain.js:66
 msgid "Refresh DNS Records"
 msgstr ""
 
-#: mail/mail/doctype/mail_domain/mail_domain.js:101
+#: mail/mail/doctype/mail_domain/mail_domain.js:114
 msgid "Refreshing DNS Records..."
 msgstr ""
 
-#: frontend/src/components/MailDetails.vue:60
+#: frontend/src/pages/dashboard/MembersView.vue:131
+msgid "Remove Admin"
+msgstr ""
+
+#: frontend/src/pages/dashboard/MembersView.vue:136
+#: frontend/src/pages/dashboard/MembersView.vue:147
+msgid "Remove Member"
+msgstr ""
+
+#: frontend/src/components/MailDetails.vue:73
 #: mail/mail/doctype/incoming_mail/incoming_mail.js:12
 #: mail/mail/doctype/outgoing_mail/outgoing_mail.js:64
 msgid "Reply"
 msgstr ""
 
-#: frontend/src/components/MailDetails.vue:67
+#: frontend/src/components/MailDetails.vue:80
 #: mail/mail/doctype/incoming_mail/incoming_mail.js:19
 #: mail/mail/doctype/outgoing_mail/outgoing_mail.js:71
 msgid "Reply All"
@@ -2224,7 +2336,8 @@ msgstr ""
 #: mail/mail/doctype/mail_account/mail_account.js:62
 #: mail/mail/doctype/mail_domain/mail_domain.js:19
 #: mail/mail/doctype/mail_domain/mail_domain.js:30
-#: mail/mail/doctype/mail_domain/mail_domain.js:41
+#: mail/mail/doctype/mail_domain/mail_domain.js:42
+#: mail/mail/doctype/mail_domain/mail_domain.js:54
 msgid "Reports"
 msgstr ""
 
@@ -2292,16 +2405,12 @@ msgstr ""
 msgid "Retrying..."
 msgstr ""
 
-#. Label of the role (Select) field in DocType 'Mail Account Request'
-#: mail/mail/doctype/mail_account_request/mail_account_request.json
-msgid "Role"
-msgstr ""
-
-#: mail/mail/doctype/mail_account_request/mail_account_request.py:45
-msgid "Role is mandatory."
+#: frontend/src/pages/dashboard/MembersView.vue:108
+msgid "Role updated successfully"
 msgstr ""
 
 #. Label of the is_root_domain (Check) field in DocType 'Mail Domain'
+#: frontend/src/pages/dashboard/DomainView.vue:36
 #: mail/mail/doctype/mail_domain/mail_domain.json
 msgid "Root Domain"
 msgstr ""
@@ -2311,11 +2420,12 @@ msgstr ""
 msgid "Root Domain Name"
 msgstr ""
 
-#: mail/mail/doctype/mail_domain/mail_domain.js:66
+#: frontend/src/pages/dashboard/DomainView.vue:245
+#: mail/mail/doctype/mail_domain/mail_domain.js:79
 msgid "Rotate DKIM Keys"
 msgstr ""
 
-#: mail/mail/doctype/mail_domain/mail_domain.js:116
+#: mail/mail/doctype/mail_domain/mail_domain.js:129
 msgid "Rotating DKIM Keys..."
 msgstr ""
 
@@ -2327,7 +2437,7 @@ msgstr ""
 msgid "Row #{0}: Duplicate recipient {1} of type {2}."
 msgstr ""
 
-#: mail/mail/doctype/mail_domain/mail_domain.py:143
+#: mail/mail/doctype/mail_domain/mail_domain.py:140
 msgid "Row #{0}: Failed to verify {1} : {2}."
 msgstr ""
 
@@ -2371,11 +2481,20 @@ msgstr ""
 msgid "SPF Result"
 msgstr ""
 
+#: frontend/src/pages/dashboard/DomainView.vue:13
+msgid "Save"
+msgstr ""
+
 #. Label of the spamd_scanning_mode (Select) field in DocType 'Mail Settings'
 #. Label of the scanning_mode (Data) field in DocType 'Spam Check Log'
 #: mail/mail/doctype/mail_settings/mail_settings.json
 #: mail/mail/doctype/spam_check_log/spam_check_log.json
 msgid "Scanning Mode"
+msgstr ""
+
+#. Label of the seconds (Int) field in DocType 'Rate Limit'
+#: mail/mail/doctype/rate_limit/rate_limit.json
+msgid "Seconds"
 msgstr ""
 
 #. Label of the secret (Small Text) field in DocType 'Mail Account'
@@ -2387,20 +2506,21 @@ msgstr ""
 msgid "Selector / Scope"
 msgstr ""
 
-#: frontend/src/components/Modals/SendMail.vue:175
+#: frontend/src/components/Modals/SendMailModal.vue:175
 msgid "Send"
 msgstr ""
 
-#. Label of the send_email (Check) field in DocType 'Mail Account Request'
+#. Label of the send_invite (Check) field in DocType 'Mail Account Request'
+#: frontend/src/components/Modals/AddMemberModal.vue:51
 #: mail/mail/doctype/mail_account_request/mail_account_request.json
-msgid "Send Email"
+msgid "Send Invite"
 msgstr ""
 
-#: frontend/src/components/Modals/SendMail.vue:5
+#: frontend/src/components/Modals/SendMailModal.vue:5
 msgid "Send Mail"
 msgstr ""
 
-#: mail/mail/doctype/mail_account_request/mail_account_request.js:17
+#: mail/mail/doctype/mail_account_request/mail_account_request.js:25
 msgid "Send Verification Email"
 msgstr ""
 
@@ -2411,7 +2531,7 @@ msgstr ""
 #: mail/mail/report/mail_tracker/mail_tracker.js:59
 #: mail/mail/report/mail_tracker/mail_tracker.py:56
 #: mail/mail/report/outbound_delay/outbound_delay.js:70
-#: mail/mail/report/outbound_delay/outbound_delay.py:113
+#: mail/mail/report/outbound_delay/outbound_delay.py:125
 #: mail/mail/report/outgoing_mail_summary/outgoing_mail_summary.js:70
 #: mail/mail/report/outgoing_mail_summary/outgoing_mail_summary.py:110
 msgid "Sender"
@@ -2429,7 +2549,7 @@ msgstr ""
 #. Option for the 'Folder' (Select) field in DocType 'Outgoing Mail'
 #: mail/mail/doctype/mail_recipient/mail_recipient.json
 #: mail/mail/doctype/outgoing_mail/outgoing_mail.json
-#: mail/mail/report/outgoing_mail_summary/outgoing_mail_summary.py:320
+#: mail/mail/report/outgoing_mail_summary/outgoing_mail_summary.py:324
 msgid "Sent"
 msgstr ""
 
@@ -2449,7 +2569,7 @@ msgstr ""
 msgid "Set up organization"
 msgstr ""
 
-#: frontend/src/components/Modals/Settings.vue:2
+#: frontend/src/components/Modals/SettingsModal.vue:2
 msgid "Settings"
 msgstr ""
 
@@ -2499,10 +2619,10 @@ msgstr ""
 msgid "Spam Check Log"
 msgstr ""
 
-#: mail/mail/doctype/spam_check_log/spam_check_log.py:158
-#: mail/mail/doctype/spam_check_log/spam_check_log.py:166
-#: mail/mail/doctype/spam_check_log/spam_check_log.py:182
-#: mail/mail/doctype/spam_check_log/spam_check_log.py:195
+#: mail/mail/doctype/spam_check_log/spam_check_log.py:148
+#: mail/mail/doctype/spam_check_log/spam_check_log.py:156
+#: mail/mail/doctype/spam_check_log/spam_check_log.py:172
+#: mail/mail/doctype/spam_check_log/spam_check_log.py:185
 msgid "Spam Detection Failed"
 msgstr ""
 
@@ -2524,7 +2644,7 @@ msgstr ""
 msgid "Spam score exceeded the permitted threshold."
 msgstr ""
 
-#: mail/mail/doctype/spam_check_log/spam_check_log.py:195
+#: mail/mail/doctype/spam_check_log/spam_check_log.py:185
 msgid "Spam score not found in output."
 msgstr ""
 
@@ -2538,7 +2658,7 @@ msgstr ""
 msgid "SpamAssassin"
 msgstr ""
 
-#: mail/mail/doctype/spam_check_log/spam_check_log.py:179
+#: mail/mail/doctype/spam_check_log/spam_check_log.py:169
 msgid "SpamAssassin did not return the expected response. This may indicate a permission issue or an unauthorized connection. Please check the following: {0}"
 msgstr ""
 
@@ -2567,13 +2687,14 @@ msgid "Status"
 msgstr ""
 
 #. Label of the is_subdomain (Check) field in DocType 'Mail Domain'
+#: frontend/src/pages/dashboard/DomainView.vue:30
 #: mail/mail/doctype/mail_domain/mail_domain.json
 msgid "Subdomain"
 msgstr ""
 
 #. Label of the subject (Data) field in DocType 'Incoming Mail'
 #. Label of the subject (Data) field in DocType 'Outgoing Mail'
-#: frontend/src/components/Modals/SendMail.vue:84
+#: frontend/src/components/Modals/SendMailModal.vue:84
 #: mail/mail/doctype/incoming_mail/incoming_mail.json
 #: mail/mail/doctype/outgoing_mail/outgoing_mail.json
 #: mail/mail/report/outgoing_mail_summary/outgoing_mail_summary.js:89
@@ -2637,6 +2758,7 @@ msgstr ""
 #: mail/mail/doctype/mail_tenant_member/mail_tenant_member.json
 #: mail/mail/doctype/mime_message/mime_message.json
 #: mail/mail/doctype/outgoing_mail/outgoing_mail.json
+#: mail/mail/doctype/rate_limit/rate_limit.json
 #: mail/mail/doctype/spam_check_log/spam_check_log.json
 msgid "System Manager"
 msgstr ""
@@ -2662,12 +2784,14 @@ msgstr ""
 
 #. Label of the tenant (Link) field in DocType 'Mail Account'
 #. Label of the tenant (Link) field in DocType 'Mail Account Request'
+#. Label of the tenant (Link) field in DocType 'Mail Alias'
 #. Label of the tenant (Link) field in DocType 'Mail Domain'
 #. Label of the tenant (Link) field in DocType 'Mail Domain Request'
 #. Label of the tenant (Link) field in DocType 'Mail Group'
 #. Label of the tenant (Link) field in DocType 'Mail Tenant Member'
 #: mail/mail/doctype/mail_account/mail_account.json
 #: mail/mail/doctype/mail_account_request/mail_account_request.json
+#: mail/mail/doctype/mail_alias/mail_alias.json
 #: mail/mail/doctype/mail_domain/mail_domain.json
 #: mail/mail/doctype/mail_domain_request/mail_domain_request.json
 #: mail/mail/doctype/mail_group/mail_group.json
@@ -2680,20 +2804,24 @@ msgstr ""
 msgid "Tenant Name"
 msgstr ""
 
-#: mail/mail/doctype/mail_account_request/mail_account_request.py:68
+#: mail/mail/doctype/mail_account_request/mail_account_request.py:77
 #: mail/mail/doctype/mail_domain_request/mail_domain_request.py:39
 msgid "Tenant is required"
 msgstr ""
 
-#: mail/mail/doctype/mail_group_member/mail_group_member.py:32
+#: mail/mail/doctype/mail_group_member/mail_group_member.py:39
 msgid "The Mail Group {0} and the member {1} {2} must belong to the same tenant."
 msgstr ""
 
-#: mail/mail/doctype/mail_account/mail_account.py:78
+#: mail/mail/doctype/mail_group_member/mail_group_member.py:29
+msgid "The Mail Group {0} is disabled."
+msgstr ""
+
+#: mail/mail/doctype/mail_account/mail_account.py:76
 msgid "The account is linked to Mail Alias {0}. Please disable it first."
 msgstr ""
 
-#: mail/mail/doctype/mail_account/mail_account.py:84
+#: mail/mail/doctype/mail_account/mail_account.py:82
 msgid "The account is linked to a Mail Group as a member. Please remove it first."
 msgstr ""
 
@@ -2754,11 +2882,11 @@ msgstr ""
 msgid "The maximum messages allowed per SMTP session."
 msgstr ""
 
-#: mail/api/spamd.py:16 mail/api/spamd.py:33 mail/api/spamd.py:46
+#: mail/api/spamd.py:17 mail/api/spamd.py:35
 msgid "The message is required."
 msgstr ""
 
-#: mail/api/outbound.py:62
+#: mail/api/outbound.py:65
 msgid "The raw message is required."
 msgstr ""
 
@@ -2773,8 +2901,8 @@ msgstr ""
 msgid "The token used to authenticate with your DNS provider."
 msgstr ""
 
-#: mail/mail/doctype/mail_alias/mail_alias.py:52
-#: mail/mail/doctype/mail_group_member/mail_group_member.py:48
+#: mail/mail/doctype/mail_alias/mail_alias.py:85
+#: mail/mail/doctype/mail_group_member/mail_group_member.py:55
 msgid "The {0} {1} is disabled."
 msgstr ""
 
@@ -2782,8 +2910,12 @@ msgstr ""
 msgid "This email has been blocked because our system flagged it as spam. The spam score exceeded the permitted threshold. To resolve this, review your email content, remove any potentially suspicious links or attachments, and try sending it again. If the issue persists, please contact our support team for assistance."
 msgstr ""
 
-#: mail/mail/doctype/mail_account_request/mail_account_request.py:140
+#: mail/mail/doctype/mail_account_request/mail_account_request.py:175
 msgid "This method can only be called for invited users."
+msgstr ""
+
+#: mail/mail/doctype/mail_account_request/mail_account_request.py:118
+msgid "This request has expired. Please create a new one."
 msgstr ""
 
 #. Label of the spamd_outbound_threshold (Float) field in DocType 'Mail
@@ -2816,13 +2948,13 @@ msgstr ""
 msgid "Time an unauthenticated session can remain inactive before termination."
 msgstr ""
 
-#: mail/mail/doctype/spam_check_log/spam_check_log.py:157
+#: mail/mail/doctype/spam_check_log/spam_check_log.py:147
 msgid "Timed out waiting for response from SpamAssassin."
 msgstr ""
 
 #. Option for the 'Type' (Select) field in DocType 'Mail Recipient'
-#: frontend/src/components/MailDetails.vue:25
-#: frontend/src/components/Modals/SendMail.vue:31
+#: frontend/src/components/MailDetails.vue:26
+#: frontend/src/components/Modals/SendMailModal.vue:31
 #: mail/mail/doctype/mail_recipient/mail_recipient.json
 msgid "To"
 msgstr ""
@@ -2846,15 +2978,15 @@ msgstr ""
 msgid "Token mismatch in DSN Report."
 msgstr ""
 
-#: mail/mail/report/outbound_delay/outbound_delay.py:87
+#: mail/mail/report/outbound_delay/outbound_delay.py:99
 msgid "Total Delay"
 msgstr ""
 
-#: mail/mail/report/mail_tracker/mail_tracker.py:182
+#: mail/mail/report/mail_tracker/mail_tracker.py:186
 msgid "Total Opened"
 msgstr ""
 
-#: mail/mail/report/mail_tracker/mail_tracker.py:176
+#: mail/mail/report/mail_tracker/mail_tracker.py:180
 msgid "Total Sent"
 msgstr ""
 
@@ -2870,7 +3002,7 @@ msgstr ""
 msgid "Tracking ID"
 msgstr ""
 
-#: mail/api/track.py:14
+#: mail/api/track.py:17
 msgid "Tracking ID is required - {0}."
 msgstr ""
 
@@ -2899,8 +3031,12 @@ msgstr ""
 msgid "Transfer Completed At - Transfer Started At"
 msgstr ""
 
-#: mail/mail/report/outbound_delay/outbound_delay.py:81
-msgid "Transfer Delay"
+#: mail/mail/report/outbound_delay/outbound_delay.py:93
+msgid "Transfer Duration"
+msgstr ""
+
+#: mail/mail/report/outbound_delay/outbound_delay.py:87
+msgid "Transfer Started After"
 msgstr ""
 
 #. Label of the transfer_started_after (Float) field in DocType 'Outgoing Mail'
@@ -2916,7 +3052,7 @@ msgstr ""
 #. Description of the 'Transfer Started After (Seconds)' (Float) field in
 #. DocType 'Outgoing Mail'
 #: mail/mail/doctype/outgoing_mail/outgoing_mail.json
-msgid "Transfer Started At - Submitted At"
+msgid "Transfer Started At - Processed At"
 msgstr ""
 
 #: mail/mail/doctype/outgoing_mail/outgoing_mail.js:33
@@ -2961,7 +3097,7 @@ msgstr ""
 msgid "Unauthenticated Session Timeout (Seconds)"
 msgstr ""
 
-#: mail/mail/doctype/dkim_key/dkim_key.py:194
+#: mail/mail/doctype/dkim_key/dkim_key.py:170
 msgid "Unsupported algorithm. Use 'rsa-sha256' or 'ed25519-sha256'."
 msgstr ""
 
@@ -2976,6 +3112,7 @@ msgstr ""
 #. Label of the user (Link) field in DocType 'Mail Sync History'
 #. Label of the user (Link) field in DocType 'Mail Tenant'
 #. Label of the user (Link) field in DocType 'Mail Tenant Member'
+#: frontend/src/pages/dashboard/MembersView.vue:17
 #: mail/mail/doctype/mail_account/mail_account.json
 #: mail/mail/doctype/mail_contact/mail_contact.json
 #: mail/mail/doctype/mail_domain_request/mail_domain_request.json
@@ -2983,6 +3120,12 @@ msgstr ""
 #: mail/mail/doctype/mail_tenant/mail_tenant.json
 #: mail/mail/doctype/mail_tenant_member/mail_tenant_member.json
 msgid "User"
+msgstr ""
+
+#. Label of the user_details_section (Section Break) field in DocType 'Mail
+#. Account Request'
+#: mail/mail/doctype/mail_account_request/mail_account_request.json
+msgid "User Details"
 msgstr ""
 
 #: mail/mail/doctype/mail_domain_request/mail_domain_request.py:37
@@ -2993,15 +3136,15 @@ msgstr ""
 msgid "User must be an admin of the tenant"
 msgstr ""
 
-#: mail/mail/doctype/mail_account/mail_account.py:185
+#: mail/mail/doctype/mail_account/mail_account.py:180
 msgid "User with email {0} already exists."
 msgstr ""
 
-#: mail/mail/doctype/mail_tenant/mail_tenant.py:22
+#: mail/mail/doctype/mail_tenant/mail_tenant.py:21
 msgid "User {0} does not have Mail Admin role."
 msgstr ""
 
-#: mail/mail/doctype/mail_account/mail_account.py:96
+#: mail/mail/doctype/mail_account/mail_account.py:94
 msgid "User {0} does not have Mail User role."
 msgstr ""
 
@@ -3014,26 +3157,33 @@ msgid "User {0} has an active Mail Account {1}. Please disable it first."
 msgstr ""
 
 #: mail/mail/doctype/mail_tenant_member/mail_tenant_member.py:38
-msgid "User {0} is already a member of another Mail Tenant."
+msgid "User {0} is already a member of another tenant."
 msgstr ""
 
 #: mail/mail/doctype/mail_tenant_member/mail_tenant_member.py:35
 msgid "User {0} is already a member."
 msgstr ""
 
-#: mail/api/account.py:13
+#: mail/mail/doctype/mail_account_request/mail_account_request.py:61
+#: mail/mail/doctype/mail_account_request/mail_account_request.py:112
 msgid "User {0} is already registered."
+msgstr ""
+
+#: mail/api/admin.py:58
+msgid "User {0} is not a Mail Admin of Tenant {1}."
 msgstr ""
 
 #: mail/api/auth.py:22
 msgid "User {0} is not allowed to access mail accounts."
 msgstr ""
 
-#: mail/mail/doctype/mail_account_request/mail_account_request.py:75
+#: mail/mail/doctype/mail_account_request/mail_account_request.py:84
 msgid "User {0} is not authorized to invite users to the tenant."
 msgstr ""
 
 #. Label of the username (Data) field in DocType 'Mail Agent'
+#: frontend/src/components/Modals/AddMemberModal.vue:21
+#: frontend/src/pages/LoginView.vue:5
 #: mail/mail/doctype/mail_agent/mail_agent.json
 msgid "Username"
 msgstr ""
@@ -3047,17 +3197,25 @@ msgstr ""
 msgid "Value"
 msgstr ""
 
+#. Label of the verification_details_section (Section Break) field in DocType
+#. 'Mail Account Request'
+#: mail/mail/doctype/mail_account_request/mail_account_request.json
+msgid "Verification Details"
+msgstr ""
+
 #. Label of the verification_key (Data) field in DocType 'Mail Domain Request'
+#: frontend/src/components/Modals/AddDomainModal.vue:42
 #: mail/mail/doctype/mail_domain_request/mail_domain_request.json
 msgid "Verification Key"
 msgstr ""
 
-#: mail/mail/doctype/mail_account_request/mail_account_request.py:133
+#: mail/mail/doctype/mail_account_request/mail_account_request.py:166
 msgid "Verification email sent successfully."
 msgstr ""
 
 #. Label of the is_verified (Check) field in DocType 'DNS Record'
 #. Label of the is_verified (Check) field in DocType 'Mail Domain'
+#: frontend/src/pages/dashboard/DomainView.vue:24
 #: mail/mail/doctype/dns_record/dns_record.json
 #: mail/mail/doctype/mail_domain/mail_domain.json
 msgid "Verified"
@@ -3071,7 +3229,8 @@ msgstr ""
 msgid "Verify DNS Record"
 msgstr ""
 
-#: mail/mail/doctype/mail_domain/mail_domain.js:45
+#: frontend/src/pages/dashboard/DomainView.vue:232
+#: mail/mail/doctype/mail_domain/mail_domain.js:58
 msgid "Verify DNS Records"
 msgstr ""
 
@@ -3083,48 +3242,52 @@ msgstr ""
 msgid "Verifying DNS Record..."
 msgstr ""
 
-#: mail/mail/doctype/mail_domain/mail_domain.js:86
+#: mail/mail/doctype/mail_domain/mail_domain.js:99
 msgid "Verifying DNS Records..."
+msgstr ""
+
+#: frontend/src/pages/dashboard/DomainView.vue:225
+msgid "View in Desk"
 msgstr ""
 
 #: mail/mail/doctype/outgoing_mail/outgoing_mail.py:178
 msgid "You are not allowed to send from address {0}."
 msgstr ""
 
-#: mail/mail/doctype/mail_account_request/mail_account_request.py:147
+#: mail/mail/doctype/mail_account_request/mail_account_request.py:182
 #: mail/utils/validation.py:140
 msgid "You are not authorized to perform this action."
 msgstr ""
 
-#: mail/mail/doctype/mail_domain/mail_domain.py:120
+#: mail/mail/doctype/mail_domain/mail_domain.py:117
 msgid "You do not have permission to refresh DNS Records."
 msgstr ""
 
-#: mail/mail/doctype/mail_domain/mail_domain.py:163
+#: mail/mail/doctype/mail_domain/mail_domain.py:162
 msgid "You do not have permission to rotate DKIM Keys."
 msgstr ""
 
-#: mail/mail/doctype/mail_domain/mail_domain.py:137
+#: mail/mail/doctype/mail_domain/mail_domain.py:134
 msgid "You do not have permission to verify DNS Records."
 msgstr ""
 
-#: mail/mail/doctype/mail_account_request/mail_account_request.py:118
+#: mail/mail/doctype/mail_account_request/mail_account_request.py:151
 msgid "You have been invited by {0} to join Frappe Mail"
 msgstr ""
 
-#: mail/mail/doctype/mail_account/mail_account.py:119
+#: mail/mail/doctype/mail_account/mail_account.py:114
 msgid "You have reached the maximum limit of {0} accounts for the tenant."
 msgstr ""
 
-#: mail/mail/doctype/mail_domain/mail_domain.py:75
+#: mail/mail/doctype/mail_domain/mail_domain.py:72
 msgid "You have reached the maximum limit of {0} domains for the tenant."
 msgstr ""
 
-#: mail/mail/doctype/mail_group/mail_group.py:92
+#: mail/mail/doctype/mail_group/mail_group.py:89
 msgid "You have reached the maximum limit of {0} groups for the tenant."
 msgstr ""
 
-#: mail/mail/doctype/mail_account_request/mail_account_request.py:123
+#: mail/mail/doctype/mail_account_request/mail_account_request.py:156
 msgid "{0} - OTP for Frappe Mail Account Verification"
 msgstr ""
 
@@ -3132,9 +3295,9 @@ msgstr ""
 msgid "{0} does not exist."
 msgstr ""
 
-#: frontend/src/components/Modals/SendMail.vue:37
-#: frontend/src/components/Modals/SendMail.vue:67
-#: frontend/src/components/Modals/SendMail.vue:79
+#: frontend/src/components/Modals/SendMailModal.vue:37
+#: frontend/src/components/Modals/SendMailModal.vue:67
+#: frontend/src/components/Modals/SendMailModal.vue:79
 msgid "{0} is an invalid email address"
 msgstr ""
 

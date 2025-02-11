@@ -7,7 +7,6 @@ import frappe
 from frappe import _
 from frappe.model.document import Document
 from frappe.utils import cint, random_string
-from frappe.utils.caching import request_cache
 
 from mail.agent import create_dkim_key_on_agents, delete_dkim_key_from_agents
 from mail.mail.doctype.dns_record.dns_record import create_or_update_dns_record
@@ -29,7 +28,7 @@ class DKIMKey(Document):
 			if self.has_value_changed("enabled"):
 				self.create_or_update_dns_record()
 				self.disable_existing_dkim_keys()
-				create_dkim_key_on_agents(self.domain_name, self.rsa_private_key, self.ed25519_private_key)
+				create_dkim_key_on_agents(self.domain_name, self.rsa_private_key)
 		elif self.has_value_changed("enabled"):
 			delete_dkim_key_from_agents(self.domain_name)
 
@@ -52,27 +51,14 @@ class DKIMKey(Document):
 		"""Generates the DKIM Keys."""
 
 		self.rsa_private_key, self.rsa_public_key = generate_dkim_keys("rsa-sha256", cint(self.rsa_key_size))
-		self.ed25519_private_key, self.ed25519_public_key = generate_dkim_keys("ed25519-sha256")
 
 	def create_or_update_dns_record(self) -> None:
 		"""Creates or Updates the DNS Record."""
 
-		# RSA
 		create_or_update_dns_record(
 			host=f"{get_dkim_host(self.domain_name, 'rsa')}._domainkey",
 			type="TXT",
 			value=f"v=DKIM1; k=rsa; h=sha256; p={self.rsa_public_key}",
-			ttl=300,
-			category="Sending Record",
-			attached_to_doctype=self.doctype,
-			attached_to_docname=self.name,
-		)
-
-		# Ed25519
-		create_or_update_dns_record(
-			host=f"{get_dkim_host(self.domain_name, 'ed25519')}._domainkey",
-			type="TXT",
-			value=f"v=DKIM1; k=ed25519; h=sha256; p={self.ed25519_public_key}",
 			ttl=300,
 			category="Sending Record",
 			attached_to_doctype=self.doctype,
@@ -102,24 +88,12 @@ def create_dkim_key(domain_name: str, rsa_key_size: int | None = None) -> "DKIMK
 	return doc
 
 
-@request_cache
-def get_dkim_private_key(
-	domain_name: str, algorithm: Literal["rsa-sha256", "ed25519-sha256"], raise_exception: bool = True
-) -> str | None:
+def get_dkim_private_key(domain_name: str, raise_exception: bool = True) -> str | None:
 	"""Returns the DKIM private key for the given domain."""
 
-	private_key = None
-
-	if algorithm == "rsa-sha256":
-		private_key_field = "rsa_private_key"
-	elif algorithm == "ed25519-sha256":
-		private_key_field = "ed25519_private_key"
-
-	if private_key_field:
-		private_key = frappe.db.get_value(
-			"DKIM Key", {"enabled": 1, "domain_name": domain_name}, private_key_field
-		)
-
+	private_key = frappe.db.get_value(
+		"DKIM Key", {"enabled": 1, "domain_name": domain_name}, "rsa_private_key"
+	)
 	if not private_key and raise_exception:
 		frappe.throw(_("DKIM Key not found for the domain {0}").format(frappe.bold(domain_name)))
 

@@ -171,7 +171,7 @@ def unblock_ip_on_agents(ip_address: str, agents: list[str] | None = None) -> No
 
 
 def create_dkim_key_on_agents(
-	domain_name: str, rsa_private_key: str, ed25519_private_key: str, agents: list[str] | None = None
+	domain_name: str, rsa_private_key: str, agents: list[str] | None = None
 ) -> None:
 	"""Creates a DKIM Key on all primary agents."""
 
@@ -194,20 +194,7 @@ def create_dkim_key_on_agents(
 					["domain", domain_name],
 				],
 				"assert_empty": True,
-			},
-			{
-				"type": "insert",
-				"prefix": f"signature.ed25519-{domain_name}",
-				"values": [
-					["report", "true"],
-					["selector", get_dkim_selector("ed25519")],
-					["canonicalization", "relaxed/relaxed"],
-					["private-key", ed25519_private_key],
-					["algorithm", "ed25519-sha256"],
-					["domain", domain_name],
-				],
-				"assert_empty": True,
-			},
+			}
 		]
 	)
 	for agent in primary_agents:
@@ -233,11 +220,7 @@ def delete_dkim_key_from_agents(domain_name: str, agents: list[str] | None = Non
 			{
 				"type": "clear",
 				"prefix": f"signature.rsa-{domain_name}",
-			},
-			{
-				"type": "clear",
-				"prefix": f"signature.ed25519-{domain_name}",
-			},
+			}
 		]
 	)
 	for agent in primary_agents:
