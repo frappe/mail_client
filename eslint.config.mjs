@@ -1,10 +1,11 @@
 import globals from 'globals'
 import pluginJs from '@eslint/js'
+import tseslint from 'typescript-eslint'
 import pluginVue from 'eslint-plugin-vue'
 import prettier from 'eslint-config-prettier'
 import pluginPrettier from 'eslint-plugin-prettier'
 
-export default [
+export default tseslint.config(
   { files: ['**/*.{js,mjs,cjs,ts,vue}'] },
   {
     languageOptions: {
@@ -112,6 +113,7 @@ export default [
     },
   },
   pluginJs.configs.recommended,
+  tseslint.configs.recommended,
   ...pluginVue.configs['flat/recommended'],
   prettier,
   {
@@ -123,4 +125,4 @@ export default [
       'no-console': 'warn',
     },
   },
-]
+)
