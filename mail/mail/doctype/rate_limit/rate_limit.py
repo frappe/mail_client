@@ -16,3 +16,9 @@ class RateLimit(Document):
 		"""Clear cache for the rate limit"""
 
 		frappe.cache.hdel("rate_limits", self.method_path)
+
+
+def on_doctype_update() -> None:
+	frappe.db.add_unique(
+		"Rate Limit", ["method_path", "key_", "ip_based", "seconds"], constraint_name="unique_rate_limit"
+	)

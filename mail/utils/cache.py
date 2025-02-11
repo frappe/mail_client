@@ -166,7 +166,7 @@ def get_rate_limits(method_path: str) -> list:
 			frappe.qb.from_(RATE_LIMIT)
 			.select(
 				RATE_LIMIT.ignore_in_developer_mode,
-				RATE_LIMIT.key,
+				RATE_LIMIT.key_.as_("key"),
 				RATE_LIMIT.limit,
 				RATE_LIMIT.seconds,
 				RATE_LIMIT.methods,

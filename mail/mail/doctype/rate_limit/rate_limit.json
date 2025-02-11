@@ -12,7 +12,7 @@
   "method_path",
   "methods",
   "column_break_kcmd",
-  "key",
+  "key_",
   "limit",
   "seconds",
   "ip_based"
@@ -21,11 +21,6 @@
   {
    "fieldname": "section_break_v9lm",
    "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "key",
-   "fieldtype": "Data",
-   "label": "Key"
   },
   {
    "default": "5",
@@ -89,11 +84,16 @@
    "fieldname": "ignore_in_developer_mode",
    "fieldtype": "Check",
    "label": "Ignore in Developer Mode"
+  },
+  {
+   "fieldname": "key_",
+   "fieldtype": "Data",
+   "label": "Key"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-02-10 15:52:41.222086",
+ "modified": "2025-02-11 13:51:39.268019",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Rate Limit",
