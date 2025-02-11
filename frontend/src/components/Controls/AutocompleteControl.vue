@@ -115,7 +115,7 @@
 	</Combobox>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { Combobox, ComboboxInput, ComboboxOptions, ComboboxOption } from '@headlessui/vue'
 import { Popover } from 'frappe-ui'
 import { ChevronDown, X } from 'lucide-vue-next'

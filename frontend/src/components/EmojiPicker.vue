@@ -59,7 +59,7 @@
 		</template>
 	</Popover>
 </template>
-<script setup>
+<script setup lang="ts">
 import { Popover } from 'frappe-ui'
 import { gemoji } from 'gemoji'
 import { ref, computed } from 'vue'

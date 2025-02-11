@@ -22,7 +22,7 @@
 		</button>
 	</div>
 </template>
-<script setup>
+<script setup lang="ts">
 import { ref, inject } from 'vue'
 import { FormControl, Button, createResource, ErrorMessage } from 'frappe-ui'
 import { sessionStore } from '@/stores/session'

@@ -92,7 +92,7 @@
 	</div>
 	<Dialog v-model="showConfirmDialog" :options="confirmDialogOptions" />
 </template>
-<script setup>
+<script setup lang="ts">
 import { ref, computed, inject } from 'vue'
 import { useRouter } from 'vue-router'
 import {

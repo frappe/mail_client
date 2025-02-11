@@ -26,7 +26,6 @@ export const sessionStore = defineStore('mail-session', () => {
 		},
 		onSuccess: () => {
 			userResource.reload()
-			userResource.promise
 			user.value = sessionUser()
 			login.reset()
 

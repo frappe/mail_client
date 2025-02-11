@@ -49,7 +49,7 @@
 	</Dialog>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, inject, watch } from 'vue'
 import { Dialog, FormControl, ErrorMessage, createResource } from 'frappe-ui'
 import CopyControl from '@/components/Controls/CopyControl.vue'

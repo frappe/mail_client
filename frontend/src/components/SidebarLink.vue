@@ -48,7 +48,7 @@
 		</div>
 	</button>
 </template>
-<script setup>
+<script setup lang="ts">
 import { Tooltip } from 'frappe-ui'
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'

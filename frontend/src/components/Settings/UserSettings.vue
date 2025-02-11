@@ -38,7 +38,7 @@
 		</template>
 	</Dialog>
 </template>
-<script setup>
+<script setup lang="ts">
 import { ref, inject } from 'vue'
 import CopyControl from '@/components/Controls/CopyControl.vue'
 import { Avatar, Button, Dialog, createResource } from 'frappe-ui'

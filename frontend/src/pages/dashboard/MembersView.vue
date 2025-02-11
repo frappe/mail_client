@@ -53,7 +53,7 @@
 	<AddMemberModal v-model="showAddMember" @reload-members="members.reload()" />
 	<Dialog v-model="showRemoveMember" :options="removeMemberOptions" />
 </template>
-<script setup>
+<script setup lang="ts">
 import { ref, computed, inject } from 'vue'
 import {
 	Avatar,

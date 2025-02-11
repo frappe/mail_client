@@ -34,7 +34,7 @@
 		</template>
 	</Dialog>
 </template>
-<script setup>
+<script setup lang="ts">
 import { markRaw, ref } from 'vue'
 import UserSettings from '@/components/Settings/UserSettings.vue'
 import MailAccountSettings from '@/components/Settings/MailAccountSettings.vue'

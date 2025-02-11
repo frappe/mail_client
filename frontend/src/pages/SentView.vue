@@ -51,7 +51,7 @@
 		</div>
 	</div>
 </template>
-<script setup>
+<script setup lang="ts">
 import { Breadcrumbs, createResource, createListResource } from 'frappe-ui'
 import { inject, onMounted } from 'vue'
 import HeaderActions from '@/components/HeaderActions.vue'

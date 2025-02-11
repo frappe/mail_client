@@ -86,7 +86,7 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { Combobox, ComboboxInput, ComboboxOptions, ComboboxOption } from '@headlessui/vue'
 import { createResource, Button, ErrorMessage } from 'frappe-ui'
 import { ref, computed, nextTick } from 'vue'
@@ -121,7 +121,7 @@ const selectedValue = computed({
 		if (val) {
 			showOptions.value = false
 		}
-		val?.value && addValue(val.value)
+		if (val?.value) addValue(val.value)
 	},
 })
 
@@ -199,7 +199,7 @@ const addValue = (value) => {
 				}
 			}
 		})
-		!error.value && (value = '')
+		if (!error.value) value = ''
 	}
 }
 

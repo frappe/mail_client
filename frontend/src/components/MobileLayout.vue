@@ -26,7 +26,7 @@
 		</div>
 	</div>
 </template>
-<script setup>
+<script setup lang="ts">
 import { getSidebarLinks } from '../utils'
 import { useRouter } from 'vue-router'
 import { computed } from 'vue'

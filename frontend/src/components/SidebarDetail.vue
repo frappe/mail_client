@@ -14,7 +14,7 @@
 		</div>
 	</div>
 </template>
-<script setup>
+<script setup lang="ts">
 import MailDate from './MailDate.vue'
 
 defineProps({
