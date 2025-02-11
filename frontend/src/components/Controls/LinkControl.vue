@@ -46,7 +46,7 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import AutocompleteControl from '@/components/Controls/AutocompleteControl.vue'
 import { watchDebounced } from '@vueuse/core'
 import { createResource, Button } from 'frappe-ui'

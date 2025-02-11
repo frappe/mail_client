@@ -51,7 +51,7 @@
 		</div>
 	</div>
 </template>
-<script setup>
+<script setup lang="ts">
 import { Breadcrumbs, createListResource, createResource } from 'frappe-ui'
 import { inject, onMounted } from 'vue'
 import { formatNumber, startResizing, singularize } from '@/utils'

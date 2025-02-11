@@ -5,7 +5,7 @@
 	<Dialogs />
 	<Toasts />
 </template>
-<script setup>
+<script setup lang="ts">
 import { useRoute } from 'vue-router'
 import { Toasts } from 'frappe-ui'
 import { Dialogs } from '@/utils/dialogs'

@@ -9,7 +9,7 @@
 	</div>
 	<SendMailModal v-model="showSendModal" @reload-mails="emit('reloadMails')" />
 </template>
-<script setup>
+<script setup lang="ts">
 import { Button } from 'frappe-ui'
 import { SquarePen } from 'lucide-vue-next'
 import SendMailModal from '@/components/Modals/SendMailModal.vue'

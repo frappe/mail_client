@@ -45,7 +45,7 @@
 	</div>
 	<AddDomainModal v-model="showAddDomain" @reload-domains="domains.reload()" />
 </template>
-<script setup>
+<script setup lang="ts">
 import { ref, inject } from 'vue'
 import {
 	Button,

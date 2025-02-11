@@ -116,7 +116,7 @@
 		@reload-mails="emit('reloadMails')"
 	/>
 </template>
-<script setup>
+<script setup lang="ts">
 import { createResource, Avatar, Button, Tooltip } from 'frappe-ui'
 import { watch, ref, reactive, inject } from 'vue'
 import { Reply, ReplyAll, Forward } from 'lucide-vue-next'

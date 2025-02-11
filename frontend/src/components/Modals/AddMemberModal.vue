@@ -83,7 +83,7 @@
 	</Dialog>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { reactive, inject, watch } from 'vue'
 import { Dialog, FeatherIcon, FormControl, ErrorMessage, createResource } from 'frappe-ui'
 import LinkControl from '@/components/Controls/LinkControl.vue'

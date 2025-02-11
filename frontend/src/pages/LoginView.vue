@@ -26,7 +26,7 @@
 		</router-link>
 	</div>
 </template>
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
 import { Button, FormControl, ErrorMessage } from 'frappe-ui'
 import { sessionStore } from '@/stores/session'
