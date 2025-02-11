@@ -155,3 +155,37 @@ def get_primary_agents() -> list:
 		).run(pluck="name")
 
 	return frappe.cache.get_value("primary_agents", generator)
+
+
+def get_rate_limits(method_path: str) -> list:
+	"""Returns the rate limits for the method path."""
+
+	def generator() -> list:
+		RATE_LIMIT = frappe.qb.DocType("Rate Limit")
+		rate_limits = (
+			frappe.qb.from_(RATE_LIMIT)
+			.select(
+				RATE_LIMIT.ignore_in_developer_mode,
+				RATE_LIMIT.key_.as_("key"),
+				RATE_LIMIT.limit,
+				RATE_LIMIT.seconds,
+				RATE_LIMIT.methods,
+				RATE_LIMIT.ip_based,
+			)
+			.where((RATE_LIMIT.enabled == 1) & (RATE_LIMIT.method_path == method_path))
+		).run(as_dict=True)
+
+		if not rate_limits:
+			return []
+
+		for rl in rate_limits:
+			rl["ignore_in_developer_mode"] = bool(rl["ignore_in_developer_mode"])
+			rl["methods"] = rl["methods"].split(",")
+			rl["ip_based"] = bool(rl["ip_based"])
+
+			if len(rl["methods"]) == 1 and rl["methods"][0] == "ALL":
+				rl["methods"] = "ALL"
+
+		return rate_limits
+
+	return frappe.cache.hget("rate_limits", method_path, generator)

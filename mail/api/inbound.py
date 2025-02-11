@@ -4,19 +4,19 @@ from typing import TYPE_CHECKING
 
 import frappe
 from frappe import _
-from frappe.rate_limiter import rate_limit
 from frappe.utils import convert_utc_to_system_timezone, now
 
 from mail.api.auth import validate_account, validate_user
 from mail.mail.doctype.mail_sync_history.mail_sync_history import get_mail_sync_history
 from mail.utils.dt import convert_to_utc
+from mail.utils.rate_limiter import dynamic_rate_limit
 
 if TYPE_CHECKING:
 	from mail.mail.doctype.mail_sync_history.mail_sync_history import MailSyncHistory
 
 
 @frappe.whitelist(methods=["GET"])
-@rate_limit(limit=10, seconds=60)
+@dynamic_rate_limit()
 def pull(
 	account: str,
 	limit: int = 50,
@@ -40,7 +40,7 @@ def pull(
 
 
 @frappe.whitelist(methods=["GET"])
-@rate_limit(limit=10, seconds=60)
+@dynamic_rate_limit()
 def pull_raw(
 	account: str,
 	limit: int = 50,

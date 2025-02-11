@@ -2,13 +2,13 @@ from html import unescape
 
 import frappe
 from frappe import _
-from frappe.rate_limiter import rate_limit
 
 from mail.mail.doctype.spam_check_log.spam_check_log import create_spam_check_log
+from mail.utils.rate_limiter import dynamic_rate_limit
 
 
 @frappe.whitelist(methods=["POST"])
-@rate_limit(limit=60, seconds=60)
+@dynamic_rate_limit()
 def scan(message: str | None = None) -> dict:
 	"""Returns the spam score, spamd response and scanning mode of the message"""
 
@@ -26,7 +26,7 @@ def scan(message: str | None = None) -> dict:
 
 
 @frappe.whitelist(methods=["POST"])
-@rate_limit(limit=60, seconds=60)
+@dynamic_rate_limit()
 def get_spam_score(message: str | None = None) -> float:
 	"""Returns the spam score of the message"""
 

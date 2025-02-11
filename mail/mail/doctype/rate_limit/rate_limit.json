@@ -1,0 +1,127 @@
+{
+ "actions": [],
+ "autoname": "hash",
+ "creation": "2025-02-10 12:14:22.025044",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_v9lm",
+  "enabled",
+  "ignore_in_developer_mode",
+  "section_break_vvaw",
+  "method_path",
+  "methods",
+  "column_break_kcmd",
+  "key_",
+  "limit",
+  "seconds",
+  "ip_based"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_v9lm",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "5",
+   "fieldname": "limit",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Limit",
+   "non_negative": 1,
+   "reqd": 1
+  },
+  {
+   "default": "86400",
+   "fieldname": "seconds",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Seconds",
+   "non_negative": 1,
+   "reqd": 1
+  },
+  {
+   "default": "ALL",
+   "fieldname": "methods",
+   "fieldtype": "Small Text",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Methods",
+   "reqd": 1
+  },
+  {
+   "default": "1",
+   "fieldname": "ip_based",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "IP Based"
+  },
+  {
+   "default": "1",
+   "depends_on": "eval: !doc.__islocal",
+   "fieldname": "enabled",
+   "fieldtype": "Check",
+   "label": "Enabled",
+   "search_index": 1
+  },
+  {
+   "fieldname": "section_break_vvaw",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_kcmd",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "method_path",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Method Path",
+   "placeholder": "mail.api.track.open",
+   "reqd": 1,
+   "search_index": 1,
+   "set_only_once": 1
+  },
+  {
+   "default": "1",
+   "fieldname": "ignore_in_developer_mode",
+   "fieldtype": "Check",
+   "label": "Ignore in Developer Mode"
+  },
+  {
+   "fieldname": "key_",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Key"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-02-11 15:02:50.785940",
+ "modified_by": "Administrator",
+ "module": "Mail",
+ "name": "Rate Limit",
+ "naming_rule": "Random",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}
