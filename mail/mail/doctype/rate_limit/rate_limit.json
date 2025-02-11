@@ -27,6 +27,7 @@
    "fieldname": "limit",
    "fieldtype": "Int",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Limit",
    "non_negative": 1,
    "reqd": 1
@@ -36,6 +37,7 @@
    "fieldname": "seconds",
    "fieldtype": "Int",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Seconds",
    "non_negative": 1,
    "reqd": 1
@@ -45,6 +47,7 @@
    "fieldname": "methods",
    "fieldtype": "Small Text",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Methods",
    "reqd": 1
   },
@@ -52,6 +55,7 @@
    "default": "1",
    "fieldname": "ip_based",
    "fieldtype": "Check",
+   "in_list_view": 1,
    "label": "IP Based"
   },
   {
@@ -73,6 +77,8 @@
   {
    "fieldname": "method_path",
    "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Method Path",
    "placeholder": "mail.api.track.open",
    "reqd": 1,
@@ -88,12 +94,14 @@
   {
    "fieldname": "key_",
    "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Key"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-02-11 13:51:39.268019",
+ "modified": "2025-02-11 15:02:50.785940",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Rate Limit",

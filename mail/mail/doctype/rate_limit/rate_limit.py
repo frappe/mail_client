@@ -3,6 +3,7 @@
 
 import frappe
 from frappe.model.document import Document
+from frappe.utils import cint
 
 
 class RateLimit(Document):
@@ -16,6 +17,29 @@ class RateLimit(Document):
 		"""Clear cache for the rate limit"""
 
 		frappe.cache.hdel("rate_limits", self.method_path)
+
+
+def create_rate_limit(
+	method_path: str,
+	limit: int = 5,
+	seconds: int = 86_400,
+	key: str | None = None,
+	ip_based: bool = True,
+	methods: str = "ALL",
+	ignore_in_developer_mode: bool = True,
+) -> "RateLimit":
+	"""Create a Rate Limit document"""
+
+	doc = frappe.new_doc("Rate Limit")
+	doc.enabled = 1
+	doc.ignore_in_developer_mode = cint(ignore_in_developer_mode)
+	doc.method_path = method_path
+	doc.methods = methods
+	doc.key = key
+	doc.limit = limit
+	doc.seconds = seconds
+	doc.ip_based = cint(ip_based)
+	doc.insert(ignore_permissions=True)
 
 
 def on_doctype_update() -> None:
