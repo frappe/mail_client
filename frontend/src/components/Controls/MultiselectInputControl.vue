@@ -121,7 +121,7 @@ const selectedValue = computed({
 		if (val) {
 			showOptions.value = false
 		}
-		val?.value && addValue(val.value)
+		if (val?.value) addValue(val.value)
 	},
 })
 
@@ -199,7 +199,7 @@ const addValue = (value) => {
 				}
 			}
 		})
-		!error.value && (value = '')
+		if (!error.value) value = ''
 	}
 }
 

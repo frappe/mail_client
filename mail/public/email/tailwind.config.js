@@ -1,4 +1,4 @@
-const config = require('../../../frontend/tailwind.config')
+import config from '../../../frontend/tailwind.config'
 
 module.exports = {
 	content: ['./mail/templates/emails/*.html'],

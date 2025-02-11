@@ -416,12 +416,12 @@ const send = async () => {
 
 const toggleCC = () => {
 	cc.value = !cc.value
-	cc.value && nextTick(() => ccInput.value.setFocus())
+	if (cc.value) nextTick(() => ccInput.value.setFocus())
 }
 
 const toggleBCC = () => {
 	bcc.value = !bcc.value
-	bcc.value && nextTick(() => bccInput.value.setFocus())
+	if (bcc.value) nextTick(() => bccInput.value.setFocus())
 }
 
 const appendEmoji = () => {
