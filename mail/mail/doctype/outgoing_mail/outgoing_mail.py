@@ -1083,7 +1083,7 @@ def get_random_agent_or_agent_group(
 	if include_agents or exclude_agents:
 		agents = set(frappe.db.get_all("Mail Agent", {"enabled": 1, "enable_outbound": 1}, pluck="name"))
 		if include_agents:
-			if invalid_agents := [agent for agent in include_agents if agent not in agents]:
+			if invalid_agents := [agent for agent in include_agents if agent and agent not in agents]:
 				frappe.throw(
 					_("The following agents do not exist or are not enabled for outbound: {0}").format(
 						", ".join(invalid_agents)
@@ -1097,7 +1097,9 @@ def get_random_agent_or_agent_group(
 		selected_agent = random.choice(list(agents))
 	else:
 		if include_agent_groups:
-			if invalid_groups := [group for group in include_agent_groups if group not in agent_groups]:
+			if invalid_groups := [
+				group for group in include_agent_groups if group and group not in agent_groups
+			]:
 				frappe.throw(
 					_("The following agent groups do not exist or are not enabled for outbound: {0}").format(
 						", ".join(invalid_groups)
