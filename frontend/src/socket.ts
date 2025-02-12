@@ -1,6 +1,7 @@
 import { io } from 'socket.io-client'
 import { getCachedListResource, getCachedResource } from 'frappe-ui'
 
+// eslint-disable-next-line import/no-unresolved
 import { socketio_port } from '../../../../sites/common_site_config.json'
 
 export function initSocket() {

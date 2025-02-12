@@ -189,4 +189,9 @@ export default config(
       ],
     },
   },
+  {
+    linterOptions: {
+      reportUnusedDisableDirectives: 'off',
+    },
+  },
 )
