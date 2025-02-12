@@ -46,20 +46,21 @@
 	<AddDomainModal v-model="showAddDomain" @reload-domains="domains.reload()" />
 </template>
 <script setup lang="ts">
-import { ref, inject } from 'vue'
+import { inject, ref } from 'vue'
 import {
-	Button,
+	Badge,
 	Breadcrumbs,
-	ListView,
+	Button,
+	FeatherIcon,
 	ListEmptyState,
 	ListHeader,
-	ListRows,
 	ListRow,
 	ListRowItem,
-	Badge,
-	FeatherIcon,
+	ListRows,
+	ListView,
 	createListResource,
 } from 'frappe-ui'
+
 import AddDomainModal from '@/components/Modals/AddDomainModal.vue'
 
 const user = inject('$user')

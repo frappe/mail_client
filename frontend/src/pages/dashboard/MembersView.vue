@@ -54,22 +54,23 @@
 	<Dialog v-model="showRemoveMember" :options="removeMemberOptions" />
 </template>
 <script setup lang="ts">
-import { ref, computed, inject } from 'vue'
+import { computed, inject, ref } from 'vue'
 import {
 	Avatar,
 	Badge,
-	Button,
 	Breadcrumbs,
-	ListView,
-	ListHeader,
-	ListRows,
-	ListRow,
+	Button,
 	Dialog,
 	Dropdown,
+	ListHeader,
+	ListRow,
+	ListRows,
+	ListView,
 	createResource,
 } from 'frappe-ui'
-import AddMemberModal from '@/components/Modals/AddMemberModal.vue'
+
 import { raiseToast } from '@/utils'
+import AddMemberModal from '@/components/Modals/AddMemberModal.vue'
 
 const user = inject('$user')
 

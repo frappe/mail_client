@@ -117,11 +117,12 @@
 	/>
 </template>
 <script setup lang="ts">
-import { createResource, Avatar, Button, Tooltip } from 'frappe-ui'
-import { watch, ref, reactive, inject } from 'vue'
-import { Reply, ReplyAll, Forward } from 'lucide-vue-next'
-import SendMailModal from '@/components/Modals/SendMailModal.vue'
+import { inject, reactive, ref, watch } from 'vue'
+import { Forward, Reply, ReplyAll } from 'lucide-vue-next'
+import { Avatar, Button, Tooltip, createResource } from 'frappe-ui'
+
 import MailDate from '@/components/MailDate.vue'
+import SendMailModal from '@/components/Modals/SendMailModal.vue'
 
 const showSendModal = ref(false)
 const draftMailID = ref(null)

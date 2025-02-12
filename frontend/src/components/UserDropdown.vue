@@ -61,20 +61,22 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import MailLogo from '@/components/Icons/MailLogo.vue'
-import SettingsModal from '@/components/Modals/SettingsModal.vue'
-import { sessionStore } from '@/stores/session'
-import { Dropdown } from 'frappe-ui'
 import {
+	ArrowRightLeft,
+	ChevronDown,
 	Home,
 	LayoutDashboard,
-	ChevronDown,
 	LogOut,
-	ArrowRightLeft,
 	Settings as SettingsIcon,
 } from 'lucide-vue-next'
+import { Dropdown } from 'frappe-ui'
+
 import { convertToTitleCase } from '../utils'
+
+import { sessionStore } from '@/stores/session'
 import { userStore } from '@/stores/user'
+import MailLogo from '@/components/Icons/MailLogo.vue'
+import SettingsModal from '@/components/Modals/SettingsModal.vue'
 
 const { logout, branding } = sessionStore()
 const { userResource } = userStore()

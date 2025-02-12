@@ -36,8 +36,8 @@
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 
-import MailLogo from '@/components/Icons/MailLogo.vue'
 import FrappeLogo from '@/components/Icons/FrappeLogo.vue'
+import MailLogo from '@/components/Icons/MailLogo.vue'
 
 const route = useRoute()
 

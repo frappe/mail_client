@@ -6,8 +6,9 @@
 	</Tooltip>
 </template>
 <script setup lang="ts">
-import { inject, computed } from 'vue'
+import { computed, inject } from 'vue'
 import { Tooltip } from 'frappe-ui'
+
 import { timeAgo } from '@/utils'
 
 const dayjs = inject('$dayjs')

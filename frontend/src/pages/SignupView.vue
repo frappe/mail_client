@@ -69,11 +69,12 @@
 	</div>
 </template>
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { FormControl, Button, createResource, ErrorMessage } from 'frappe-ui'
-import { sessionStore } from '@/stores/session'
+import { Button, ErrorMessage, FormControl, createResource } from 'frappe-ui'
+
 import { raiseToast } from '@/utils'
+import { sessionStore } from '@/stores/session'
 
 const router = useRouter()
 const { login } = sessionStore()

@@ -60,10 +60,9 @@
 	</Popover>
 </template>
 <script setup lang="ts">
-import { Popover } from 'frappe-ui'
+import { computed, ref } from 'vue'
 import { gemoji } from 'gemoji'
-import { ref, computed } from 'vue'
-import { FormControl, Button } from 'frappe-ui'
+import { Button, FormControl, Popover } from 'frappe-ui'
 
 const search = ref('')
 const emoji = defineModel()

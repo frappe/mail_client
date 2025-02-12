@@ -50,10 +50,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, inject, watch } from 'vue'
-import { Dialog, FormControl, ErrorMessage, createResource } from 'frappe-ui'
-import CopyControl from '@/components/Controls/CopyControl.vue'
+import { inject, ref, watch } from 'vue'
+import { Dialog, ErrorMessage, FormControl, createResource } from 'frappe-ui'
+
 import { raiseToast } from '@/utils'
+import CopyControl from '@/components/Controls/CopyControl.vue'
 
 const show = defineModel()
 const user = inject('$user')

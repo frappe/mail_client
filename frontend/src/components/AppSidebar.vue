@@ -41,13 +41,14 @@
 </template>
 
 <script setup lang="ts">
+import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import UserDropdown from '@/components/UserDropdown.vue'
-import SidebarLink from '@/components/SidebarLink.vue'
 import { useStorage } from '@vueuse/core'
-import { ref, computed } from 'vue'
 import { ArrowLeftFromLine } from 'lucide-vue-next'
-import { getSidebarLinks } from '../utils'
+
+import { getSidebarLinks } from '@/utils'
+import SidebarLink from '@/components/SidebarLink.vue'
+import UserDropdown from '@/components/UserDropdown.vue'
 
 const route = useRoute()
 

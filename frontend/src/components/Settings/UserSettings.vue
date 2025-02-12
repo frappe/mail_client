@@ -39,9 +39,10 @@
 	</Dialog>
 </template>
 <script setup lang="ts">
-import { ref, inject } from 'vue'
-import CopyControl from '@/components/Controls/CopyControl.vue'
+import { inject, ref } from 'vue'
 import { Avatar, Button, Dialog, createResource } from 'frappe-ui'
+
+import CopyControl from '@/components/Controls/CopyControl.vue'
 
 const user = inject('$user')
 const showSecret = ref(false)

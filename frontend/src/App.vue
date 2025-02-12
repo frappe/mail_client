@@ -6,14 +6,15 @@
 	<Toasts />
 </template>
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { Toasts } from 'frappe-ui'
+
+import { useScreenSize } from '@/utils/composables'
 import { Dialogs } from '@/utils/dialogs'
-import { computed } from 'vue'
-import { useScreenSize } from './utils/composables'
-import LoginLayout from './components/LoginLayout.vue'
-import DesktopLayout from './components/DesktopLayout.vue'
-import MobileLayout from './components/MobileLayout.vue'
+import DesktopLayout from '@/components/DesktopLayout.vue'
+import LoginLayout from '@/components/LoginLayout.vue'
+import MobileLayout from '@/components/MobileLayout.vue'
 
 const route = useRoute()
 const screenSize = useScreenSize()

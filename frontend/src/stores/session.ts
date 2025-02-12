@@ -1,8 +1,10 @@
+import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import { createResource } from 'frappe-ui'
+
 import { userStore } from './user'
+
 import router from '@/router'
-import { ref, computed } from 'vue'
 
 export const sessionStore = defineStore('mail-session', () => {
 	const { userResource } = userStore()

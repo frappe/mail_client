@@ -28,7 +28,8 @@
 </template>
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Button, FormControl, ErrorMessage } from 'frappe-ui'
+import { Button, ErrorMessage, FormControl } from 'frappe-ui'
+
 import { sessionStore } from '@/stores/session'
 
 const { login } = sessionStore()

@@ -93,21 +93,22 @@
 	<Dialog v-model="showConfirmDialog" :options="confirmDialogOptions" />
 </template>
 <script setup lang="ts">
-import { ref, computed, inject } from 'vue'
+import { computed, inject, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import {
-	Button,
-	Switch,
-	FormControl,
-	Dropdown,
 	Breadcrumbs,
-	ListView,
-	ListHeader,
-	ListRows,
-	ListRow,
+	Button,
 	Dialog,
+	Dropdown,
+	FormControl,
+	ListHeader,
+	ListRow,
+	ListRows,
+	ListView,
+	Switch,
 	createDocumentResource,
 } from 'frappe-ui'
+
 import { raiseToast } from '@/utils'
 import HorizontalControl from '@/components/Controls/HorizontalControl.vue'
 
