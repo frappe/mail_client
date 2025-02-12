@@ -162,22 +162,22 @@ export default config(
               position: 'after',
             },
             {
-              pattern: '@/stores**',
+              pattern: '@/utils/**',
               group: 'internal',
               position: 'after',
             },
             {
-              pattern: '@/utils**',
+              pattern: '@/stores/**',
               group: 'internal',
               position: 'after',
             },
             {
-              pattern: '@/pages**',
+              pattern: '@/pages/**',
               group: 'internal',
               position: 'after',
             },
             {
-              pattern: '@/components**',
+              pattern: '@/components/**',
               group: 'internal',
               position: 'after',
             },
