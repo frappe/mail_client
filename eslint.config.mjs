@@ -13,6 +13,14 @@ export default tseslint.config(
       importPlugin.flatConfigs.recommended,
       importPlugin.flatConfigs.typescript,
     ],
+    settings: {
+      'import/resolver': {
+        alias: {
+          map: [['@', './frontend/src']],
+          extensions: ['.js', '.ts', '.vue'],
+        },
+      },
+    },
   },
   {
     languageOptions: {
@@ -131,10 +139,49 @@ export default tseslint.config(
       'prefer-const': 'error',
       'no-console': 'warn',
       'import/no-unresolved': 'off',
+      'import/no-duplicates': 'error',
       'import/newline-after-import': 'error',
       'import/order': [
         'error',
         {
+          alphabetize: {
+            order: 'asc',
+          },
+          named: true,
+          pathGroups: [
+            {
+              pattern: 'vue**',
+              group: 'external',
+              position: 'before',
+            },
+            {
+              pattern: 'frappe-ui',
+              group: 'external',
+              position: 'after',
+            },
+            {
+              pattern: '@/stores**',
+              group: 'internal',
+              position: 'after',
+            },
+            {
+              pattern: '@/utils**',
+              group: 'internal',
+              position: 'after',
+            },
+            {
+              pattern: '@/pages**',
+              group: 'internal',
+              position: 'after',
+            },
+            {
+              pattern: '@/components**',
+              group: 'internal',
+              position: 'after',
+            },
+          ],
+          pathGroupsExcludedImportTypes: [],
+          distinctGroup: false,
           'newlines-between': 'always',
         },
       ],

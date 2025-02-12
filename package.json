@@ -17,6 +17,7 @@
     "@eslint/js": "^9.20.0",
     "eslint": "^9.20.0",
     "eslint-config-prettier": "^10.0.1",
+    "eslint-import-resolver-alias": "^1.1.2",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-prettier": "^5.2.3",
     "eslint-plugin-vue": "^9.32.0",
