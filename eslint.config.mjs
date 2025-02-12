@@ -1,12 +1,19 @@
-import globals from 'globals'
-import pluginJs from '@eslint/js'
-import tseslint from 'typescript-eslint'
-import pluginVue from 'eslint-plugin-vue'
+import eslint from '@eslint/js'
 import prettier from 'eslint-config-prettier'
-import pluginPrettier from 'eslint-plugin-prettier'
+import importPlugin from 'eslint-plugin-import'
+import prettierPlugin from 'eslint-plugin-prettier'
+import vuePlugin from 'eslint-plugin-vue'
+import globals from 'globals'
+import tseslint from 'typescript-eslint'
 
 export default tseslint.config(
-  { files: ['**/*.{js,mjs,cjs,ts,vue}'] },
+  {
+    files: ['**/*.{js,mjs,cjs,ts,vue}'],
+    extends: [
+      importPlugin.flatConfigs.recommended,
+      importPlugin.flatConfigs.typescript,
+    ],
+  },
   {
     languageOptions: {
       globals: {
@@ -112,17 +119,25 @@ export default tseslint.config(
       sourceType: 'module',
     },
   },
-  pluginJs.configs.recommended,
+  eslint.configs.recommended,
   tseslint.configs.recommended,
-  ...pluginVue.configs['flat/recommended'],
+  ...vuePlugin.configs['flat/recommended'],
   prettier,
   {
-    plugins: { prettier: pluginPrettier },
+    plugins: { prettier: prettierPlugin },
     rules: {
       'prettier/prettier': 'error',
       'space-unary-ops': ['error', { words: true }],
       'prefer-const': 'error',
       'no-console': 'warn',
+      'import/no-unresolved': 'off',
+      'import/newline-after-import': 'error',
+      'import/order': [
+        'error',
+        {
+          'newlines-between': 'always',
+        },
+      ],
     },
   },
 )
