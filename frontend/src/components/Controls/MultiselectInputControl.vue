@@ -87,12 +87,11 @@
 </template>
 
 <script setup lang="ts">
-import { Combobox, ComboboxInput, ComboboxOptions, ComboboxOption } from '@headlessui/vue'
-import { createResource, Button, ErrorMessage } from 'frappe-ui'
-import { ref, computed, nextTick } from 'vue'
+import { computed, nextTick, ref } from 'vue'
+import { Combobox, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue'
 import { watchDebounced } from '@vueuse/core'
-import { Popover, Avatar } from 'frappe-ui'
 import { X } from 'lucide-vue-next'
+import { Avatar, Button, ErrorMessage, Popover, createResource } from 'frappe-ui'
 
 const props = defineProps({
 	validate: {

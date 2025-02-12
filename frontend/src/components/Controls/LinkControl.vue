@@ -47,11 +47,12 @@
 </template>
 
 <script setup lang="ts">
-import AutocompleteControl from '@/components/Controls/AutocompleteControl.vue'
+import { computed, ref, useAttrs } from 'vue'
 import { watchDebounced } from '@vueuse/core'
-import { createResource, Button } from 'frappe-ui'
 import { Plus } from 'lucide-vue-next'
-import { useAttrs, computed, ref } from 'vue'
+import { Button, createResource } from 'frappe-ui'
+
+import AutocompleteControl from '@/components/Controls/AutocompleteControl.vue'
 
 const props = defineProps({
 	doctype: {

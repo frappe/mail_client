@@ -23,8 +23,9 @@
 	</div>
 </template>
 <script setup lang="ts">
-import { ref, inject } from 'vue'
-import { FormControl, Button, createResource, ErrorMessage } from 'frappe-ui'
+import { inject, ref } from 'vue'
+import { Button, ErrorMessage, FormControl, createResource } from 'frappe-ui'
+
 import { sessionStore } from '@/stores/session'
 
 const user = inject('$user')

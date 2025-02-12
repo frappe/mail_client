@@ -36,10 +36,11 @@
 </template>
 <script setup lang="ts">
 import { markRaw, ref } from 'vue'
-import UserSettings from '@/components/Settings/UserSettings.vue'
+import { Mailbox, User } from 'lucide-vue-next'
+import { Button, Dialog } from 'frappe-ui'
+
 import MailAccountSettings from '@/components/Settings/MailAccountSettings.vue'
-import { Dialog, Button } from 'frappe-ui'
-import { User, Mailbox } from 'lucide-vue-next'
+import UserSettings from '@/components/Settings/UserSettings.vue'
 
 const show = defineModel()
 

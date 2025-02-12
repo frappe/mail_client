@@ -27,12 +27,14 @@
 	</div>
 </template>
 <script setup lang="ts">
-import { getSidebarLinks } from '../utils'
-import { useRouter } from 'vue-router'
 import { computed } from 'vue'
+import { useRouter } from 'vue-router'
+import { LogIn, LogOut, UserRound } from 'lucide-vue-next'
+
+import { getSidebarLinks } from '../utils'
+
 import { sessionStore } from '@/stores/session'
 import { userStore } from '@/stores/user'
-import { LogOut, LogIn, UserRound } from 'lucide-vue-next'
 
 const { logout, user } = sessionStore()
 let { isLoggedIn } = sessionStore()

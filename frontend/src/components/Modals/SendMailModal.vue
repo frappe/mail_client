@@ -183,27 +183,28 @@
 	</Dialog>
 </template>
 <script setup lang="ts">
+import { computed, inject, nextTick, reactive, ref, watch } from 'vue'
+import { EditorContent } from '@tiptap/vue-3'
+import { useDebounceFn } from '@vueuse/core'
+import { Laugh, Paperclip } from 'lucide-vue-next'
 import {
+	Button,
 	Dialog,
 	FeatherIcon,
-	TextEditor,
-	createResource,
-	createDocumentResource,
 	FileUploader,
+	Progress,
+	TextEditor,
 	TextEditorFixedMenu,
 	TextInput,
-	Button,
-	Progress,
+	createDocumentResource,
+	createResource,
 } from 'frappe-ui'
-import { reactive, watch, inject, ref, nextTick, computed } from 'vue'
-import { useDebounceFn } from '@vueuse/core'
-import { Paperclip, Laugh } from 'lucide-vue-next'
-import LinkControl from '@/components/Controls/LinkControl.vue'
-import EmojiPicker from '@/components/EmojiPicker.vue'
-import MultiselectInputControl from '@/components/Controls/MultiselectInputControl.vue'
-import { EditorContent } from '@tiptap/vue-3'
-import { validateEmail, formatBytes } from '@/utils'
+
+import { formatBytes, validateEmail } from '@/utils'
 import { userStore } from '@/stores/user'
+import LinkControl from '@/components/Controls/LinkControl.vue'
+import MultiselectInputControl from '@/components/Controls/MultiselectInputControl.vue'
+import EmojiPicker from '@/components/EmojiPicker.vue'
 
 const user = inject('$user')
 const show = defineModel()

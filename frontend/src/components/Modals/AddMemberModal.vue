@@ -84,10 +84,11 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, inject, watch } from 'vue'
-import { Dialog, FeatherIcon, FormControl, ErrorMessage, createResource } from 'frappe-ui'
-import LinkControl from '@/components/Controls/LinkControl.vue'
+import { inject, reactive, watch } from 'vue'
+import { Dialog, ErrorMessage, FeatherIcon, FormControl, createResource } from 'frappe-ui'
+
 import { raiseToast } from '@/utils'
+import LinkControl from '@/components/Controls/LinkControl.vue'
 
 const show = defineModel()
 const user = inject('$user')

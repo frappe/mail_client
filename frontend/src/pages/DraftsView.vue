@@ -57,14 +57,15 @@
 	</div>
 </template>
 <script setup lang="ts">
-import { Breadcrumbs, createResource, createListResource } from 'frappe-ui'
-import { ref, inject } from 'vue'
-import HeaderActions from '@/components/HeaderActions.vue'
-import { formatNumber, startResizing, singularize } from '@/utils'
-import MailDetails from '@/components/MailDetails.vue'
+import { inject, ref } from 'vue'
 import { useDebounceFn } from '@vueuse/core'
-import SidebarDetail from '@/components/SidebarDetail.vue'
+import { Breadcrumbs, createListResource, createResource } from 'frappe-ui'
+
+import { formatNumber, singularize, startResizing } from '@/utils'
 import { userStore } from '@/stores/user'
+import HeaderActions from '@/components/HeaderActions.vue'
+import MailDetails from '@/components/MailDetails.vue'
+import SidebarDetail from '@/components/SidebarDetail.vue'
 
 const mailDetails = ref(null)
 const user = inject('$user')

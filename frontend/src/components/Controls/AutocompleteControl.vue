@@ -116,10 +116,10 @@
 </template>
 
 <script setup lang="ts">
-import { Combobox, ComboboxInput, ComboboxOptions, ComboboxOption } from '@headlessui/vue'
-import { Popover } from 'frappe-ui'
+import { computed, nextTick, ref, useAttrs, useSlots, watch } from 'vue'
+import { Combobox, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue'
 import { ChevronDown, X } from 'lucide-vue-next'
-import { ref, computed, useAttrs, useSlots, watch, nextTick } from 'vue'
+import { Popover } from 'frappe-ui'
 
 const props = defineProps({
 	modelValue: {

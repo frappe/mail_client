@@ -49,10 +49,10 @@
 	</button>
 </template>
 <script setup lang="ts">
-import { Tooltip } from 'frappe-ui'
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import * as icons from 'lucide-vue-next'
+import { Tooltip } from 'frappe-ui'
 
 const router = useRouter()
 const emit = defineEmits(['openModal', 'deletePage'])

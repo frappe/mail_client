@@ -1,7 +1,8 @@
-import router from '@/router'
+import { reactive } from 'vue'
 import { defineStore } from 'pinia'
 import { createResource } from 'frappe-ui'
-import { reactive } from 'vue'
+
+import router from '@/router'
 
 export const userStore = defineStore('mail-users', () => {
 	const userResource = createResource({

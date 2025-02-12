@@ -1,14 +1,16 @@
 import './index.css'
 
 import { createApp } from 'vue'
-import router from './router'
-import App from './App.vue'
 import { createPinia } from 'pinia'
-import dayjs from '@/utils/dayjs'
-import { userStore } from './stores/user'
-import translationPlugin from './translation'
+import { frappeRequest, pageMetaPlugin, setConfig } from 'frappe-ui'
+
+import App from './App.vue'
+import router from './router'
 import { initSocket } from './socket'
-import { setConfig, frappeRequest, pageMetaPlugin } from 'frappe-ui'
+import translationPlugin from './translation'
+
+import dayjs from '@/utils/dayjs'
+import { userStore } from '@/stores/user'
 
 const pinia = createPinia()
 const app = createApp(App)

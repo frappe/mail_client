@@ -10,10 +10,11 @@
 	<SendMailModal v-model="showSendModal" @reload-mails="emit('reloadMails')" />
 </template>
 <script setup lang="ts">
-import { Button } from 'frappe-ui'
-import { SquarePen } from 'lucide-vue-next'
-import SendMailModal from '@/components/Modals/SendMailModal.vue'
 import { ref } from 'vue'
+import { SquarePen } from 'lucide-vue-next'
+import { Button } from 'frappe-ui'
+
+import SendMailModal from '@/components/Modals/SendMailModal.vue'
 
 const emit = defineEmits(['reloadMails'])
 
