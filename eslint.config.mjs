@@ -15,7 +15,9 @@ export default config(
     ],
     settings: {
       'import/resolver': {
-        typescript: {},
+        typescript: {
+          project: './frontend/tsconfig.json',
+        },
         alias: {
           map: ['@', './frontend/src'],
           extensions: ['.js', '.ts', '.vue'],
@@ -139,7 +141,6 @@ export default config(
       'space-unary-ops': ['error', { words: true }],
       'prefer-const': 'error',
       'no-console': 'warn',
-      'import/no-unresolved': 'off',
       'import/no-duplicates': 'error',
       'import/newline-after-import': 'error',
       'import/order': [
