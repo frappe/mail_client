@@ -4,9 +4,9 @@ import importPlugin from 'eslint-plugin-import'
 import prettierPlugin from 'eslint-plugin-prettier'
 import vuePlugin from 'eslint-plugin-vue'
 import globals from 'globals'
-import tseslint from 'typescript-eslint'
+import { config, configs } from 'typescript-eslint'
 
-export default tseslint.config(
+export default config(
   {
     files: ['**/*.{js,mjs,cjs,ts,vue}'],
     extends: [
@@ -15,8 +15,9 @@ export default tseslint.config(
     ],
     settings: {
       'import/resolver': {
+        typescript: {},
         alias: {
-          map: [['@', './frontend/src']],
+          map: ['@', './frontend/src'],
           extensions: ['.js', '.ts', '.vue'],
         },
       },
@@ -128,7 +129,7 @@ export default tseslint.config(
     },
   },
   eslint.configs.recommended,
-  tseslint.configs.recommended,
+  configs.recommended,
   ...vuePlugin.configs['flat/recommended'],
   prettier,
   {
