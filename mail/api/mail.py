@@ -43,8 +43,14 @@ def get_user_info() -> dict:
 	)
 	user["roles"] = frappe.get_roles(user.name)
 	user.tenant = frappe.db.get_value("Mail Tenant Member", {"user": frappe.session.user}, "tenant")
+	user.is_mail_user = "Mail User" in user.roles
+	user.is_mail_admin = "Mail Admin" in user.roles
+
 	if user.tenant:
-		user.tenant_name = frappe.db.get_value("Mail Tenant", user.tenant, "tenant_name")
+		user.tenant_name, tenant_owner = frappe.db.get_value(
+			"Mail Tenant", user.tenant, ["tenant_name", "user"]
+		)
+		user.is_tenant_owner = tenant_owner == frappe.session.user
 
 	user.default_outgoing = get_default_outgoing_email_for_user(frappe.session.user)
 

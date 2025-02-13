@@ -71,8 +71,7 @@ import {
 } from 'lucide-vue-next'
 import { Dropdown } from 'frappe-ui'
 
-import { convertToTitleCase } from '../utils'
-
+import { convertToTitleCase } from '@/utils'
 import { sessionStore } from '@/stores/session'
 import { userStore } from '@/stores/user'
 import MailLogo from '@/components/Icons/MailLogo.vue'
@@ -122,6 +121,7 @@ const userDropdownOptions = [
 		onClick: () => {
 			showSettings.value = true
 		},
+		condition: () => !userResource.data.is_tenant_owner,
 	},
 	{
 		icon: LogOut,

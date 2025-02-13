@@ -4,14 +4,11 @@ import { createResource } from 'frappe-ui'
 
 import router from '@/router'
 
+type Folder = 'incoming' | 'sent' | 'draft'
+
 export const userStore = defineStore('mail-users', () => {
 	const userResource = createResource({
 		url: 'mail.api.mail.get_user_info',
-		transform: (data) => {
-			if (!data) return
-			data.is_mail_user = data.roles.includes('Mail User')
-			data.is_mail_admin = data.roles.includes('Mail Admin')
-		},
 		onError: (error) => {
 			if (error && error.exc_type === 'AuthenticationError') {
 				router.push('/login')
@@ -20,13 +17,18 @@ export const userStore = defineStore('mail-users', () => {
 		auto: true,
 	})
 
+	const getParsedItem = (key: string) => {
+		const item = sessionStorage.getItem(key)
+		return item ? JSON.parse(item) : null
+	}
+
 	const currentMail = reactive({
-		incoming: JSON.parse(sessionStorage.getItem('currentIncomingMail')) || null,
-		sent: JSON.parse(sessionStorage.getItem('currentSentMail')) || null,
-		draft: JSON.parse(sessionStorage.getItem('currentDraftMail')) || null,
+		incoming: getParsedItem('currentIncomingMail'),
+		sent: getParsedItem('currentSentMail'),
+		draft: getParsedItem('currentDraftMail'),
 	})
 
-	const setCurrentMail = (folder, mail) => {
+	const setCurrentMail = (folder: Folder, mail: string | null) => {
 		const itemName = `current${folder.charAt(0).toUpperCase() + folder.slice(1)}Mail`
 		if (!mail) {
 			currentMail[folder] = null
