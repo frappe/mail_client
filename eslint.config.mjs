@@ -157,6 +157,7 @@ export default config(
             order: 'asc',
           },
           named: true,
+          groups: ['builtin', 'external', 'internal', 'type'],
           pathGroups: [
             {
               pattern: 'vue**',

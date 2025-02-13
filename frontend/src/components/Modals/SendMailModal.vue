@@ -15,7 +15,7 @@
 					'[&_p.reply-to-content]:hidden',
 				]"
 				:content="mail.html"
-				@change="(val) => (mail.html = val)"
+				@change="(val: string) => (mail.html = val)"
 			>
 				<template #top>
 					<div class="flex flex-col gap-3">
@@ -34,7 +34,8 @@
 								class="flex-1 text-sm"
 								:validate="validateEmail"
 								:error-message="
-									(value) => __('{0} is an invalid email address', [value])
+									(value: string) =>
+										__('{0} is an invalid email address', [value])
 								"
 							/>
 							<div class="flex gap-1.5">
@@ -64,7 +65,8 @@
 								class="flex-1 text-sm"
 								:validate="validateEmail"
 								:error-message="
-									(value) => __('{0} is an invalid email address', [value])
+									(value: string) =>
+										__('{0} is an invalid email address', [value])
 								"
 							/>
 						</div>
@@ -76,7 +78,8 @@
 								class="flex-1 text-sm"
 								:validate="validateEmail"
 								:error-message="
-									(value) => __('{0} is an invalid email address', [value])
+									(value: string) =>
+										__('{0} is an invalid email address', [value])
 								"
 							/>
 						</div>
@@ -206,9 +209,11 @@ import LinkControl from '@/components/Controls/LinkControl.vue'
 import MultiselectInputControl from '@/components/Controls/MultiselectInputControl.vue'
 import EmojiPicker from '@/components/EmojiPicker.vue'
 
+import type { ReplyDetails } from '@/types'
+
 const user = inject('$user')
-const show = defineModel()
-const localMailID = ref(null)
+const show = defineModel<boolean>()
+const localMailID = ref<string>()
 const textEditor = ref(null)
 const ccInput = ref(null)
 const bccInput = ref(null)
@@ -221,9 +226,7 @@ const { setCurrentMail } = userStore()
 
 const SYNC_DEBOUNCE_TIME = 1500
 
-const editor = computed(() => {
-	return textEditor.value.editor
-})
+const editor = computed(() => textEditor.value.editor)
 
 const isMailEmpty = computed(() => {
 	const isSubjectEmpty = !mail.subject.length
@@ -231,24 +234,18 @@ const isMailEmpty = computed(() => {
 	if (mail.html) {
 		const element = document.createElement('div')
 		element.innerHTML = mail.html
-		isHtmlEmpty = !element.textContent.trim()
-		isHtmlEmpty = Array.from(element.children).some((d) => !d.textContent.trim())
+		isHtmlEmpty = !element.textContent?.trim()
+		isHtmlEmpty = Array.from(element.children).some((d) => !d.textContent?.trim())
 	}
 	const isRecipientsEmpty = [mail.to, mail.cc, mail.bcc].every((d) => !d.length)
 
 	return isSubjectEmpty && isHtmlEmpty && isRecipientsEmpty
 })
 
-const props = defineProps({
-	mailID: {
-		type: String,
-		required: false,
-	},
-	replyDetails: {
-		type: Object,
-		required: false,
-	},
-})
+const props = defineProps<{
+	mailID?: string
+	replyDetails?: ReplyDetails
+}>()
 
 const emit = defineEmits(['reloadMails'])
 
@@ -279,7 +276,7 @@ watch(show, () => {
 	if (!show.value) return
 	if (props.mailID) getDraftMail(props.mailID)
 	else {
-		localMailID.value = null
+		localMailID.value = undefined
 		Object.assign(mail, emptyMail)
 	}
 
@@ -370,7 +367,7 @@ const attachments = createResource({
 const removeAttachment = createResource({
 	url: 'frappe.client.delete',
 	method: 'DELETE',
-	makeParams(values) {
+	makeParams(values: { name: string }) {
 		return { doctype: 'File', name: values.name }
 	},
 	onSuccess() {
@@ -378,7 +375,7 @@ const removeAttachment = createResource({
 	},
 })
 
-const getDraftMail = (name) =>
+const getDraftMail = (name: string) =>
 	createDocumentResource({
 		doctype: 'Outgoing Mail',
 		name: name,

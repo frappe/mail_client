@@ -31,8 +31,7 @@ import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { LogIn, LogOut, UserRound } from 'lucide-vue-next'
 
-import { getSidebarLinks } from '../utils'
-
+import { getSidebarLinks } from '@/utils'
 import { sessionStore } from '@/stores/session'
 import { userStore } from '@/stores/user'
 

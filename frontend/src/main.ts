@@ -4,11 +4,10 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import { frappeRequest, pageMetaPlugin, setConfig } from 'frappe-ui'
 
-import App from './App.vue'
-import router from './router'
-import { initSocket } from './socket'
-import translationPlugin from './translation'
-
+import App from '@/App.vue'
+import router from '@/router'
+import { initSocket } from '@/socket'
+import translationPlugin from '@/translation'
 import dayjs from '@/utils/dayjs'
 import { userStore } from '@/stores/user'
 
