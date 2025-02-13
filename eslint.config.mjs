@@ -1,10 +1,11 @@
+import vueParser from 'vue-eslint-parser'
 import eslint from '@eslint/js'
 import prettier from 'eslint-config-prettier'
 import importPlugin from 'eslint-plugin-import'
 import prettierPlugin from 'eslint-plugin-prettier'
 import vuePlugin from 'eslint-plugin-vue'
 import globals from 'globals'
-import { config, configs } from 'typescript-eslint'
+import { config, configs, parser } from 'typescript-eslint'
 
 export default config(
   {
@@ -27,6 +28,12 @@ export default config(
   },
   {
     languageOptions: {
+      parser: vueParser,
+      parserOptions: {
+        parser: {
+          ts: parser,
+        },
+      },
       globals: {
         ...globals.browser,
         ...globals.node,
