@@ -120,13 +120,13 @@ class OutgoingMail(Document):
 
 	def on_submit(self) -> None:
 		self.create_mail_contacts()
+		self._db_set(status="Pending", notify_update=True)
 
 		if not self.is_newsletter:
 			if self.via_api and self.submitted_after <= 5:
 				self._db_set(priority=1)
-				self.process_for_delivery()
-		else:
-			self._db_set(status="Pending", notify_update=True)
+
+			self.process_for_delivery()
 
 	def on_update_after_submit(self) -> None:
 		self.set_folder()
