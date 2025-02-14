@@ -5,7 +5,7 @@ frappe.listview_settings['Outgoing Mail'] = {
 	get_indicator: (doc) => {
 		const status_colors = {
 			Draft: 'grey',
-			'In Progress': 'yellow',
+			Pending: 'yellow',
 			Blocked: 'red',
 			Accepted: 'blue',
 			Transferring: 'yellow',

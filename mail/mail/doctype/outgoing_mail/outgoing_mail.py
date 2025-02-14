@@ -121,14 +121,12 @@ class OutgoingMail(Document):
 	def on_submit(self) -> None:
 		self.create_mail_contacts()
 
-		kwargs = {"status": "In Progress"}
-		if not self.is_newsletter and self.via_api and self.submitted_after <= 5:
-			kwargs.update({"priority": 1})
-
-		self._db_set(notify_update=True, **kwargs)
-
 		if not self.is_newsletter:
-			self.process_for_delivery()
+			if self.via_api and self.submitted_after <= 5:
+				self._db_set(priority=1)
+				self.process_for_delivery()
+		else:
+			self._db_set(status="Pending", notify_update=True)
 
 	def on_update_after_submit(self) -> None:
 		self.set_folder()
@@ -782,7 +780,7 @@ class OutgoingMail(Document):
 		# Reload the doc to ensure it reflects the latest status.
 		# This handles cases where the email's status might have been manually updated (e.g., Accepted) after the job was created.
 		self.reload()
-		if self.status != "In Progress":
+		if self.status != "Pending":
 			return
 
 		kwargs = self._prepare_delivery_args()
@@ -877,7 +875,7 @@ class OutgoingMail(Document):
 
 		frappe.only_for("System Manager")
 
-		if self.status in ["In Progress", "Blocked"]:
+		if self.status in ["Pending", "Blocked"]:
 			for rcpt in self.recipients:
 				if rcpt.status == "Blocked":
 					rcpt.status = ""

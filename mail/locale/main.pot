@@ -1224,7 +1224,7 @@ msgstr ""
 
 #. Option for the 'Status' (Select) field in DocType 'Outgoing Mail'
 #: mail/mail/doctype/outgoing_mail/outgoing_mail.json
-msgid "In Progress"
+msgid "Pending"
 msgstr ""
 
 #. Label of the in_reply_to_mail_name (Dynamic Link) field in DocType 'Incoming
