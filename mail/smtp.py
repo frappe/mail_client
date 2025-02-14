@@ -161,7 +161,7 @@ class SMTPConnectionPool:
 		with self._pool_lock:
 			if key in self._pools:
 				pool = self._pools[key]
-				if connection.is_session_valid() and pool.qsize() < pool.maxsize:
+				if connection.is_session_valid() and not pool.full():
 					pool.put(connection)
 					return
 		connection.close()
