@@ -2,9 +2,7 @@ import { useTimeAgo } from '@vueuse/core'
 import { toast } from 'frappe-ui'
 
 export function convertToTitleCase(str: string) {
-	if (!str) {
-		return ''
-	}
+	if (!str) return ''
 
 	return str
 		.toLowerCase()
@@ -28,6 +26,12 @@ export function getSidebarLinks() {
 			icon: 'Send',
 			to: 'Sent',
 			activeFor: ['Sent'],
+		},
+		{
+			label: 'Outbox',
+			icon: 'Send',
+			to: 'Outbox',
+			activeFor: ['Outbox'],
 		},
 		{
 			label: 'Drafts',

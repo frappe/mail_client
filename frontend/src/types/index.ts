@@ -31,3 +31,5 @@ export interface User {
 export interface UserResource {
 	data: User
 }
+
+export type Folder = 'Inbox' | 'Sent' | 'Drafts'

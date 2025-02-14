@@ -1,10 +1,11 @@
 export {}
 
+type TranslateFunction = (message: string, variables?: string[]) => string
 declare global {
-	const __: (message: string, variables?: string[]) => string
+	const __: TranslateFunction
 }
 declare module 'vue' {
 	interface ComponentCustomProperties {
-		__: (message: string, variables?: string[]) => string
+		__: TranslateFunction
 	}
 }

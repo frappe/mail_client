@@ -4,9 +4,7 @@ import { createResource } from 'frappe-ui'
 
 import router from '@/router'
 
-import type { UserResource } from '@/types'
-
-type Folder = 'incoming' | 'sent' | 'draft'
+import type { Folder, UserResource } from '@/types'
 
 export const userStore = defineStore('mail-users', () => {
 	const userResource: UserResource = createResource({
@@ -25,13 +23,13 @@ export const userStore = defineStore('mail-users', () => {
 	}
 
 	const currentMail = reactive({
-		incoming: getParsedItem('currentIncomingMail'),
-		sent: getParsedItem('currentSentMail'),
-		draft: getParsedItem('currentDraftMail'),
+		Inbox: getParsedItem('currentInboxMail'),
+		Sent: getParsedItem('currentSentMail'),
+		Drafts: getParsedItem('currentDraftsMail'),
 	})
 
 	const setCurrentMail = (folder: Folder, mail: string | null) => {
-		const itemName = `current${folder.charAt(0).toUpperCase() + folder.slice(1)}Mail`
+		const itemName = `current${folder}Mail`
 		if (!mail) {
 			currentMail[folder] = null
 			sessionStorage.removeItem(itemName)

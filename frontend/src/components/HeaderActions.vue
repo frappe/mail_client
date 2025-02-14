@@ -1,10 +1,10 @@
 <template>
 	<div>
-		<Button variant="subtle" @click="openSendModal()">
+		<Button variant="subtle" size="md" @click="openSendModal()">
 			<template #prefix>
 				<SquarePen class="h-4 w-4 text-gray-600" />
 			</template>
-			{{ __('Compose an email') }}
+			{{ __('Compose') }}
 		</Button>
 	</div>
 	<SendMailModal v-model="showSendModal" @reload-mails="emit('reloadMails')" />

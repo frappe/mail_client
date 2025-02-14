@@ -44,6 +44,11 @@ const routes = [
 		component: () => import('@/pages/SentView.vue'),
 	},
 	{
+		path: '/outbox',
+		name: 'Outbox',
+		component: () => import('@/pages/OutboxView.vue'),
+	},
+	{
 		path: '/drafts',
 		name: 'Drafts',
 		component: () => import('@/pages/DraftsView.vue'),

@@ -7,10 +7,10 @@
 				<template #suffix>
 					<div v-if="draftMailsCount.data" class="ml-2 self-end text-xs text-gray-600">
 						{{
-							__('{0} {1}').format(
+							__('{0} {1}', [
 								formatNumber(draftMailsCount.data),
 								draftMailsCount.data == 1 ? singularize('messages') : 'messages',
-							)
+							])
 						}}
 					</div>
 				</template>
@@ -67,8 +67,10 @@ import HeaderActions from '@/components/HeaderActions.vue'
 import MailDetails from '@/components/MailDetails.vue'
 import SidebarDetail from '@/components/SidebarDetail.vue'
 
+import type { UserResource } from '@/types'
+
 const mailDetails = ref(null)
-const user = inject('$user')
+const user = inject('$user') as UserResource
 const { currentMail, setCurrentMail } = userStore()
 
 const reloadDrafts = () => {
