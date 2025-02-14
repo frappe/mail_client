@@ -7,7 +7,7 @@ from frappe.translate import get_all_translations
 from frappe.utils import is_html
 
 from mail.utils.cache import get_account_for_user, get_default_outgoing_email_for_user
-from mail.utils.user import has_role, is_system_manager
+from mail.utils.user import get_user_email_addresses, has_role, is_system_manager
 
 
 def check_app_permission() -> bool:
@@ -431,3 +431,8 @@ def get_attachments(dt: str, dn: str):
 		fields=["name", "file_name", "file_url", "file_size"],
 		filters={"attached_to_name": dn, "attached_to_doctype": dt},
 	)
+
+
+@frappe.whitelist()
+def get_user_addresses():
+	return get_user_email_addresses(frappe.session.user)

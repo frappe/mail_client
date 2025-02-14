@@ -21,10 +21,10 @@
 					<div class="flex flex-col gap-3">
 						<div class="flex items-center gap-2 border-t pt-2.5">
 							<span class="text-xs text-gray-500">{{ __('From') }}:</span>
-							<LinkControl
+							<FormControl
 								v-model="mail.from"
-								doctype="Mail Account"
-								:filters="{ user: user.data?.name }"
+								type="autocomplete"
+								:options="addressOptions.data"
 							/>
 						</div>
 						<div class="flex items-center gap-2">
@@ -195,6 +195,7 @@ import {
 	Dialog,
 	FeatherIcon,
 	FileUploader,
+	FormControl,
 	Progress,
 	TextEditor,
 	TextEditorFixedMenu,
@@ -205,7 +206,6 @@ import {
 
 import { formatBytes, validateEmail } from '@/utils'
 import { userStore } from '@/stores/user'
-import LinkControl from '@/components/Controls/LinkControl.vue'
 import MultiselectInputControl from '@/components/Controls/MultiselectInputControl.vue'
 import EmojiPicker from '@/components/EmojiPicker.vue'
 
@@ -301,6 +301,11 @@ watch(
 )
 
 watch(mail, syncMail)
+
+const addressOptions = createResource({
+	url: 'mail.api.mail.get_user_addresses',
+	auto: true,
+})
 
 const createDraftMail = createResource({
 	url: 'mail.api.outbound.send',

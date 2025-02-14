@@ -10,6 +10,7 @@ import { config, configs, parser } from 'typescript-eslint'
 export default config(
   {
     files: ['**/*.{js,mjs,cjs,ts,vue}'],
+    ignores: ['frappe-ui/**'],
     extends: [
       importPlugin.flatConfigs.recommended,
       importPlugin.flatConfigs.typescript,
