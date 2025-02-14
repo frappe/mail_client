@@ -18,7 +18,7 @@ from urllib.parse import parse_qs, urlparse
 import frappe
 from frappe import _
 from frappe.model.document import Document
-from frappe.query_builder import Interval
+from frappe.query_builder import Interval, Order
 from frappe.query_builder.functions import Now
 from frappe.utils import (
 	add_to_date,
@@ -1167,6 +1167,41 @@ def create_outgoing_mail(
 			doc.submit()
 
 	return doc
+
+
+def transfer_emails_to_agent() -> None:
+	"""Transfers the emails to the agent for sending."""
+
+	OM = frappe.qb.DocType("Outgoing Mail")
+	mails = (
+		frappe.qb.from_(OM)
+		.select(OM.name)
+		.where((OM.docstatus == 1) & (OM.status == "Pending"))
+		.orderby(OM.priority, order=Order.desc)
+		.orderby(OM.submitted_at, order=Order.asc)
+		.limit(500)
+	).run(pluck="name")
+
+	if not mails:
+		return
+
+	failed_mails = []
+	for mail in mails:
+		try:
+			outgoing_mail: OutgoingMail = frappe.get_doc("Outgoing Mail", mail)
+			outgoing_mail.process_for_delivery()
+		except Exception:
+			failed_mails.append(mail.name)
+
+			failed_count = len(failed_mails)
+			total_count = len(mails)
+			failure_rate = failed_count / total_count
+			if (failure_rate > 0.33) and (failed_count > 50):
+				frappe.throw(
+					_(
+						"Too many email transfer failures: {failed_count}/{total_count} ({failure_rate:.2%}). Process halted to prevent further issues."
+					).format(failed_count=failed_count, total_count=total_count, failure_rate=failure_rate)
+				)
 
 
 def transfer_failed_emails_to_agent() -> None:
