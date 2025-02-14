@@ -56,12 +56,13 @@ class SMTPConnection:
 
 	def is_session_valid(self) -> bool:
 		current_time = time.time()
-		expired = (
+		if (
 			current_time - self.last_used > self.__inactivity_timeout
 			or current_time - self.__created_at > self.__session_duration
 			or self.__email_count >= self.__max_messages
-		)
-		return not expired and self._is_session_active()
+		):
+			return False
+		return self._is_session_active()
 
 	def increment_email_count(self) -> None:
 		self.__email_count += 1
