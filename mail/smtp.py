@@ -1,6 +1,6 @@
 import time
 from collections.abc import Generator
-from contextlib import contextmanager
+from contextlib import contextmanager, suppress
 from queue import Queue
 from smtplib import SMTP, SMTP_SSL, SMTPServerDisconnected
 from threading import Lock, Thread
@@ -30,15 +30,47 @@ class SMTPConnection:
 		self.__session_duration = session_duration
 		self.__max_messages = max_messages
 		self.__email_count = 0
+		self.__session = self.create_session(host, port, username, password, use_ssl, use_tls)
 
-		self.session = self.__create_connection(host, port, username, password, use_ssl, use_tls)
 		self.host = host
 		self.port = port
 		self.username = username
 		self.last_used = time.time()
 
-	def __create_connection(
-		self, host: str, port: int, username: str, password: str, use_ssl: bool, use_tls: bool
+	@property
+	def session(self) -> SMTP | SMTP_SSL:
+		return self.__session
+
+	def _is_session_active(self) -> bool:
+		if not self.session:
+			return False
+
+		try:
+			return self.session.noop()[0] == 250
+		except Exception:
+			return False
+
+	def is_session_valid(self) -> bool:
+		current_time = time.time()
+		expired = (
+			current_time - self.last_used > self.__inactivity_timeout
+			or current_time - self.__created_at > self.__session_duration
+			or self.__email_count >= self.__max_messages
+		)
+		return not expired and self._is_session_active()
+
+	def increment_email_count(self) -> None:
+		self.__email_count += 1
+		self.last_used = time.time()
+
+	def close(self) -> None:
+		if self.session:
+			with suppress(SMTPServerDisconnected, TimeoutError, OSError):
+				self.session.quit()
+
+	@classmethod
+	def create_session(
+		cls, host: str, port: int, username: str, password: str, use_ssl: bool, use_tls: bool
 	) -> SMTP | SMTP_SSL:
 		_SMTP = SMTP_SSL if use_ssl else SMTP
 		session = _SMTP(host, port)
@@ -48,32 +80,6 @@ class SMTPConnection:
 			session.ehlo()
 		session.login(username, password)
 		return session
-
-	def is_active(self) -> bool:
-		try:
-			self.session.noop()
-			return True
-		except (SMTPServerDisconnected, OSError):
-			return False
-
-	def is_valid(self) -> bool:
-		current_time = time.time()
-		expired = (
-			current_time - self.last_used > self.__inactivity_timeout
-			or current_time - self.__created_at > self.__session_duration
-			or self.__email_count >= self.__max_messages
-		)
-		return not expired and self.is_active()
-
-	def increment_email_count(self) -> None:
-		self.__email_count += 1
-		self.last_used = time.time()
-
-	def close(self) -> None:
-		try:
-			self.session.quit()
-		except (SMTPServerDisconnected, OSError):
-			pass
 
 
 class SMTPConnectionPool:
@@ -126,7 +132,7 @@ class SMTPConnectionPool:
 		with Lock():
 			while not pool.empty():
 				connection: SMTPConnection = pool.get()
-				if connection.is_valid():
+				if connection.is_session_valid():
 					connection.last_used = time.time()
 					return connection
 				else:
@@ -155,7 +161,7 @@ class SMTPConnectionPool:
 			if key in self._pools:
 				pool = self._pools[key]
 				with Lock():
-					if connection.is_active() and pool.qsize() < pool.maxsize:
+					if connection.is_session_valid() and pool.qsize() < pool.maxsize:
 						pool.put(connection)
 						return
 		connection.close()
@@ -183,7 +189,7 @@ class SMTPConnectionPool:
 					valid_connections = Queue(self.max_connections)
 					while not pool.empty():
 						connection: SMTPConnection = pool.get()
-						if connection.is_valid():
+						if connection.is_session_valid():
 							valid_connections.put(connection)
 						else:
 							connection.close()
