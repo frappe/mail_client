@@ -24,7 +24,7 @@
 							<LinkControl
 								v-model="mail.from"
 								doctype="Mail Account"
-								:filters="{ user: user.data.name }"
+								:filters="{ user: user.data?.name }"
 							/>
 						</div>
 						<div class="flex items-center gap-2">
@@ -209,9 +209,9 @@ import LinkControl from '@/components/Controls/LinkControl.vue'
 import MultiselectInputControl from '@/components/Controls/MultiselectInputControl.vue'
 import EmojiPicker from '@/components/EmojiPicker.vue'
 
-import type { ReplyDetails } from '@/types'
+import type { ReplyDetails, UserResource } from '@/types'
 
-const user = inject('$user')
+const user = inject('$user') as UserResource
 const show = defineModel<boolean>()
 const localMailID = ref<string>()
 const textEditor = ref(null)
@@ -313,7 +313,7 @@ const createDraftMail = createResource({
 			...mail,
 		}
 	},
-	onSuccess(data) {
+	onSuccess(data: string) {
 		if (isSend.value) Object.assign(mail, emptyMail)
 		else {
 			localMailID.value = data

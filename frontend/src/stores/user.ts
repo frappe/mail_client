@@ -4,10 +4,12 @@ import { createResource } from 'frappe-ui'
 
 import router from '@/router'
 
+import type { UserResource } from '@/types'
+
 type Folder = 'incoming' | 'sent' | 'draft'
 
 export const userStore = defineStore('mail-users', () => {
-	const userResource = createResource({
+	const userResource: UserResource = createResource({
 		url: 'mail.api.mail.get_user_info',
 		onError: (error) => {
 			if (error && error.exc_type === 'AuthenticationError') {
