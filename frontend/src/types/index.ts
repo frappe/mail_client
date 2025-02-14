@@ -29,5 +29,5 @@ export interface User {
 }
 
 export interface UserResource {
-	data?: User
+	data: User
 }

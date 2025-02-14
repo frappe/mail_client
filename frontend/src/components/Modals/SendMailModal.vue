@@ -85,9 +85,9 @@
 						</div>
 						<div class="flex items-center gap-2 pb-2.5">
 							<span class="text-xs text-gray-500">{{ __('Subject') }}:</span>
-							<TextInput
+							<input
 								v-model="mail.subject"
-								class="flex-1 border-none bg-white text-sm hover:bg-white focus:border-none focus:!shadow-none focus-visible:!ring-0"
+								class="text-ink-gray-8 flex-1 border-none bg-white text-base focus-visible:!ring-0"
 							/>
 						</div>
 					</div>
@@ -115,7 +115,7 @@
 						<template #default="{ file, progress, uploading, openFileSelector }">
 							<!-- Attachments -->
 							<div
-								v-if="localMailID"
+								v-if="localMailID && attachments.data?.length"
 								class="mb-2 flex flex-col gap-2 text-sm text-gray-700"
 							>
 								<div v-if="uploading" class="rounded bg-gray-100 p-2.5">
@@ -199,7 +199,6 @@ import {
 	Progress,
 	TextEditor,
 	TextEditorFixedMenu,
-	TextInput,
 	createDocumentResource,
 	createResource,
 } from 'frappe-ui'
