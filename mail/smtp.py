@@ -45,10 +45,14 @@ class SMTPConnection:
 		if not self.session:
 			return False
 
-		try:
-			return self.session.noop()[0] == 250
-		except Exception:
-			return False
+		if not hasattr(self, "_last_check") or (time.time() - self._last_check) > 10:
+			self._last_check = time.time()
+			try:
+				return self.session.noop()[0] == 250
+			except Exception:
+				return False
+
+		return True
 
 	def is_session_valid(self) -> bool:
 		current_time = time.time()
