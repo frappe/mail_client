@@ -79,9 +79,7 @@ class SMTPConnection:
 		_SMTP = SMTP_SSL if use_ssl else SMTP
 		session = _SMTP(host, port)
 		if use_tls:
-			session.ehlo()
 			session.starttls()
-			session.ehlo()
 		session.login(username, password)
 		return session
 
