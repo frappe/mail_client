@@ -177,7 +177,7 @@ class SMTPConnectionPool:
 			self._stop_cleanup_thread()
 
 	def _initialize_cleanup_thread(self) -> None:
-		if self._running and self._cleanup_thread is None:
+		if self._running and (not self._cleanup_thread or not self._cleanup_thread.is_alive()):
 			self._cleanup_thread = Thread(target=self._cleanup_stale_connections, daemon=True)
 			self._cleanup_thread.start()
 
