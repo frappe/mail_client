@@ -131,16 +131,13 @@ class SMTPConnectionPool:
 				self._running = True
 				self._initialize_cleanup_thread()
 
-		pool = self._pools[key]
-
-		with Lock():
+			pool = self._pools[key]
 			while not pool.empty():
 				connection: SMTPConnection = pool.get()
 				if connection.is_session_valid():
 					connection.last_used = time.time()
 					return connection
-				else:
-					connection.close()
+				connection.close()
 
 			if pool.qsize() < self.max_connections:
 				return SMTPConnection(
@@ -155,19 +152,18 @@ class SMTPConnectionPool:
 					self.max_messages,
 				)
 
-			raise SMTPConnectionLimitError(
-				f"SMTP connection pool limit ({self.max_connections}) reached for {key}"
-			)
+		raise SMTPConnectionLimitError(
+			f"SMTP connection pool limit ({self.max_connections}) reached for {key}"
+		)
 
 	def return_connection(self, connection: SMTPConnection) -> None:
 		key = (connection.host, connection.port, connection.username)
 		with self._pool_lock:
 			if key in self._pools:
 				pool = self._pools[key]
-				with Lock():
-					if connection.is_session_valid() and pool.qsize() < pool.maxsize:
-						pool.put(connection)
-						return
+				if connection.is_session_valid() and pool.qsize() < pool.maxsize:
+					pool.put(connection)
+					return
 		connection.close()
 
 	def close_all_connections(self) -> None:
