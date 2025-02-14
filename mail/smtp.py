@@ -252,6 +252,9 @@ def smtp_server(
 
 	try:
 		yield _connection.session
+	except Exception:
+		_connection.close()
+		raise
 	finally:
 		if _connection:
 			_connection.increment_email_count()
