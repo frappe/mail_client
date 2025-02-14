@@ -35,7 +35,7 @@
 								:validate="validateEmail"
 								:error-message="
 									(value: string) =>
-										__('{0} is an invalid email address', [value])
+										__(`'{0}' is an invalid email address`, [value])
 								"
 							/>
 							<div class="flex gap-1.5">
@@ -66,7 +66,7 @@
 								:validate="validateEmail"
 								:error-message="
 									(value: string) =>
-										__('{0} is an invalid email address', [value])
+										__(`'{0}' is an invalid email address`, [value])
 								"
 							/>
 						</div>
@@ -79,7 +79,7 @@
 								:validate="validateEmail"
 								:error-message="
 									(value: string) =>
-										__('{0} is an invalid email address', [value])
+										__(`'{0}' is an invalid email address`, [value])
 								"
 							/>
 						</div>
