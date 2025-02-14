@@ -1176,9 +1176,16 @@ def transfer_emails_to_agent() -> None:
 	mails = (
 		frappe.qb.from_(OM)
 		.select(OM.name)
-		.where((OM.docstatus == 1) & (OM.status == "Pending"))
+		.where(
+			(OM.docstatus == 1)
+			& (
+				(OM.status == "Pending")
+				| ((OM.status == "Failed") & (Now() >= OM.retry_after))
+				| ((OM.status == "Transferring") & (OM.transfer_started_at <= (Now() - Interval(minutes=10))))
+			)
+		)
 		.orderby(OM.priority, order=Order.desc)
-		.orderby(OM.submitted_at, order=Order.asc)
+		.orderby(OM.failed_count, OM.submitted_at, order=Order.asc)
 		.limit(500)
 	).run(pluck="name")
 
@@ -1189,10 +1196,14 @@ def transfer_emails_to_agent() -> None:
 	for mail in mails:
 		try:
 			outgoing_mail: OutgoingMail = frappe.get_doc("Outgoing Mail", mail)
-			outgoing_mail.process_for_delivery()
+			if outgoing_mail.status == "Pending":
+				outgoing_mail.process_for_delivery()
+			elif outgoing_mail.status == "Failed":
+				outgoing_mail.retry_failed()
+			elif outgoing_mail.status == "Transferring":
+				outgoing_mail.force_transfer_to_mail_agent()
 		except Exception:
 			failed_mails.append(mail.name)
-
 			failed_count = len(failed_mails)
 			total_count = len(mails)
 			failure_rate = failed_count / total_count
@@ -1202,25 +1213,6 @@ def transfer_emails_to_agent() -> None:
 						"Too many email transfer failures: {failed_count}/{total_count} ({failure_rate:.2%}). Process halted to prevent further issues."
 					).format(failed_count=failed_count, total_count=total_count, failure_rate=failure_rate)
 				)
-
-
-def transfer_failed_emails_to_agent() -> None:
-	"""Transfers the failed emails to the agent."""
-
-	mails = frappe.db.get_all(
-		"Outgoing Mail",
-		{
-			"status": ["in", ["Failed", "Transferring"]],
-			"submitted_at": ["<=", add_to_date(now(), minutes=-60)],
-		},
-		pluck="name",
-	)
-	for mail in mails:
-		doc = frappe.get_doc("Outgoing Mail", mail)
-		if doc.status == "Failed":
-			doc.retry_failed()
-		else:
-			doc.force_transfer_to_mail_agent()
 
 
 def delete_newsletters() -> None:

@@ -223,7 +223,6 @@ scheduler_events = {
 	"cron": {
 		"*/2 * * * *": [
 			"mail.tasks.enqueue_transfer_emails_to_agent",
-			"mail.tasks.enqueue_transfer_failed_emails_to_agent",
 			"mail.tasks.enqueue_fetch_emails_from_mail_agents",
 		]
 	},
