@@ -122,11 +122,13 @@ class OutgoingMail(Document):
 		self.create_mail_contacts()
 
 		kwargs = {"status": "In Progress"}
-		if self.via_api and not self.is_newsletter and self.submitted_after <= 5:
+		if not self.is_newsletter and self.via_api and self.submitted_after <= 5:
 			kwargs.update({"priority": 1})
 
 		self._db_set(notify_update=True, **kwargs)
-		self.enqueue_process_for_delivery()
+
+		if not self.is_newsletter:
+			self.process_for_delivery()
 
 	def on_update_after_submit(self) -> None:
 		self.set_folder()
