@@ -183,7 +183,9 @@ class MailAccountRequest(Document):
 		frappe.msgprint(_("Verification email sent successfully."), indicator="green", alert=True)
 
 	@frappe.whitelist()
-	def force_verify_and_create_account(self, first_name: str, last_name: str, password: str) -> None:
+	def force_verify_and_create_account(
+		self, first_name: str, last_name: str | None = None, password: str | None = None
+	) -> None:
 		"""Force verify and create account for invited user."""
 
 		self.validate_expired()
@@ -201,7 +203,9 @@ class MailAccountRequest(Document):
 		self.db_set("is_verified", 1)
 		self.create_account(first_name, last_name, password)
 
-	def create_account(self, first_name: str, last_name: str, password: str) -> None:
+	def create_account(
+		self, first_name: str, last_name: str | None = None, password: str | None = None
+	) -> None:
 		"""Create mail account for the user."""
 
 		if not self.is_verified:
