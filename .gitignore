@@ -4,6 +4,7 @@
 *.swp
 tags
 node_modules
+yarn-error.log
 __pycache__
 mail/public/frontend
 mail/www/mail.html
