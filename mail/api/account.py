@@ -1,5 +1,6 @@
 import frappe
 from frappe import _
+from frappe.utils import cint, get_datetime, now_datetime
 
 from mail.mail.doctype.mail_account.mail_account import create_user
 from mail.utils.rate_limiter import dynamic_rate_limit
@@ -45,15 +46,21 @@ def verify_otp(account_request: str, otp: str) -> str:
 
 @frappe.whitelist(allow_guest=True)
 @dynamic_rate_limit()
-def get_account_request(request_key: str) -> dict:
+def get_account_request(request_key: str) -> dict | None:
 	"""Return the account request details"""
 
-	return frappe.db.get_value(
+	if account_request := frappe.db.get_value(
 		"Mail Account Request",
 		{"request_key": request_key},
-		["email", "is_verified", "is_expired", "account"],
+		["email", "is_verified", "expires_at", "account"],
 		as_dict=True,
-	)
+	):
+		is_expired = 0
+		if expires_at := account_request["expires_at"]:
+			is_expired = cint(get_datetime(expires_at) < now_datetime())
+		account_request.pop("expires_at")
+		account_request["is_expired"] = is_expired
+		return account_request
 
 
 @frappe.whitelist(allow_guest=True)
