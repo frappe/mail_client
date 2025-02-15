@@ -22,6 +22,7 @@
   "is_verified",
   "is_expired",
   "column_break_vcxy",
+  "expires_at",
   "request_key",
   "otp"
  ],
@@ -103,10 +104,10 @@
    "depends_on": "eval: !doc.__islocal",
    "fieldname": "is_expired",
    "fieldtype": "Check",
+   "is_virtual": 1,
    "label": "Is Expired",
    "no_copy": 1,
-   "read_only": 1,
-   "search_index": 1
+   "read_only": 1
   },
   {
    "default": "0",
@@ -180,11 +181,19 @@
   {
    "fieldname": "column_break_0kvc",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "expires_at",
+   "fieldtype": "Datetime",
+   "label": "Expires At",
+   "no_copy": 1,
+   "read_only": 1,
+   "search_index": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-02-08 19:23:07.362319",
+ "modified": "2025-02-15 14:45:09.774986",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Account Request",
