@@ -1,9 +1,9 @@
 <template>
-	<MailLayout v-if="sentMails" folder="Sent" :count="sentMailsCount?.data" :mails="sentMails" />
+	<MailLayout v-if="sentMails" folder="Sent" :mails="sentMails" />
 </template>
 <script setup lang="ts">
 import { inject, onMounted } from 'vue'
-import { createListResource, createResource } from 'frappe-ui'
+import { createListResource } from 'frappe-ui'
 
 import { userStore } from '@/stores/user'
 import MailLayout from '@/components/MailLayout.vue'
@@ -17,7 +17,7 @@ const { currentMail, setCurrentMail } = userStore()
 onMounted(() => {
 	socket.on('outgoing_mail_sent', () => {
 		sentMails.reload()
-		sentMailsCount.reload()
+		// sentMailsCount.reload()
 	})
 })
 
@@ -30,20 +30,5 @@ const sentMails = createListResource({
 	onSuccess(data) {
 		if (!currentMail.Sent && data.length) setCurrentMail('Sent', data[0].name)
 	},
-})
-
-const sentMailsCount = createResource({
-	url: 'frappe.client.get_count',
-	makeParams() {
-		return {
-			doctype: 'Outgoing Mail',
-			filters: {
-				sender: user.data?.name,
-				status: 'Sent',
-			},
-		}
-	},
-	cache: ['sentMailsCount', user.data?.name],
-	auto: true,
 })
 </script>

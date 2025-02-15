@@ -7,8 +7,8 @@
 				<div class="ml-2 self-end text-xs text-gray-600">
 					{{
 						__('{0} {1}', [
-							formatNumber(count || 0),
-							count == 1 ? singularize('messages') : 'messages',
+							formatNumber(mailCount?.data || 0),
+							mailCount?.data == 1 ? singularize('messages') : 'messages',
 						])
 					}}
 				</div>
@@ -44,17 +44,14 @@
 			/>
 		</div>
 		<div class="w-2/3 flex-1 overflow-auto">
-			<MailDetails
-				ref="mailDetails"
-				:mail-i-d="currentMail[folder]"
-				:type="folder === 'Inbox' ? 'Incoming Mail' : 'Outgoing Mail'"
-			/>
+			<MailDetails ref="mailDetails" :mail-i-d="currentMail[folder]" :type="mailType" />
 		</div>
 	</div>
 </template>
 <script setup lang="ts">
+import { computed, inject } from 'vue'
 import { useDebounceFn } from '@vueuse/core'
-import { Breadcrumbs } from 'frappe-ui'
+import { Breadcrumbs, createResource } from 'frappe-ui'
 
 import { formatNumber, singularize, startResizing } from '@/utils'
 import { userStore } from '@/stores/user'
@@ -62,15 +59,33 @@ import HeaderActions from '@/components/HeaderActions.vue'
 import MailDetails from '@/components/MailDetails.vue'
 import SidebarDetail from '@/components/SidebarDetail.vue'
 
-import type { Folder } from '@/types'
+import type { Folder, UserResource } from '@/types'
 
+const user = inject('$user') as UserResource
 const { currentMail, setCurrentMail } = userStore()
 
 const props = defineProps<{
 	folder: Folder
-	count?: number
 	mails: object
 }>()
+
+const mailType = computed(() => (props.folder === 'Inbox' ? 'Incoming Mail' : 'Outgoing Mail'))
+
+const mailCountFilters = computed(() =>
+	props.folder === 'Inbox'
+		? { receiver: user.data.name }
+		: { sender: user.data.name, folder: props.folder },
+)
+
+const mailCount = createResource({
+	url: 'frappe.client.get_count',
+	makeParams: () => ({
+		doctype: mailType.value,
+		filters: mailCountFilters.value,
+	}),
+	cache: [`${props.folder}MailCount`, user.data?.name],
+	auto: true,
+})
 
 const loadMoreEmails = useDebounceFn(() => {
 	if (props.mails.hasNextPage) props.mails.next()

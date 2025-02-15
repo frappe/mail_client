@@ -1,14 +1,9 @@
 <template>
-	<MailLayout
-		v-if="draftMails"
-		folder="Drafts"
-		:count="draftMailsCount?.data"
-		:mails="draftMails"
-	/>
+	<MailLayout v-if="draftMails" folder="Drafts" :mails="draftMails" />
 </template>
 <script setup lang="ts">
 import { inject, ref } from 'vue'
-import { createListResource, createResource } from 'frappe-ui'
+import { createListResource } from 'frappe-ui'
 
 import { userStore } from '@/stores/user'
 import MailLayout from '@/components/MailLayout.vue'
@@ -35,20 +30,5 @@ const draftMails = createListResource({
 		if (!currentMail.Drafts) setCurrentMail('Drafts', data[0].name)
 		mailDetails.value?.reloadThread()
 	},
-})
-
-const draftMailsCount = createResource({
-	url: 'frappe.client.get_count',
-	makeParams() {
-		return {
-			doctype: 'Outgoing Mail',
-			filters: {
-				sender: user.data?.name,
-				status: 'Draft',
-			},
-		}
-	},
-	cache: ['draftMailsCount', user.data?.name],
-	auto: true,
 })
 </script>
