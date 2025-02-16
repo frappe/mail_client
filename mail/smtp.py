@@ -1,3 +1,4 @@
+import atexit
 import time
 from collections.abc import Generator
 from contextlib import contextmanager, suppress
@@ -5,7 +6,11 @@ from queue import Queue
 from smtplib import SMTP, SMTP_SSL, SMTPServerDisconnected
 from threading import Lock, Thread
 
+import frappe
+
 from mail.utils.cache import get_smtp_limits
+
+_smtp_connections_cache = {}
 
 
 class SMTPConnectionLimitError(Exception):
@@ -19,11 +24,11 @@ class SMTPConnection:
 		port: int,
 		username: str,
 		password: str,
-		use_ssl: bool,
-		use_tls: bool,
-		inactivity_timeout: int,
-		session_duration: int,
-		max_messages: int,
+		use_ssl: bool = False,
+		use_tls: bool = False,
+		inactivity_timeout: int = 300,
+		session_duration: int = 600,
+		max_messages: int = 10,
 	) -> None:
 		self.__created_at = time.time()
 		self.__inactivity_timeout = inactivity_timeout
@@ -239,7 +244,7 @@ class SMTPContext:
 
 
 @contextmanager
-def smtp_server(
+def smtp_session(
 	host: str,
 	port: int,
 	username: str,
@@ -259,3 +264,51 @@ def smtp_server(
 		if _connection:
 			_connection.increment_email_count()
 			_pool.return_connection(_connection)
+
+
+def get_smtp_connection(
+	host: str,
+	port: int,
+	username: str,
+	password: str,
+	use_ssl: bool = False,
+	use_tls: bool = False,
+	enqueue_close: bool = True,
+) -> SMTPConnection:
+	key = (host, port, username)
+
+	if key in _smtp_connections_cache:
+		connection: SMTPConnection = _smtp_connections_cache[key]
+		if connection.is_session_valid():
+			return connection
+		else:
+			connection.close()
+			del _smtp_connections_cache[key]
+
+	smtp_limits = get_smtp_limits()
+	max_messages = smtp_limits["max_messages"]
+	session_duration = smtp_limits["session_duration"]
+	inactivity_timeout = smtp_limits["inactivity_timeout"]
+
+	connection = SMTPConnection(
+		host,
+		port,
+		username,
+		password,
+		use_ssl,
+		use_tls,
+		inactivity_timeout,
+		session_duration,
+		max_messages,
+	)
+	_smtp_connections_cache[key] = connection
+
+	if enqueue_close:
+		if frappe.request and hasattr(frappe.request, "after_response"):
+			frappe.request.after_response.add(connection.close)
+		elif frappe.job and hasattr(frappe.job, "after_job"):
+			frappe.job.after_job.add(connection.close)
+		elif not frappe.flags.in_test:
+			atexit.register(connection.close)
+
+	return connection

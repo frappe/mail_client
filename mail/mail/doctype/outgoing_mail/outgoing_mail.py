@@ -41,7 +41,7 @@ from mail.mail.doctype.mime_message.mime_message import (
 	update_mime_message,
 )
 from mail.mail.doctype.spam_check_log.spam_check_log import create_spam_check_log
-from mail.smtp import SMTPContext
+from mail.smtp import SMTPContext, get_smtp_connection
 from mail.utils import (
 	convert_html_to_text,
 	get_in_reply_to,
@@ -959,9 +959,25 @@ class OutgoingMail(Document):
 			username = mail_account.email
 			password = mail_account.get_password("password")
 
-			with SMTPContext(agent_or_group, 465, username, password, use_ssl=True) as server:
-				mail_options = [f"ENVID={self.name}:{self.token}", f"MT-PRIORITY={self.priority}"]
-				server.sendmail(self.from_, recipients, self.message, mail_options=mail_options)
+			mail_options = [f"ENVID={self.name}:{self.token}", f"MT-PRIORITY={self.priority}"]
+			if frappe.request and hasattr(frappe.request, "after_response"):
+				# Web worker:
+				# Retrieves an `SMTP` or `SMTP_SSL` session from the `SMTPConnectionPool`.
+				# Supports multiple concurrent connections for the same (host, port, user) key.
+				# Reuses existing connections across threads.
+				# Connections are gracefully closed by the cleanup thread.
+
+				with SMTPContext(agent_or_group, 465, username, password, use_ssl=True) as session:
+					session.sendmail(self.from_, recipients, self.message, mail_options=mail_options)
+			else:
+				# Background worker:
+				# Retrieves an `SMTPConnection` from a local cache.
+				# Ensures the same connection is reused throughout the job for the (host, port, user) key.
+				# Connection is gracefully closed when the job completes.
+
+				connection = get_smtp_connection(agent_or_group, 465, username, password, use_ssl=True)
+				connection.session.sendmail(self.from_, recipients, self.message, mail_options=mail_options)
+				connection.increment_email_count()
 
 			transfer_completed_at = now()
 			transfer_completed_after = time_diff_in_seconds(transfer_completed_at, transfer_started_at)
