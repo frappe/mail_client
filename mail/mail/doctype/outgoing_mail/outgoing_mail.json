@@ -311,7 +311,7 @@
    "fieldtype": "Select",
    "label": "Folder",
    "no_copy": 1,
-   "options": "Drafts\nSent\nTrash",
+   "options": "Drafts\nOutbox\nSent\nTrash",
    "reqd": 1,
    "search_index": 1
   },
@@ -631,7 +631,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-02-17 14:17:02.586154",
+ "modified": "2025-02-17 16:30:14.969915",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Outgoing Mail",

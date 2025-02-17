@@ -130,7 +130,7 @@ class OutgoingMail(Document):
 			self.process_for_delivery()
 
 	def on_update_after_submit(self) -> None:
-		self.set_folder()
+		self.set_folder(db_set=True)
 
 	def on_trash(self) -> None:
 		if self.docstatus != 0 and frappe.session.user != "Administrator":
@@ -142,19 +142,21 @@ class OutgoingMail(Document):
 		if self.amended_from:
 			frappe.throw(_("Amending {0} is not allowed.").format(frappe.bold("Outgoing Mail")))
 
-	def set_folder(self) -> None:
+	def set_folder(self, db_set: bool = False) -> None:
 		"""Validates the folder"""
 
-		folder = self.folder
 		if self.docstatus == 0:
-			folder = "Drafts"
-		elif folder == "Drafts":
-			folder = "Sent"
-
-		if self.get("_action") == "update_after_submit":
-			self._db_set(folder=folder, notify_update=True)
+			self.folder = "Drafts"
+		elif self.docstatus == 1:
+			if self.status not in ["Deferred", "Bounced", "Partially Sent", "Sent"]:
+				self.folder = "Outbox"
+			elif self.folder != "Trash":
+				self.folder = "Sent"
 		else:
-			self.folder = folder
+			return
+
+		if db_set:
+			self._db_set(folder=self.folder, notify_update=True)
 
 	def set_priority(self) -> None:
 		"""Sets the priority."""
@@ -989,7 +991,9 @@ class OutgoingMail(Document):
 					rcpt.db_update()
 
 			self.update_status()
+			self.set_folder()
 			self._db_set(
+				folder=self.folder,
 				status=self.status,
 				transfer_completed_at=transfer_completed_at,
 				transfer_completed_after=transfer_completed_after,
