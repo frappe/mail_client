@@ -18,11 +18,12 @@ from urllib.parse import parse_qs, urlparse
 import frappe
 from frappe import _
 from frappe.model.document import Document
-from frappe.query_builder import Interval
+from frappe.query_builder import Interval, Order
 from frappe.query_builder.functions import Now
 from frappe.utils import (
 	add_to_date,
 	cint,
+	create_batch,
 	flt,
 	get_datetime_str,
 	now,
@@ -41,7 +42,7 @@ from mail.mail.doctype.mime_message.mime_message import (
 	update_mime_message,
 )
 from mail.mail.doctype.spam_check_log.spam_check_log import create_spam_check_log
-from mail.smtp import SMTPContext
+from mail.smtp import SMTPContext, get_smtp_connection
 from mail.utils import (
 	convert_html_to_text,
 	get_in_reply_to,
@@ -120,13 +121,13 @@ class OutgoingMail(Document):
 
 	def on_submit(self) -> None:
 		self.create_mail_contacts()
+		self._db_set(status="Pending", notify_update=True)
 
-		kwargs = {"status": "In Progress"}
-		if self.via_api and not self.is_newsletter and self.submitted_after <= 5:
-			kwargs.update({"priority": 1})
+		if not self.is_newsletter:
+			if self.via_api and self.submitted_after <= 5:
+				self._db_set(priority=1)
 
-		self._db_set(notify_update=True, **kwargs)
-		self.enqueue_process_for_delivery()
+			self.process_for_delivery()
 
 	def on_update_after_submit(self) -> None:
 		self.set_folder()
@@ -780,7 +781,7 @@ class OutgoingMail(Document):
 		# Reload the doc to ensure it reflects the latest status.
 		# This handles cases where the email's status might have been manually updated (e.g., Accepted) after the job was created.
 		self.reload()
-		if self.status != "In Progress":
+		if self.status not in ["Pending", "Queued"]:
 			return
 
 		kwargs = self._prepare_delivery_args()
@@ -875,7 +876,7 @@ class OutgoingMail(Document):
 
 		frappe.only_for("System Manager")
 
-		if self.status in ["In Progress", "Blocked"]:
+		if self.status in ["Pending", "Blocked"]:
 			for rcpt in self.recipients:
 				if rcpt.status == "Blocked":
 					rcpt.status = ""
@@ -959,9 +960,25 @@ class OutgoingMail(Document):
 			username = mail_account.email
 			password = mail_account.get_password("password")
 
-			with SMTPContext(agent_or_group, 465, username, password, use_ssl=True) as server:
-				mail_options = [f"ENVID={self.name}:{self.token}", f"MT-PRIORITY={self.priority}"]
-				server.sendmail(self.from_, recipients, self.message, mail_options=mail_options)
+			mail_options = [f"ENVID={self.name}:{self.token}", f"MT-PRIORITY={self.priority}"]
+			if frappe.request and hasattr(frappe.request, "after_response"):
+				# Web worker:
+				# Retrieves an `SMTP` or `SMTP_SSL` session from the `SMTPConnectionPool`.
+				# Supports multiple concurrent connections for the same (host, port, user) key.
+				# Reuses existing connections across threads.
+				# Connections are gracefully closed by the cleanup thread.
+
+				with SMTPContext(agent_or_group, 465, username, password, use_ssl=True) as session:
+					session.sendmail(self.from_, recipients, self.message, mail_options=mail_options)
+			else:
+				# Background worker:
+				# Retrieves an `SMTPConnection` from a local cache.
+				# Ensures the same connection is reused throughout the job for the (host, port, user) key.
+				# Connection is gracefully closed when the job completes.
+
+				connection = get_smtp_connection(agent_or_group, 465, username, password, use_ssl=True)
+				connection.session.sendmail(self.from_, recipients, self.message, mail_options=mail_options)
+				connection.increment_email_count()
 
 			transfer_completed_at = now()
 			transfer_completed_after = time_diff_in_seconds(transfer_completed_at, transfer_started_at)
@@ -1169,23 +1186,80 @@ def create_outgoing_mail(
 	return doc
 
 
-def transfer_failed_emails_to_agent() -> None:
-	"""Transfers the failed emails to the agent."""
+def process_email_transfer_batch(mails: list[str]) -> None:
+	"""Processes a batch of emails and transfer them to the agent."""
 
-	mails = frappe.db.get_all(
-		"Outgoing Mail",
-		{
-			"status": ["in", ["Failed", "Transferring"]],
-			"submitted_at": ["<=", add_to_date(now(), minutes=-60)],
-		},
-		pluck="name",
-	)
+	failed_mails = []
+
 	for mail in mails:
-		doc = frappe.get_doc("Outgoing Mail", mail)
-		if doc.status == "Failed":
-			doc.retry_failed()
-		else:
-			doc.force_transfer_to_mail_agent()
+		try:
+			outgoing_mail: OutgoingMail = frappe.get_doc("Outgoing Mail", mail)
+			match outgoing_mail.status:
+				case "Pending" | "Queued":
+					outgoing_mail.process_for_delivery()
+				case "Failed":
+					outgoing_mail.retry_failed()
+				case "Transferring":
+					outgoing_mail.force_transfer_to_mail_agent()
+		except Exception:
+			failed_mails.append(mail)
+			failed_count = len(failed_mails)
+			total_count = len(mails)
+			failure_ratio = failed_count / total_count
+			if (failure_ratio > 0.33) and (failed_count > 50):
+				frappe.throw(
+					_(
+						"Too many email transfer failures: {failed_count}/{total_count} ({failure_rate:.2%}). Process halted."
+					).format(failed_count=failed_count, total_count=total_count, failure_rate=failure_ratio)
+				)
+
+
+def transfer_mails_to_mail_agent() -> None:
+	"""Select emails and queues them for transfer to the agent."""
+
+	MAX_BATCH_SIZE = 5_000
+	BATCH_PROCESS_SIZE = 1_000
+
+	OM = frappe.qb.DocType("Outgoing Mail")
+	mails = (
+		frappe.qb.from_(OM)
+		.select(OM.name)
+		.where(
+			(OM.docstatus == 1)
+			& (
+				(OM.status == "Pending")
+				| ((OM.status == "Failed") & (Now() >= OM.retry_after))
+				| ((OM.status == "Transferring") & (OM.transfer_started_at <= (Now() - Interval(minutes=10))))
+			)
+		)
+		.orderby(OM.priority, order=Order.desc)
+		.orderby(OM.failed_count, OM.submitted_at, order=Order.asc)
+		.limit(MAX_BATCH_SIZE)
+	).run(pluck="name")
+
+	if not mails:
+		return
+
+	try:
+		(
+			frappe.qb.update(OM).set(OM.status, "Queued").where((OM.docstatus == 1) & (OM.name.isin(mails)))
+		).run()
+
+		for idx, batch in enumerate(create_batch(mails, BATCH_PROCESS_SIZE)):
+			frappe.enqueue(
+				process_email_transfer_batch,
+				queue="long",
+				job_name=f"process_email_transfer_batch_{idx+1}_{len(batch)}",
+				enqueue_after_commit=False,
+				mails=batch,
+			)
+
+		# Recursively process next batch if the limit was reached.
+		if len(mails) == MAX_BATCH_SIZE:
+			transfer_mails_to_mail_agent()
+
+	except Exception:
+		frappe.log_error("Error occurred while queuing emails for transfer.")
 
 
 def delete_newsletters() -> None:

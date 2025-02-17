@@ -1,9 +1,12 @@
+import atexit
 import time
 from collections.abc import Generator
-from contextlib import contextmanager
+from contextlib import contextmanager, suppress
 from queue import Queue
 from smtplib import SMTP, SMTP_SSL, SMTPServerDisconnected
 from threading import Lock, Thread
+
+import frappe
 
 from mail.utils.cache import get_smtp_limits
 
@@ -19,61 +22,70 @@ class SMTPConnection:
 		port: int,
 		username: str,
 		password: str,
-		use_ssl: bool,
-		use_tls: bool,
-		inactivity_timeout: int,
-		session_duration: int,
-		max_messages: int,
+		use_ssl: bool = False,
+		use_tls: bool = False,
+		inactivity_timeout: int = 300,
+		session_duration: int = 600,
+		max_messages: int = 10,
 	) -> None:
 		self.__created_at = time.time()
 		self.__inactivity_timeout = inactivity_timeout
 		self.__session_duration = session_duration
 		self.__max_messages = max_messages
 		self.__email_count = 0
+		self.__session = self.create_session(host, port, username, password, use_ssl, use_tls)
 
-		self.session = self.__create_connection(host, port, username, password, use_ssl, use_tls)
 		self.host = host
 		self.port = port
 		self.username = username
 		self.last_used = time.time()
 
-	def __create_connection(
-		self, host: str, port: int, username: str, password: str, use_ssl: bool, use_tls: bool
-	) -> SMTP | SMTP_SSL:
-		_SMTP = SMTP_SSL if use_ssl else SMTP
-		session = _SMTP(host, port)
-		if use_tls:
-			session.ehlo()
-			session.starttls()
-			session.ehlo()
-		session.login(username, password)
-		return session
+	@property
+	def session(self) -> SMTP | SMTP_SSL:
+		return self.__session
 
-	def is_active(self) -> bool:
-		try:
-			self.session.noop()
-			return True
-		except (SMTPServerDisconnected, OSError):
+	def _is_session_active(self) -> bool:
+		if not self.session:
 			return False
 
-	def is_valid(self) -> bool:
+		if not hasattr(self, "_last_check") or (time.time() - self._last_check) > 10:
+			self._last_check = time.time()
+			try:
+				return self.session.noop()[0] == 250
+			except Exception:
+				return False
+
+		return True
+
+	def is_session_valid(self) -> bool:
 		current_time = time.time()
-		expired = (
+		if (
 			current_time - self.last_used > self.__inactivity_timeout
 			or current_time - self.__created_at > self.__session_duration
 			or self.__email_count >= self.__max_messages
-		)
-		return not expired and self.is_active()
+		):
+			return False
+		return self._is_session_active()
 
 	def increment_email_count(self) -> None:
 		self.__email_count += 1
 		self.last_used = time.time()
 
 	def close(self) -> None:
-		try:
-			self.session.quit()
-		except (SMTPServerDisconnected, OSError):
-			pass
+		if self.session:
+			with suppress(SMTPServerDisconnected, TimeoutError, OSError):
+				self.session.quit()
+
+	@classmethod
+	def create_session(
+		cls, host: str, port: int, username: str, password: str, use_ssl: bool, use_tls: bool
+	) -> SMTP | SMTP_SSL:
+		_SMTP = SMTP_SSL if use_ssl else SMTP
+		session = _SMTP(host, port)
+		if use_tls:
+			session.starttls()
+		session.login(username, password)
+		return session
 
 
 class SMTPConnectionPool:
@@ -121,16 +133,13 @@ class SMTPConnectionPool:
 				self._running = True
 				self._initialize_cleanup_thread()
 
-		pool = self._pools[key]
-
-		with Lock():
+			pool = self._pools[key]
 			while not pool.empty():
 				connection: SMTPConnection = pool.get()
-				if connection.is_valid():
+				if connection.is_session_valid():
 					connection.last_used = time.time()
 					return connection
-				else:
-					connection.close()
+				connection.close()
 
 			if pool.qsize() < self.max_connections:
 				return SMTPConnection(
@@ -145,19 +154,18 @@ class SMTPConnectionPool:
 					self.max_messages,
 				)
 
-			raise SMTPConnectionLimitError(
-				f"SMTP connection pool limit ({self.max_connections}) reached for {key}"
-			)
+		raise SMTPConnectionLimitError(
+			f"SMTP connection pool limit ({self.max_connections}) reached for {key}"
+		)
 
 	def return_connection(self, connection: SMTPConnection) -> None:
 		key = (connection.host, connection.port, connection.username)
 		with self._pool_lock:
 			if key in self._pools:
 				pool = self._pools[key]
-				with Lock():
-					if connection.is_active() and pool.qsize() < pool.maxsize:
-						pool.put(connection)
-						return
+				if connection.is_session_valid() and not pool.full():
+					pool.put(connection)
+					return
 		connection.close()
 
 	def close_all_connections(self) -> None:
@@ -171,7 +179,7 @@ class SMTPConnectionPool:
 			self._stop_cleanup_thread()
 
 	def _initialize_cleanup_thread(self) -> None:
-		if self._running and self._cleanup_thread is None:
+		if self._running and (not self._cleanup_thread or not self._cleanup_thread.is_alive()):
 			self._cleanup_thread = Thread(target=self._cleanup_stale_connections, daemon=True)
 			self._cleanup_thread.start()
 
@@ -183,7 +191,7 @@ class SMTPConnectionPool:
 					valid_connections = Queue(self.max_connections)
 					while not pool.empty():
 						connection: SMTPConnection = pool.get()
-						if connection.is_valid():
+						if connection.is_session_valid():
 							valid_connections.put(connection)
 						else:
 							connection.close()
@@ -234,7 +242,7 @@ class SMTPContext:
 
 
 @contextmanager
-def smtp_server(
+def smtp_session(
 	host: str,
 	port: int,
 	username: str,
@@ -247,7 +255,61 @@ def smtp_server(
 
 	try:
 		yield _connection.session
+	except Exception:
+		_connection.close()
+		raise
 	finally:
 		if _connection:
 			_connection.increment_email_count()
 			_pool.return_connection(_connection)
+
+
+def get_smtp_connection(
+	host: str,
+	port: int,
+	username: str,
+	password: str,
+	use_ssl: bool = False,
+	use_tls: bool = False,
+	enqueue_close: bool = True,
+) -> SMTPConnection:
+	key = (host, port, username)
+
+	if hasattr(frappe.local, "_smtp_connections"):
+		if key in frappe.local._smtp_connections:
+			connection: SMTPConnection = frappe.local._smtp_connections[key]
+			if connection.is_session_valid():
+				return connection
+			else:
+				connection.close()
+				del frappe.local._smtp_connections[key]
+	else:
+		frappe.local._smtp_connections = {}
+
+	smtp_limits = get_smtp_limits()
+	max_messages = smtp_limits["max_messages"]
+	session_duration = smtp_limits["session_duration"]
+	inactivity_timeout = smtp_limits["inactivity_timeout"]
+
+	connection = SMTPConnection(
+		host,
+		port,
+		username,
+		password,
+		use_ssl,
+		use_tls,
+		inactivity_timeout,
+		session_duration,
+		max_messages,
+	)
+	frappe.local._smtp_connections[key] = connection
+
+	if enqueue_close:
+		if frappe.request and hasattr(frappe.request, "after_response"):
+			frappe.request.after_response.add(connection.close)
+		elif frappe.job and hasattr(frappe.job, "after_job"):
+			frappe.job.after_job.add(connection.close)
+		elif not frappe.flags.in_test:
+			atexit.register(connection.close)
+
+	return connection
