@@ -780,7 +780,7 @@ class OutgoingMail(Document):
 		# Reload the doc to ensure it reflects the latest status.
 		# This handles cases where the email's status might have been manually updated (e.g., Accepted) after the job was created.
 		self.reload()
-		if self.status != "Pending":
+		if self.status not in ["Pending", "Queued"]:
 			return
 
 		kwargs = self._prepare_delivery_args()
