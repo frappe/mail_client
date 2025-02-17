@@ -321,7 +321,7 @@ const createDraftMail = createResource({
 		if (isSend.value) Object.assign(mail, emptyMail)
 		else {
 			localMailID.value = data
-			setCurrentMail('draft', data)
+			setCurrentMail('Drafts', data)
 			emit('reloadMails')
 		}
 	},
@@ -338,7 +338,7 @@ const updateDraftMail = createResource({
 		}
 	},
 	onSuccess() {
-		if (isSend.value) setCurrentMail('draft', null)
+		if (isSend.value) setCurrentMail('Drafts', null)
 		emit('reloadMails')
 	},
 })
@@ -353,7 +353,7 @@ const deleteDraftMail = createResource({
 		}
 	},
 	onSuccess() {
-		setCurrentMail('draft', null)
+		setCurrentMail('Drafts', null)
 		emit('reloadMails')
 	},
 })

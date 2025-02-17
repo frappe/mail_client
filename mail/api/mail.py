@@ -70,7 +70,7 @@ def get_translations() -> dict:
 
 
 @frappe.whitelist()
-def get_incoming_mails(start: int = 0) -> list:
+def get_inbox_mails(start: int = 0) -> list:
 	"""Returns incoming mails for the current user."""
 
 	account = get_account_for_user(frappe.session.user)
@@ -105,7 +105,7 @@ def get_sent_mails(start: int = 0) -> list:
 
 
 @frappe.whitelist()
-def get_draft_mails(start: int = 0) -> list:
+def get_drafts_mails(start: int = 0) -> list:
 	"""Returns draft mails for the current user."""
 
 	return get_outgoing_mails("Draft", start)

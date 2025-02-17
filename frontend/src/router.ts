@@ -36,22 +36,22 @@ const routes = [
 	{
 		path: '/inbox',
 		name: 'Inbox',
-		component: () => import('@/pages/InboxView.vue'),
+		component: () => import('@/pages/MailFolderView.vue'),
 	},
 	{
 		path: '/sent',
 		name: 'Sent',
-		component: () => import('@/pages/SentView.vue'),
+		component: () => import('@/pages/MailFolderView.vue'),
 	},
 	{
 		path: '/outbox',
 		name: 'Outbox',
-		component: () => import('@/pages/OutboxView.vue'),
+		component: () => import('@/pages/MailFolderView.vue'),
 	},
 	{
 		path: '/drafts',
 		name: 'Drafts',
-		component: () => import('@/pages/DraftsView.vue'),
+		component: () => import('@/pages/MailFolderView.vue'),
 	},
 	{
 		path: '/dashboard',
