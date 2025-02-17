@@ -2,16 +2,16 @@ import frappe
 
 from mail.mail.doctype.dns_record.dns_record import verify_all_dns_records
 from mail.mail.doctype.incoming_mail.incoming_mail import fetch_emails_from_mail_agents
-from mail.mail.doctype.outgoing_mail.outgoing_mail import delete_newsletters, transfer_emails_to_agent
+from mail.mail.doctype.outgoing_mail.outgoing_mail import delete_newsletters, transfer_mails_to_mail_agent
 from mail.utils import enqueue_job
 
 
 @frappe.whitelist()
-def enqueue_transfer_emails_to_agent() -> None:
-	"Called by the scheduler to enqueue the `transfer_emails_to_agent` job."
+def enqueue_transfer_mails_to_mail_agent() -> None:
+	"Called by the scheduler to enqueue the `transfer_mails_to_mail_agent` job."
 
 	frappe.session.user = "Administrator"
-	enqueue_job(transfer_emails_to_agent, queue="long", deduplicate=True)
+	enqueue_job(transfer_mails_to_mail_agent, queue="long", deduplicate=True)
 
 
 @frappe.whitelist()

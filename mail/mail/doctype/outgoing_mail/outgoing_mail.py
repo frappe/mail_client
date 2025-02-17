@@ -23,6 +23,7 @@ from frappe.query_builder.functions import Now
 from frappe.utils import (
 	add_to_date,
 	cint,
+	create_batch,
 	flt,
 	get_datetime_str,
 	now,
@@ -1185,8 +1186,39 @@ def create_outgoing_mail(
 	return doc
 
 
-def transfer_emails_to_agent() -> None:
-	"""Transfers the emails to the agent for sending."""
+def process_email_transfer_batch(mails: list[str]) -> None:
+	"""Processes a batch of emails and transfer them to the agent."""
+
+	failed_mails = []
+
+	for mail in mails:
+		try:
+			outgoing_mail: OutgoingMail = frappe.get_doc("Outgoing Mail", mail)
+			match outgoing_mail.status:
+				case "Pending" | "Queued":
+					outgoing_mail.process_for_delivery()
+				case "Failed":
+					outgoing_mail.retry_failed()
+				case "Transferring":
+					outgoing_mail.force_transfer_to_mail_agent()
+		except Exception:
+			failed_mails.append(mail)
+			failed_count = len(failed_mails)
+			total_count = len(mails)
+			failure_ratio = failed_count / total_count
+			if (failure_ratio > 0.33) and (failed_count > 50):
+				frappe.throw(
+					_(
+						"Too many email transfer failures: {failed_count}/{total_count} ({failure_rate:.2%}). Process halted."
+					).format(failed_count=failed_count, total_count=total_count, failure_rate=failure_ratio)
+				)
+
+
+def transfer_mails_to_mail_agent() -> None:
+	"""Select emails and queues them for transfer to the agent."""
+
+	MAX_BATCH_SIZE = 5_000
+	BATCH_PROCESS_SIZE = 1_000
 
 	OM = frappe.qb.DocType("Outgoing Mail")
 	mails = (
@@ -1202,33 +1234,32 @@ def transfer_emails_to_agent() -> None:
 		)
 		.orderby(OM.priority, order=Order.desc)
 		.orderby(OM.failed_count, OM.submitted_at, order=Order.asc)
-		.limit(500)
+		.limit(MAX_BATCH_SIZE)
 	).run(pluck="name")
 
 	if not mails:
 		return
 
-	failed_mails = []
-	for mail in mails:
-		try:
-			outgoing_mail: OutgoingMail = frappe.get_doc("Outgoing Mail", mail)
-			if outgoing_mail.status == "Pending":
-				outgoing_mail.process_for_delivery()
-			elif outgoing_mail.status == "Failed":
-				outgoing_mail.retry_failed()
-			elif outgoing_mail.status == "Transferring":
-				outgoing_mail.force_transfer_to_mail_agent()
-		except Exception:
-			failed_mails.append(mail.name)
-			failed_count = len(failed_mails)
-			total_count = len(mails)
-			failure_rate = failed_count / total_count
-			if (failure_rate > 0.33) and (failed_count > 50):
-				frappe.throw(
-					_(
-						"Too many email transfer failures: {failed_count}/{total_count} ({failure_rate:.2%}). Process halted to prevent further issues."
-					).format(failed_count=failed_count, total_count=total_count, failure_rate=failure_rate)
-				)
+	try:
+		(
+			frappe.qb.update(OM).set(OM.status, "Queued").where((OM.docstatus == 1) & (OM.name.isin(mails)))
+		).run()
+
+		for idx, batch in enumerate(create_batch(mails, BATCH_PROCESS_SIZE)):
+			frappe.enqueue(
+				process_email_transfer_batch,
+				queue="long",
+				job_name=f"process_email_transfer_batch_{idx+1}_{len(batch)}",
+				enqueue_after_commit=False,
+				mails=batch,
+			)
+
+		# Recursively process next batch if the limit was reached.
+		if len(mails) == MAX_BATCH_SIZE:
+			transfer_mails_to_mail_agent()
+
+	except Exception:
+		frappe.log_error("Error occurred while queuing emails for transfer.")
 
 
 def delete_newsletters() -> None:
