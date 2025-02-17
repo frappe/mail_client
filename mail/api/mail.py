@@ -3,6 +3,7 @@ from email.utils import parseaddr
 
 import frappe
 from bs4 import BeautifulSoup
+from frappe import _
 from frappe.translate import get_all_translations
 from frappe.utils import is_html
 
@@ -228,6 +229,12 @@ def get_snippet(content) -> str:
 @frappe.whitelist()
 def get_mail_thread(name, mail_type) -> list:
 	"""Returns the mail thread for the given mail."""
+
+	if not frappe.db.exists(mail_type, name):
+		frappe.throw(
+			_("{0}: {1} does not exist.").format(mail_type, frappe.bold(name)),
+			frappe.DoesNotExistError,
+		)
 
 	mail = get_mail_details(name, mail_type, True)
 	mail.mail_type = mail_type
