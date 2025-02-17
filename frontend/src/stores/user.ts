@@ -17,26 +17,27 @@ export const userStore = defineStore('mail-users', () => {
 		auto: true,
 	})
 
-	const getParsedItem = (key: string) => {
+	const getParsedItem = (key: string): string | null => {
 		const item = sessionStorage.getItem(key)
 		return item ? JSON.parse(item) : null
 	}
 
-	const currentMail = reactive({
+	const currentMail: Record<Folder, string | null> = reactive({
 		Inbox: getParsedItem('currentInboxMail'),
 		Sent: getParsedItem('currentSentMail'),
+		Outbox: getParsedItem('currentOutboxMail'),
 		Drafts: getParsedItem('currentDraftsMail'),
 	})
 
 	const setCurrentMail = (folder: Folder, mail: string | null) => {
 		const itemName = `current${folder}Mail`
-		if (!mail) {
+		if (mail) {
+			currentMail[folder] = mail
+			sessionStorage.setItem(itemName, JSON.stringify(mail))
+		} else {
 			currentMail[folder] = null
 			sessionStorage.removeItem(itemName)
-			return
 		}
-		currentMail[folder] = mail
-		sessionStorage.setItem(itemName, JSON.stringify(mail))
 	}
 
 	return { userResource, currentMail, setCurrentMail }

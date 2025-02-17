@@ -105,28 +105,33 @@ def get_sent_mails(start: int = 0) -> list:
 
 
 @frappe.whitelist()
+def get_outbox_mails(start: int = 0) -> list:
+	"""Returns outbox mails for the current user."""
+
+	return get_outgoing_mails("Outbox", start)
+
+
+@frappe.whitelist()
 def get_drafts_mails(start: int = 0) -> list:
 	"""Returns draft mails for the current user."""
 
-	return get_outgoing_mails("Draft", start)
+	return get_outgoing_mails("Drafts", start)
 
 
-def get_outgoing_mails(status: str, start: int = 0) -> list:
+def get_outgoing_mails(folder: str, start: int = 0) -> list:
 	"""Returns outgoing mails for the current user."""
 
 	account = get_account_for_user(frappe.session.user)
 
-	if status == "Draft":
-		docstatus = 0
+	if folder == "Drafts":
 		order_by = "modified desc"
 	else:
-		docstatus = 1
 		# TODO: fix sorting
 		order_by = "created_at desc"
 
 	mails = frappe.get_all(
 		"Outgoing Mail",
-		{"sender": account, "docstatus": docstatus, "status": status},
+		{"sender": account, "folder": folder},
 		[
 			"name",
 			"subject",

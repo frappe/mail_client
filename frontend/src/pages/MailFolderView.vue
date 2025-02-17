@@ -80,7 +80,7 @@ const doctype = computed(() =>
 
 const mailDetails = ref(null)
 
-const folders: Folder[] = ['Inbox', 'Sent', 'Drafts']
+const folders: Folder[] = ['Inbox', 'Sent', 'Outbox', 'Drafts']
 
 const createMailResource = (folder: Folder) =>
 	createListResource({
