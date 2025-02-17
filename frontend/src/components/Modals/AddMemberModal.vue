@@ -90,8 +90,10 @@ import { Dialog, ErrorMessage, FeatherIcon, FormControl, createResource } from '
 import { raiseToast } from '@/utils'
 import LinkControl from '@/components/Controls/LinkControl.vue'
 
-const show = defineModel()
-const user = inject('$user')
+import type { UserResource } from '@/types'
+
+const show = defineModel<boolean>()
+const user = inject('$user') as UserResource
 
 const defaultAccountRequest = {
 	username: '',

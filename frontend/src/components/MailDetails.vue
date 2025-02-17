@@ -118,12 +118,17 @@
 </template>
 <script setup lang="ts">
 import { inject, reactive, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { Forward, Reply, ReplyAll } from 'lucide-vue-next'
 import { Avatar, Button, Tooltip, createResource } from 'frappe-ui'
 
+import { userStore } from '@/stores/user'
 import MailDate from '@/components/MailDate.vue'
 import SendMailModal from '@/components/Modals/SendMailModal.vue'
 
+import type { Folder } from '@/types'
+
+const { setCurrentMail } = userStore()
 const showSendModal = ref(false)
 const draftMailID = ref(null)
 const dayjs = inject('$dayjs')
@@ -150,15 +155,21 @@ const replyDetails = reactive({
 	in_reply_to_mail_name: '',
 })
 
+const route = useRoute()
+
 const mailThread = createResource({
 	url: 'mail.api.mail.get_mail_thread',
-	makeParams() {
+	makeParams: () => {
 		return {
 			name: props.mailID,
 			mail_type: props.type,
 		}
 	},
 	auto: !!props.mailID,
+	onError: (error) => {
+		if (error.exc_type === 'DoesNotExistError')
+			setCurrentMail(String(route.name) as Folder, null)
+	},
 })
 
 const reloadThread = () => {

@@ -2,9 +2,8 @@ import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import { createResource } from 'frappe-ui'
 
-import { userStore } from './user'
-
 import router from '@/router'
+import { userStore } from '@/stores/user'
 
 export const sessionStore = defineStore('mail-session', () => {
 	const { userResource } = userStore()
@@ -39,9 +38,9 @@ export const sessionStore = defineStore('mail-session', () => {
 	const logout = createResource({
 		url: 'logout',
 		onSuccess() {
-			sessionStorage.removeItem('currentIncomingMail')
+			sessionStorage.removeItem('currentInboxMail')
 			sessionStorage.removeItem('currentSentMail')
-			sessionStorage.removeItem('currentDraftMail')
+			sessionStorage.removeItem('currentDraftsMail')
 			userResource.reset()
 			user.value = null
 			window.location.reload()

@@ -174,31 +174,24 @@ function reload(val) {
 	})
 }
 
-const addValue = (value) => {
+const addValue = (input: string) => {
 	error.value = null
-	if (value) {
-		const splitValues = value.split(',')
-		splitValues.forEach((value) => {
-			value = value.trim()
-			if (value) {
-				// check if value is not already in the values array
-				if (!values.value?.includes(value)) {
-					// check if value is valid
-					if (value && props.validate && !props.validate(value)) {
-						error.value = props.errorMessage(value)
-						return
-					}
-					// add value to values array
-					if (!values.value) {
-						values.value = [value]
-					} else {
-						values.value.push(value)
-					}
-					value = value.replace(value, '')
-				}
-			}
-		})
-		if (!error.value) value = ''
+	if (!input) return
+
+	const valArr = input
+		.split(',')
+		.map((v) => v.trim())
+		.filter(Boolean)
+
+	for (const val of valArr) {
+		if (values.value?.includes(val)) continue
+
+		if (props.validate && !props.validate(val)) {
+			error.value = props.errorMessage(val)
+			return
+		}
+
+		values.value = values.value ? [...values.value, val] : [val]
 	}
 }
 
