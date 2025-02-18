@@ -84,6 +84,7 @@ class IncomingMail(Document):
 		self.status = "Submitted"
 
 		parser = EmailParser(self.message)
+		self.delivered_to = parser.get_delivered_to()
 		self.display_name, self.sender = parser.get_sender()
 		self.domain_name = self.receiver.split("@")[1]
 		self.subject = parser.get_subject()
