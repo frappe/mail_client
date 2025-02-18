@@ -1176,10 +1176,10 @@ def create_outgoing_mail(
 	doc.via_api = via_api
 	doc.is_newsletter = is_newsletter
 
-	if via_api and not is_newsletter:
+	if doc.via_api and not doc.is_newsletter:
 		user = frappe.session.user
-		if from_ not in get_user_email_addresses(user):
-			from_ = get_default_outgoing_email_for_user(user)
+		if doc.from_ not in get_user_email_addresses(user):
+			doc.from_ = get_default_outgoing_email_for_user(user)
 
 	if not do_not_save:
 		doc.save()
