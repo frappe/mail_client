@@ -126,7 +126,7 @@
    "in_standard_filter": 1,
    "label": "Status",
    "no_copy": 1,
-   "options": "Draft\nIn Progress\nBlocked\nAccepted\nTransferring\nFailed\nTransferred\nDeferred\nBounced\nPartially Sent\nSent\nCancelled",
+   "options": "Draft\nPending\nQueued\nBlocked\nAccepted\nTransferring\nFailed\nTransferred\nDeferred\nBounced\nPartially Sent\nSent\nCancelled",
    "read_only": 1,
    "reqd": 1,
    "search_index": 1
@@ -311,7 +311,7 @@
    "fieldtype": "Select",
    "label": "Folder",
    "no_copy": 1,
-   "options": "Drafts\nSent\nTrash",
+   "options": "Drafts\nOutbox\nSent\nTrash",
    "reqd": 1,
    "search_index": 1
   },
@@ -631,7 +631,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-02-06 10:47:04.026208",
+ "modified": "2025-02-17 16:30:14.969915",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Outgoing Mail",

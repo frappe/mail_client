@@ -18,7 +18,7 @@ frappe.ui.form.on('Outgoing Mail', {
 	add_actions(frm) {
 		if (frm.doc.docstatus !== 1) return
 
-		if (['In Progress', 'Blocked'].includes(frm.doc.status)) {
+		if (['Pending', 'Blocked'].includes(frm.doc.status)) {
 			if (!frappe.user_roles.includes('System Manager')) return
 
 			frm.add_custom_button(

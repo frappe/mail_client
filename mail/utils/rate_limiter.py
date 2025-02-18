@@ -12,16 +12,16 @@ def dynamic_rate_limit() -> callable:
 	def decorator(fn):
 		@wraps(fn)
 		def wrapper(*args, **kwargs):
-			method_path = frappe.form_dict.cmd
-			rate_limits = get_rate_limits(method_path)
-
 			wrapped_fn = fn
-			for rl in rate_limits:
-				if rl["ignore_in_developer_mode"] and frappe.conf.developer_mode:
-					continue
+			if method_path := frappe.form_dict.cmd:
+				rate_limits = get_rate_limits(method_path)
 
-				rl.pop("ignore_in_developer_mode")
-				wrapped_fn = rate_limit(**rl)(wrapped_fn)
+				for rl in rate_limits:
+					if rl["ignore_in_developer_mode"] and frappe.conf.developer_mode:
+						continue
+
+					rl.pop("ignore_in_developer_mode")
+					wrapped_fn = rate_limit(**rl)(wrapped_fn)
 
 			return wrapped_fn(*args, **kwargs)
 

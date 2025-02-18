@@ -1,12 +1,19 @@
 # Copyright (c) 2025, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
-import random
 
 import frappe
 from frappe import _
 from frappe.model.document import Document
-from frappe.utils import add_days, get_url, nowdate, random_string, validate_email_address
+from frappe.utils import (
+	add_to_date,
+	get_datetime,
+	get_url,
+	now,
+	now_datetime,
+	random_string,
+	validate_email_address,
+)
 
 from mail.mail.doctype.mail_account.mail_account import create_mail_account
 from mail.utils import generate_otp
@@ -20,10 +27,15 @@ from mail.utils.validation import (
 
 
 class MailAccountRequest(Document):
+	@property
+	def is_expired(self) -> bool:
+		return self.expires_at and get_datetime(self.expires_at) < now_datetime()
+
 	def validate(self) -> None:
 		self.validate_email()
 
 		if self.is_new():
+			self.set_expires_at()
 			self.set_ip_address()
 
 			if self.is_invite:
@@ -48,6 +60,11 @@ class MailAccountRequest(Document):
 		if self.email:
 			self.email = self.email.strip().lower()
 			validate_email_address(self.email, True)
+
+	def set_expires_at(self) -> None:
+		"""Sets the expiry date of the request."""
+
+		self.expires_at = add_to_date(now(), days=1)
 
 	def set_ip_address(self) -> None:
 		"""Sets the IP address of the request."""
@@ -166,7 +183,9 @@ class MailAccountRequest(Document):
 		frappe.msgprint(_("Verification email sent successfully."), indicator="green", alert=True)
 
 	@frappe.whitelist()
-	def force_verify_and_create_account(self, first_name: str, last_name: str, password: str) -> None:
+	def force_verify_and_create_account(
+		self, first_name: str, last_name: str | None = None, password: str | None = None
+	) -> None:
 		"""Force verify and create account for invited user."""
 
 		self.validate_expired()
@@ -184,7 +203,9 @@ class MailAccountRequest(Document):
 		self.db_set("is_verified", 1)
 		self.create_account(first_name, last_name, password)
 
-	def create_account(self, first_name: str, last_name: str, password: str) -> None:
+	def create_account(
+		self, first_name: str, last_name: str | None = None, password: str | None = None
+	) -> None:
 		"""Create mail account for the user."""
 
 		if not self.is_verified:
@@ -198,17 +219,6 @@ class MailAccountRequest(Document):
 			password=password,
 			is_admin=self.is_admin,
 		)
-
-
-def expire_mail_account_requests() -> None:
-	"""Called by scheduler to expire mail account requests older than 2 days."""
-
-	frappe.db.set_value(
-		"Mail Account Request",
-		{"is_expired": 0, "creation": ["<", add_days(nowdate(), -2)]},
-		"is_expired",
-		1,
-	)
 
 
 def has_permission(doc: "Document", ptype: str, user: str | None = None) -> bool:
