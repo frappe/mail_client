@@ -59,7 +59,7 @@
 							:datetime="mail.folder === 'Drafts' ? mail.modified : mail.creation"
 						/>
 						<Tooltip
-							v-for="action in modalActions(mail.folder).filter(
+							v-for="action in mailActions(mail.folder).filter(
 								(d) => d.condition !== false,
 							)"
 							:key="action.actionType"
@@ -72,7 +72,7 @@
 							</Button>
 						</Tooltip>
 						<Tooltip :text="__('More')">
-							<Dropdown :options="moreOptions">
+							<Dropdown :options="moreActions">
 								<Button variant="ghost">
 									<template #icon>
 										<EllipsisVertical class="h-4 w-4 text-gray-600" />
@@ -87,7 +87,9 @@
 				class="ProseMirror prose prose-table:table-fixed prose-td:p-2 prose-th:p-2 prose-td:border prose-th:border prose-td:border-gray-300 prose-th:border-gray-300 prose-td:relative prose-th:relative prose-th:bg-gray-100 max-w-none pt-4 text-sm leading-5"
 			>
 				<div v-if="mail.body_html" class="prose-sm" v-html="mailBody(mail.body_html)" />
-				<div v-else-if="mail.body_plain" class="prose-sm">{{ mail.body_plain }}</div>
+				<pre v-else-if="mail.body_plain" class="text-wrap bg-white text-gray-800">{{
+					mail.body_plain
+				}}</pre>
 			</div>
 		</div>
 	</div>
@@ -179,14 +181,14 @@ const mailBody = (bodyHTML: string) => {
 
 type ActionType = 'editDraft' | 'reply' | 'replyAll' | 'forward'
 
-interface ModalAction {
+interface MailAction {
 	label: string
 	actionType: ActionType
 	icon: typeof SquarePen
 	condition?: boolean
 }
 
-const modalActions = (folder: Folder): ModalAction[] => [
+const mailActions = (folder: Folder): MailAction[] => [
 	{
 		label: __('Edit Draft'),
 		actionType: 'editDraft',
@@ -213,7 +215,7 @@ const modalActions = (folder: Folder): ModalAction[] => [
 	},
 ]
 
-const moreOptions = (folder: Folder) => []
+const moreActions = (folder: Folder) => []
 
 const openModal = (type: ActionType, mail) => {
 	if (type === 'editDraft') {
