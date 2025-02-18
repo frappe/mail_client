@@ -54,6 +54,25 @@ const routes = [
 		component: () => import('@/pages/MailFolderView.vue'),
 	},
 	{
+		path: '/trash',
+		name: 'Trash',
+		component: () => import('@/pages/MailFolderView.vue'),
+	},
+	{
+		path: '/mime-message/incoming-mail/:id',
+		name: 'IncomingMailMimeMessage',
+		component: () => import('@/pages/MimeMessageView.vue'),
+		props: true,
+		meta: { isMimeMessage: true },
+	},
+	{
+		path: '/mime-message/outgoing-mail/:id',
+		name: 'OutgoingMailMimeMessage',
+		component: () => import('@/pages/MimeMessageView.vue'),
+		props: true,
+		meta: { isMimeMessage: true },
+	},
+	{
 		path: '/dashboard',
 		redirect: { name: 'Domains' },
 		meta: { isDashboard: true },

@@ -30,7 +30,7 @@ const props = defineProps({
 	},
 })
 
-const copyToClipBoard = async (text) => {
+const copyToClipBoard = async (text: string) => {
 	try {
 		await navigator.clipboard.writeText(text)
 		message.value = 'Copied!'

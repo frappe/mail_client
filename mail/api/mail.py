@@ -448,3 +448,9 @@ def get_attachments(dt: str, dn: str):
 @frappe.whitelist()
 def get_user_addresses():
 	return get_user_email_addresses(frappe.session.user)
+
+
+@frappe.whitelist()
+def get_mime_message(mail_type: str, name: str) -> dict:
+	doc = frappe.get_doc(mail_type, name)
+	return {"message": doc.message}

@@ -77,7 +77,7 @@
 							>
 								<Button variant="ghost">
 									<template #icon>
-										<EllipsisVertical class="h-4 w-4 text-gray-600" />
+										<Ellipsis class="h-4 w-4 text-gray-600" />
 									</template>
 								</Button>
 							</Dropdown>
@@ -86,7 +86,7 @@
 				</div>
 			</div>
 			<div
-				class="ProseMirror prose prose-table:table-fixed prose-td:p-2 prose-th:p-2 prose-td:border prose-th:border prose-td:border-gray-300 prose-th:border-gray-300 prose-td:relative prose-th:relative prose-th:bg-gray-100 max-w-none pt-4 text-sm leading-5"
+				class="ProseMirror prose prose-table:table-fixed prose-td:p-2 prose-th:p-2 prose-td:border prose-th:border prose-td:border-gray-300 prose-th:border-gray-300 prose-td:relative prose-th:relative prose-th:bg-gray-100 max-w-none pt-4"
 			>
 				<div v-if="mail.body_html" class="prose-sm" v-html="mailBody(mail.body_html)" />
 				<pre v-else-if="mail.body_plain" class="text-wrap bg-white text-gray-800">{{
@@ -110,10 +110,11 @@
 		@reload-mails="emit('reloadMails')"
 	/>
 </template>
+
 <script setup lang="ts">
 import { inject, reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { EllipsisVertical, Forward, Reply, ReplyAll, SquarePen } from 'lucide-vue-next'
+import { Ellipsis, Forward, Mail, Reply, ReplyAll, SquarePen } from 'lucide-vue-next'
 import { Avatar, Button, Dropdown, Tooltip, createResource } from 'frappe-ui'
 
 import { userStore } from '@/stores/user'
@@ -123,20 +124,15 @@ import SendMailModal from '@/components/Modals/SendMailModal.vue'
 import type { Folder } from '@/types'
 
 const { setCurrentMail } = userStore()
-const showSendModal = ref(false)
-const draftMailID = ref<string>()
 const dayjs = inject('$dayjs')
 
-const props = defineProps({
-	mailID: {
-		type: [String, null],
-		required: true,
-	},
-	type: {
-		type: String,
-		required: true,
-	},
-})
+const showSendModal = ref(false)
+const draftMailID = ref<string>()
+
+const props = defineProps<{
+	mailID?: string
+	type: string
+}>()
 
 const emit = defineEmits(['reloadMails'])
 
@@ -169,6 +165,7 @@ const mailThread = createResource({
 const reloadThread = () => {
 	if (props.mailID) mailThread.reload()
 }
+
 defineExpose({ reloadThread })
 
 const mailBody = (bodyHTML: string) => {
@@ -193,7 +190,10 @@ interface MailAction {
 const mailActions = (mail): MailAction[] => [
 	{
 		label: __('Edit Draft'),
-		onClick: () => openModal('editDraft', mail),
+		onClick: () => {
+			draftMailID.value = mail.name
+			showSendModal.value = true
+		},
 		icon: SquarePen,
 		condition: mail.folder === 'Drafts',
 	},
@@ -217,14 +217,22 @@ const mailActions = (mail): MailAction[] => [
 	},
 ]
 
-const moreActions = (mail): MailAction[] => []
+const moreActions = (mail): MailAction[] => [
+	{
+		label: __('See MIME Message'),
+		onClick: () => {
+			window
+				.open(
+					`mime-message/${mail.mail_type.toLowerCase().split(' ').join('-')}/${mail.name}`,
+					'_blank',
+				)
+				?.focus()
+		},
+		icon: Mail,
+	},
+]
 
 const openModal = (type: ActionType, mail) => {
-	if (type === 'editDraft') {
-		draftMailID.value = mail.name
-		showSendModal.value = true
-		return
-	}
 	if (props.type == 'Incoming Mail') {
 		replyDetails.to = mail.sender
 	} else {

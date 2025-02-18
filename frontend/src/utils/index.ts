@@ -16,38 +16,44 @@ export function convertToTitleCase(str: string) {
 export function getSidebarLinks() {
 	return [
 		{
-			label: 'Inbox',
+			label: __('Inbox'),
 			icon: 'Inbox',
 			to: 'Inbox',
 			activeFor: ['Inbox'],
 		},
 		{
-			label: 'Sent',
+			label: __('Sent'),
 			icon: 'Send',
 			to: 'Sent',
 			activeFor: ['Sent'],
 		},
 		{
-			label: 'Outbox',
+			label: __('Outbox'),
 			icon: 'MailWarning',
 			to: 'Outbox',
 			activeFor: ['Outbox'],
 		},
 		{
-			label: 'Drafts',
+			label: __('Drafts'),
 			icon: 'Edit3',
 			to: 'Drafts',
 			activeFor: ['Drafts'],
 		},
 		{
-			label: 'Domains',
+			label: __('Trash'),
+			icon: 'Trash2',
+			to: 'Trash',
+			activeFor: ['Trash'],
+		},
+		{
+			label: __('Domains'),
 			icon: 'Globe',
 			to: 'Domains',
 			activeFor: ['Domains', 'Domain'],
 			forDashboard: true,
 		},
 		{
-			label: 'Members',
+			label: __('Members'),
 			icon: 'Users',
 			to: 'Members',
 			activeFor: ['Members'],
@@ -142,4 +148,11 @@ export const raiseToast = (message: string, type = 'success') => {
 		iconClasses: 'text-red-500',
 		timeout: 7,
 	})
+}
+
+export const kebabToTitleCase = (str: string) => {
+	return str
+		.split('-')
+		.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+		.join(' ')
 }

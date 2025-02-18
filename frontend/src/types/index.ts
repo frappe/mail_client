@@ -32,4 +32,4 @@ export interface UserResource {
 	data: User
 }
 
-export type Folder = 'Inbox' | 'Sent' | 'Outbox' | 'Drafts'
+export type Folder = 'Inbox' | 'Sent' | 'Outbox' | 'Drafts' | 'Trash'

@@ -112,12 +112,9 @@ import {
 import { raiseToast } from '@/utils'
 import HorizontalControl from '@/components/Controls/HorizontalControl.vue'
 
-const props = defineProps({
-	domainName: {
-		type: String,
-		required: true,
-	},
-})
+const props = defineProps<{
+	domainName: string
+}>()
 
 const user = inject('$user')
 const router = useRouter()
