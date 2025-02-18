@@ -63,7 +63,7 @@
 							<Button
 								icon="edit"
 								variant="ghost"
-								@click="openModal('editDraft', mail.name)"
+								@click="openModal('editDraft', mail)"
 							>
 							</Button>
 						</Tooltip>
@@ -95,10 +95,11 @@
 				</div>
 			</div>
 			<div
-				v-if="mail.body_html"
-				class="ProseMirror prose prose-table:table-fixed prose-td:p-2 prose-th:p-2 prose-td:border prose-th:border prose-td:border-gray-300 prose-th:border-gray-300 prose-td:relative prose-th:relative prose-th:bg-gray-100 prose-sm max-w-none pt-4 text-sm leading-5"
-				v-html="mailBody(mail.body_html)"
-			></div>
+				class="ProseMirror prose prose-table:table-fixed prose-td:p-2 prose-th:p-2 prose-td:border prose-th:border prose-td:border-gray-300 prose-th:border-gray-300 prose-td:relative prose-th:relative prose-th:bg-gray-100 max-w-none pt-4 text-sm leading-5"
+			>
+				<div v-if="mail.body_html" class="prose-sm" v-html="mailBody(mail.body_html)" />
+				<div v-else-if="mail.body_plain" class="prose-sm">{{ mail.body_plain }}</div>
+			</div>
 		</div>
 	</div>
 	<div
@@ -130,7 +131,7 @@ import type { Folder } from '@/types'
 
 const { setCurrentMail } = userStore()
 const showSendModal = ref(false)
-const draftMailID = ref(null)
+const draftMailID = ref<string>()
 const dayjs = inject('$dayjs')
 
 const props = defineProps({
@@ -177,7 +178,7 @@ const reloadThread = () => {
 }
 defineExpose({ reloadThread })
 
-const mailBody = (bodyHTML) => {
+const mailBody = (bodyHTML: string) => {
 	bodyHTML = bodyHTML.replace(/<br\s*\/?>/, '')
 	bodyHTML = bodyHTML.replace(
 		/<blockquote>/g,
@@ -187,9 +188,11 @@ const mailBody = (bodyHTML) => {
 	return bodyHTML
 }
 
-const openModal = (type, mail) => {
+type ModalActionType = 'editDraft' | 'reply' | 'replyAll' | 'forward'
+
+const openModal = (type: ModalActionType, mail) => {
 	if (type === 'editDraft') {
-		draftMailID.value = mail
+		draftMailID.value = mail.name
 		showSendModal.value = true
 		return
 	}

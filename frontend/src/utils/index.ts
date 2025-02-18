@@ -29,7 +29,7 @@ export function getSidebarLinks() {
 		},
 		{
 			label: 'Outbox',
-			icon: 'Send',
+			icon: 'MailWarning',
 			to: 'Outbox',
 			activeFor: ['Outbox'],
 		},
