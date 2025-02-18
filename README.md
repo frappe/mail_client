@@ -423,9 +423,9 @@ APIs for retrieving received emails.
 #### 3.1 Pull
 
 - **Endpoint:** `GET /inbound/pull` or `/api/method/mail.api.inbound.pull`
-- **Description:** Fetches a list of received emails for a specified account.
+- **Description:** Fetches a list of received emails for a specified email address.
 - **Parameters:**
-  - `account` (str): The account from which to pull emails.
+  - `email` (str): The email address for which to pull emails.
   - `limit` (int = 50): Maximum number of emails to retrieve.
   - `last_synced_at` (str | None): Optional timestamp to fetch emails received after this time.
 - **Response:** Returns a dictionary with a list of received email details.
