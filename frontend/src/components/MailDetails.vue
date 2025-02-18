@@ -59,20 +59,22 @@
 							:datetime="mail.folder === 'Drafts' ? mail.modified : mail.creation"
 						/>
 						<Tooltip
-							v-for="action in mailActions(mail.folder).filter(
+							v-for="action in mailActions(mail).filter(
 								(d) => d.condition !== false,
 							)"
-							:key="action.actionType"
+							:key="action.label"
 							:text="action.label"
 						>
-							<Button variant="ghost" @click="openModal(action.actionType, mail)">
+							<Button variant="ghost" @click="action.onClick()">
 								<template #icon>
 									<component :is="action.icon" class="h-4 w-4 text-gray-600" />
 								</template>
 							</Button>
 						</Tooltip>
 						<Tooltip :text="__('More')">
-							<Dropdown :options="moreActions">
+							<Dropdown
+								:options="moreActions(mail).filter((d) => d.condition !== false)"
+							>
 								<Button variant="ghost">
 									<template #icon>
 										<EllipsisVertical class="h-4 w-4 text-gray-600" />
@@ -183,39 +185,39 @@ type ActionType = 'editDraft' | 'reply' | 'replyAll' | 'forward'
 
 interface MailAction {
 	label: string
-	actionType: ActionType
+	onClick: () => void | typeof openModal
 	icon: typeof SquarePen
 	condition?: boolean
 }
 
-const mailActions = (folder: Folder): MailAction[] => [
+const mailActions = (mail): MailAction[] => [
 	{
 		label: __('Edit Draft'),
-		actionType: 'editDraft',
+		onClick: () => openModal('editDraft', mail),
 		icon: SquarePen,
-		condition: folder === 'Drafts',
+		condition: mail.folder === 'Drafts',
 	},
 	{
 		label: __('Reply'),
-		actionType: 'reply',
+		onClick: () => openModal('reply', mail),
 		icon: Reply,
-		condition: folder !== 'Drafts',
+		condition: mail.folder !== 'Drafts',
 	},
 	{
 		label: __('Reply All'),
-		actionType: 'replyAll',
+		onClick: () => openModal('replyAll', mail),
 		icon: ReplyAll,
-		condition: folder !== 'Drafts',
+		condition: mail.folder !== 'Drafts',
 	},
 	{
 		label: __('Forward'),
-		actionType: 'forward',
+		onClick: () => openModal('forward', mail),
 		icon: Forward,
-		condition: folder !== 'Drafts',
+		condition: mail.folder !== 'Drafts',
 	},
 ]
 
-const moreActions = (folder: Folder) => []
+const moreActions = (mail): MailAction[] => []
 
 const openModal = (type: ActionType, mail) => {
 	if (type === 'editDraft') {
