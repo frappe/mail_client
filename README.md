@@ -369,10 +369,10 @@ Queue management ensures that emails are processed efficiently, even under high 
 #### 1.1 Validate
 
 - **Endpoint:** `POST /auth/validate` or `/api/method/mail.api.auth.validate`
-- **Description:** Validates if a user has the required permissions for an account.
+- **Description:** Validates if a user has the required permissions and owns the email address.
 - **Parameters:**
-  - `account` (str | None = None): The account to validate.
-- **Response:** Returns nothing if validation is successful. Throws an exception with the reason if the account cannot be validated.
+  - `email` (str | None = None): The email address to validate.
+- **Response:** Returns nothing if validation is successful. Throws an exception with the reason if the email address cannot be validated.
 
 ### 2. Outbound API
 
