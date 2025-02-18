@@ -54,42 +54,31 @@
 							</span>
 						</div>
 					</div>
-					<div
-						v-if="mail.folder === 'Drafts'"
-						class="flex items-center space-x-2 self-start"
-					>
-						<MailDate :datetime="mail.modified" />
-						<Tooltip :text="__('Edit')">
-							<Button
-								icon="edit"
-								variant="ghost"
-								@click="openModal('editDraft', mail)"
-							>
-							</Button>
-						</Tooltip>
-					</div>
-					<div v-else class="flex items-center space-x-2 self-start">
-						<MailDate :datetime="mail.creation" />
-						<Tooltip :text="__('Reply')">
-							<Button variant="ghost" @click="openModal('reply', mail)">
+					<div class="flex items-center space-x-2 self-start">
+						<MailDate
+							:datetime="mail.folder === 'Drafts' ? mail.modified : mail.creation"
+						/>
+						<Tooltip
+							v-for="action in modalActions(mail.folder).filter(
+								(d) => d.condition !== false,
+							)"
+							:key="action.actionType"
+							:text="action.label"
+						>
+							<Button variant="ghost" @click="openModal(action.actionType, mail)">
 								<template #icon>
-									<Reply class="h-4 w-4 text-gray-600" />
+									<component :is="action.icon" class="h-4 w-4 text-gray-600" />
 								</template>
 							</Button>
 						</Tooltip>
-						<Tooltip :text="__('Reply All')">
-							<Button variant="ghost" @click="openModal('replyAll', mail)">
-								<template #icon>
-									<ReplyAll class="h-4 w-4 text-gray-600" />
-								</template>
-							</Button>
-						</Tooltip>
-						<Tooltip :text="__('Forward')">
-							<Button variant="ghost" @click="openModal('forward', mail)">
-								<template #icon>
-									<Forward class="h-4 w-4 text-gray-600" />
-								</template>
-							</Button>
+						<Tooltip :text="__('More')">
+							<Dropdown :options="moreOptions">
+								<Button variant="ghost">
+									<template #icon>
+										<EllipsisVertical class="h-4 w-4 text-gray-600" />
+									</template>
+								</Button>
+							</Dropdown>
 						</Tooltip>
 					</div>
 				</div>
@@ -120,8 +109,8 @@
 <script setup lang="ts">
 import { inject, reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { Forward, Reply, ReplyAll } from 'lucide-vue-next'
-import { Avatar, Button, Tooltip, createResource } from 'frappe-ui'
+import { EllipsisVertical, Forward, Reply, ReplyAll, SquarePen } from 'lucide-vue-next'
+import { Avatar, Button, Dropdown, Tooltip, createResource } from 'frappe-ui'
 
 import { userStore } from '@/stores/user'
 import MailDate from '@/components/MailDate.vue'
@@ -188,9 +177,45 @@ const mailBody = (bodyHTML: string) => {
 	return bodyHTML
 }
 
-type ModalActionType = 'editDraft' | 'reply' | 'replyAll' | 'forward'
+type ActionType = 'editDraft' | 'reply' | 'replyAll' | 'forward'
 
-const openModal = (type: ModalActionType, mail) => {
+interface ModalAction {
+	label: string
+	actionType: ActionType
+	icon: typeof SquarePen
+	condition?: boolean
+}
+
+const modalActions = (folder: Folder): ModalAction[] => [
+	{
+		label: __('Edit Draft'),
+		actionType: 'editDraft',
+		icon: SquarePen,
+		condition: folder === 'Drafts',
+	},
+	{
+		label: __('Reply'),
+		actionType: 'reply',
+		icon: Reply,
+		condition: folder !== 'Drafts',
+	},
+	{
+		label: __('Reply All'),
+		actionType: 'replyAll',
+		icon: ReplyAll,
+		condition: folder !== 'Drafts',
+	},
+	{
+		label: __('Forward'),
+		actionType: 'forward',
+		icon: Forward,
+		condition: folder !== 'Drafts',
+	},
+]
+
+const moreOptions = (folder: Folder) => []
+
+const openModal = (type: ActionType, mail) => {
 	if (type === 'editDraft') {
 		draftMailID.value = mail.name
 		showSendModal.value = true
