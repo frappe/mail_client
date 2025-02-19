@@ -155,8 +155,6 @@ class IncomingMail(Document):
 			if not original_envelope_id:
 				frappe.throw(_("Original Envelope Id not found in DSN Report."))
 
-			outgoing_mail = frappe.get_doc("Outgoing Mail", original_envelope_id)
-
 			dsn_data = []
 			required_headers = [
 				"Final-Recipient",
@@ -175,7 +173,6 @@ class IncomingMail(Document):
 					dsn_data.append(_rcpt_data)
 					_rcpt_data = {}
 
-			rcpt_status_changed = False
 			for rcpt_data in dsn_data:
 				final_recipient = rcpt_data["Final-Recipient"].split("rfc822;")[1].strip()
 				diagnostic_code = rcpt_data["Diagnostic-Code"].split("smtp;")[1].strip()
@@ -188,28 +185,16 @@ class IncomingMail(Document):
 					},
 					indent=4,
 				)
-
-				for rcpt in outgoing_mail.recipients:
-					if rcpt.email == final_recipient:
-						rcpt_status_changed = True
-						rcpt.status = "Bounced"
-						rcpt.response = response
-						rcpt.db_update()
-
-						if rcpt.status == "Bounced":
-							create_or_update_bounce_history(
-								sender=self.delivered_to,
-								recipient=rcpt.email,
-								bounce_increment=1,
-								last_bounce_response=response,
-							)
-
-			if rcpt_status_changed:
-				outgoing_mail.update_status(db_set=True, notify_update=True)
+				create_or_update_bounce_history(
+					sender=self.delivered_to,
+					recipient=final_recipient,
+					bounce_increment=1,
+					last_bounce_response=response,
+				)
 
 			self.type = "DSN Report"
 			self.in_reply_to_mail_type = "Outgoing Mail"
-			self.in_reply_to_mail_name = outgoing_mail.name
+			self.in_reply_to_mail_name = original_envelope_id
 
 		except Exception:
 			frappe.log_error(

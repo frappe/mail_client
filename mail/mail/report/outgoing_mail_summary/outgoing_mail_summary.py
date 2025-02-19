@@ -75,12 +75,6 @@ def get_columns() -> list[dict]:
 			"width": 100,
 		},
 		{
-			"label": _("Error Message"),
-			"fieldname": "error_message",
-			"fieldtype": "Code",
-			"width": 500,
-		},
-		{
 			"label": _("Domain Name"),
 			"fieldname": "domain_name",
 			"fieldtype": "Link",
@@ -153,8 +147,6 @@ def get_data(filters: dict | None = None) -> list[dict]:
 			OM.via_api,
 			OM.priority,
 			OM.is_newsletter,
-			MR.response,
-			MR.error_message,
 			OM.domain_name,
 			OM.agent,
 			OM.ip_address,
@@ -224,16 +216,7 @@ def get_data(filters: dict | None = None) -> list[dict]:
 
 		query = query.where(Criterion.any(conditions))
 
-	data = query.run(as_dict=True)
-
-	for row in data:
-		if row["response"]:
-			response = json.loads(row.pop("response"))
-			row["error_message"] = f"{response['status']} - {response['diagnostic_code']}"
-		elif row["error_message"]:
-			row["error_message"] = row.pop("error_message")
-
-	return data
+	return query.run(as_dict=True)
 
 
 def get_chart(data: list) -> list[dict]:
