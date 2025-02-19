@@ -339,6 +339,9 @@ def get_mail_details(name: str, type: str, include_all_details: bool = False) ->
 		"folder",
 	]
 
+	if type == "Outgoing Mail":
+		fields.append("from_")
+
 	mail = frappe.db.get_value(type, name, fields, as_dict=1)
 	mail.mail_type = type
 

@@ -15,8 +15,13 @@
 				/>
 				<div class="flex flex-1 justify-between text-xs">
 					<div class="flex flex-col space-y-1">
-						<div class="text-base font-semibold">
-							{{ mail.display_name || mail.sender }}
+						<div class="space-x-1">
+							<span class="text-base font-semibold">
+								{{ mail.display_name || mail.from_ || mail.sender }}
+							</span>
+							<span v-if="mail.display_name" class="text-sm text-gray-600">
+								{{ `<${mail.from_ || mail.sender}>` }}
+							</span>
 						</div>
 						<div class="leading-4">
 							{{ mail.subject }}
