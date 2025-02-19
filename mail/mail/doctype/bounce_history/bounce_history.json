@@ -5,30 +5,22 @@
  "engine": "InnoDB",
  "field_order": [
   "section_break_3lr7",
-  "email",
+  "sender",
+  "recipient",
   "check_deliverability",
   "column_break_u47n",
   "bounce_count",
   "section_break_mcdk",
-  "last_bounce_at",
+  "last_bounced_at",
   "column_break_jnmn",
-  "blocked_until"
+  "blocked_until",
+  "section_break_cwkl",
+  "last_bounce_response"
  ],
  "fields": [
   {
    "fieldname": "section_break_3lr7",
    "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "email",
-   "fieldtype": "Data",
-   "in_list_view": 1,
-   "in_standard_filter": 1,
-   "label": "Email",
-   "no_copy": 1,
-   "reqd": 1,
-   "set_only_once": 1,
-   "unique": 1
   },
   {
    "fieldname": "column_break_u47n",
@@ -46,13 +38,6 @@
    "search_index": 1
   },
   {
-   "fieldname": "last_bounce_at",
-   "fieldtype": "Datetime",
-   "in_list_view": 1,
-   "label": "Last Bounce At",
-   "reqd": 1
-  },
-  {
    "fieldname": "blocked_until",
    "fieldtype": "Datetime",
    "in_list_view": 1,
@@ -68,15 +53,51 @@
    "fieldtype": "Column Break"
   },
   {
-   "depends_on": "eval: doc.email",
+   "depends_on": "eval: doc.recipient",
    "fieldname": "check_deliverability",
    "fieldtype": "Button",
    "label": "Check Deliverability"
+  },
+  {
+   "fieldname": "sender",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Sender",
+   "search_index": 1
+  },
+  {
+   "fieldname": "recipient",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Recipient",
+   "no_copy": 1,
+   "reqd": 1,
+   "search_index": 1,
+   "set_only_once": 1
+  },
+  {
+   "fieldname": "section_break_cwkl",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "last_bounce_response",
+   "fieldtype": "Code",
+   "label": "Last Bounce Response",
+   "read_only": 1
+  },
+  {
+   "fieldname": "last_bounced_at",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Last Bounced At",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-02-04 10:43:28.981071",
+ "modified": "2025-02-19 17:08:29.777748",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Bounce History",

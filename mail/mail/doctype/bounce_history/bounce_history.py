@@ -13,13 +13,13 @@ class BounceHistory(Document):
 
 	def validate(self) -> None:
 		if self.has_value_changed("bounce_count"):
-			self.set_last_bounce_at()
+			self.set_last_bounced_at()
 			self.set_blocked_until()
 
-	def set_last_bounce_at(self) -> None:
+	def set_last_bounced_at(self) -> None:
 		"""Sets the last bounce at to the current time"""
 
-		self.last_bounce_at = now()
+		self.last_bounced_at = now()
 
 	def set_blocked_until(self) -> None:
 		"""Sets the blocked until date based on the bounce count"""
@@ -31,22 +31,54 @@ class BounceHistory(Document):
 		self.blocked_until = add_days(now(), block_for_days)
 
 
-def create_or_update_bounce_history(email: str, bounce_increment: int = 1) -> None:
-	"""Create or update the bounce log for the given email"""
+def create_bounce_history(
+	recipient: str, bounce_count: int, sender: str | None = None, last_bounce_response: str | None = None
+) -> "BounceHistory":
+	"""Create a Bounce History."""
 
-	if bounce_history := frappe.db.exists("Bounce History", {"email": email}):
-		doc = frappe.get_doc("Bounce History", bounce_history)
-		doc.bounce_count += bounce_increment
-	else:
-		doc = frappe.new_doc("Bounce History")
-		doc.email = email
-		doc.bounce_count = bounce_increment
-
+	doc = frappe.new_doc("Bounce History")
+	doc.sender = sender
+	doc.recipient = recipient
+	doc.bounce_count = bounce_count
+	doc.last_bounce_response = last_bounce_response
 	doc.save(ignore_permissions=True)
 
 
-def is_email_blocked(email: str) -> bool:
-	"""Check if a email is blocked."""
+def create_or_update_bounce_history(
+	recipient: str,
+	bounce_increment: int = 1,
+	sender: str | None = None,
+	last_bounce_response: str | None = None,
+) -> None:
+	"""Create or update the bounce log for the given sender and recipient."""
 
-	blocked_until = frappe.get_cached_value("Bounce History", {"email": email}, "blocked_until")
-	return blocked_until and blocked_until > now_datetime()
+	filters = {"recipient": recipient}
+	if sender:
+		filters["sender"] = sender
+
+	if bounce_history := frappe.db.exists("Bounce History", filters):
+		doc = frappe.get_doc("Bounce History", bounce_history)
+		doc.bounce_count += bounce_increment
+		doc.last_bounce_response = last_bounce_response
+		doc.save(ignore_permissions=True)
+	else:
+		create_bounce_history(
+			recipient=recipient,
+			bounce_count=bounce_increment,
+			sender=sender,
+			last_bounce_response=last_bounce_response,
+		)
+
+
+def is_recipient_blocked(recipient: str, sender: str | None = None) -> bool:
+	"""Check if a recipient is blocked."""
+
+	filters = {"recipient": recipient}
+	if sender:
+		filters["sender"] = sender
+
+	blocked_until = frappe.get_cached_value(
+		"Bounce History", filters, "blocked_until"
+	) or frappe.get_cached_value("Bounce History", {"recipient": recipient}, "blocked_until")
+
+	return bool(blocked_until and blocked_until > now_datetime())
