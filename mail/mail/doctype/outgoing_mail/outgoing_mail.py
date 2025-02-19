@@ -34,7 +34,7 @@ from frappe.utils import (
 from frappe.utils.file_manager import save_file
 from uuid_utils import uuid7
 
-from mail.mail.doctype.bounce_log.bounce_log import is_email_blocked
+from mail.mail.doctype.bounce_history.bounce_history import is_email_blocked
 from mail.mail.doctype.mail_contact.mail_contact import create_mail_contact
 from mail.mail.doctype.mime_message.mime_message import (
 	create_mime_message,
