@@ -36,7 +36,6 @@
   "column_break_d6p9",
   "domain_name",
   "agent",
-  "token",
   "section_break_quhp",
   "message_id",
   "in_reply_to",
@@ -606,15 +605,6 @@
    "read_only": 1
   },
   {
-   "depends_on": "eval: frappe.boot.developer_mode",
-   "fieldname": "token",
-   "fieldtype": "Data",
-   "label": "Token",
-   "no_copy": 1,
-   "read_only": 1,
-   "set_only_once": 1
-  },
-  {
    "fieldname": "from_",
    "fieldtype": "Data",
    "in_list_view": 1,
@@ -628,7 +618,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-02-19 17:59:40.763251",
+ "modified": "2025-02-19 18:26:10.796167",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Outgoing Mail",

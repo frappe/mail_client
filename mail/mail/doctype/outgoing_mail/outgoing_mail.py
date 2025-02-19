@@ -27,7 +27,6 @@ from frappe.utils import (
 	flt,
 	get_datetime_str,
 	now,
-	random_string,
 	time_diff_in_seconds,
 	validate_email_address,
 )
@@ -89,7 +88,6 @@ class OutgoingMail(Document):
 		self.validate_amended_doc()
 		self.set_folder()
 		self.set_priority()
-		self.set_token()
 		self.validate_from_()
 		self.set_sender()
 		self.set_domain_name()
@@ -162,12 +160,6 @@ class OutgoingMail(Document):
 		"""Sets the priority."""
 
 		self.priority = -1 if self.is_newsletter else 0
-
-	def set_token(self):
-		"""Sets the token."""
-
-		if not self.token:
-			self.token = random_string(10)
 
 	def validate_from_(self) -> None:
 		"""Validates the from address."""
@@ -962,7 +954,7 @@ class OutgoingMail(Document):
 			username = mail_account.email
 			password = mail_account.get_password("password")
 
-			mail_options = [f"ENVID={self.name}:{self.token}", f"MT-PRIORITY={self.priority}"]
+			mail_options = [f"ENVID={self.name}", f"MT-PRIORITY={self.priority}"]
 			if frappe.request and hasattr(frappe.request, "after_response"):
 				# Web worker:
 				# Retrieves an `SMTP` or `SMTP_SSL` session from the `SMTPConnectionPool`.
