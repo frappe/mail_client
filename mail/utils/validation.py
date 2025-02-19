@@ -7,6 +7,7 @@ from frappe import _
 from frappe.utils.caching import request_cache
 from validate_email_address import validate_email
 
+from mail.utils import normalize_email
 from mail.utils.cache import get_tenant_for_user
 from mail.utils.user import has_role
 
@@ -56,21 +57,34 @@ def is_subaddressed_email(email: str, raise_exception: bool = False) -> bool:
 
 
 def is_email_assigned(email: str, ignore_doctype: str | None = None, raise_exception: bool = False) -> bool:
-	"""Returns True if the email is already assigned to Mail Account, Mail Group, or Mail Alias else False."""
+	"""Returns True if the email is already assigned to Mail Account, Mail Group, or Mail Alias, else False."""
 
 	doctypes = ["Mail Account", "Mail Group", "Mail Alias"]
+	normalized_email = normalize_email(email)
+
 	if ignore_doctype:
 		doctypes.remove(ignore_doctype)
 
 	for doctype in doctypes:
-		if frappe.db.exists(doctype, {"email": email}):
+		if frappe.db.exists(doctype, {"normalized_email": normalized_email}):
 			if raise_exception:
-				frappe.throw(
-					_("The email address {0} is already assigned as a {1}.").format(
-						frappe.bold(email), frappe.bold(doctype)
+				if email == normalized_email:
+					frappe.throw(
+						_("The email address {0} is already assigned as a {1}.").format(
+							frappe.bold(normalized_email), frappe.bold(doctype)
+						)
 					)
-				)
-
+				else:
+					frappe.throw(
+						_(
+							"The email address {0} cannot be used because it is too similar to an existing email in {1}. We ignore dots in the local part of the email (before '@'). For example, {2} and {3} are treated as the same address. Please use a different email."
+						).format(
+							frappe.bold(email),
+							frappe.bold(doctype),
+							frappe.bold(email),
+							frappe.bold(normalized_email),
+						)
+					)
 			return True
 	return False
 
