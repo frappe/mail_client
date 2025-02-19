@@ -147,19 +147,15 @@ class IncomingMail(Document):
 
 		try:
 			original_envelope_id = None
-			token = None
-
 			for part in message.walk():
 				if part.get("Original-Envelope-Id"):
-					original_envelope_id, token = part.get("Original-Envelope-Id").split(":")
+					original_envelope_id = part.get("Original-Envelope-Id")
 					break
 
-			if not original_envelope_id or not token:
-				frappe.throw(_("Original Envelope Id or Token not found in DSN Report."))
+			if not original_envelope_id:
+				frappe.throw(_("Original Envelope Id not found in DSN Report."))
 
 			outgoing_mail = frappe.get_doc("Outgoing Mail", original_envelope_id)
-			if outgoing_mail.token != token:
-				frappe.throw(_("Token mismatch in DSN Report."))
 
 			dsn_data = []
 			required_headers = [
