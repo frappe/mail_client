@@ -6,6 +6,7 @@ from frappe import _
 from frappe.model.document import Document
 
 from mail.agent import create_alias_on_agents, delete_alias_from_agents, patch_alias_on_agents
+from mail.utils import normalize_email
 from mail.utils.cache import get_account_for_user, get_tenant_for_user
 from mail.utils.user import has_role, is_system_manager, is_tenant_admin
 from mail.utils.validation import (
@@ -28,6 +29,7 @@ class MailAlias(Document):
 	def validate(self) -> None:
 		self.validate_domain()
 		self.validate_email()
+		self.set_normalized_email()
 		self.validate_alias_for_name()
 
 	def on_update(self) -> None:
@@ -69,6 +71,11 @@ class MailAlias(Document):
 		is_subaddressed_email(self.email, raise_exception=True)
 		is_email_assigned(self.email, self.doctype, raise_exception=True)
 		is_valid_email_for_domain(self.email, self.domain_name, raise_exception=True)
+
+	def set_normalized_email(self) -> None:
+		"""Sets the normalized email."""
+
+		self.normalized_email = normalize_email(self.email)
 
 	def validate_alias_for_name(self) -> None:
 		"""Validates the alias for name."""

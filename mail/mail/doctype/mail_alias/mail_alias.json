@@ -10,6 +10,7 @@
   "domain_name",
   "tenant",
   "email",
+  "normalized_email",
   "column_break_wo8t",
   "alias_for_type",
   "alias_for_name"
@@ -91,11 +92,22 @@
    "read_only": 1,
    "search_index": 1,
    "set_only_once": 1
+  },
+  {
+   "fieldname": "normalized_email",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Normalized Email",
+   "no_copy": 1,
+   "options": "Email",
+   "read_only": 1,
+   "set_only_once": 1,
+   "unique": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-02-04 16:58:00.344165",
+ "modified": "2025-02-19 11:48:33.501192",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Mail Alias",
