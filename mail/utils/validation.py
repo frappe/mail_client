@@ -44,6 +44,17 @@ def is_port_open(fqdn: str, port: int, timeout: int = 10) -> bool:
 		return False
 
 
+def remove_subaddressing(email: str) -> str:
+	"""Removes subaddressing from an email address.
+
+	Example:
+	    input: "user+filter@example.com"
+	    output: "user@example.com"
+	"""
+	match = re.match(r"([^+]+)(?:\+[^@]*)?(@.+)", email)
+	return f"{match.group(1)}{match.group(2)}" if match else email
+
+
 def is_email_assigned(email: str, ignore_doctype: str | None = None, raise_exception: bool = False) -> bool:
 	"""Returns True if the email is already assigned to Mail Account, Mail Group, or Mail Alias else False."""
 
