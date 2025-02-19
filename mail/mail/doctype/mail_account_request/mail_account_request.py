@@ -23,6 +23,7 @@ from mail.utils.validation import (
 	is_valid_email_for_domain,
 	validate_domain_is_enabled_and_verified,
 	validate_domain_owned_by_tenant,
+	validate_no_subaddressing,
 )
 
 
@@ -117,6 +118,7 @@ class MailAccountRequest(Document):
 
 		self.account = self.account.strip().lower()
 		validate_email_address(self.account, True)
+		validate_no_subaddressing(self.account)
 
 		if not is_valid_email_for_domain(self.account, self.domain_name):
 			frappe.throw(

@@ -13,6 +13,7 @@ from mail.utils.validation import (
 	is_valid_email_for_domain,
 	validate_domain_is_enabled_and_verified,
 	validate_domain_owned_by_tenant,
+	validate_no_subaddressing,
 )
 
 
@@ -76,6 +77,7 @@ class MailGroup(Document):
 	def validate_email(self) -> None:
 		"""Validates the email address."""
 
+		validate_no_subaddressing(self.email)
 		is_email_assigned(self.email, self.doctype, raise_exception=True)
 		is_valid_email_for_domain(self.email, self.domain_name, raise_exception=True)
 

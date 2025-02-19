@@ -16,6 +16,7 @@ from mail.utils.validation import (
 	is_valid_email_for_domain,
 	validate_domain_is_enabled_and_verified,
 	validate_domain_owned_by_tenant,
+	validate_no_subaddressing,
 )
 
 
@@ -121,7 +122,7 @@ class MailAccount(Document):
 
 		if not self.email:
 			frappe.throw(_("Email is mandatory."))
-
+		validate_no_subaddressing(self.email)
 		is_email_assigned(self.email, self.doctype, raise_exception=True)
 		is_valid_email_for_domain(self.email, self.domain_name, raise_exception=True)
 
