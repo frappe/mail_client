@@ -44,6 +44,13 @@ def is_port_open(fqdn: str, port: int, timeout: int = 10) -> bool:
 		return False
 
 
+def validate_no_subaddressing(email: str) -> None:
+	"""Validates if the email address contains subaddressing."""
+
+	if re.search(r"[^@]+\+[^@]+@", email):
+		frappe.throw(_("Subaddressing is not allowed in the email address."))
+
+
 def remove_subaddressing(email: str) -> str:
 	"""Removes subaddressing from an email address.
 
