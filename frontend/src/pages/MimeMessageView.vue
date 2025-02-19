@@ -11,7 +11,7 @@
 			<div
 				v-for="[key, value] of Object.entries(mime.data)"
 				:key="key"
-				class="flex items-center px-6 py-4 text-base even:bg-gray-50/70"
+				class="flex items-center px-6 py-4 text-base last:rounded-b even:bg-gray-50/70"
 			>
 				<div class="w-1/4 text-gray-600">{{ value.label }}</div>
 				<div class="flex w-3/4 items-center text-gray-900">

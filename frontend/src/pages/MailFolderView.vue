@@ -78,7 +78,7 @@ const doctype = computed(() =>
 	currentFolder.value === 'Inbox' ? 'Incoming Mail' : 'Outgoing Mail',
 )
 
-const mailDetails = ref(null)
+const mailDetails = ref<typeof MailDetails>()
 
 const folders: Folder[] = ['Inbox', 'Sent', 'Outbox', 'Drafts']
 

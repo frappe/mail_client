@@ -71,7 +71,7 @@
 								</template>
 							</Button>
 						</Tooltip>
-						<Tooltip :text="__('More')">
+						<Tooltip v-if="mail.folder !== 'Drafts'" :text="__('More')">
 							<Dropdown
 								:options="moreActions(mail).filter((d) => d.condition !== false)"
 							>
@@ -130,7 +130,7 @@ const showSendModal = ref(false)
 const draftMailID = ref<string>()
 
 const props = defineProps<{
-	mailID?: string
+	mailID: string | null
 	type: string
 }>()
 
@@ -155,7 +155,6 @@ const mailThread = createResource({
 			mail_type: props.type,
 		}
 	},
-	auto: !!props.mailID,
 	onError: (error) => {
 		if (error.exc_type === 'DoesNotExistError')
 			setCurrentMail(String(route.name) as Folder, null)
@@ -234,7 +233,7 @@ const moreActions = (mail): MailAction[] => [
 
 const openModal = (type: ActionType, mail) => {
 	if (props.type == 'Incoming Mail') {
-		replyDetails.to = mail.sender
+		replyDetails.to = mail.reply_to || mail.sender
 	} else {
 		replyDetails.to = mail.to.map((to) => to.email).join(', ')
 	}

@@ -27,6 +27,7 @@ export const userStore = defineStore('mail-users', () => {
 		Sent: getParsedItem('currentSentMail'),
 		Outbox: getParsedItem('currentOutboxMail'),
 		Drafts: getParsedItem('currentDraftsMail'),
+		Trash: getParsedItem('currentTrashMail'),
 	})
 
 	const setCurrentMail = (folder: Folder, mail: string | null) => {

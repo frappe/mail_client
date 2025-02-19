@@ -335,6 +335,7 @@ def get_mail_details(name: str, type: str, include_all_details: bool = False) ->
 		"message_id",
 		"in_reply_to_mail_name",
 		"in_reply_to_mail_type",
+		"reply_to",
 		"folder",
 	]
 
@@ -471,8 +472,11 @@ def get_mime_message(mail_type: str, name: str) -> dict:
 		mail["bcc"] = {"label": _("BCC"), "value": get_mail_recipients("Bcc")}
 
 	elif doc.type != "DSN Report":
-		pass_or_fail = {1: "Pass", 0: "Fail"}
-		mail["spf"] = {"label": _("SPF"), "value": pass_or_fail[doc.spf_pass]}
+		pass_or_fail = {1: _("'Pass'"), 0: _("'Fail'")}
+		mail["spf"] = {
+			"label": _("SPF"),
+			"value": _("{0} with IP {1}").format(pass_or_fail[doc.spf_pass], doc.from_host),
+		}
 		mail["dkim"] = {"label": _("DKIM"), "value": pass_or_fail[doc.dkim_pass]}
 		mail["dmarc"] = {"label": _("DMARC"), "value": pass_or_fail[doc.dmarc_pass]}
 
