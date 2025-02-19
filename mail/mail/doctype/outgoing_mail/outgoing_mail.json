@@ -356,10 +356,8 @@
    "search_index": 1
   },
   {
-   "depends_on": "eval: doc.docstatus == 0",
    "fieldname": "in_reply_to_mail_type",
    "fieldtype": "Select",
-   "hidden": 1,
    "label": "In Reply To Mail Type",
    "no_copy": 1,
    "options": "\nIncoming Mail\nOutgoing Mail",
@@ -368,10 +366,9 @@
   },
   {
    "fieldname": "in_reply_to_mail_name",
-   "fieldtype": "Dynamic Link",
-   "label": "In Reply To",
+   "fieldtype": "Data",
+   "label": "In Reply To Mail Name",
    "no_copy": 1,
-   "options": "in_reply_to_mail_type",
    "read_only": 1,
    "search_index": 1
   },
@@ -631,7 +628,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-02-17 16:30:14.969915",
+ "modified": "2025-02-19 17:59:40.763251",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Outgoing Mail",
