@@ -453,4 +453,27 @@ def get_user_addresses():
 @frappe.whitelist()
 def get_mime_message(mail_type: str, name: str) -> dict:
 	doc = frappe.get_doc(mail_type, name)
-	return {"message": doc.message}
+
+	def get_mail_recipients(recipient_type):
+		return ", ".join([d.email for d in doc.recipients if d.type == recipient_type])
+
+	mail = {
+		"message": doc.message,
+		"message_id": {"label": _("Message ID"), "value": doc.message_id},
+		"created_at": {"label": _("Created at"), "value": doc.created_at},
+		"subject": {"label": _("Subject"), "value": doc.subject},
+		"from": {"label": _("From"), "value": f"{doc.display_name} <{doc.sender}>"},
+		"to": {"label": _("To"), "value": get_mail_recipients("To")},
+		"cc": {"label": _("CC"), "value": get_mail_recipients("Cc")},
+	}
+
+	if mail_type == "Outgoing Mail":
+		mail["bcc"] = {"label": _("BCC"), "value": get_mail_recipients("Bcc")}
+
+	elif doc.type != "DSN Report":
+		pass_or_fail = {1: "Pass", 0: "Fail"}
+		mail["spf"] = {"label": _("SPF"), "value": pass_or_fail[doc.spf_pass]}
+		mail["dkim"] = {"label": _("DKIM"), "value": pass_or_fail[doc.dkim_pass]}
+		mail["dmarc"] = {"label": _("DMARC"), "value": pass_or_fail[doc.dmarc_pass]}
+
+	return mail
