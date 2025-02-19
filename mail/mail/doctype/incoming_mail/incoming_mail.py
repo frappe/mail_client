@@ -212,6 +212,8 @@ class IncomingMail(Document):
 				outgoing_mail.update_status(db_set=True, notify_update=True)
 
 			self.type = "DSN Report"
+			self.in_reply_to_mail_type = "Outgoing Mail"
+			self.in_reply_to_mail_name = outgoing_mail.name
 
 		except Exception:
 			frappe.log_error(
