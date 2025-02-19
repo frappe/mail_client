@@ -202,7 +202,10 @@ class IncomingMail(Document):
 
 						if rcpt.status == "Bounced":
 							create_or_update_bounce_history(
-								sender=self.delivered_to, recipient=rcpt.email, bounce_increment=1
+								sender=self.delivered_to,
+								recipient=rcpt.email,
+								bounce_increment=1,
+								last_bounce_response=response,
 							)
 
 			if rcpt_status_changed:

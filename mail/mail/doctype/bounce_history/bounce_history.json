@@ -11,9 +11,11 @@
   "column_break_u47n",
   "bounce_count",
   "section_break_mcdk",
-  "last_bounce_at",
+  "last_bounced_at",
   "column_break_jnmn",
-  "blocked_until"
+  "blocked_until",
+  "section_break_cwkl",
+  "last_bounce_response"
  ],
  "fields": [
   {
@@ -34,13 +36,6 @@
    "non_negative": 1,
    "reqd": 1,
    "search_index": 1
-  },
-  {
-   "fieldname": "last_bounce_at",
-   "fieldtype": "Datetime",
-   "in_list_view": 1,
-   "label": "Last Bounce At",
-   "reqd": 1
   },
   {
    "fieldname": "blocked_until",
@@ -81,11 +76,28 @@
    "reqd": 1,
    "search_index": 1,
    "set_only_once": 1
+  },
+  {
+   "fieldname": "section_break_cwkl",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "last_bounce_response",
+   "fieldtype": "Code",
+   "label": "Last Bounce Response",
+   "read_only": 1
+  },
+  {
+   "fieldname": "last_bounced_at",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Last Bounced At",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-02-19 16:17:54.693470",
+ "modified": "2025-02-19 17:08:29.777748",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Bounce History",

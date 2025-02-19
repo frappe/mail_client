@@ -13,13 +13,13 @@ class BounceHistory(Document):
 
 	def validate(self) -> None:
 		if self.has_value_changed("bounce_count"):
-			self.set_last_bounce_at()
+			self.set_last_bounced_at()
 			self.set_blocked_until()
 
-	def set_last_bounce_at(self) -> None:
+	def set_last_bounced_at(self) -> None:
 		"""Sets the last bounce at to the current time"""
 
-		self.last_bounce_at = now()
+		self.last_bounced_at = now()
 
 	def set_blocked_until(self) -> None:
 		"""Sets the blocked until date based on the bounce count"""
@@ -31,18 +31,24 @@ class BounceHistory(Document):
 		self.blocked_until = add_days(now(), block_for_days)
 
 
-def create_bounce_history(recipient: str, bounce_count: int, sender: str | None = None) -> "BounceHistory":
+def create_bounce_history(
+	recipient: str, bounce_count: int, sender: str | None = None, last_bounce_response: str | None = None
+) -> "BounceHistory":
 	"""Create a Bounce History."""
 
 	doc = frappe.new_doc("Bounce History")
 	doc.sender = sender
 	doc.recipient = recipient
 	doc.bounce_count = bounce_count
+	doc.last_bounce_response = last_bounce_response
 	doc.save(ignore_permissions=True)
 
 
 def create_or_update_bounce_history(
-	recipient: str, bounce_increment: int = 1, sender: str | None = None
+	recipient: str,
+	bounce_increment: int = 1,
+	sender: str | None = None,
+	last_bounce_response: str | None = None,
 ) -> None:
 	"""Create or update the bounce log for the given sender and recipient."""
 
@@ -53,9 +59,15 @@ def create_or_update_bounce_history(
 	if bounce_history := frappe.db.exists("Bounce History", filters):
 		doc = frappe.get_doc("Bounce History", bounce_history)
 		doc.bounce_count += bounce_increment
+		doc.last_bounce_response = last_bounce_response
 		doc.save(ignore_permissions=True)
 	else:
-		create_bounce_history(recipient, bounce_increment, sender)
+		create_bounce_history(
+			recipient=recipient,
+			bounce_count=bounce_increment,
+			sender=sender,
+			last_bounce_response=last_bounce_response,
+		)
 
 
 def is_recipient_blocked(recipient: str, sender: str | None = None) -> bool:
