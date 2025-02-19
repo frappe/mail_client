@@ -148,6 +148,25 @@ def check_deliverability(email: str) -> bool:
 	return validate_email_address(email, check_mx=True, verify=True, smtp_timeout=10)
 
 
+def remove_subaddressing(email: str) -> str:
+	"""Removes subaddressing from an email address.
+
+	Example:
+	    input: "user+filter@example.com"
+	    output: "user@example.com"
+	"""
+	match = re.match(r"([^+]+)(?:\+[^@]*)?(@.+)", email)
+	return f"{match.group(1)}{match.group(2)}" if match else email
+
+
+def normalize_email(email: str) -> str:
+	"""Normalize email by removing dots before the @."""
+
+	local, domain = email.split("@", 1)
+	normalized_local = re.sub(r"\.", "", local)
+	return f"{normalized_local}@{domain}"
+
+
 def get_dkim_host(domain_name: str, type: Literal["rsa", "ed25519"]) -> str:
 	"""
 	Returns DKIM host.
