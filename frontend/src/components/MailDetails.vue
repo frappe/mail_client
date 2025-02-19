@@ -19,7 +19,7 @@
 							<span class="text-base font-semibold">
 								{{ mail.display_name || mail.from_ || mail.sender }}
 							</span>
-							<span v-if="mail.display_name" class="text-sm text-gray-600">
+							<span v-if="mail.display_name" class="text-gray-600">
 								{{ `<${mail.from_ || mail.sender}>` }}
 							</span>
 						</div>
@@ -29,32 +29,20 @@
 						<div class="space-x-2">
 							<span v-if="mail.to.length">
 								{{ __('To') }}:
-								<span
-									v-for="(recipient, idx) in mail.to"
-									:key="idx"
-									class="text-gray-700"
-								>
-									{{ recipient.display_name || recipient.email }}
+								<span class="text-gray-700">
+									{{ toRecipient(mail) }}
 								</span>
 							</span>
 							<span v-if="mail.cc.length">
 								{{ __('Cc') }}:
-								<span
-									v-for="(recipient, idx) in mail.cc"
-									:key="idx"
-									class="text-gray-700"
-								>
-									{{ recipient.display_name || recipient.email }}
+								<span class="text-gray-700">
+									{{ getRecipients(mail.cc) }}
 								</span>
 							</span>
 							<span v-if="mail.bcc.length">
 								{{ __('Bcc') }}:
-								<span
-									v-for="(recipient, idx) in mail.bcc"
-									:key="idx"
-									class="text-gray-700"
-								>
-									{{ recipient.display_name || recipient.email }}
+								<span class="text-gray-700">
+									{{ getRecipients(mail.bcc) }}
 								</span>
 							</span>
 						</div>
@@ -267,6 +255,22 @@ const getReplyHtml = (html, creation) => {
 		} wrote:
     `
 	return `<br><blockquote>${replyHeader} <br> ${html}</blockquote>`
+}
+
+interface Recipient {
+	display_name?: string
+	email: string
+}
+
+const getRecipients = (recipients: Recipient[]) =>
+	recipients.map((recipient) => recipient.display_name || recipient.email).join(', ')
+
+const toRecipient = (mail) => {
+	const isSoleRecipient = mail.to.length === 1 && !mail.cc.length && !mail.bcc.length
+	if (!isSoleRecipient) return getRecipients(mail.to)
+	return mail.display_name
+		? `${mail.to[0].display_name} <${mail.delivered_to}>`
+		: mail.delivered_to
 }
 
 watch(() => props.mailID, reloadThread)
