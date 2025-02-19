@@ -6,6 +6,7 @@ from frappe import _
 from frappe.model.document import Document
 
 from mail.agent import create_group_on_agents, delete_group_from_agents, patch_group_on_agents
+from mail.utils import normalize_email
 from mail.utils.cache import get_tenant_for_user
 from mail.utils.user import has_role, is_system_manager, is_tenant_admin
 from mail.utils.validation import (
@@ -29,6 +30,7 @@ class MailGroup(Document):
 		self.validate_enabled()
 		self.validate_domain()
 		self.validate_email()
+		self.set_normalized_email()
 		self.validate_tenant_max_groups()
 
 	def on_update(self) -> None:
@@ -80,6 +82,11 @@ class MailGroup(Document):
 		is_subaddressed_email(self.email, raise_exception=True)
 		is_email_assigned(self.email, self.doctype, raise_exception=True)
 		is_valid_email_for_domain(self.email, self.domain_name, raise_exception=True)
+
+	def set_normalized_email(self) -> None:
+		"""Sets the normalized email."""
+
+		self.normalized_email = normalize_email(self.email)
 
 	def validate_tenant_max_groups(self) -> None:
 		"""Validates the Tenant Max Groups."""

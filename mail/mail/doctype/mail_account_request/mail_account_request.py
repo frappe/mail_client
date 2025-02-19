@@ -20,6 +20,7 @@ from mail.utils import generate_otp
 from mail.utils.cache import get_tenant_for_user
 from mail.utils.user import has_role, is_system_manager, is_tenant_admin
 from mail.utils.validation import (
+	is_email_assigned,
 	is_subaddressed_email,
 	is_valid_email_for_domain,
 	validate_domain_is_enabled_and_verified,
@@ -119,6 +120,7 @@ class MailAccountRequest(Document):
 		self.account = self.account.strip().lower()
 		validate_email_address(self.account, True)
 		is_subaddressed_email(self.account, raise_exception=True)
+		is_email_assigned(self.account, raise_exception=True)
 
 		if not is_valid_email_for_domain(self.account, self.domain_name):
 			frappe.throw(

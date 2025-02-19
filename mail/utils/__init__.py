@@ -12,11 +12,7 @@ from typing import Literal
 import frappe
 from bs4 import BeautifulSoup
 from frappe import _
-from frappe.utils.background_jobs import get_jobs
 from frappe.utils.caching import redis_cache, request_cache
-
-from mail.utils.cache import get_root_domain_name
-from mail.utils.validation import validate_email_address
 
 
 def encode_image_to_base64(image_path: str) -> str:
@@ -145,7 +141,28 @@ def get_in_reply_to(
 def check_deliverability(email: str) -> bool:
 	"""Wrapper function of `utils.validation.validate_email_address` for caching."""
 
+	from mail.utils.validation import validate_email_address
+
 	return validate_email_address(email, check_mx=True, verify=True, smtp_timeout=10)
+
+
+def remove_subaddressing(email: str) -> str:
+	"""Removes subaddressing from an email address.
+
+	Example:
+	    input: "user+filter@example.com"
+	    output: "user@example.com"
+	"""
+	match = re.match(r"([^+]+)(?:\+[^@]*)?(@.+)", email)
+	return f"{match.group(1)}{match.group(2)}" if match else email
+
+
+def normalize_email(email: str) -> str:
+	"""Normalize email by removing dots before the @."""
+
+	local, domain = email.split("@", 1)
+	normalized_local = re.sub(r"\.", "", local)
+	return f"{normalized_local}@{domain}"
 
 
 def get_dkim_host(domain_name: str, type: Literal["rsa", "ed25519"]) -> str:
@@ -171,5 +188,7 @@ def get_dmarc_address() -> str:
 	Returns DMARC address.
 	e.g. dmarc@rootdomain.com
 	"""
+
+	from mail.utils.cache import get_root_domain_name
 
 	return f"dmarc@{get_root_domain_name()}"
