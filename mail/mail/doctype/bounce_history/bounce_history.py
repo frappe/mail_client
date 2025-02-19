@@ -7,7 +7,7 @@ from frappe.utils import add_days, now, now_datetime
 from uuid_utils import uuid7
 
 
-class BounceLog(Document):
+class BounceHistory(Document):
 	def autoname(self) -> None:
 		self.name = str(uuid7())
 
@@ -31,14 +31,14 @@ class BounceLog(Document):
 		self.blocked_until = add_days(now(), block_for_days)
 
 
-def create_or_update_bounce_log(email: str, bounce_increment: int = 1) -> None:
+def create_or_update_bounce_history(email: str, bounce_increment: int = 1) -> None:
 	"""Create or update the bounce log for the given email"""
 
-	if bounce_log := frappe.db.exists("Bounce Log", {"email": email}):
-		doc = frappe.get_doc("Bounce Log", bounce_log)
+	if bounce_history := frappe.db.exists("Bounce History", {"email": email}):
+		doc = frappe.get_doc("Bounce History", bounce_history)
 		doc.bounce_count += bounce_increment
 	else:
-		doc = frappe.new_doc("Bounce Log")
+		doc = frappe.new_doc("Bounce History")
 		doc.email = email
 		doc.bounce_count = bounce_increment
 
@@ -48,5 +48,5 @@ def create_or_update_bounce_log(email: str, bounce_increment: int = 1) -> None:
 def is_email_blocked(email: str) -> bool:
 	"""Check if a email is blocked."""
 
-	blocked_until = frappe.get_cached_value("Bounce Log", {"email": email}, "blocked_until")
+	blocked_until = frappe.get_cached_value("Bounce History", {"email": email}, "blocked_until")
 	return blocked_until and blocked_until > now_datetime()

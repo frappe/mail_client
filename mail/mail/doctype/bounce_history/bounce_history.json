@@ -79,7 +79,7 @@
  "modified": "2025-02-04 10:43:28.981071",
  "modified_by": "Administrator",
  "module": "Mail",
- "name": "Bounce Log",
+ "name": "Bounce History",
  "owner": "Administrator",
  "permissions": [
   {
