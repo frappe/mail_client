@@ -8,11 +8,12 @@ from frappe.model.document import Document
 from frappe.utils import random_string
 
 from mail.agent import create_account_on_agents, delete_account_from_agents, patch_account_on_agents
-from mail.utils import get_dmarc_address
+from mail.utils import get_dmarc_address, normalize_email
 from mail.utils.cache import get_aliases_for_user, get_tenant_for_user
 from mail.utils.user import has_role, is_system_manager, is_tenant_admin
 from mail.utils.validation import (
 	is_email_assigned,
+	is_subaddressed_email,
 	is_valid_email_for_domain,
 	validate_domain_is_enabled_and_verified,
 	validate_domain_owned_by_tenant,
@@ -34,6 +35,7 @@ class MailAccount(Document):
 		self.validate_user_tenant()
 		self.validate_tenant_max_accounts()
 		self.validate_email()
+		self.set_normalized_email()
 		self.validate_password()
 		self.validate_default_outgoing_email()
 		self.validate_display_name()
@@ -121,9 +123,14 @@ class MailAccount(Document):
 
 		if not self.email:
 			frappe.throw(_("Email is mandatory."))
-
+		is_subaddressed_email(self.email, raise_exception=True)
 		is_email_assigned(self.email, self.doctype, raise_exception=True)
 		is_valid_email_for_domain(self.email, self.domain_name, raise_exception=True)
+
+	def set_normalized_email(self) -> None:
+		"""Sets the normalized email."""
+
+		self.normalized_email = normalize_email(self.email)
 
 	def validate_password(self) -> None:
 		"""Generates secret if password is changed"""

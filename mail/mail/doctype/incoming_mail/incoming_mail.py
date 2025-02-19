@@ -13,7 +13,7 @@ from frappe.utils import now, time_diff_in_seconds
 from uuid_utils import uuid7
 
 from mail.imap import IMAPContext
-from mail.mail.doctype.bounce_log.bounce_log import create_or_update_bounce_log
+from mail.mail.doctype.bounce_history.bounce_history import create_or_update_bounce_history
 from mail.mail.doctype.dmarc_report.dmarc_report import create_dmarc_report
 from mail.mail.doctype.mail_contact.mail_contact import create_mail_contact
 from mail.mail.doctype.mime_message.mime_message import (
@@ -84,6 +84,7 @@ class IncomingMail(Document):
 		self.status = "Submitted"
 
 		parser = EmailParser(self.message)
+		self.delivered_to = parser.get_delivered_to()
 		self.display_name, self.sender = parser.get_sender()
 		self.domain_name = self.receiver.split("@")[1]
 		self.subject = parser.get_subject()
@@ -200,7 +201,12 @@ class IncomingMail(Document):
 						rcpt.db_update()
 
 						if rcpt.status == "Bounced":
-							create_or_update_bounce_log(rcpt.email, bounce_increment=1)
+							create_or_update_bounce_history(
+								sender=self.delivered_to,
+								recipient=rcpt.email,
+								bounce_increment=1,
+								last_bounce_response=response,
+							)
 
 			if rcpt_status_changed:
 				outgoing_mail.update_status(db_set=True, notify_update=True)

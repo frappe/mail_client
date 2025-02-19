@@ -369,10 +369,10 @@ Queue management ensures that emails are processed efficiently, even under high 
 #### 1.1 Validate
 
 - **Endpoint:** `POST /auth/validate` or `/api/method/mail.api.auth.validate`
-- **Description:** Validates if a user has the required permissions for an account.
+- **Description:** Validates if a user has the required permissions and owns the email address.
 - **Parameters:**
-  - `account` (str | None = None): The account to validate.
-- **Response:** Returns nothing if validation is successful. Throws an exception with the reason if the account cannot be validated.
+  - `email` (str | None = None): The email address to validate.
+- **Response:** Returns nothing if validation is successful. Throws an exception with the reason if the email address cannot be validated.
 
 ### 2. Outbound API
 
@@ -423,9 +423,9 @@ APIs for retrieving received emails.
 #### 3.1 Pull
 
 - **Endpoint:** `GET /inbound/pull` or `/api/method/mail.api.inbound.pull`
-- **Description:** Fetches a list of received emails for a specified account.
+- **Description:** Fetches a list of received emails for a specified email address.
 - **Parameters:**
-  - `account` (str): The account from which to pull emails.
+  - `email` (str): The email address for which to pull emails.
   - `limit` (int = 50): Maximum number of emails to retrieve.
   - `last_synced_at` (str | None): Optional timestamp to fetch emails received after this time.
 - **Response:** Returns a dictionary with a list of received email details.

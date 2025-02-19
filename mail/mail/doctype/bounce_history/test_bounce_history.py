@@ -11,18 +11,18 @@ EXTRA_TEST_RECORD_DEPENDENCIES = []  # eg. ["User"]
 IGNORE_TEST_RECORD_DEPENDENCIES = []  # eg. ["User"]
 
 
-class UnitTestBounceLog(UnitTestCase):
+class UnitTestBounceHistory(UnitTestCase):
 	"""
-	Unit tests for BounceLog.
+	Unit tests for BounceHistory.
 	Use this class for testing individual functions and methods.
 	"""
 
 	pass
 
 
-class IntegrationTestBounceLog(IntegrationTestCase):
+class IntegrationTestBounceHistory(IntegrationTestCase):
 	"""
-	Integration tests for BounceLog.
+	Integration tests for BounceHistory.
 	Use this class for testing interactions between multiple components.
 	"""
 

@@ -34,7 +34,7 @@ from frappe.utils import (
 from frappe.utils.file_manager import save_file
 from uuid_utils import uuid7
 
-from mail.mail.doctype.bounce_log.bounce_log import is_email_blocked
+from mail.mail.doctype.bounce_history.bounce_history import is_recipient_blocked
 from mail.mail.doctype.mail_contact.mail_contact import create_mail_contact
 from mail.mail.doctype.mime_message.mime_message import (
 	create_mime_message,
@@ -801,7 +801,7 @@ class OutgoingMail(Document):
 		kwargs = {"status": "Accepted"}
 
 		for rcpt in self.recipients:
-			if is_email_blocked(rcpt.email):
+			if is_recipient_blocked(sender=self.from_, recipient=rcpt.email):
 				rcpt.status = "Blocked"
 				rcpt.error_message = _(
 					"Delivery to this recipient was blocked because their email address is on our blocklist. This action was taken after repeated delivery failures to this address. To protect your sender reputation and prevent further issues, this email was not sent to the blocked recipient."
@@ -1176,10 +1176,10 @@ def create_outgoing_mail(
 	doc.via_api = via_api
 	doc.is_newsletter = is_newsletter
 
-	if via_api and not is_newsletter:
+	if doc.via_api and not doc.is_newsletter:
 		user = frappe.session.user
-		if from_ not in get_user_email_addresses(user):
-			from_ = get_default_outgoing_email_for_user(user)
+		if doc.from_ not in get_user_email_addresses(user):
+			doc.from_ = get_default_outgoing_email_for_user(user)
 
 	if not do_not_save:
 		doc.save()

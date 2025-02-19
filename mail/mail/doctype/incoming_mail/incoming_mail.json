@@ -11,6 +11,7 @@
   "reply_to",
   "column_break_hpzu",
   "receiver",
+  "delivered_to",
   "in_reply_to_mail_type",
   "in_reply_to_mail_name",
   "subject",
@@ -427,6 +428,17 @@
    "read_only": 1,
    "reqd": 1,
    "search_index": 1
+  },
+  {
+   "fieldname": "delivered_to",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Delivered To",
+   "no_copy": 1,
+   "options": "Email",
+   "read_only": 1,
+   "search_index": 1
   }
  ],
  "in_create": 1,
@@ -439,7 +451,7 @@
    "link_fieldname": "incoming_mail"
   }
  ],
- "modified": "2025-02-04 10:45:06.278146",
+ "modified": "2025-02-18 11:56:03.015162",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Incoming Mail",

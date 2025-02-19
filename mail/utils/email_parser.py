@@ -51,6 +51,12 @@ class EmailParser:
 
 		return parseaddr(self.message["From"])
 
+	def get_delivered_to(self) -> str | None:
+		"""Returns the Delivered-To email address of the email."""
+
+		if delivered_to := self.message.get("Delivered-To"):
+			return remove_whitespace_characters(delivered_to)
+
 	def get_reply_to(self) -> str:
 		"""Returns the reply-to email(s) of the email."""
 

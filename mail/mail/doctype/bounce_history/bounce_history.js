@@ -1,9 +1,9 @@
 // Copyright (c) 2024, Frappe Technologies Pvt. Ltd. and contributors
 // For license information, please see license.txt
 
-frappe.ui.form.on('Bounce Log', {
+frappe.ui.form.on('Bounce History', {
 	check_deliverability(frm) {
-		const email = frm.doc.email
+		const email = frm.doc.recipient
 
 		if (!email) return
 
