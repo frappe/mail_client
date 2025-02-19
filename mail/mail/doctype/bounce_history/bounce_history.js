@@ -3,7 +3,7 @@
 
 frappe.ui.form.on('Bounce History', {
 	check_deliverability(frm) {
-		const email = frm.doc.email
+		const email = frm.doc.recipient
 
 		if (!email) return
 
