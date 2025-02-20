@@ -1,13 +1,14 @@
 <template>
-	<div class="space-y-0.5 p-2">
+	<div class="space-y-1 p-2.5">
 		<div class="flex items-center justify-between">
 			<div class="mr-2 flex items-center space-x-2 truncate">
 				<h2 class="truncate font-semibold">{{ mail.subject || __('(No Subject)') }}</h2>
 				<Badge
-					v-if="Object.keys(STATUS).includes(mail.status)"
+					v-if="Object.keys(STATUS).includes(badgeField)"
 					:label="badge.label"
 					:theme="badge.theme"
 					size="sm"
+					class="!text-[11px]"
 				/>
 			</div>
 			<MailDate :datetime="mail.creation" :in-list="true" />
@@ -42,9 +43,15 @@ const STATUS = {
 	Queued: { label: __('Queued'), theme: 'orange' },
 	Blocked: { label: __('Blocked'), theme: 'red' },
 	Failed: { label: __('Failed'), theme: 'red' },
+	'DSN Report': { label: __('DSN Report'), theme: 'blue' },
+	'DMARC Report': { label: __('DMARC Report'), theme: 'blue' },
 }
 
-const badge = computed<BadgeType>(() => STATUS[props.mail.status])
+const badgeField = computed(() =>
+	props.mail.mail_type === 'Outgoing Mail' ? props.mail.status : props.mail.type,
+)
+
+const badge = computed<BadgeType>(() => STATUS[badgeField.value])
 </script>
 
 <style>

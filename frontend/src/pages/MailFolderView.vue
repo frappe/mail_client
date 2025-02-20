@@ -25,8 +25,8 @@
 			<div
 				v-for="(mail, idx) in mails[currentFolder].data"
 				:key="idx"
-				class="flex cursor-pointer flex-col space-y-1"
-				:class="{ 'rounded bg-gray-100': mail.name == currentMail[currentFolder] }"
+				class="flex cursor-pointer flex-col space-y-1 rounded"
+				:class="{ 'bg-gray-100': mail.name == currentMail[currentFolder] }"
 				@click="setCurrentMail(currentFolder, mail.name)"
 			>
 				<SidebarDetail :mail="mail" />

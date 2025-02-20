@@ -89,6 +89,7 @@ def get_inbox_mails(start: int = 0) -> list:
 			"in_reply_to_mail_name",
 			"in_reply_to_mail_type",
 			"status",
+			"type",
 			"message_id",
 		],
 		limit=50,
@@ -345,7 +346,7 @@ def get_mail_details(name: str, type: str, include_all_details: bool = False) ->
 	if type == "Outgoing Mail":
 		fields.append("from_")
 	else:
-		fields.append("delivered_to")
+		fields.extend(["delivered_to", "type"])
 
 	mail = frappe.db.get_value(type, name, fields, as_dict=1)
 	mail.mail_type = type
