@@ -88,6 +88,7 @@ def get_inbox_mails(start: int = 0) -> list:
 			"creation",
 			"in_reply_to_mail_name",
 			"in_reply_to_mail_type",
+			"status",
 			"message_id",
 		],
 		limit=50,
@@ -143,6 +144,7 @@ def get_outgoing_mails(folder: str, start: int = 0) -> list:
 			"display_name",
 			"in_reply_to_mail_name",
 			"in_reply_to_mail_type",
+			"status",
 			"message_id",
 		],
 		limit=50,
@@ -337,6 +339,7 @@ def get_mail_details(name: str, type: str, include_all_details: bool = False) ->
 		"in_reply_to_mail_type",
 		"reply_to",
 		"folder",
+		"status",
 	]
 
 	if type == "Outgoing Mail":

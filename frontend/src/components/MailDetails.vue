@@ -4,7 +4,7 @@
 			v-for="mail in mailThread.data"
 			:key="mail.name"
 			class="mb-4 p-3"
-			:class="{ 'rounded-md shadow': mailThread.data.length > 1 }"
+			:class="{ 'rounded-md border': mailThread.data.length > 1 }"
 		>
 			<div class="flex space-x-3 border-b pb-2">
 				<Avatar
@@ -79,13 +79,13 @@
 				</div>
 			</div>
 			<div
-				class="ProseMirror prose prose-table:table-fixed prose-td:p-2 prose-th:p-2 prose-td:border prose-th:border prose-td:border-gray-300 prose-th:border-gray-300 prose-td:relative prose-th:relative prose-th:bg-gray-100 max-w-none pt-4"
-			>
-				<div v-if="mail.body_html" class="prose-sm" v-html="mailBody(mail.body_html)" />
-				<pre v-else-if="mail.body_plain" class="text-wrap bg-white text-gray-800">{{
-					mail.body_plain
-				}}</pre>
-			</div>
+				v-if="mail.body_html"
+				class="mail-body ProseMirror prose-sm"
+				v-html="mailBody(mail.body_html)"
+			/>
+			<pre v-else-if="mail.body_plain" class="mail-body text-wrap">{{
+				mail.body_plain
+			}}</pre>
 		</div>
 	</div>
 	<div
@@ -270,7 +270,7 @@ const toRecipient = (mail) => {
 	if (!isSoleRecipient) return getRecipients(mail.to)
 
 	const recipient = mail.delivered_to || mail.to[0].email
-	return mail.display_name ? `${mail.to[0].display_name} <${recipient}>` : recipient
+	return mail.to[0].display_name ? `${mail.to[0].display_name} <${recipient}>` : recipient
 }
 
 watch(() => props.mailID, reloadThread)
@@ -281,5 +281,9 @@ watch(() => props.mailID, reloadThread)
 		:where([class~='not-prose'], [class~='not-prose'] *)
 	)::before {
 	content: '';
+}
+
+.mail-body {
+	@apply prose prose-table:table-fixed prose-td:p-2 prose-th:p-2 prose-td:border prose-th:border prose-td:border-gray-300 prose-th:border-gray-300 prose-td:relative prose-th:relative prose-th:bg-gray-100 prose-sm max-w-none pt-4 text-sm leading-5;
 }
 </style>
