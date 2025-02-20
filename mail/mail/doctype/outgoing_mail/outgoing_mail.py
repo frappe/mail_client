@@ -146,7 +146,7 @@ class OutgoingMail(Document):
 		if self.docstatus == 0:
 			self.folder = "Drafts"
 		elif self.docstatus == 1:
-			if self.status not in ["Deferred", "Bounced", "Partially Sent", "Sent"]:
+			if self.status != "Sent":
 				self.folder = "Outbox"
 			elif self.folder != "Trash":
 				self.folder = "Sent"
@@ -726,25 +726,15 @@ class OutgoingMail(Document):
 		if not status:
 			recipient_statuses = [r.status for r in self.recipients]
 			total_statuses = len(recipient_statuses)
-			status_counts = {
-				k: recipient_statuses.count(k) for k in ["", "Blocked", "Deferred", "Bounced", "Sent"]
-			}
+			status_counts = {k: recipient_statuses.count(k) for k in ["", "Blocked", "Sent"]}
 
 			if status_counts[""] == total_statuses:  # All recipients are in pending state (no status)
 				return
 
 			if status_counts["Blocked"] == total_statuses:  # All recipients are blocked
 				status = "Blocked"
-			elif status_counts["Deferred"] > 0:  # Any recipient is deferred
-				status = "Deferred"
 			elif status_counts["Sent"] == total_statuses:  # All recipients are sent
 				status = "Sent"
-			elif status_counts["Sent"] > 0:  # Any recipient is sent
-				status = "Partially Sent"
-			elif (
-				status_counts["Bounced"] > 0
-			):  # All recipients are bounced or some are blocked and some are bounced
-				status = "Bounced"
 
 		if status:
 			self.status = status
@@ -901,15 +891,6 @@ class OutgoingMail(Document):
 		frappe.only_for("System Manager")
 		if self.status in ["Transferring"]:
 			frappe.flags.force_transfer = True
-			self.transfer_to_mail_agent()
-
-	@frappe.whitelist()
-	def retry_bounced(self) -> None:
-		"""Retries bounced email."""
-
-		frappe.only_for("System Manager")
-		if self.status == "Bounced":
-			self._db_set(status="Accepted", error_log=None, error_message=None, commit=True)
 			self.transfer_to_mail_agent()
 
 	@frappe.whitelist()

@@ -75,7 +75,8 @@ class MailAlias(Document):
 	def set_normalized_email(self) -> None:
 		"""Sets the normalized email."""
 
-		self.normalized_email = normalize_email(self.email)
+		if not self.normalized_email:
+			self.normalized_email = normalize_email(self.email)
 
 	def validate_alias_for_name(self) -> None:
 		"""Validates the alias for name."""

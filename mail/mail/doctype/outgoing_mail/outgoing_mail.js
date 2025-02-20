@@ -74,16 +74,6 @@ frappe.ui.form.on('Outgoing Mail', {
 				},
 				__('Actions'),
 			)
-		} else if (frm.doc.status === 'Bounced') {
-			if (!frappe.user_roles.includes('System Manager')) return
-
-			frm.add_custom_button(
-				__('Retry'),
-				() => {
-					frm.trigger('retry_bounced')
-				},
-				__('Actions'),
-			)
 		}
 	},
 
@@ -178,20 +168,6 @@ frappe.ui.form.on('Outgoing Mail', {
 			frm: frm,
 			args: {
 				all: true,
-			},
-		})
-	},
-
-	retry_bounced(frm) {
-		frappe.call({
-			doc: frm.doc,
-			method: 'retry_bounced',
-			freeze: true,
-			freeze_message: __('Retrying...'),
-			callback: (r) => {
-				if (!r.exc) {
-					frm.refresh()
-				}
 			},
 		})
 	},

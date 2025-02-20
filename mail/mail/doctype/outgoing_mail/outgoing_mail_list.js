@@ -11,10 +11,6 @@ frappe.listview_settings['Outgoing Mail'] = {
 			Accepted: 'blue',
 			Transferring: 'yellow',
 			Failed: 'red',
-			Transferred: 'blue',
-			Deferred: 'orange',
-			Bounced: 'pink',
-			'Partially Sent': 'purple',
 			Sent: 'green',
 			Cancelled: 'red',
 		}
