@@ -268,9 +268,9 @@ const getRecipients = (recipients: Recipient[]) =>
 const toRecipient = (mail) => {
 	const isSoleRecipient = mail.to.length === 1 && !mail.cc.length && !mail.bcc.length
 	if (!isSoleRecipient) return getRecipients(mail.to)
-	return mail.display_name
-		? `${mail.to[0].display_name} <${mail.delivered_to}>`
-		: mail.delivered_to
+
+	const recipient = mail.delivered_to || mail.to[0].email
+	return mail.display_name ? `${mail.to[0].display_name} <${recipient}>` : recipient
 }
 
 watch(() => props.mailID, reloadThread)

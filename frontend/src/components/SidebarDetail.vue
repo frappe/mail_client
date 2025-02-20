@@ -1,15 +1,15 @@
 <template>
-	<div class="p-2">
+	<div class="space-y-0.5 p-2">
 		<div class="flex items-center justify-between">
-			<div class="font-semibold">
-				{{ mail.display_name ? mail.display_name : mail.sender }}
+			<div class="mr-1 truncate font-semibold">
+				{{ mail.subject || __('(No Subject)') }}
 			</div>
 			<MailDate :datetime="mail.creation" :in-list="true" />
 		</div>
-		<div class="subject text-xs">
-			{{ mail.subject }}
+		<div class="snippet line-clamp-1 text-xs">
+			{{ mail.display_name ? mail.display_name : mail.sender }}
 		</div>
-		<div class="snippet text-xs text-gray-600">
+		<div class="snippet line-clamp-2 h-9 text-xs text-gray-600">
 			{{ mail.snippet }}
 		</div>
 	</div>
@@ -27,19 +27,6 @@ defineProps({
 <style>
 .snippet {
 	display: -webkit-box;
-	line-clamp: 2;
-	-webkit-line-clamp: 2;
-	-webkit-box-orient: vertical;
-	text-overflow: ellipsis;
-	width: 100%;
-	overflow: hidden;
-	line-height: 1.5;
-}
-
-.subject {
-	display: -webkit-box;
-	line-clamp: 1;
-	-webkit-line-clamp: 1;
 	-webkit-box-orient: vertical;
 	text-overflow: ellipsis;
 	width: 100%;
