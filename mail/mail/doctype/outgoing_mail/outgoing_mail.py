@@ -27,7 +27,6 @@ from frappe.utils import (
 	flt,
 	get_datetime_str,
 	now,
-	random_string,
 	time_diff_in_seconds,
 	validate_email_address,
 )
@@ -89,7 +88,6 @@ class OutgoingMail(Document):
 		self.validate_amended_doc()
 		self.set_folder()
 		self.set_priority()
-		self.set_token()
 		self.validate_from_()
 		self.set_sender()
 		self.set_domain_name()
@@ -148,7 +146,7 @@ class OutgoingMail(Document):
 		if self.docstatus == 0:
 			self.folder = "Drafts"
 		elif self.docstatus == 1:
-			if self.status not in ["Deferred", "Bounced", "Partially Sent", "Sent"]:
+			if self.status != "Sent":
 				self.folder = "Outbox"
 			elif self.folder != "Trash":
 				self.folder = "Sent"
@@ -162,12 +160,6 @@ class OutgoingMail(Document):
 		"""Sets the priority."""
 
 		self.priority = -1 if self.is_newsletter else 0
-
-	def set_token(self):
-		"""Sets the token."""
-
-		if not self.token:
-			self.token = random_string(10)
 
 	def validate_from_(self) -> None:
 		"""Validates the from address."""
@@ -734,25 +726,15 @@ class OutgoingMail(Document):
 		if not status:
 			recipient_statuses = [r.status for r in self.recipients]
 			total_statuses = len(recipient_statuses)
-			status_counts = {
-				k: recipient_statuses.count(k) for k in ["", "Blocked", "Deferred", "Bounced", "Sent"]
-			}
+			status_counts = {k: recipient_statuses.count(k) for k in ["", "Blocked", "Sent"]}
 
 			if status_counts[""] == total_statuses:  # All recipients are in pending state (no status)
 				return
 
 			if status_counts["Blocked"] == total_statuses:  # All recipients are blocked
 				status = "Blocked"
-			elif status_counts["Deferred"] > 0:  # Any recipient is deferred
-				status = "Deferred"
 			elif status_counts["Sent"] == total_statuses:  # All recipients are sent
 				status = "Sent"
-			elif status_counts["Sent"] > 0:  # Any recipient is sent
-				status = "Partially Sent"
-			elif (
-				status_counts["Bounced"] > 0
-			):  # All recipients are bounced or some are blocked and some are bounced
-				status = "Bounced"
 
 		if status:
 			self.status = status
@@ -912,15 +894,6 @@ class OutgoingMail(Document):
 			self.transfer_to_mail_agent()
 
 	@frappe.whitelist()
-	def retry_bounced(self) -> None:
-		"""Retries bounced email."""
-
-		frappe.only_for("System Manager")
-		if self.status == "Bounced":
-			self._db_set(status="Accepted", error_log=None, error_message=None, commit=True)
-			self.transfer_to_mail_agent()
-
-	@frappe.whitelist()
 	def transfer_to_mail_agent(self) -> None:
 		"""Transfers the email to the Mail Agent."""
 
@@ -962,7 +935,7 @@ class OutgoingMail(Document):
 			username = mail_account.email
 			password = mail_account.get_password("password")
 
-			mail_options = [f"ENVID={self.name}:{self.token}", f"MT-PRIORITY={self.priority}"]
+			mail_options = [f"ENVID={self.name}", f"MT-PRIORITY={self.priority}"]
 			if frappe.request and hasattr(frappe.request, "after_response"):
 				# Web worker:
 				# Retrieves an `SMTP` or `SMTP_SSL` session from the `SMTPConnectionPool`.

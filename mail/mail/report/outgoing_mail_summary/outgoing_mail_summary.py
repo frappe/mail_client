@@ -44,12 +44,6 @@ def get_columns() -> list[dict]:
 			"width": 100,
 		},
 		{
-			"label": _("Retries"),
-			"fieldname": "retries",
-			"fieldtype": "Int",
-			"width": 80,
-		},
-		{
 			"label": _("Message Size"),
 			"fieldname": "message_size",
 			"fieldtype": "Int",
@@ -79,12 +73,6 @@ def get_columns() -> list[dict]:
 			"fieldname": "is_newsletter",
 			"fieldtype": "Check",
 			"width": 100,
-		},
-		{
-			"label": _("Error Message"),
-			"fieldname": "error_message",
-			"fieldtype": "Code",
-			"width": 500,
 		},
 		{
 			"label": _("Domain Name"),
@@ -154,14 +142,11 @@ def get_data(filters: dict | None = None) -> list[dict]:
 			OM.name,
 			OM.submitted_at,
 			MR.status,
-			MR.retries,
 			OM.message_size,
 			OM.spam_score,
 			OM.via_api,
 			OM.priority,
 			OM.is_newsletter,
-			MR.response,
-			MR.error_message,
 			OM.domain_name,
 			OM.agent,
 			OM.ip_address,
@@ -231,20 +216,11 @@ def get_data(filters: dict | None = None) -> list[dict]:
 
 		query = query.where(Criterion.any(conditions))
 
-	data = query.run(as_dict=True)
-
-	for row in data:
-		if row["response"]:
-			response = json.loads(row.pop("response"))
-			row["error_message"] = f"{response['status']} - {response['diagnostic_code']}"
-		elif row["error_message"]:
-			row["error_message"] = row.pop("error_message")
-
-	return data
+	return query.run(as_dict=True)
 
 
 def get_chart(data: list) -> list[dict]:
-	labels, sent, deffered, bounced, blocked = [], [], [], [], []
+	labels, sent, blocked = [], [], []
 
 	for row in reversed(data):
 		if not isinstance(row["submitted_at"], datetime):
@@ -257,37 +233,17 @@ def get_chart(data: list) -> list[dict]:
 
 			if row["status"] == "Sent":
 				sent.append(1)
-				deffered.append(0)
-				bounced.append(0)
-				blocked.append(0)
-			elif row["status"] == "Deferred":
-				sent.append(0)
-				deffered.append(1)
-				bounced.append(0)
-				blocked.append(0)
-			elif row["status"] == "Bounced":
-				sent.append(0)
-				deffered.append(0)
-				bounced.append(1)
 				blocked.append(0)
 			elif row["status"] == "Blocked":
 				sent.append(0)
-				deffered.append(0)
-				bounced.append(0)
 				blocked.append(1)
 			else:
 				sent.append(0)
-				deffered.append(0)
-				bounced.append(0)
 				blocked.append(0)
 		else:
 			idx = labels.index(date)
 			if row["status"] == "Sent":
 				sent[idx] += 1
-			elif row["status"] == "Deferred":
-				deffered[idx] += 1
-			elif row["status"] == "Bounced":
-				bounced[idx] += 1
 			elif row["status"] == "Blocked":
 				blocked[idx] += 1
 
@@ -295,10 +251,8 @@ def get_chart(data: list) -> list[dict]:
 		"data": {
 			"labels": labels,
 			"datasets": [
-				{"name": "bounced", "values": bounced},
-				{"name": "deffered", "values": deffered},
-				{"name": "sent", "values": sent},
 				{"name": "blocked", "values": blocked},
+				{"name": "sent", "values": sent},
 			],
 		},
 		"fieldtype": "Int",
@@ -315,7 +269,7 @@ def get_summary(data: list) -> list[dict]:
 
 	for row in data:
 		status = row["status"]
-		if status in ["Sent", "Deferred", "Bounced", "Blocked"]:
+		if status in ["Sent", "Blocked"]:
 			status_count.setdefault(status, 0)
 			status_count[status] += 1
 
@@ -324,24 +278,12 @@ def get_summary(data: list) -> list[dict]:
 			"label": _("Sent"),
 			"datatype": "Int",
 			"value": status_count.get("Sent", 0),
-			"indicator": "green",
-		},
-		{
-			"label": _("Deferred"),
-			"datatype": "Int",
-			"value": status_count.get("Deferred", 0),
 			"indicator": "blue",
-		},
-		{
-			"label": _("Bounced"),
-			"datatype": "Int",
-			"value": status_count.get("Bounced", 0),
-			"indicator": "red",
 		},
 		{
 			"label": _("Blocked"),
 			"datatype": "Int",
 			"value": status_count.get("Blocked", 0),
-			"indicator": "grey",
+			"indicator": "red",
 		},
 	]

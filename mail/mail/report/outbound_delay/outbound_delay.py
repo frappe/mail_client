@@ -42,12 +42,6 @@ def get_columns() -> list[dict]:
 			"width": 100,
 		},
 		{
-			"label": _("Retries"),
-			"fieldname": "retries",
-			"fieldtype": "Int",
-			"width": 80,
-		},
-		{
 			"label": _("Message Size"),
 			"fieldname": "message_size",
 			"fieldtype": "Int",
@@ -163,7 +157,6 @@ def get_data(filters: dict | None = None) -> list[dict]:
 			OM.name,
 			OM.submitted_at,
 			MR.status,
-			MR.retries,
 			OM.message_size,
 			OM.via_api,
 			OM.priority,

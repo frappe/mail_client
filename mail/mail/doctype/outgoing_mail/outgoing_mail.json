@@ -36,7 +36,6 @@
   "column_break_d6p9",
   "domain_name",
   "agent",
-  "token",
   "section_break_quhp",
   "message_id",
   "in_reply_to",
@@ -126,7 +125,7 @@
    "in_standard_filter": 1,
    "label": "Status",
    "no_copy": 1,
-   "options": "Draft\nPending\nQueued\nBlocked\nAccepted\nTransferring\nFailed\nTransferred\nDeferred\nBounced\nPartially Sent\nSent\nCancelled",
+   "options": "Draft\nPending\nQueued\nBlocked\nAccepted\nTransferring\nFailed\nSent\nCancelled",
    "read_only": 1,
    "reqd": 1,
    "search_index": 1
@@ -356,10 +355,8 @@
    "search_index": 1
   },
   {
-   "depends_on": "eval: doc.docstatus == 0",
    "fieldname": "in_reply_to_mail_type",
    "fieldtype": "Select",
-   "hidden": 1,
    "label": "In Reply To Mail Type",
    "no_copy": 1,
    "options": "\nIncoming Mail\nOutgoing Mail",
@@ -368,10 +365,9 @@
   },
   {
    "fieldname": "in_reply_to_mail_name",
-   "fieldtype": "Dynamic Link",
-   "label": "In Reply To",
+   "fieldtype": "Data",
+   "label": "In Reply To Mail Name",
    "no_copy": 1,
-   "options": "in_reply_to_mail_type",
    "read_only": 1,
    "search_index": 1
   },
@@ -609,15 +605,6 @@
    "read_only": 1
   },
   {
-   "depends_on": "eval: frappe.boot.developer_mode",
-   "fieldname": "token",
-   "fieldtype": "Data",
-   "label": "Token",
-   "no_copy": 1,
-   "read_only": 1,
-   "set_only_once": 1
-  },
-  {
    "fieldname": "from_",
    "fieldtype": "Data",
    "in_list_view": 1,
@@ -631,7 +618,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-02-17 16:30:14.969915",
+ "modified": "2025-02-19 19:47:08.618349",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Outgoing Mail",

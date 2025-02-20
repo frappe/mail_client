@@ -33,7 +33,7 @@ frappe.query_reports['Outgoing Mail Summary'] = {
 			label: __('Status'),
 			fieldtype: 'MultiSelectList',
 			get_data: () => {
-				return ['', 'Blocked', 'Deferred', 'Bounced', 'Sent']
+				return ['', 'Blocked', 'Sent']
 			},
 		},
 		{

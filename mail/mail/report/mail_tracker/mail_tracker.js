@@ -33,18 +33,7 @@ frappe.query_reports['Mail Tracker'] = {
 			label: __('Status'),
 			fieldtype: 'MultiSelectList',
 			get_data: () => {
-				return [
-					'',
-					'Pending',
-					'Queued',
-					'Failed',
-					'Transferred',
-					'Blocked',
-					'Deferred',
-					'Bounced',
-					'Partially Sent',
-					'Sent',
-				]
+				return ['', 'Pending', 'Queued', 'Failed', 'Blocked', 'Sent']
 			},
 		},
 		{
