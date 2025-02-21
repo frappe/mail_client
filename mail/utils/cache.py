@@ -171,6 +171,7 @@ def get_rate_limits(method_path: str) -> list:
 				RATE_LIMIT.seconds,
 				RATE_LIMIT.methods,
 				RATE_LIMIT.ip_based,
+				RATE_LIMIT.ignored_ips,
 			)
 			.where((RATE_LIMIT.enabled == 1) & (RATE_LIMIT.method_path == method_path))
 		).run(as_dict=True)
@@ -180,11 +181,16 @@ def get_rate_limits(method_path: str) -> list:
 
 		for rl in rate_limits:
 			rl["ignore_in_developer_mode"] = bool(rl["ignore_in_developer_mode"])
-			rl["methods"] = rl["methods"].split(",")
+			rl["methods"] = rl["methods"].split("\n")
 			rl["ip_based"] = bool(rl["ip_based"])
 
 			if len(rl["methods"]) == 1 and rl["methods"][0] == "ALL":
 				rl["methods"] = "ALL"
+
+			if rl["ip_based"]:
+				rl["ignored_ips"] = rl["ignored_ips"].split("\n") if rl["ignored_ips"] else []
+			else:
+				rl.pop("ignored_ips")
 
 		return rate_limits
 

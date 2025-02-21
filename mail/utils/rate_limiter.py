@@ -14,14 +14,24 @@ def dynamic_rate_limit() -> callable:
 		def wrapper(*args, **kwargs):
 			wrapped_fn = fn
 			if method_path := frappe.form_dict.cmd:
+				request_ip = frappe.local.request_ip
 				rate_limits = get_rate_limits(method_path)
 
 				for rl in rate_limits:
 					if rl["ignore_in_developer_mode"] and frappe.conf.developer_mode:
 						continue
+					elif rl["ip_based"] and any(
+						request_ip.startswith(prefix) for prefix in rl["ignored_ips"]
+					):
+						continue
 
-					rl.pop("ignore_in_developer_mode")
-					wrapped_fn = rate_limit(**rl)(wrapped_fn)
+					wrapped_fn = rate_limit(
+						key=rl["key"],
+						limit=rl["limit"],
+						seconds=rl["seconds"],
+						methods=rl["methods"],
+						ip_based=rl["ip_based"],
+					)(wrapped_fn)
 
 			return wrapped_fn(*args, **kwargs)
 
