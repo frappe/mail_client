@@ -12,6 +12,7 @@
   "column_break_hpzu",
   "receiver",
   "delivered_to",
+  "seen",
   "in_reply_to_mail_type",
   "in_reply_to_mail_name",
   "subject",
@@ -436,6 +437,13 @@
    "options": "Email",
    "read_only": 1,
    "search_index": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "fieldname": "seen",
+   "fieldtype": "Check",
+   "label": "Seen"
   }
  ],
  "in_create": 1,
@@ -448,7 +456,7 @@
    "link_fieldname": "incoming_mail"
   }
  ],
- "modified": "2025-02-19 17:54:12.262442",
+ "modified": "2025-02-21 11:30:41.798280",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Incoming Mail",

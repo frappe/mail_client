@@ -90,6 +90,7 @@ def get_inbox_mails(start: int = 0) -> list:
 			"in_reply_to_mail_type",
 			"status",
 			"type",
+			"seen",
 			"message_id",
 		],
 		limit=50,
@@ -340,13 +341,12 @@ def get_mail_details(name: str, type: str, include_all_details: bool = False) ->
 		"in_reply_to_mail_type",
 		"reply_to",
 		"folder",
-		"status",
 	]
 
 	if type == "Outgoing Mail":
-		fields.append("from_")
+		fields.extend(["from_", "status"])
 	else:
-		fields.extend(["delivered_to", "type"])
+		fields.extend(["delivered_to", "type", "seen"])
 
 	mail = frappe.db.get_value(type, name, fields, as_dict=1)
 	mail.mail_type = type
@@ -448,6 +448,8 @@ def update_draft_mail(
 
 @frappe.whitelist()
 def get_attachments(dt: str, dn: str):
+	"""Fetches mail attachments."""
+
 	return frappe.get_all(
 		"File",
 		fields=["name", "file_name", "file_url", "file_size"],
@@ -457,11 +459,15 @@ def get_attachments(dt: str, dn: str):
 
 @frappe.whitelist()
 def get_user_addresses():
+	"""Fetches user email addresses."""
+
 	return get_user_email_addresses(frappe.session.user)
 
 
 @frappe.whitelist()
 def get_mime_message(mail_type: str, name: str) -> dict:
+	"""Fetches mail mime message and related data."""
+
 	doc = frappe.get_doc(mail_type, name)
 
 	def get_mail_recipients(recipient_type):
@@ -490,3 +496,12 @@ def get_mime_message(mail_type: str, name: str) -> dict:
 		mail["dmarc"] = {"label": _("DMARC"), "value": pass_or_fail[doc.dmarc_pass]}
 
 	return mail
+
+
+@frappe.whitelist()
+def set_seen(mail_name: str, seen_value: int) -> str:
+	"""Sets seen for incoming mail."""
+
+	doc = frappe.get_doc("Incoming Mail", mail_name)
+	doc.db_set("seen", seen_value)
+	return {"mail_name": mail_name, "seen_value": seen_value}

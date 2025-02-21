@@ -107,7 +107,15 @@
 <script setup lang="ts">
 import { inject, reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { Ellipsis, Forward, Mail, Reply, ReplyAll, SquarePen } from 'lucide-vue-next'
+import {
+	Ellipsis,
+	Forward,
+	Mail,
+	MessageSquareDot,
+	Reply,
+	ReplyAll,
+	SquarePen,
+} from 'lucide-vue-next'
 import { Avatar, Button, Dropdown, Tooltip, createResource } from 'frappe-ui'
 
 import { userStore } from '@/stores/user'
@@ -127,7 +135,7 @@ const props = defineProps<{
 	type: string
 }>()
 
-const emit = defineEmits(['reloadMails'])
+const emit = defineEmits(['reloadMails', 'markAsUnread'])
 
 const replyDetails = reactive({
 	to: '',
@@ -176,7 +184,7 @@ interface MailAction {
 	label: string
 	onClick: () => void | typeof openModal
 	icon: typeof SquarePen
-	condition?: boolean
+	condition?: boolean | (() => boolean)
 }
 
 const mailActions = (mail): MailAction[] => [
@@ -221,6 +229,14 @@ const moreActions = (mail): MailAction[] => [
 				?.focus()
 		},
 		icon: Mail,
+	},
+	{
+		label: __('Mark as Unread'),
+		onClick: () => {
+			emit('markAsUnread')
+		},
+		icon: MessageSquareDot,
+		condition: () => mail.folder === 'Inbox' && mail.seen,
 	},
 ]
 

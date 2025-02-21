@@ -29,7 +29,7 @@
 				:class="{ 'bg-gray-100': mail.name == currentMail[currentFolder] }"
 				@click="setCurrentMail(currentFolder, mail.name)"
 			>
-				<SidebarDetail :mail="mail" />
+				<SidebarDetail :mail="mail" @click="markAsRead(mail)" />
 				<div
 					:class="{
 						'mx-4 h-[0.25px] border-b border-gray-100':
@@ -50,6 +50,9 @@
 				:mail-i-d="currentMail[currentFolder]"
 				:type="doctype"
 				@reload-mails="reloadMails('Drafts')"
+				@mark-as-unread="
+					setSeen.submit({ mail_name: currentMail[currentFolder], seen_value: 0 })
+				"
 			/>
 		</div>
 	</div>
@@ -88,9 +91,9 @@ const createMailResource = (folder: Folder) =>
 		doctype: doctype.value,
 		pageLength: 50,
 		cache: [`${folder}Mails`, user.data?.name],
-		onSuccess(data) {
+		onSuccess: (data) => {
 			if (!data.length) return
-			if (!currentMail[folder]) setCurrentMail(folder, data[0].name)
+			if (!currentMail[folder] && folder !== 'Inbox') setCurrentMail(folder, data[0].name)
 			mailDetails.value?.reloadThread()
 		},
 	})
@@ -112,6 +115,25 @@ const mailCount = createResource({
 	}),
 	cache: [`${currentFolder.value}MailCount`, user.data?.name],
 })
+
+interface SetSeenParams {
+	mail_name: string
+	seen_value: 1 | 0
+}
+
+const setSeen = createResource({
+	url: 'mail.api.mail.set_seen',
+	makeParams: (values: SetSeenParams) => ({ ...values }),
+	onSuccess: (data: SetSeenParams) => {
+		mails['Inbox'].data.find((m) => m.name === data.mail_name).seen = data.seen_value
+		if (!data.seen_value) setCurrentMail('Inbox', null)
+	},
+})
+
+const markAsRead = (mail) => {
+	if (!mail.seen && currentFolder.value === 'Inbox')
+		setSeen.submit({ mail_name: mail.name, seen_value: 1 })
+}
 
 const reloadMails = (folder?: Folder) => {
 	if (folder && folder !== currentFolder.value) return
