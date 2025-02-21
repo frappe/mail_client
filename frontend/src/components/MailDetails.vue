@@ -64,7 +64,7 @@
 								</template>
 							</Button>
 						</Tooltip>
-						<Tooltip v-if="mail.folder !== 'Drafts'" :text="__('More')">
+						<Tooltip :text="__('More')">
 							<Dropdown
 								:options="moreActions(mail).filter((d) => d.condition !== false)"
 							>
@@ -182,7 +182,7 @@ type ActionType = 'editDraft' | 'reply' | 'replyAll' | 'forward'
 
 interface MailAction {
 	label: string
-	onClick: () => void | typeof openModal
+	onClick: () => void
 	icon: typeof SquarePen
 	condition?: boolean | (() => boolean)
 }
@@ -229,14 +229,12 @@ const moreActions = (mail): MailAction[] => [
 				?.focus()
 		},
 		icon: Mail,
+		condition: () => mail.folder !== 'Drafts',
 	},
 	{
 		label: __('Mark as Unread'),
-		onClick: () => {
-			emit('markAsUnread')
-		},
+		onClick: () => emit('markAsUnread'),
 		icon: MessageSquareDot,
-		condition: () => mail.folder === 'Inbox' && mail.seen,
 	},
 ]
 

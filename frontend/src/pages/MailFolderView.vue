@@ -93,7 +93,10 @@ const createMailResource = (folder: Folder) =>
 		cache: [`${folder}Mails`, user.data?.name],
 		onSuccess: (data) => {
 			if (!data.length) return
-			if (!currentMail[folder] && folder !== 'Inbox') setCurrentMail(folder, data[0].name)
+			if (!currentMail[folder]) {
+				const firstSeen = data.find((m) => m.seen)
+				if (firstSeen) setCurrentMail(folder, firstSeen.name)
+			}
 			mailDetails.value?.reloadThread()
 		},
 	})
@@ -123,16 +126,17 @@ interface SetSeenParams {
 
 const setSeen = createResource({
 	url: 'mail.api.mail.set_seen',
-	makeParams: (values: SetSeenParams) => ({ ...values }),
+	makeParams: (values: SetSeenParams) => ({ mail_type: doctype.value, ...values }),
 	onSuccess: (data: SetSeenParams) => {
-		mails['Inbox'].data.find((m) => m.name === data.mail_name).seen = data.seen_value
-		if (!data.seen_value) setCurrentMail('Inbox', null)
+		mails[currentFolder.value].data.find((m) => m.name === data.mail_name).seen =
+			data.seen_value
+		if (data.seen_value) mailDetails.value?.reloadThread()
+		else setCurrentMail(currentFolder.value, null)
 	},
 })
 
 const markAsRead = (mail) => {
-	if (!mail.seen && currentFolder.value === 'Inbox')
-		setSeen.submit({ mail_name: mail.name, seen_value: 1 })
+	if (!mail.seen) setSeen.submit({ mail_name: mail.name, seen_value: 1 })
 }
 
 const reloadMails = (folder?: Folder) => {

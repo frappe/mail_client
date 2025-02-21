@@ -148,6 +148,7 @@ def get_outgoing_mails(folder: str, start: int = 0) -> list:
 			"in_reply_to_mail_type",
 			"status",
 			"message_id",
+			"seen",
 		],
 		limit=50,
 		start=start,
@@ -341,12 +342,13 @@ def get_mail_details(name: str, type: str, include_all_details: bool = False) ->
 		"in_reply_to_mail_type",
 		"reply_to",
 		"folder",
+		"seen",
 	]
 
 	if type == "Outgoing Mail":
 		fields.extend(["from_", "status"])
 	else:
-		fields.extend(["delivered_to", "type", "seen"])
+		fields.extend(["delivered_to", "type"])
 
 	mail = frappe.db.get_value(type, name, fields, as_dict=1)
 	mail.mail_type = type
@@ -499,9 +501,9 @@ def get_mime_message(mail_type: str, name: str) -> dict:
 
 
 @frappe.whitelist()
-def set_seen(mail_name: str, seen_value: int) -> str:
-	"""Sets seen for incoming mail."""
+def set_seen(mail_type: str, mail_name: str, seen_value: int) -> str:
+	"""Sets seen for mail."""
 
-	doc = frappe.get_doc("Incoming Mail", mail_name)
+	doc = frappe.get_doc(mail_type, mail_name)
 	doc.db_set("seen", seen_value)
 	return {"mail_name": mail_name, "seen_value": seen_value}

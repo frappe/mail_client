@@ -12,10 +12,10 @@
   "column_break_hpzu",
   "receiver",
   "delivered_to",
-  "seen",
   "in_reply_to_mail_type",
   "in_reply_to_mail_name",
   "subject",
+  "seen",
   "section_break_s2hp",
   "recipients",
   "section_break_eomq",
@@ -443,6 +443,7 @@
    "default": "0",
    "fieldname": "seen",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Seen"
   }
  ],
@@ -456,7 +457,7 @@
    "link_fieldname": "incoming_mail"
   }
  ],
- "modified": "2025-02-21 11:30:41.798280",
+ "modified": "2025-02-21 13:06:08.439042",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Incoming Mail",
