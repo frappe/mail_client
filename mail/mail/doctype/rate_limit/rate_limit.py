@@ -2,16 +2,48 @@
 # For license information, please see license.txt
 
 import frappe
+from frappe import _
 from frappe.model.document import Document
 from frappe.utils import cint
 
 
 class RateLimit(Document):
+	def validate(self) -> None:
+		self.validate_key_or_ip_based()
+		self.validate_methods()
+		self.validate_ignored_ips()
+
 	def on_update(self) -> None:
 		self.clear_cache()
 
 	def on_trash(self) -> None:
 		self.clear_cache()
+
+	def validate_key_or_ip_based(self) -> None:
+		"""Validate key or IP based"""
+
+		if not self.key and not self.ip_based:
+			frappe.throw(_("Either key or IP flag is required."))
+
+	def validate_methods(self) -> None:
+		"""Validate methods"""
+
+		methods = []
+		if self.methods:
+			for method in self.methods.split("\n"):
+				if method and method not in methods:
+					methods.append(method)
+		self.methods = "\n".join(methods)
+
+	def validate_ignored_ips(self) -> None:
+		"""Validate ignored IPs"""
+
+		ignored_ips = []
+		if self.ignored_ips:
+			for ip in self.ignored_ips.split("\n"):
+				if ip and ip not in ignored_ips:
+					ignored_ips.append(ip)
+		self.ignored_ips = "\n".join(ignored_ips)
 
 	def clear_cache(self) -> None:
 		"""Clear cache for the rate limit"""
