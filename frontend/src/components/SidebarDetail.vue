@@ -1,8 +1,11 @@
 <template>
 	<div class="space-y-1 p-2.5">
 		<div class="flex items-center justify-between">
-			<h2 class="mr-1 truncate font-semibold" :class="{ italic: !mail.subject }">
-				{{ mail.subject || __('[No subject]') }}
+			<h2 class="mr-1 flex items-center truncate">
+				<span v-if="!mail.seen" class="mr-1.5 h-2 w-2 rounded-full bg-blue-500" />
+				<span class="truncate font-semibold" :class="{ italic: !mail.subject }">
+					{{ mail.subject || __('[No subject]') }}
+				</span>
 			</h2>
 			<MailDate :datetime="mail.creation" :in-list="true" />
 		</div>
