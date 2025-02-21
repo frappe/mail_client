@@ -11,11 +11,13 @@
   "section_break_vvaw",
   "method_path",
   "methods",
-  "column_break_kcmd",
-  "key_",
-  "limit",
+  "column_break_mc1j",
   "seconds",
-  "ip_based"
+  "limit",
+  "key_",
+  "column_break_r3yj",
+  "ip_based",
+  "ignored_ips"
  ],
  "fields": [
   {
@@ -71,10 +73,6 @@
    "fieldtype": "Section Break"
   },
   {
-   "fieldname": "column_break_kcmd",
-   "fieldtype": "Column Break"
-  },
-  {
    "fieldname": "method_path",
    "fieldtype": "Data",
    "in_list_view": 1,
@@ -97,11 +95,25 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Key"
+  },
+  {
+   "depends_on": "eval: doc.ip_based",
+   "fieldname": "ignored_ips",
+   "fieldtype": "Small Text",
+   "label": "Ignored IPs"
+  },
+  {
+   "fieldname": "column_break_mc1j",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_r3yj",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-02-11 15:02:50.785940",
+ "modified": "2025-02-21 09:59:29.363311",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Rate Limit",
@@ -123,5 +135,6 @@
  ],
  "sort_field": "creation",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "track_changes": 1
 }
