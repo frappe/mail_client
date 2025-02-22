@@ -10,6 +10,8 @@ import frappe
 
 from mail.utils.cache import get_smtp_limits
 
+_smtp_connections_cache = {}
+
 
 class SMTPConnectionLimitError(Exception):
 	pass
@@ -275,16 +277,14 @@ def get_smtp_connection(
 ) -> SMTPConnection:
 	key = (host, port, username)
 
-	if hasattr(frappe.local, "_smtp_connections"):
-		if key in frappe.local._smtp_connections:
-			connection: SMTPConnection = frappe.local._smtp_connections[key]
-			if connection.is_session_valid():
-				return connection
-			else:
-				connection.close()
-				del frappe.local._smtp_connections[key]
-	else:
-		frappe.local._smtp_connections = {}
+	global _smtp_connections_cache
+	if key in _smtp_connections_cache:
+		connection: SMTPConnection = _smtp_connections_cache[key]
+		if connection.is_session_valid():
+			return connection
+		else:
+			connection.close()
+			del _smtp_connections_cache[key]
 
 	smtp_limits = get_smtp_limits()
 	max_messages = smtp_limits["max_messages"]
@@ -302,7 +302,7 @@ def get_smtp_connection(
 		session_duration,
 		max_messages,
 	)
-	frappe.local._smtp_connections[key] = connection
+	_smtp_connections_cache[key] = connection
 
 	if enqueue_close:
 		if frappe.request and hasattr(frappe.request, "after_response"):
