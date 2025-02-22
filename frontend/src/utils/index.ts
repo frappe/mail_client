@@ -1,15 +1,13 @@
 import { useTimeAgo } from '@vueuse/core'
 import { toast } from 'frappe-ui'
 
-export function convertToTitleCase(str) {
-	if (!str) {
-		return ''
-	}
+export function convertToTitleCase(str: string) {
+	if (!str) return ''
 
 	return str
 		.toLowerCase()
 		.split(' ')
-		.map(function (word) {
+		.map(function (word: string) {
 			return word.charAt(0).toUpperCase().concat(word.substr(1))
 		})
 		.join(' ')
@@ -18,32 +16,44 @@ export function convertToTitleCase(str) {
 export function getSidebarLinks() {
 	return [
 		{
-			label: 'Inbox',
+			label: __('Inbox'),
 			icon: 'Inbox',
 			to: 'Inbox',
 			activeFor: ['Inbox'],
 		},
 		{
-			label: 'Sent',
+			label: __('Sent'),
 			icon: 'Send',
 			to: 'Sent',
 			activeFor: ['Sent'],
 		},
 		{
-			label: 'Drafts',
+			label: __('Outbox'),
+			icon: 'MailWarning',
+			to: 'Outbox',
+			activeFor: ['Outbox'],
+		},
+		{
+			label: __('Drafts'),
 			icon: 'Edit3',
 			to: 'Drafts',
 			activeFor: ['Drafts'],
 		},
 		{
-			label: 'Domains',
+			label: __('Trash'),
+			icon: 'Trash2',
+			to: 'Trash',
+			activeFor: ['Trash'],
+		},
+		{
+			label: __('Domains'),
 			icon: 'Globe',
 			to: 'Domains',
 			activeFor: ['Domains', 'Domain'],
 			forDashboard: true,
 		},
 		{
-			label: 'Members',
+			label: __('Members'),
 			icon: 'Users',
 			to: 'Members',
 			activeFor: ['Members'],
@@ -52,7 +62,7 @@ export function getSidebarLinks() {
 	]
 }
 
-export function formatNumber(number) {
+export function formatNumber(number: number) {
 	return number.toLocaleString('en-IN', {
 		maximumFractionDigits: 0,
 	})
@@ -81,7 +91,7 @@ export function startResizing(event) {
 	document.addEventListener('mouseup', onMouseUp)
 }
 
-export function singularize(word) {
+export function singularize(word: string) {
 	const endings = {
 		ves: 'fe',
 		ies: 'y',
@@ -98,13 +108,13 @@ export function timeAgo(date) {
 	return useTimeAgo(date).value
 }
 
-export function validateEmail(email) {
+export function validateEmail(email: string) {
 	const regExp =
 		/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 	return regExp.test(email)
 }
 
-export function formatBytes(bytes) {
+export function formatBytes(bytes: number) {
 	if (!+bytes) return '0 Bytes'
 
 	const k = 1024
@@ -115,7 +125,7 @@ export function formatBytes(bytes) {
 	return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))}${sizes[i]}`
 }
 
-export const raiseToast = (message, type = 'success') => {
+export const raiseToast = (message: string, type = 'success') => {
 	if (type === 'success')
 		return toast({
 			title: 'Success',
@@ -138,4 +148,11 @@ export const raiseToast = (message, type = 'success') => {
 		iconClasses: 'text-red-500',
 		timeout: 7,
 	})
+}
+
+export const kebabToTitleCase = (str: string) => {
+	return str
+		.split('-')
+		.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+		.join(' ')
 }

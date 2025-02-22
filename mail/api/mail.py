@@ -3,11 +3,12 @@ from email.utils import parseaddr
 
 import frappe
 from bs4 import BeautifulSoup
+from frappe import _
 from frappe.translate import get_all_translations
 from frappe.utils import is_html
 
 from mail.utils.cache import get_account_for_user, get_default_outgoing_email_for_user
-from mail.utils.user import has_role, is_system_manager
+from mail.utils.user import get_user_email_addresses, has_role, is_system_manager
 
 
 def check_app_permission() -> bool:
@@ -43,8 +44,14 @@ def get_user_info() -> dict:
 	)
 	user["roles"] = frappe.get_roles(user.name)
 	user.tenant = frappe.db.get_value("Mail Tenant Member", {"user": frappe.session.user}, "tenant")
+	user.is_mail_user = "Mail User" in user.roles
+	user.is_mail_admin = "Mail Admin" in user.roles
+
 	if user.tenant:
-		user.tenant_name = frappe.db.get_value("Mail Tenant", user.tenant, "tenant_name")
+		user.tenant_name, tenant_owner = frappe.db.get_value(
+			"Mail Tenant", user.tenant, ["tenant_name", "user"]
+		)
+		user.is_tenant_owner = tenant_owner == frappe.session.user
 
 	user.default_outgoing = get_default_outgoing_email_for_user(frappe.session.user)
 
@@ -64,7 +71,7 @@ def get_translations() -> dict:
 
 
 @frappe.whitelist()
-def get_incoming_mails(start: int = 0) -> list:
+def get_inbox_mails(start: int = 0) -> list:
 	"""Returns incoming mails for the current user."""
 
 	account = get_account_for_user(frappe.session.user)
@@ -81,6 +88,9 @@ def get_incoming_mails(start: int = 0) -> list:
 			"creation",
 			"in_reply_to_mail_name",
 			"in_reply_to_mail_type",
+			"status",
+			"type",
+			"seen",
 			"message_id",
 		],
 		limit=50,
@@ -99,28 +109,33 @@ def get_sent_mails(start: int = 0) -> list:
 
 
 @frappe.whitelist()
-def get_draft_mails(start: int = 0) -> list:
+def get_outbox_mails(start: int = 0) -> list:
+	"""Returns outbox mails for the current user."""
+
+	return get_outgoing_mails("Outbox", start)
+
+
+@frappe.whitelist()
+def get_drafts_mails(start: int = 0) -> list:
 	"""Returns draft mails for the current user."""
 
-	return get_outgoing_mails("Draft", start)
+	return get_outgoing_mails("Drafts", start)
 
 
-def get_outgoing_mails(status: str, start: int = 0) -> list:
+def get_outgoing_mails(folder: str, start: int = 0) -> list:
 	"""Returns outgoing mails for the current user."""
 
 	account = get_account_for_user(frappe.session.user)
 
-	if status == "Draft":
-		docstatus = 0
+	if folder == "Drafts":
 		order_by = "modified desc"
 	else:
-		docstatus = 1
 		# TODO: fix sorting
 		order_by = "created_at desc"
 
 	mails = frappe.get_all(
 		"Outgoing Mail",
-		{"sender": account, "docstatus": docstatus, "status": status},
+		{"sender": account, "folder": folder},
 		[
 			"name",
 			"subject",
@@ -131,7 +146,9 @@ def get_outgoing_mails(status: str, start: int = 0) -> list:
 			"display_name",
 			"in_reply_to_mail_name",
 			"in_reply_to_mail_type",
+			"status",
 			"message_id",
+			"seen",
 		],
 		limit=50,
 		start=start,
@@ -217,6 +234,12 @@ def get_snippet(content) -> str:
 @frappe.whitelist()
 def get_mail_thread(name, mail_type) -> list:
 	"""Returns the mail thread for the given mail."""
+
+	if not frappe.db.exists(mail_type, name):
+		frappe.throw(
+			_("{0}: {1} does not exist.").format(mail_type, frappe.bold(name)),
+			frappe.DoesNotExistError,
+		)
 
 	mail = get_mail_details(name, mail_type, True)
 	mail.mail_type = mail_type
@@ -317,8 +340,15 @@ def get_mail_details(name: str, type: str, include_all_details: bool = False) ->
 		"message_id",
 		"in_reply_to_mail_name",
 		"in_reply_to_mail_type",
+		"reply_to",
 		"folder",
+		"seen",
 	]
+
+	if type == "Outgoing Mail":
+		fields.extend(["from_", "status"])
+	else:
+		fields.extend(["delivered_to", "type"])
 
 	mail = frappe.db.get_value(type, name, fields, as_dict=1)
 	mail.mail_type = type
@@ -420,8 +450,60 @@ def update_draft_mail(
 
 @frappe.whitelist()
 def get_attachments(dt: str, dn: str):
+	"""Fetches mail attachments."""
+
 	return frappe.get_all(
 		"File",
 		fields=["name", "file_name", "file_url", "file_size"],
 		filters={"attached_to_name": dn, "attached_to_doctype": dt},
 	)
+
+
+@frappe.whitelist()
+def get_user_addresses():
+	"""Fetches user email addresses."""
+
+	return get_user_email_addresses(frappe.session.user)
+
+
+@frappe.whitelist()
+def get_mime_message(mail_type: str, name: str) -> dict:
+	"""Fetches mail mime message and related data."""
+
+	doc = frappe.get_doc(mail_type, name)
+
+	def get_mail_recipients(recipient_type):
+		return ", ".join([d.email for d in doc.recipients if d.type == recipient_type])
+
+	mail = {
+		"message": doc.message,
+		"message_id": {"label": _("Message ID"), "value": doc.message_id},
+		"created_at": {"label": _("Created at"), "value": doc.created_at},
+		"subject": {"label": _("Subject"), "value": doc.subject},
+		"from": {"label": _("From"), "value": f"{doc.display_name} <{doc.sender}>"},
+		"to": {"label": _("To"), "value": get_mail_recipients("To")},
+		"cc": {"label": _("CC"), "value": get_mail_recipients("Cc")},
+	}
+
+	if mail_type == "Outgoing Mail":
+		mail["bcc"] = {"label": _("BCC"), "value": get_mail_recipients("Bcc")}
+
+	elif doc.type != "DSN Report":
+		pass_or_fail = {1: _("'Pass'"), 0: _("'Fail'")}
+		mail["spf"] = {
+			"label": _("SPF"),
+			"value": _("{0} with IP {1}").format(pass_or_fail[doc.spf_pass], doc.from_host),
+		}
+		mail["dkim"] = {"label": _("DKIM"), "value": pass_or_fail[doc.dkim_pass]}
+		mail["dmarc"] = {"label": _("DMARC"), "value": pass_or_fail[doc.dmarc_pass]}
+
+	return mail
+
+
+@frappe.whitelist()
+def set_seen(mail_type: str, mail_name: str, seen_value: int) -> str:
+	"""Sets seen for mail."""
+
+	doc = frappe.get_doc(mail_type, mail_name)
+	doc.db_set("seen", seen_value)
+	return {"mail_name": mail_name, "seen_value": seen_value}

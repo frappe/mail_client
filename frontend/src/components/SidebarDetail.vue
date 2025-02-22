@@ -1,45 +1,73 @@
 <template>
-	<div class="p-2">
+	<div class="space-y-1 p-2.5">
 		<div class="flex items-center justify-between">
-			<div class="font-semibold">
-				{{ mail.display_name ? mail.display_name : mail.sender }}
-			</div>
+			<h2 class="mr-1 flex items-center truncate">
+				<span v-if="!mail.seen" class="mr-1.5 h-2 w-2 rounded-full bg-blue-500" />
+				<span class="truncate font-semibold" :class="{ italic: !mail.subject }">
+					{{ mail.subject || __('[No subject]') }}
+				</span>
+			</h2>
 			<MailDate :datetime="mail.creation" :in-list="true" />
 		</div>
-		<div class="subject text-xs">
-			{{ mail.subject }}
-		</div>
-		<div class="snippet text-xs text-gray-600">
-			{{ mail.snippet }}
+		<h3 class="snippet line-clamp-1 text-xs">
+			{{ mail.display_name ? mail.display_name : mail.sender }}
+		</h3>
+		<h4
+			class="snippet line-clamp-2 h-9 text-xs text-gray-600"
+			:class="{ italic: !mail.snippet }"
+		>
+			{{ mail.snippet || __('— No message body —') }}
+		</h4>
+		<div class="flex items-center">
+			<!-- <div class="flex rounded bg-gray-100 p-1 text-gray-700">
+				<Paperclip class="mr-1 h-3.5 w-3.5" />
+				<span class="text-xs">{{ 20 }}</span>
+			</div> -->
+			<Badge
+				class="ml-auto"
+				v-if="Object.keys(STATUS).includes(badgeField)"
+				:label="badge.label"
+				:theme="badge.theme"
+			/>
 		</div>
 	</div>
 </template>
-<script setup lang="ts">
-import MailDate from './MailDate.vue'
 
-defineProps({
-	mail: {
-		type: Object,
-		required: true,
-	},
-})
+<script setup lang="ts">
+import { computed } from 'vue'
+import { Paperclip } from 'lucide-vue-next'
+import { Badge } from 'frappe-ui'
+
+import MailDate from '@/components/MailDate.vue'
+
+const props = defineProps<{
+	mail: object
+}>()
+
+interface BadgeType {
+	label: string
+	theme: 'gray' | 'blue' | 'green' | 'orange' | 'red'
+}
+
+const STATUS = {
+	Draft: { label: __('Draft'), theme: 'gray' },
+	Queued: { label: __('Queued'), theme: 'orange' },
+	Blocked: { label: __('Blocked'), theme: 'red' },
+	Failed: { label: __('Failed'), theme: 'red' },
+	'DSN Report': { label: __('DSN Report'), theme: 'blue' },
+	'DMARC Report': { label: __('DMARC Report'), theme: 'blue' },
+}
+
+const badgeField = computed(() =>
+	props.mail.mail_type === 'Outgoing Mail' ? props.mail.status : props.mail.type,
+)
+
+const badge = computed<BadgeType>(() => STATUS[badgeField.value])
 </script>
+
 <style>
 .snippet {
 	display: -webkit-box;
-	line-clamp: 2;
-	-webkit-line-clamp: 2;
-	-webkit-box-orient: vertical;
-	text-overflow: ellipsis;
-	width: 100%;
-	overflow: hidden;
-	line-height: 1.5;
-}
-
-.subject {
-	display: -webkit-box;
-	line-clamp: 1;
-	-webkit-line-clamp: 1;
 	-webkit-box-orient: vertical;
 	text-overflow: ellipsis;
 	width: 100%;

@@ -36,17 +36,41 @@ const routes = [
 	{
 		path: '/inbox',
 		name: 'Inbox',
-		component: () => import('@/pages/InboxView.vue'),
+		component: () => import('@/pages/MailFolderView.vue'),
 	},
 	{
 		path: '/sent',
 		name: 'Sent',
-		component: () => import('@/pages/SentView.vue'),
+		component: () => import('@/pages/MailFolderView.vue'),
+	},
+	{
+		path: '/outbox',
+		name: 'Outbox',
+		component: () => import('@/pages/MailFolderView.vue'),
 	},
 	{
 		path: '/drafts',
 		name: 'Drafts',
-		component: () => import('@/pages/DraftsView.vue'),
+		component: () => import('@/pages/MailFolderView.vue'),
+	},
+	{
+		path: '/trash',
+		name: 'Trash',
+		component: () => import('@/pages/MailFolderView.vue'),
+	},
+	{
+		path: '/mime-message/incoming-mail/:id',
+		name: 'IncomingMailMimeMessage',
+		component: () => import('@/pages/MimeMessageView.vue'),
+		props: true,
+		meta: { isMimeMessage: true },
+	},
+	{
+		path: '/mime-message/outgoing-mail/:id',
+		name: 'OutgoingMailMimeMessage',
+		component: () => import('@/pages/MimeMessageView.vue'),
+		props: true,
+		meta: { isMimeMessage: true },
 	},
 	{
 		path: '/dashboard',

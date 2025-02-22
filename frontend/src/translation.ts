@@ -6,21 +6,16 @@ export default function translationPlugin(app) {
 	if (!window.translatedMessages) fetchTranslations()
 }
 
-function translate(message) {
+function translate(message: string, variables?: string[]) {
 	const translatedMessages = window.translatedMessages || {}
 	const translatedMessage = translatedMessages[message] || message
 
-	const hasPlaceholders = /{\d+}/.test(message)
-	if (!hasPlaceholders) {
-		return translatedMessage
-	}
-	return {
-		format: function (...args) {
-			return translatedMessage.replace(/{(\d+)}/g, function (match, number) {
-				return typeof args[number] != 'undefined' ? args[number] : match
-			})
-		},
-	}
+	const hasPlaceholders = /{\d+}/.test(message) && variables
+	if (!hasPlaceholders) return translatedMessage
+
+	return translatedMessage.replace(/{(\d+)}/g, (match: string, number: number) => {
+		return typeof variables[number] !== 'undefined' ? variables[number] : match
+	})
 }
 
 function fetchTranslations() {

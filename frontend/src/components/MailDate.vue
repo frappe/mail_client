@@ -1,6 +1,6 @@
 <template>
 	<Tooltip :text="tooltipText" :disabled="inList">
-		<div class="cursor-pointer text-xs text-gray-600">
+		<div class="cursor-pointer text-nowrap text-xs text-gray-600">
 			{{ formattedDate }}
 		</div>
 	</Tooltip>

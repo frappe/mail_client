@@ -15,6 +15,7 @@
   "in_reply_to_mail_type",
   "in_reply_to_mail_name",
   "subject",
+  "seen",
   "section_break_s2hp",
   "recipients",
   "section_break_eomq",
@@ -436,6 +437,14 @@
    "options": "Email",
    "read_only": 1,
    "search_index": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "fieldname": "seen",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Seen"
   }
  ],
  "in_create": 1,
@@ -448,7 +457,7 @@
    "link_fieldname": "incoming_mail"
   }
  ],
- "modified": "2025-02-19 17:54:12.262442",
+ "modified": "2025-02-21 13:06:08.439042",
  "modified_by": "Administrator",
  "module": "Mail",
  "name": "Incoming Mail",

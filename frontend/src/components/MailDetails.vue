@@ -4,7 +4,7 @@
 			v-for="mail in mailThread.data"
 			:key="mail.name"
 			class="mb-4 p-3"
-			:class="{ 'rounded-md shadow': mailThread.data.length > 1 }"
+			:class="{ 'rounded-md border': mailThread.data.length > 1 }"
 		>
 			<div class="flex space-x-3 border-b pb-2">
 				<Avatar
@@ -15,8 +15,13 @@
 				/>
 				<div class="flex flex-1 justify-between text-xs">
 					<div class="flex flex-col space-y-1">
-						<div class="text-base font-semibold">
-							{{ mail.display_name || mail.sender }}
+						<div class="space-x-1">
+							<span class="text-base font-semibold">
+								{{ mail.display_name || mail.from_ || mail.sender }}
+							</span>
+							<span v-if="mail.display_name" class="text-gray-600">
+								{{ `<${mail.from_ || mail.sender}>` }}
+							</span>
 						</div>
 						<div class="leading-4">
 							{{ mail.subject }}
@@ -24,81 +29,63 @@
 						<div class="space-x-2">
 							<span v-if="mail.to.length">
 								{{ __('To') }}:
-								<span
-									v-for="(recipient, idx) in mail.to"
-									:key="idx"
-									class="text-gray-700"
-								>
-									{{ recipient.display_name || recipient.email }}
+								<span class="text-gray-700">
+									{{ toRecipient(mail) }}
 								</span>
 							</span>
 							<span v-if="mail.cc.length">
 								{{ __('Cc') }}:
-								<span
-									v-for="(recipient, idx) in mail.cc"
-									:key="idx"
-									class="text-gray-700"
-								>
-									{{ recipient.display_name || recipient.email }}
+								<span class="text-gray-700">
+									{{ getRecipients(mail.cc) }}
 								</span>
 							</span>
 							<span v-if="mail.bcc.length">
 								{{ __('Bcc') }}:
-								<span
-									v-for="(recipient, idx) in mail.bcc"
-									:key="idx"
-									class="text-gray-700"
-								>
-									{{ recipient.display_name || recipient.email }}
+								<span class="text-gray-700">
+									{{ getRecipients(mail.bcc) }}
 								</span>
 							</span>
 						</div>
 					</div>
-					<div
-						v-if="mail.folder === 'Drafts'"
-						class="flex items-center space-x-2 self-start"
-					>
-						<MailDate :datetime="mail.modified" />
-						<Tooltip :text="__('Edit')">
-							<Button
-								icon="edit"
-								variant="ghost"
-								@click="openModal('editDraft', mail.name)"
+					<div class="flex items-center space-x-2 self-start">
+						<MailDate
+							:datetime="mail.folder === 'Drafts' ? mail.modified : mail.creation"
+						/>
+						<Tooltip
+							v-for="action in mailActions(mail).filter(
+								(d) => d.condition !== false,
+							)"
+							:key="action.label"
+							:text="action.label"
+						>
+							<Button variant="ghost" @click="action.onClick()">
+								<template #icon>
+									<component :is="action.icon" class="h-4 w-4 text-gray-600" />
+								</template>
+							</Button>
+						</Tooltip>
+						<Tooltip :text="__('More')">
+							<Dropdown
+								:options="moreActions(mail).filter((d) => d.condition !== false)"
 							>
-							</Button>
-						</Tooltip>
-					</div>
-					<div v-else class="flex items-center space-x-2 self-start">
-						<MailDate :datetime="mail.creation" />
-						<Tooltip :text="__('Reply')">
-							<Button variant="ghost" @click="openModal('reply', mail)">
-								<template #icon>
-									<Reply class="h-4 w-4 text-gray-600" />
-								</template>
-							</Button>
-						</Tooltip>
-						<Tooltip :text="__('Reply All')">
-							<Button variant="ghost" @click="openModal('replyAll', mail)">
-								<template #icon>
-									<ReplyAll class="h-4 w-4 text-gray-600" />
-								</template>
-							</Button>
-						</Tooltip>
-						<Tooltip :text="__('Forward')">
-							<Button variant="ghost" @click="openModal('forward', mail)">
-								<template #icon>
-									<Forward class="h-4 w-4 text-gray-600" />
-								</template>
-							</Button>
+								<Button variant="ghost">
+									<template #icon>
+										<Ellipsis class="h-4 w-4 text-gray-600" />
+									</template>
+								</Button>
+							</Dropdown>
 						</Tooltip>
 					</div>
 				</div>
 			</div>
 			<div
 				v-if="mail.body_html"
-				class="ProseMirror prose prose-table:table-fixed prose-td:p-2 prose-th:p-2 prose-td:border prose-th:border prose-td:border-gray-300 prose-th:border-gray-300 prose-td:relative prose-th:relative prose-th:bg-gray-100 prose-sm max-w-none pt-4 text-sm leading-5"
+				class="mail-body ProseMirror prose-sm"
 				v-html="mailBody(mail.body_html)"
-			></div>
+			/>
+			<pre v-else-if="mail.body_plain" class="mail-body text-wrap">{{
+				mail.body_plain
+			}}</pre>
 		</div>
 	</div>
 	<div
@@ -116,30 +103,39 @@
 		@reload-mails="emit('reloadMails')"
 	/>
 </template>
+
 <script setup lang="ts">
 import { inject, reactive, ref, watch } from 'vue'
-import { Forward, Reply, ReplyAll } from 'lucide-vue-next'
-import { Avatar, Button, Tooltip, createResource } from 'frappe-ui'
+import { useRoute } from 'vue-router'
+import {
+	Ellipsis,
+	Forward,
+	Mail,
+	MessageSquareDot,
+	Reply,
+	ReplyAll,
+	SquarePen,
+} from 'lucide-vue-next'
+import { Avatar, Button, Dropdown, Tooltip, createResource } from 'frappe-ui'
 
+import { userStore } from '@/stores/user'
 import MailDate from '@/components/MailDate.vue'
 import SendMailModal from '@/components/Modals/SendMailModal.vue'
 
-const showSendModal = ref(false)
-const draftMailID = ref(null)
+import type { Folder } from '@/types'
+
+const { setCurrentMail } = userStore()
 const dayjs = inject('$dayjs')
 
-const props = defineProps({
-	mailID: {
-		type: [String, null],
-		required: true,
-	},
-	type: {
-		type: String,
-		required: true,
-	},
-})
+const showSendModal = ref(false)
+const draftMailID = ref<string>()
 
-const emit = defineEmits(['reloadMails'])
+const props = defineProps<{
+	mailID: string | null
+	type: string
+}>()
+
+const emit = defineEmits(['reloadMails', 'markAsUnread'])
 
 const replyDetails = reactive({
 	to: '',
@@ -150,23 +146,29 @@ const replyDetails = reactive({
 	in_reply_to_mail_name: '',
 })
 
+const route = useRoute()
+
 const mailThread = createResource({
 	url: 'mail.api.mail.get_mail_thread',
-	makeParams() {
+	makeParams: () => {
 		return {
 			name: props.mailID,
 			mail_type: props.type,
 		}
 	},
-	auto: !!props.mailID,
+	onError: (error) => {
+		if (error.exc_type === 'DoesNotExistError')
+			setCurrentMail(String(route.name) as Folder, null)
+	},
 })
 
 const reloadThread = () => {
 	if (props.mailID) mailThread.reload()
 }
+
 defineExpose({ reloadThread })
 
-const mailBody = (bodyHTML) => {
+const mailBody = (bodyHTML: string) => {
 	bodyHTML = bodyHTML.replace(/<br\s*\/?>/, '')
 	bodyHTML = bodyHTML.replace(
 		/<blockquote>/g,
@@ -176,14 +178,69 @@ const mailBody = (bodyHTML) => {
 	return bodyHTML
 }
 
-const openModal = (type, mail) => {
-	if (type === 'editDraft') {
-		draftMailID.value = mail
-		showSendModal.value = true
-		return
-	}
+type ActionType = 'editDraft' | 'reply' | 'replyAll' | 'forward'
+
+interface MailAction {
+	label: string
+	onClick: () => void
+	icon: typeof SquarePen
+	condition?: boolean | (() => boolean)
+}
+
+const mailActions = (mail): MailAction[] => [
+	{
+		label: __('Edit Draft'),
+		onClick: () => {
+			draftMailID.value = mail.name
+			showSendModal.value = true
+		},
+		icon: SquarePen,
+		condition: mail.folder === 'Drafts',
+	},
+	{
+		label: __('Reply'),
+		onClick: () => openModal('reply', mail),
+		icon: Reply,
+		condition: mail.folder !== 'Drafts',
+	},
+	{
+		label: __('Reply All'),
+		onClick: () => openModal('replyAll', mail),
+		icon: ReplyAll,
+		condition: mail.folder !== 'Drafts',
+	},
+	{
+		label: __('Forward'),
+		onClick: () => openModal('forward', mail),
+		icon: Forward,
+		condition: mail.folder !== 'Drafts',
+	},
+]
+
+const moreActions = (mail): MailAction[] => [
+	{
+		label: __('See MIME Message'),
+		onClick: () => {
+			window
+				.open(
+					`mime-message/${mail.mail_type.toLowerCase().split(' ').join('-')}/${mail.name}`,
+					'_blank',
+				)
+				?.focus()
+		},
+		icon: Mail,
+		condition: () => mail.folder !== 'Drafts',
+	},
+	{
+		label: __('Mark as Unread'),
+		onClick: () => emit('markAsUnread'),
+		icon: MessageSquareDot,
+	},
+]
+
+const openModal = (type: ActionType, mail) => {
 	if (props.type == 'Incoming Mail') {
-		replyDetails.to = mail.sender
+		replyDetails.to = mail.reply_to || mail.sender
 	} else {
 		replyDetails.to = mail.to.map((to) => to.email).join(', ')
 	}
@@ -214,6 +271,22 @@ const getReplyHtml = (html, creation) => {
 	return `<br><blockquote>${replyHeader} <br> ${html}</blockquote>`
 }
 
+interface Recipient {
+	display_name?: string
+	email: string
+}
+
+const getRecipients = (recipients: Recipient[]) =>
+	recipients.map((recipient) => recipient.display_name || recipient.email).join(', ')
+
+const toRecipient = (mail) => {
+	const isSoleRecipient = mail.to.length === 1 && !mail.cc.length && !mail.bcc.length
+	if (!isSoleRecipient) return getRecipients(mail.to)
+
+	const recipient = mail.delivered_to || mail.to[0].email
+	return mail.to[0].display_name ? `${mail.to[0].display_name} <${recipient}>` : recipient
+}
+
 watch(() => props.mailID, reloadThread)
 </script>
 <style>
@@ -222,5 +295,9 @@ watch(() => props.mailID, reloadThread)
 		:where([class~='not-prose'], [class~='not-prose'] *)
 	)::before {
 	content: '';
+}
+
+.mail-body {
+	@apply prose prose-table:table-fixed prose-td:p-2 prose-th:p-2 prose-td:border prose-th:border prose-td:border-gray-300 prose-th:border-gray-300 prose-td:relative prose-th:relative prose-th:bg-gray-100 prose-sm max-w-none pt-4 text-sm leading-5;
 }
 </style>
