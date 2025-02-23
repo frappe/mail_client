@@ -20,9 +20,9 @@ class RateLimit(Document):
 		self.clear_cache()
 
 	def validate_key_or_ip_based(self) -> None:
-		"""Validate key or IP based"""
+		"""Validate key_ or IP based"""
 
-		if not self.key and not self.ip_based:
+		if not self.key_ and not self.ip_based:
 			frappe.throw(_("Either key or IP flag is required."))
 
 	def validate_methods(self) -> None:
@@ -67,7 +67,7 @@ def create_rate_limit(
 	doc.ignore_in_developer_mode = cint(ignore_in_developer_mode)
 	doc.method_path = method_path
 	doc.methods = methods
-	doc.key = key
+	doc.key_ = key
 	doc.limit = limit
 	doc.seconds = seconds
 	doc.ip_based = cint(ip_based)
